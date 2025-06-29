@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+
+    <color name="main_1">#7770FE</color>
+    <color name="main_2">#E8ECFF</color>
+
+    <color name="sub_1">#5D71F1</color>
+    <color name="sub_2">#9A90FF</color>
+    <color name="sub_3">#D2D5FF</color>
+
+    <color name="point">#FFB5B5</color>
+
+    <color name="text_primary">#0F0F0F</color>
+    <color name="text_secondary">#5C6569</color>
+    <color name="text_tertiary">#788084</color>
+
+    <color name="deactive">#9B9FA1</color>
+    <color name="gray">#C2C4C6</color>
+    <color name="line">#DFE2E3</color>
+    <color name="bg">#F0F0F0</color>
+</resources>

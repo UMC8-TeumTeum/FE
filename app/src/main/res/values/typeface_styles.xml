@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- HEADER -->
+    <style name="Header1">
+        <item name="fontFamily">@font/noto_sans_kr_semibold</item>
+        <item name="android:textSize">22sp</item>
+    </style>
+
+    <style name="Header2">
+        <item name="fontFamily">@font/noto_sans_kr_medium</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="Header3">
+        <item name="fontFamily">@font/noto_sans_kr_medium</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <!-- MEDIUM -->
+    <style name="Md16">
+        <item name="fontFamily">@font/noto_sans_kr_medium</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="Md15Regular">
+        <item name="fontFamily">@font/noto_sans_kr_regular</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="Md15Medium">
+        <item name="fontFamily">@font/noto_sans_kr_medium</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <!-- SMALL -->
+    <style name="Sm14Medium">
+        <item name="fontFamily">@font/noto_sans_kr_medium</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="Sm14Regular">
+        <item name="fontFamily">@font/noto_sans_kr_regular</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="Sm12Medium">
+        <item name="fontFamily">@font/noto_sans_kr_medium</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="Sm12Regular">
+        <item name="fontFamily">@font/noto_sans_kr_regular</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <!-- EXTRA SMALL -->
+    <style name="Xs11Regular">
+        <item name="fontFamily">@font/noto_sans_kr_regular</item>
+        <item name="android:textSize">11sp</item>
+    </style>
+
+</resources>
