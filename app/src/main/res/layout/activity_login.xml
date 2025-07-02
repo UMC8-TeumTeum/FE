@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SignIn.LoginActivity">
+
+    <!-- 앱 로고 추가 -->
+    <ImageView
+        android:id="@+id/logo_iv"
+        android:src="@drawable/ic_launcher_foreground"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_bias="0.25" />
+
+    <!-- 카카오 로그인 버튼 -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/kakao_login_btn"
+        android:layout_width="0dp"
+        android:layout_height="55dp"
+        android:text="카카오 로그인"
+        style="@style/Md15Medium"
+        android:textColor="@color/black"
+        android:gravity="center"
+        app:icon="@drawable/ic_kakao"
+        app:iconTint="@android:color/black"
+        app:iconPadding="16dp"
+        app:iconGravity="start"
+        app:iconSize="20dp"
+        android:backgroundTint="#FEE500"
+        app:cornerRadius="8dp"
+        android:paddingTop="0dp"
+        android:paddingBottom="0dp"
+        android:paddingStart="24dp"
+        android:textAlignment="center"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_bias="0.65"
+        android:layout_marginStart="31dp"
+        android:layout_marginEnd="31dp" />
+
+    <!-- 네이버 로그인 버튼 -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/naver_login_btn"
+        android:layout_width="0dp"
+        android:layout_height="55dp"
+        android:backgroundTint="#03C75A"
+        android:text="네이버 로그인"
+        style="@style/Md15Medium"
+        android:textColor="@color/white"
+        android:gravity="center"
+        app:cornerRadius="8dp"
+        app:icon="@drawable/ic_naver"
+        app:iconGravity="start"
+        app:iconPadding="16dp"
+        app:iconSize="20dp"
+        app:iconTint="@android:color/white"
+        android:paddingTop="0dp"
+        android:paddingBottom="0dp"
+        android:paddingStart="24dp"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/kakao_login_btn"
+        android:layout_marginTop="62dp"
+        android:layout_marginStart="31dp"
+        android:layout_marginEnd="31dp" />
+
+    <!-- 틈틈 로그인 버튼 -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/teumteum_login_btn"
+        android:layout_width="0dp"
+        android:layout_height="55dp"
+        android:text="틈틈 아이디로 시작하기"
+        style="@style/Md15Medium"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:backgroundTint="#001522"
+        app:cornerRadius="8dp"
+        android:paddingTop="0dp"
+        android:paddingBottom="0dp"
+        android:paddingStart="24dp"
+        android:textAlignment="center"
+        app:layout_constraintTop_toTopOf="@+id/naver_login_btn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="62dp"
+        android:layout_marginStart="31dp"
+        android:layout_marginEnd="31dp" />
+
+    <!-- 회원 가입 텍스트 버튼 -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="@+id/teumteum_login_btn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="80dp">
+
+        <TextView
+            android:id="@+id/signup_tv"
+            style="@style/Sm14Regular"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="아이디로 회원가입"
+            android:textColor="#5C6569"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="0dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#5C6569" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
