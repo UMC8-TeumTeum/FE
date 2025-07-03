@@ -14,11 +14,11 @@
         android:layout_height="wrap_content"
         android:text="일상의 빈틈 확인 \n플랫폼 틈틈"
         style="@style/Header1"
-        android:textSize="26sp"
+        android:textSize="28sp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="54dp"
         />
 
     <!-- 체크박스1 -->
@@ -28,10 +28,11 @@
         android:layout_height="wrap_content"
         android:text="서비스 이용 약관 동의 (필수) > "
         style="@style/Sm14Regular"
+        android:paddingStart="12dp"
         app:layout_constraintTop_toBottomOf="@id/title_tv"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="200dp"
-        android:layout_marginStart="20dp" />
+        android:layout_marginTop="239dp"
+        android:layout_marginStart="16dp" />
 
     <!-- 동의서 내용 1 -->
     <TextView
@@ -53,9 +54,10 @@
         android:layout_height="wrap_content"
         android:text="개인정보 수집 및 이용 동의 (필수) > "
         style="@style/Sm14Regular"
+        android:paddingStart="12dp"
         app:layout_constraintTop_toBottomOf="@id/check1"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="20dp" />
+        android:layout_marginStart="16dp" />
 
     <!-- 동의서 내용 2 -->
     <TextView
@@ -78,9 +80,10 @@
         android:layout_height="wrap_content"
         android:text="개인정보 제3자 제공에 대한 안내 (선택) > "
         style="@style/Sm14Regular"
+        android:paddingStart="12dp"
         app:layout_constraintTop_toBottomOf="@id/check2"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="20dp" />
+        android:layout_marginStart="16dp" />
 
     <!-- 동의서 내용 3 -->
     <TextView
@@ -102,9 +105,10 @@
         android:layout_height="wrap_content"
         android:text="마케팅 및 광고성 정보 수신 동의 (선택) > "
         style="@style/Sm14Regular"
+        android:paddingStart="12dp"
         app:layout_constraintTop_toBottomOf="@id/check3"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="20dp" />
+        android:layout_marginStart="16dp" />
 
     <!-- 동의서 내용 4 -->
     <TextView
@@ -125,8 +129,9 @@
         android:layout_height="1dp"
         android:background="#EAEAEA"
         app:layout_constraintTop_toBottomOf="@+id/check4"
-        android:layout_marginStart="25dp"
-        android:layout_marginEnd="25dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="19dp"
+        android:layout_marginEnd="19dp"
         />
 
     <!-- 전체동의 -->
@@ -136,9 +141,11 @@
         android:layout_height="wrap_content"
         android:text="전체 동의"
         style="@style/Sm14Regular"
+        android:paddingStart="12dp"
         app:layout_constraintTop_toBottomOf="@id/checkbox_underline"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="20dp" />
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp" />
 
     <!--다음으로 버튼-->
     <com.google.android.material.button.MaterialButton
@@ -149,14 +156,12 @@
         style="@style/Md16"
         app:cornerRadius="8dp"
         android:backgroundTint="@color/black"
-        app:layout_constraintTop_toBottomOf="@+id/check5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginTop="60dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginStart="19dp"
+        android:layout_marginEnd="19dp"
+        android:layout_marginBottom="18.5dp"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
