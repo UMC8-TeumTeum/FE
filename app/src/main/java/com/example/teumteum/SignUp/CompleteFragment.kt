@@ -6,11 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.teumteum.R
-import com.example.teumteum.databinding.FragmentAgreementBinding
 
-class AgreementFragment : Fragment() {
-
-    private lateinit var binding: FragmentAgreementBinding
+class CompleteFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,19 +17,12 @@ class AgreementFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentAgreementBinding.inflate(inflater, container, false)
-        return binding.root
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_complete, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (activity as? SignUpActivity)?.setProgressBar(50)
-
-        binding.nextBtn.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, CompleteFragment())
-                .addToBackStack(null)
-                .commit()
-        }
+        (activity as? SignUpActivity)?.setProgressBar(100)
     }
 }
