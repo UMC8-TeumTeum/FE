@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SignUp.AgreementFragment">
+
+    <!-- 제목 -->
+    <TextView
+        android:id="@+id/title_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="일상의 빈틈 확인 \n플랫폼 틈틈"
+        style="@style/Header1"
+        android:textSize="26sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="60dp"
+        />
+
+    <!-- 체크박스1 -->
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/check1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="서비스 이용 약관 동의 (필수) > "
+        style="@style/Sm14Regular"
+        app:layout_constraintTop_toBottomOf="@id/title_tv"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="200dp"
+        android:layout_marginStart="20dp" />
+
+    <!-- 동의서 내용 1 -->
+    <TextView
+        android:id="@+id/detail1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="여기에 동의서 내용이 들어갑니다."
+        android:visibility="gone"
+        android:padding="16dp"
+        android:textColor="#444444"
+        app:layout_constraintTop_toBottomOf="@id/check1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- 체크박스2 -->
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/check2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="개인정보 수집 및 이용 동의 (필수) > "
+        style="@style/Sm14Regular"
+        app:layout_constraintTop_toBottomOf="@id/check1"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="20dp" />
+
+    <!-- 동의서 내용 2 -->
+    <TextView
+        android:id="@+id/detail2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="여기에 동의서 내용이 들어갑니다."
+        android:visibility="gone"
+        android:padding="16dp"
+        android:textColor="#444444"
+        app:layout_constraintTop_toBottomOf="@id/check2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+
+    <!-- 체크박스3 -->
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/check3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="개인정보 제3자 제공에 대한 안내 (선택) > "
+        style="@style/Sm14Regular"
+        app:layout_constraintTop_toBottomOf="@id/check2"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="20dp" />
+
+    <!-- 동의서 내용 3 -->
+    <TextView
+        android:id="@+id/detail3"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="여기에 동의서 내용이 들어갑니다."
+        android:visibility="gone"
+        android:padding="16dp"
+        android:textColor="#444444"
+        app:layout_constraintTop_toBottomOf="@id/check3"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- 체크박스4 -->
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/check4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="마케팅 및 광고성 정보 수신 동의 (선택) > "
+        style="@style/Sm14Regular"
+        app:layout_constraintTop_toBottomOf="@id/check3"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="20dp" />
+
+    <!-- 동의서 내용 4 -->
+    <TextView
+        android:id="@+id/detail4"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="여기에 동의서 내용이 들어갑니다."
+        android:visibility="gone"
+        android:padding="16dp"
+        android:textColor="#444444"
+        app:layout_constraintTop_toBottomOf="@id/check4"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <View
+        android:id="@+id/checkbox_underline"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#EAEAEA"
+        app:layout_constraintTop_toBottomOf="@+id/check4"
+        android:layout_marginStart="25dp"
+        android:layout_marginEnd="25dp"
+        />
+
+    <!-- 전체동의 -->
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/check5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="전체 동의"
+        style="@style/Sm14Regular"
+        app:layout_constraintTop_toBottomOf="@id/checkbox_underline"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="20dp" />
+
+    <!--다음으로 버튼-->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/next_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="다음으로"
+        style="@style/Md16"
+        app:cornerRadius="8dp"
+        android:backgroundTint="@color/black"
+        app:layout_constraintTop_toBottomOf="@+id/check5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="60dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        />
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
