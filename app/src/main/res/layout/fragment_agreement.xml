@@ -15,10 +15,12 @@
         android:text="일상의 빈틈 확인 \n플랫폼 틈틈"
         style="@style/Header1"
         android:textSize="28sp"
+        android:textColor="@color/black"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="54dp"
+        android:layout_marginTop="159dp"
+        android:includeFontPadding="false"
         />
 
     <!-- 체크박스1 -->
@@ -27,25 +29,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="서비스 이용 약관 동의 (필수) > "
+        android:textColor="@color/black"
+        android:buttonTint="@color/black"
+        android:backgroundTint="@color/black"
         style="@style/Sm14Regular"
         android:paddingStart="12dp"
         app:layout_constraintTop_toBottomOf="@id/title_tv"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="239dp"
-        android:layout_marginStart="16dp" />
-
-    <!-- 동의서 내용 1 -->
-    <TextView
-        android:id="@+id/detail1"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="여기에 동의서 내용이 들어갑니다."
-        android:visibility="gone"
-        android:padding="16dp"
-        android:textColor="#444444"
-        app:layout_constraintTop_toBottomOf="@id/check1"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:layout_marginStart="16dp"
+        />
 
     <!-- 체크박스2 -->
     <androidx.appcompat.widget.AppCompatCheckBox
@@ -53,25 +46,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="개인정보 수집 및 이용 동의 (필수) > "
+        android:textColor="@color/black"
+        android:buttonTint="@color/black"
+        android:backgroundTint="@color/black"
         style="@style/Sm14Regular"
         android:paddingStart="12dp"
         app:layout_constraintTop_toBottomOf="@id/check1"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginStart="16dp" />
-
-    <!-- 동의서 내용 2 -->
-    <TextView
-        android:id="@+id/detail2"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="여기에 동의서 내용이 들어갑니다."
-        android:visibility="gone"
-        android:padding="16dp"
-        android:textColor="#444444"
-        app:layout_constraintTop_toBottomOf="@id/check2"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
 
     <!-- 체크박스3 -->
     <androidx.appcompat.widget.AppCompatCheckBox
@@ -79,24 +61,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="개인정보 제3자 제공에 대한 안내 (선택) > "
+        android:textColor="@color/black"
+        android:buttonTint="@color/black"
+        android:backgroundTint="@color/black"
         style="@style/Sm14Regular"
         android:paddingStart="12dp"
         app:layout_constraintTop_toBottomOf="@id/check2"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginStart="16dp" />
-
-    <!-- 동의서 내용 3 -->
-    <TextView
-        android:id="@+id/detail3"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="여기에 동의서 내용이 들어갑니다."
-        android:visibility="gone"
-        android:padding="16dp"
-        android:textColor="#444444"
-        app:layout_constraintTop_toBottomOf="@id/check3"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- 체크박스4 -->
     <androidx.appcompat.widget.AppCompatCheckBox
@@ -104,24 +76,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="마케팅 및 광고성 정보 수신 동의 (선택) > "
+        android:textColor="@color/black"
+        android:buttonTint="@color/black"
+        android:backgroundTint="@color/black"
         style="@style/Sm14Regular"
         android:paddingStart="12dp"
         app:layout_constraintTop_toBottomOf="@id/check3"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginStart="16dp" />
-
-    <!-- 동의서 내용 4 -->
-    <TextView
-        android:id="@+id/detail4"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="여기에 동의서 내용이 들어갑니다."
-        android:visibility="gone"
-        android:padding="16dp"
-        android:textColor="#444444"
-        app:layout_constraintTop_toBottomOf="@id/check4"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
 
     <View
         android:id="@+id/checkbox_underline"
@@ -140,6 +102,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="전체 동의"
+        android:textColor="@color/black"
+        android:buttonTint="@color/black"
+        android:backgroundTint="@color/black"
         style="@style/Sm14Regular"
         android:paddingStart="12dp"
         app:layout_constraintTop_toBottomOf="@id/checkbox_underline"
@@ -154,14 +119,16 @@
         android:layout_height="wrap_content"
         android:text="다음으로"
         style="@style/Md16"
+        android:textColor="#0F0F0F"
         app:cornerRadius="8dp"
-        android:backgroundTint="@color/black"
+        android:backgroundTint="#F6F6F6"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginStart="19dp"
         android:layout_marginEnd="19dp"
         android:layout_marginBottom="18.5dp"
+        android:enabled="false"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
