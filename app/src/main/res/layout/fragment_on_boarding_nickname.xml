@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
+    tools:context=".SignUp.OnBoardingNicknameFragment">
+
+    <TextView
+        android:id="@+id/title_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="안녕하세요!"
+        style="@style/Header1"
+        android:textSize="28sp"
+        android:textColor="@color/black"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="159dp"
+        android:includeFontPadding="false"
+        />
+
+    <TextView
+        android:id="@+id/sub_title_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="틈틈에서 사용할 닉네임과 분야/직종을 작성해주세요"
+        style="@style/Header2"
+        android:textSize="14sp"
+        android:textColor="@color/black"
+        app:layout_constraintTop_toBottomOf="@+id/title_tv"
+        app:layout_constraintStart_toStartOf="@+id/title_tv"
+        android:layout_marginTop="10dp"
+        android:includeFontPadding="false"
+        />
+
+    <TextView
+        android:id="@+id/nickname_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="닉네임"
+        style="@style/Header2"
+        android:textSize="16sp"
+        android:textColor="@color/black"
+        app:layout_constraintTop_toBottomOf="@+id/sub_title_tv"
+        app:layout_constraintStart_toStartOf="@+id/sub_title_tv"
+        android:layout_marginTop="66dp"
+        android:includeFontPadding="false"/>
+
+    <RelativeLayout
+        android:id="@+id/nickname_form"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@drawable/rounded_edit_text"
+        app:layout_constraintTop_toBottomOf="@+id/nickname_tv"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="18dp"
+        android:layout_marginEnd="18dp"
+        android:paddingHorizontal="12dp"
+        android:gravity="center_vertical">
+
+        <EditText
+            android:id="@+id/nickname_et"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:hint="최대 10자까지 입력 가능합니다. (필수)"
+            android:maxLength="10"
+            android:textColorHint="#B0B0B0"
+            android:textColor="#000000"
+            android:textSize="14sp"
+            android:paddingEnd="40dp"
+            android:gravity="center_vertical"
+            android:singleLine="true" />
+
+        <ImageView
+            android:id="@+id/nickname_clear_btn"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/clear_btn"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/nickname_error_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="중복된 닉네임입니다."
+        android:textColor="#FF3B30"
+        android:textSize="12sp"
+        app:layout_constraintTop_toBottomOf="@id/nickname_form"
+        app:layout_constraintStart_toStartOf="@id/nickname_form"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="15dp"
+        android:visibility="visible"
+        />
+
+    <TextView
+        android:id="@+id/field_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="직종/분야"
+        style="@style/Header2"
+        android:textSize="16sp"
+        android:textColor="@color/black"
+        app:layout_constraintTop_toBottomOf="@+id/nickname_form"
+        app:layout_constraintStart_toStartOf="@+id/nickname_form"
+        android:layout_marginTop="66dp"
+        android:includeFontPadding="false"/>
+
+    <RelativeLayout
+        android:id="@+id/field_form"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@drawable/rounded_edit_text"
+        app:layout_constraintTop_toBottomOf="@+id/field_tv"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="18dp"
+        android:layout_marginEnd="18dp"
+        android:paddingHorizontal="12dp"
+        android:gravity="center_vertical">
+
+        <EditText
+            android:id="@+id/field_et"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:hint="최대 10자까지 입력 가능합니다. (필수)"
+            android:maxLength="10"
+            android:textColorHint="#B0B0B0"
+            android:textColor="#000000"
+            android:textSize="14sp"
+            android:paddingEnd="40dp"
+            android:gravity="center_vertical"
+            android:singleLine="true" />
+
+        <ImageView
+            android:id="@+id/field_clear_btn"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/clear_btn"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            />
+    </RelativeLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/next_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="다음으로"
+        style="@style/Md16"
+        app:cornerRadius="8dp"
+        android:backgroundTint="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginStart="19dp"
+        android:layout_marginEnd="19dp"
+        android:layout_marginBottom="18.5dp"
+        />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
