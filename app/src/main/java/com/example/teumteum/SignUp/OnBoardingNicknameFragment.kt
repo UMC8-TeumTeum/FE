@@ -41,5 +41,12 @@ class OnBoardingNicknameFragment : Fragment() {
                 .addToBackStack(null)
                 .commit()
         }
+
+        binding.nicknameClearBtn.setOnClickListener {
+            binding.nicknameEt.setText("")
+        }
+        binding.fieldClearBtn.setOnClickListener {
+            binding.fieldEt.setText("")
+        }
     }
 }
