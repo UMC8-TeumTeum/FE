@@ -1,10 +1,14 @@
-package com.example.teumteum
+package com.example.teumteum.ui.main
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.teumteum.ui.feed.FeedFragment
+import com.example.teumteum.ui.friend.FriendFragment
+import com.example.teumteum.ui.myhome.MyhomeFragment
+import com.example.teumteum.R
 import com.example.teumteum.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {

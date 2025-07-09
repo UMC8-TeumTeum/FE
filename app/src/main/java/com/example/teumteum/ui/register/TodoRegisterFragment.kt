@@ -1,4 +1,4 @@
-package com.example.teumteum
+package com.example.teumteum.ui.register
 
 import android.os.Bundle
 import android.view.LayoutInflater

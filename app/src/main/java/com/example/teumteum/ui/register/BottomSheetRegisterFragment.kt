@@ -1,10 +1,10 @@
-package com.example.teumteum
+package com.example.teumteum.ui.register
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isVisible
+import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentBottomSheetRegisterBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment

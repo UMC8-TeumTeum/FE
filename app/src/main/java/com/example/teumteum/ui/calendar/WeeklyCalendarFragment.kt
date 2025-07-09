@@ -1,7 +1,6 @@
-package com.example.teumteum
+package com.example.teumteum.ui.calendar
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup

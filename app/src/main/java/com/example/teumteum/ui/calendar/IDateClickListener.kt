@@ -1,4 +1,4 @@
-package com.example.teumteum
+package com.example.teumteum.ui.calendar
 
 import org.threeten.bp.LocalDate
 
