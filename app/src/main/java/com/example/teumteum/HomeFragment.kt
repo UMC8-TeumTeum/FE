@@ -52,24 +52,29 @@ class HomeFragment : Fragment(), IDateClickListener {
         }
 
         binding.fabAddIv.setOnClickListener {
-            val bottomSheetDialog = BottomSheetDialog(requireContext())
-            val bottomSheetView = layoutInflater.inflate(R.layout.layout_bottom_sheet, null)
-            bottomSheetDialog.setContentView(bottomSheetView)
-
-            bottomSheetDialog.setOnShowListener { dialog ->
-                val bottomSheet =
-                    (dialog as BottomSheetDialog).findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
-                bottomSheet?.let {
-                    val screenHeight = resources.displayMetrics.heightPixels
-                    it.layoutParams?.height = (screenHeight * 0.84).toInt()
-                    val behavior = BottomSheetBehavior.from(it)
-                    behavior.peekHeight = (screenHeight * 0.84).toInt()
-                    it.requestLayout()
-                }
-            }
-
-            bottomSheetDialog.show()
+            val bottomSheet = BottomSheetRegisterFragment()
+            bottomSheet.show(parentFragmentManager, bottomSheet.tag)
         }
+
+//        binding.fabAddIv.setOnClickListener {
+//            val bottomSheetDialog = BottomSheetDialog(requireContext())
+//            val bottomSheetView = layoutInflater.inflate(R.layout.fragment_bottom_sheet_register, null)
+//            bottomSheetDialog.setContentView(bottomSheetView)
+//
+//            bottomSheetDialog.setOnShowListener { dialog ->
+//                val bottomSheet =
+//                    (dialog as BottomSheetDialog).findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+//                bottomSheet?.let {
+//                    val screenHeight = resources.displayMetrics.heightPixels
+//                    it.layoutParams?.height = (screenHeight * 0.84).toInt()
+//                    val behavior = BottomSheetBehavior.from(it)
+//                    behavior.peekHeight = (screenHeight * 0.84).toInt()
+//                    it.requestLayout()
+//                }
+//            }
+//
+//            bottomSheetDialog.show()
+//        }
 
         setWeeklyCalendarViewPager()
         setMonthlyCalendarViewPager()

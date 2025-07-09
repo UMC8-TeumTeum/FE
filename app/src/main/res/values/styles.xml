@@ -53,8 +53,4 @@
         <item name="android:enabled">true</item>
     </style>
 
-    <style name="TimePickerStyle">
-        <item name="android:timePickerMode">spinner</item>
-    </style>
-
 </resources>
