@@ -4,7 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".SignUp.CompleteFragment">
+    android:background="@color/white"
+    tools:context=".SignUp.CompleteFragment"
+    >
 
     <!-- 제목 -->
     <TextView
@@ -14,10 +16,12 @@
         android:text="만나서 반가워요!"
         style="@style/Header1"
         android:textSize="28sp"
+        android:textColor="@color/black"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="54dp"
+        android:layout_marginTop="159dp"
+        android:includeFontPadding="false"
         />
 
     <com.google.android.material.button.MaterialButton

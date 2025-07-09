@@ -29,7 +29,9 @@ class AgreementFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        (activity as? SignUpActivity)?.setProgressBarVisible(true)
         (activity as? SignUpActivity)?.setProgressBar(50)
+
 
         setupCheckBoxListeners()
         updateNextButtonState()
@@ -41,6 +43,12 @@ class AgreementFragment : Fragment() {
                 .addToBackStack(null)
                 .commit()
         }
+
+        // 약관 텍스트뷰 클릭 시 상세 프래그먼트로 이동
+        binding.term1Tv.setOnClickListener { openTermsDetail("term1",binding.term1Tv.text.toString()) }
+        binding.term2Tv.setOnClickListener { openTermsDetail("term2",binding.term2Tv.text.toString()) }
+        binding.term3Tv.setOnClickListener { openTermsDetail("term3",binding.term3Tv.text.toString()) }
+        binding.term4Tv.setOnClickListener { openTermsDetail("term4",binding.term4Tv.text.toString()) }
     }
 
     //체크박스 리스너
@@ -51,15 +59,15 @@ class AgreementFragment : Fragment() {
             setCheckBoxTint(checkBox, checkBox.isChecked)
         }
 
-        binding.check1.setOnCheckedChangeListener { _, _ -> listener(binding.check1) }
-        binding.check2.setOnCheckedChangeListener { _, _ -> listener(binding.check2) }
-        binding.check3.setOnCheckedChangeListener { _, _ -> listener(binding.check3) }
-        binding.check4.setOnCheckedChangeListener { _, _ -> listener(binding.check4) }
+        binding.term1Checkbox.setOnCheckedChangeListener { _, _ -> listener(binding.term1Checkbox) }
+        binding.term2Checkbox.setOnCheckedChangeListener { _, _ -> listener(binding.term2Checkbox) }
+        binding.term3Checkbox.setOnCheckedChangeListener { _, _ -> listener(binding.term3Checkbox) }
+        binding.term4Checkbox.setOnCheckedChangeListener { _, _ -> listener(binding.term4Checkbox) }
     }
 
     //체크박스 상태에 따른 다음으로 버튼 상태 변경
     private fun updateNextButtonState() {
-        val allChecked = binding.check1.isChecked && binding.check2.isChecked
+        val allChecked = binding.term1Checkbox.isChecked && binding.term2Checkbox.isChecked
         binding.nextBtn.isEnabled = allChecked
 
         // 배경색 변경
@@ -81,7 +89,7 @@ class AgreementFragment : Fragment() {
 
     //전체 동의 체크박스 리스너
     private fun setupSelectAllCheckbox() {
-        binding.check5.setOnCheckedChangeListener { checkBox: CompoundButton, isChecked ->
+        binding.allCheckbox.setOnCheckedChangeListener { checkBox: CompoundButton, isChecked ->
             setAllAgreementChecked(isChecked)
             setCheckBoxTint(checkBox, isChecked)
         }
@@ -89,26 +97,28 @@ class AgreementFragment : Fragment() {
 
     //전체 동의 체크박스 활성화 검사
     private fun syncSelectAllCheckbox() {
-        val allChecked = binding.check1.isChecked &&
-                binding.check2.isChecked &&
-                binding.check3.isChecked &&
-                binding.check4.isChecked
+        val allChecked = binding.term1Checkbox.isChecked &&
+                binding.term2Checkbox.isChecked &&
+                binding.term3Checkbox.isChecked &&
+                binding.term4Checkbox.isChecked
 
-        if (binding.check5.isChecked != allChecked) {
-            binding.check5.setOnCheckedChangeListener(null)
-            binding.check5.isChecked = allChecked
-            binding.check5.setOnCheckedChangeListener { _, isChecked ->
+        if (binding.allCheckbox.isChecked != allChecked) {
+            binding.allCheckbox.setOnCheckedChangeListener(null)
+            binding.allCheckbox.isChecked = allChecked
+            setCheckBoxTint(binding.allCheckbox, allChecked)
+            binding.allCheckbox.setOnCheckedChangeListener { _, isChecked ->
                 setAllAgreementChecked(isChecked)
+                setCheckBoxTint(binding.allCheckbox, isChecked)
             }
         }
     }
 
     //전체 동의 체크 시 모든 체크박스 활성화
     private fun setAllAgreementChecked(isChecked: Boolean) {
-        binding.check1.isChecked = isChecked
-        binding.check2.isChecked = isChecked
-        binding.check3.isChecked = isChecked
-        binding.check4.isChecked = isChecked
+        binding.term1Checkbox.isChecked = isChecked
+        binding.term2Checkbox.isChecked = isChecked
+        binding.term3Checkbox.isChecked = isChecked
+        binding.term4Checkbox.isChecked = isChecked
     }
 
     private fun setCheckBoxTint(checkBox: CompoundButton, isChecked: Boolean) {
@@ -118,5 +128,20 @@ class AgreementFragment : Fragment() {
             ContextCompat.getColor(requireContext(), R.color.gray)
         }
         checkBox.buttonTintList = ColorStateList.valueOf(color)
+    }
+
+    //약관 상세 페이지 이동
+    private fun openTermsDetail(termKey: String, title: String) {
+        val fragment = TermsDetailFragment().apply {
+            arguments = Bundle().apply {
+                putString("term_key", termKey)
+                putString("term_title", title)
+            }
+        }
+
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .addToBackStack(null)
+            .commit()
     }
 }

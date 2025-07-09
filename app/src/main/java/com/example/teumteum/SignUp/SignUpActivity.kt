@@ -1,6 +1,7 @@
 package com.example.teumteum.SignUp
 
 import android.os.Bundle
+import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -22,5 +23,10 @@ class SignUpActivity : AppCompatActivity() {
     //상단 프로그레스바 제어
     fun setProgressBar(progress: Int){
         binding.progressBar.progress = progress
+    }
+
+    //프로그레스바 visible 설정
+    fun setProgressBarVisible(visible: Boolean) {
+        binding.progressBar.visibility = if (visible) View.VISIBLE else View.GONE
     }
 }
