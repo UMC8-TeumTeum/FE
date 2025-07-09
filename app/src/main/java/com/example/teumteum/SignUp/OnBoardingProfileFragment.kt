@@ -54,10 +54,17 @@ class OnBoardingProfileFragment : Fragment() {
             }
             galleryLauncher.launch(intent)
         }
+        binding.cameraBtn.setOnClickListener {
+            val intent = Intent(Intent.ACTION_PICK).apply {
+                type = "image/*"
+            }
+            galleryLauncher.launch(intent)
+        }
 
         binding.nextBtn.setOnClickListener {
             startActivity(Intent(requireContext(), MainActivity::class.java))
         }
+
     }
 
     private fun setNickname(nickname: String){
