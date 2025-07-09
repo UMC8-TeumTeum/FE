@@ -41,6 +41,9 @@ android {
 
 dependencies {
 
+    // 친구 인디케이터
+    implementation ("com.tbuonomo:dotsindicator:4.3")
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

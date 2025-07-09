@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="360dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@drawable/friend_bg_bottom_sheet"
+    android:paddingTop="24dp"
+    android:paddingBottom="24dp"
+    android:paddingStart="32dp"
+    android:paddingEnd="32dp"
+    android:gravity="center_horizontal">
+
+    <View
+        android:layout_width="74dp"
+        android:layout_height="4dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/friend_bottom_sheet_handle" />
+
+    <TextView
+        android:id="@+id/rejectTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="요청된 틈을 거절하시겠어요?"
+        android:textColor="#0F0F0F"
+        android:textSize="20sp"
+        android:fontFamily="@font/noto_sans_kr_medium"
+        android:layout_marginBottom="20dp" />
+
+    <!-- 선택된 메시지 -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnRejectMent"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:text="이때는 시간이 안돼요 멘트 보내기"
+        android:textColor="#0F0F0F"
+        app:cornerRadius="12dp"
+        android:textSize="14sp"
+        android:layout_marginBottom="12dp"
+        app:strokeColor="#7770FE"
+        app:strokeWidth="0dp"
+        app:backgroundTint="#F6F6F6"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:insetLeft="0dp"
+        android:insetRight="0dp" />
+
+    <!-- 비활성화 메시지 -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSuggestTime"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:text="가능한 다른 시간대 제안하기"
+        android:textColor="#0F0F0F"
+        app:cornerRadius="12dp"
+        android:textSize="14sp"
+        app:strokeColor="#7770FE"
+        app:strokeWidth="0dp"
+        app:backgroundTint="#F6F6F6"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:insetLeft="0dp"
+        android:insetRight="0dp" />
+
+    <!-- 하단 버튼 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCancel"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1"
+            android:text="취소"
+            android:textColor="#0F0F0F"
+            android:textSize="16sp"
+            android:fontFamily="@font/noto_sans_kr_medium"
+            android:layout_marginEnd="8dp"
+            app:cornerRadius="12dp"
+            app:backgroundTint="#F6F6F6"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:insetLeft="0dp"
+            android:insetRight="0dp" />
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSend"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1"
+            android:text="전송"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:fontFamily="@font/noto_sans_kr_medium"
+            app:cornerRadius="12dp"
+            app:backgroundTint="#0F0F0F"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:insetLeft="0dp"
+            android:insetRight="0dp" />
+    </LinearLayout>
+</LinearLayout>

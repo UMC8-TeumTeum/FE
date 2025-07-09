@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:orientation="horizontal"
+    android:paddingHorizontal="12dp"
+    android:gravity="center_vertical">
+
+    <!-- 별 아이콘 -->
+    <ImageButton
+        android:id="@+id/starIv"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@drawable/friend01_star"
+        android:background="@android:color/transparent"
+        android:layout_marginEnd="12dp" />
+
+    <!-- 프로필 사진 -->
+    <LinearLayout
+        android:id="@+id/profileLayout"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="@drawable/freind01_circle_profile">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="프로필"
+            android:textSize="10sp"
+            android:textColor="#666666"/>
+    </LinearLayout>
+
+    <!-- 이름 + 직업 -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/nameTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="이름"
+            android:layout_marginStart="8dp"
+            android:textSize="16sp"
+            android:textColor="#0F0F0F"
+            android:fontFamily="@font/noto_sans_kr_medium" />
+
+        <TextView
+            android:id="@+id/jobTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" · UX디자이너"
+            android:textSize="16sp"
+            android:textColor="#D3D3D3"
+            android:layout_marginStart="8dp"
+            android:fontFamily="@font/noto_sans_kr_medium" />
+    </LinearLayout>
+
+    <!-- 비행기 아이콘 -->
+    <ImageButton
+        android:id="@+id/sendBtn"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:src="@drawable/friend01_following_send"
+        android:background="@android:color/transparent"
+        android:scaleType="centerInside" />
+
+</LinearLayout>
