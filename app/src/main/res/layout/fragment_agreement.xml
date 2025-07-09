@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".SignUp.AgreementFragment">
+
+    <!-- 제목 -->
+    <TextView
+        android:id="@+id/title_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="일상의 빈틈 확인 \n플랫폼 틈틈"
+        style="@style/Header1"
+        android:textSize="28sp"
+        android:textColor="@color/black"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="159dp"
+        android:includeFontPadding="false"
+        />
+
+    <!-- 체크박스1 -->
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/term1_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:buttonTint="@color/black"
+        android:backgroundTint="@color/black"
+        app:layout_constraintTop_toBottomOf="@id/title_tv"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="239dp"
+        android:layout_marginStart="16dp"
+        android:minWidth="0dp"
+        android:paddingEnd="0dp"
+        />
+
+    <TextView
+        android:id="@+id/term1_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="서비스 이용 약관 동의 (필수) >"
+        style="@style/Sm14Regular"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toEndOf="@id/term1_checkbox"
+        app:layout_constraintTop_toTopOf="@id/term1_checkbox"
+        app:layout_constraintBottom_toBottomOf="@id/term1_checkbox"
+        android:layout_marginStart="12dp"
+        />
+
+
+    <!-- 체크박스2 -->
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/term2_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:buttonTint="@color/black"
+        android:backgroundTint="@color/black"
+        app:layout_constraintTop_toBottomOf="@id/term1_checkbox"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="16dp"
+        android:minWidth="0dp"
+        android:paddingEnd="0dp"
+        />
+
+    <TextView
+        android:id="@+id/term2_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="개인정보 수집 및 이용 동의 (필수) >"
+        style="@style/Sm14Regular"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toEndOf="@id/term2_checkbox"
+        app:layout_constraintTop_toTopOf="@id/term2_checkbox"
+        app:layout_constraintBottom_toBottomOf="@id/term2_checkbox"
+        android:layout_marginStart="12dp"
+        />
+
+    <!-- 체크박스3 -->
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/term3_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:buttonTint="@color/black"
+        android:backgroundTint="@color/black"
+        app:layout_constraintTop_toBottomOf="@id/term2_checkbox"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="16dp"
+        android:minWidth="0dp"
+        android:paddingEnd="0dp"
+        />
+
+    <TextView
+        android:id="@+id/term3_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="개인정보 제3자 제공에 대한 안내 (선택) >"
+        style="@style/Sm14Regular"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toEndOf="@id/term3_checkbox"
+        app:layout_constraintTop_toTopOf="@id/term3_checkbox"
+        app:layout_constraintBottom_toBottomOf="@id/term3_checkbox"
+        android:layout_marginStart="12dp"
+        />
+
+    <!-- 체크박스4 -->
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/term4_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:buttonTint="@color/black"
+        android:backgroundTint="@color/black"
+        app:layout_constraintTop_toBottomOf="@id/term3_checkbox"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="16dp"
+        android:minWidth="0dp"
+        android:paddingEnd="0dp"
+        />
+
+    <TextView
+        android:id="@+id/term4_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="마케팅 및 광고성 정보 수신 동의 (선택) >"
+        style="@style/Sm14Regular"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toEndOf="@id/term4_checkbox"
+        app:layout_constraintTop_toTopOf="@id/term4_checkbox"
+        app:layout_constraintBottom_toBottomOf="@id/term4_checkbox"
+        android:layout_marginStart="12dp"
+        />
+
+    <View
+        android:id="@+id/checkbox_underline"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#EAEAEA"
+        app:layout_constraintTop_toBottomOf="@+id/term4_checkbox"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="19dp"
+        android:layout_marginEnd="19dp"
+        />
+
+    <!-- 전체동의 -->
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/all_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:buttonTint="@color/black"
+        android:backgroundTint="@color/black"
+        app:layout_constraintTop_toBottomOf="@id/checkbox_underline"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:minWidth="0dp"
+        android:paddingEnd="0dp"
+        />
+
+    <TextView
+        android:id="@+id/allcheck_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="전체 동의"
+        style="@style/Sm14Regular"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toEndOf="@id/all_checkbox"
+        app:layout_constraintTop_toTopOf="@id/all_checkbox"
+        app:layout_constraintBottom_toBottomOf="@id/all_checkbox"
+        android:layout_marginStart="12dp"
+        />
+
+    <!--다음으로 버튼-->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/next_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="다음으로"
+        style="@style/Md16"
+        android:textColor="#0F0F0F"
+        app:cornerRadius="8dp"
+        android:backgroundTint="#F6F6F6"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginStart="19dp"
+        android:layout_marginEnd="19dp"
+        android:layout_marginBottom="18.5dp"
+        android:enabled="false"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
