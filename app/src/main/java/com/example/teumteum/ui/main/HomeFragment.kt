@@ -1,4 +1,4 @@
-package com.example.teumteum
+package com.example.teumteum.ui.home
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,9 +8,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
+import com.example.teumteum.BottomSheetRegisterFragment
+import com.example.teumteum.CalendarMode
+import com.example.teumteum.CalendarVPAdapter
+import com.example.teumteum.IDateClickListener
+import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentHomeBinding
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialog
 
 import org.threeten.bp.LocalDate
 import org.threeten.bp.format.DateTimeFormatter

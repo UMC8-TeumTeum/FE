@@ -3,6 +3,8 @@ package com.example.teumteum
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.example.teumteum.ui.calendar.MonthlyCalendarFragment
+import com.example.teumteum.ui.calendar.WeeklyCalendarFragment
 
 class CalendarVPAdapter(
     fragmentActivity: FragmentActivity,
