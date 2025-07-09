@@ -45,10 +45,10 @@ class AgreementFragment : Fragment() {
         }
 
         // 약관 텍스트뷰 클릭 시 상세 프래그먼트로 이동
-        binding.term1Tv.setOnClickListener { openTermsDetail("term1",binding.term1Tv.text.toString()) }
-        binding.term2Tv.setOnClickListener { openTermsDetail("term2",binding.term2Tv.text.toString()) }
-        binding.term3Tv.setOnClickListener { openTermsDetail("term3",binding.term3Tv.text.toString()) }
-        binding.term4Tv.setOnClickListener { openTermsDetail("term4",binding.term4Tv.text.toString()) }
+        binding.term1Tv.setOnClickListener { openTermsDetail("term1","서비스 이용 약관 동의 (필수)") }
+        binding.term2Tv.setOnClickListener { openTermsDetail("term2","개인정보 수집 및 이용 동의 (필수)") }
+        binding.term3Tv.setOnClickListener { openTermsDetail("term3","개인정보 제3자 제공에 대한 안내 (선택)") }
+        binding.term4Tv.setOnClickListener { openTermsDetail("term4","마케팅 및 광고성 정보 수신 동의 (선택)") }
     }
 
     //체크박스 리스너
