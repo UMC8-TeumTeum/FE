@@ -167,3 +167,13 @@ ex) [FEAT/#30] 홈 뷰 구현, [ADD/#1] 폰트 파일 추가
 [카테고리/#이슈번호] 제목
 
 ex) [FEAT/#6] 로그인 뷰 구현
+
+
+# ⚙️Android Studio 환경 설정
+버전 : Meerkat
+
+targetSDK : 35
+
+minSDK : 24
+
+테스트 환경 : Emulator(Pixel 8a)
