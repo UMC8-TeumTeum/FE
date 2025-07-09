@@ -41,6 +41,9 @@ android {
 
 dependencies {
 
+    // 친구 인디케이터
+    implementation ("com.tbuonomo:dotsindicator:4.3")
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -54,6 +57,12 @@ dependencies {
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
     implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
     implementation("com.google.android.material:material:1.11.0")
+
+    //ThreeTenABP
+    implementation("com.jakewharton.threetenabp:threetenabp:1.4.5")
+
+    //grid
+    implementation("androidx.gridlayout:gridlayout:1.0.0")
 
     //Material Component
     implementation("com.google.android.material:material:1.12.0")

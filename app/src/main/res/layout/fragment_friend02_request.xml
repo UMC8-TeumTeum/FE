@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@android:color/white"
+    android:padding="20dp">
+
+    <!-- 뒤로가기 + 더보기 -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp">
+
+        <ImageButton
+            android:id="@+id/backButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="12dp"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/ic_undo"
+            android:background="@android:color/transparent"
+            android:contentDescription="뒤로가기 버튼" />
+
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/titleTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="18dp"
+            android:text="나에게 온 틈 요청이에요"
+            android:textSize="22sp"
+            android:fontFamily="@font/noto_sans_kr_semibold"
+            android:textColor="#0F0F0F"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="0dp"
+            android:paddingBottom="5dp" />
+
+        <TextView
+            android:id="@+id/subtitleTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="18dp"
+            android:text="아직 확인하지 않은 틈을 보여드려요"
+            android:textSize="12sp"
+            android:fontFamily="@font/noto_sans_kr_regular"
+            android:textColor="#0F0F0F"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="0dp"
+            android:paddingTop="-2dp" />
+    </LinearLayout>
+
+
+    <!-- 틈 요청 카드 (ViewPager2로 구현) -->
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/requestViewPager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="16dp" />
+
+    <!-- 페이지 인디케이터 (dot) -->
+    <com.tbuonomo.viewpagerdotsindicator.WormDotsIndicator
+        android:id="@+id/dotsIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="24dp"
+        app:dotsColor="#B1B2B3"
+        app:selectedDotColor="#0F0F0F"
+        app:dotsSize="10dp"
+        app:dotsSpacing="4dp" />
+
+
+
+    <!-- 버튼 2개 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="120dp"
+        android:orientation="vertical">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnReject"
+            android:layout_width="match_parent"
+            android:layout_height="58dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="18dp"
+            android:layout_marginRight="10dp"
+            android:text="이때는 시간이 안돼요"
+            android:textColor="#0F0F0F"
+            android:textSize="16sp"
+            android:fontFamily="@font/noto_sans_kr_medium"
+            app:cornerRadius="12dp"
+            app:backgroundTint="#F6F6F6"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:insetLeft="0dp"
+            android:insetRight="0dp"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAccept"
+            android:layout_width="match_parent"
+            android:layout_height="58dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="18dp"
+            android:layout_marginRight="10dp"
+            android:text="함께할래요"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:fontFamily="@font/noto_sans_kr_medium"
+            app:cornerRadius="12dp"
+            app:backgroundTint="#0F0F0F"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:insetLeft="0dp"
+            android:insetRight="0dp"/>
+
+    </LinearLayout>
+
+</LinearLayout>

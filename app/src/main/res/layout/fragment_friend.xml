@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/fragment_friend_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:background="@android:color/white">
+
+    <!-- 상단 배경 및 추천 영역 -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="440dp"
+        android:background="#7770FE">
+
+        <!-- 메뉴, 검색, 알림 아이콘 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal"
+            android:padding="16dp"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="20dp"
+                android:layout_marginLeft="5dp"
+                android:src="@drawable/friend_teumteum_logo" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <ImageButton
+                android:id="@+id/btn_alarm"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="5dp"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_top_alarm"
+                android:padding="11dp"
+                android:scaleType="centerInside" />
+
+
+            <ImageButton
+                android:id="@+id/btn_search"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:padding="11dp"
+                android:src="@drawable/ic_search"
+                android:background="@android:color/transparent"
+                android:scaleType="centerInside"
+                app:tint="#FFFFFF" />
+
+        </LinearLayout>
+
+        <!-- 텍스트 -->
+        <TextView
+            android:id="@+id/textName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="나와 하루의 빈틈이 맞는\n친구를 찾아볼까요?"
+            android:textColor="@android:color/white"
+            android:fontFamily="@font/noto_sans_kr_semibold"
+            android:textSize="20sp"
+            android:layout_marginTop="80dp"
+            android:layout_marginStart="20dp" />
+
+        <!-- 추천 프로필 카드 (가로 스크롤) -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recommendRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:layout_marginTop="170dp"
+            android:paddingStart="18dp"
+            android:paddingEnd="12dp"
+            android:orientation="horizontal"
+            android:overScrollMode="never"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/friend01_item_recommend_card"/>
+
+
+        <!-- 약속된 톰 보러가기 버튼 -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/viewPromiseBtn"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="350dp"
+            android:text="약속된 틈 보러가기"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:fontFamily="@font/noto_sans_kr_medium"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:insetLeft="0dp"
+            android:insetRight="0dp"
+            app:cornerRadius="12dp"
+            app:backgroundTint="#0F0F0F"/>
+
+
+    </RelativeLayout>
+
+    <!-- 팔로잉 / 팔로워 탭 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="20dp"
+        android:paddingTop="12dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="팔로잉"
+            android:fontFamily="@font/noto_sans_kr_medium"
+            android:textStyle="bold"
+            android:textColor="#0F0F0F"
+            android:layout_marginEnd="16dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="팔로워"
+            android:fontFamily="@font/noto_sans_kr_medium"
+            android:textColor="#B1B2B3" />
+    </LinearLayout>
+
+    <!-- 팔로잉 리스트 (세로 스크롤 RecyclerView) -->
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/followingRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:padding="12dp"
+            tools:listitem="@layout/friend01_item_following"/>
+    </LinearLayout>
+</LinearLayout>

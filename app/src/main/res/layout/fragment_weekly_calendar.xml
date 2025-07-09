@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="200dp"
+    android:orientation="horizontal"
+    android:weightSum="7" >
+
+    <LinearLayout style="@style/calendar_date_layout">
+        <TextView
+            android:id="@+id/tv1"
+            tools:text="1"
+            style="@style/calendar_date_tv" />
+    </LinearLayout>
+
+    <LinearLayout style="@style/calendar_date_layout">
+        <TextView
+            android:id="@+id/tv2"
+            tools:text="2"
+            style="@style/calendar_date_tv" />
+    </LinearLayout>
+
+    <LinearLayout style="@style/calendar_date_layout">
+        <TextView
+            android:id="@+id/tv3"
+            tools:text="3"
+            style="@style/calendar_date_tv" />
+    </LinearLayout>
+
+    <LinearLayout style="@style/calendar_date_layout">
+        <TextView
+            android:id="@+id/tv4"
+            tools:text="4"
+            style="@style/calendar_date_tv" />
+    </LinearLayout>
+
+    <LinearLayout style="@style/calendar_date_layout">
+        <TextView
+            android:id="@+id/tv5"
+            tools:text="5"
+            style="@style/calendar_date_tv" />
+    </LinearLayout>
+
+    <LinearLayout style="@style/calendar_date_layout">
+        <TextView
+            android:id="@+id/tv6"
+            tools:text="6"
+            style="@style/calendar_date_tv" />
+    </LinearLayout>
+
+    <LinearLayout style="@style/calendar_date_layout">
+        <TextView
+            android:id="@+id/tv7"
+            tools:text="7"
+            style="@style/calendar_date_tv" />
+    </LinearLayout>
+
+</LinearLayout>
