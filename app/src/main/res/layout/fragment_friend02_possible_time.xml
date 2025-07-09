@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@android:color/white"
+    android:padding="20dp">
+
+    <!-- 뒤로가기 -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp">
+
+        <ImageButton
+            android:id="@+id/backButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="12dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_arrow_back"
+            android:scaleType="centerInside" />
+
+    </RelativeLayout>
+
+    <!-- 제목, 부제목 -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/titleTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="18dp"
+            android:layout_marginTop="20dp"
+            android:text="가능한 시간을 재탐색해주세요"
+            android:textSize="22sp"
+            android:fontFamily="@font/noto_sans_kr_semibold"
+            android:textColor="#0F0F0F"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="0dp"
+            android:paddingBottom="5dp" />
+
+        <TextView
+            android:id="@+id/subtitleTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="18dp"
+            android:text="친구와 맞는 시간을 재탐색해요"
+            android:textSize="12sp"
+            android:fontFamily="@font/noto_sans_kr_regular"
+            android:textColor="#0F0F0F"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="0dp"
+            android:paddingTop="-2dp" />
+    </LinearLayout>
+
+    <!-- 틈 요청 카드 ViewPager2 -->
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/requestViewPager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="16dp" />
+
+    <!-- 찾기 버튼 -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnFind"
+        android:layout_width="match_parent"
+        android:layout_height="58dp"
+        android:layout_marginTop="180dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:text="찾기"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:fontFamily="@font/noto_sans_kr_medium"
+        app:cornerRadius="12dp"
+        app:backgroundTint="#0F0F0F"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:insetLeft="0dp"
+        android:insetRight="0dp" />
+
+</LinearLayout>

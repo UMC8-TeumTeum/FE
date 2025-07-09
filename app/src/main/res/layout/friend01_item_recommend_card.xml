@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="145dp"
+    android:layout_height="146dp"
+    app:cardCornerRadius="15dp"
+    app:cardElevation="1dp"
+    app:cardBackgroundColor="#FFFFFF"
+    android:layout_marginEnd="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:paddingTop="12dp">
+
+        <!-- 회색 원형 프로필 -->
+        <LinearLayout
+            android:id="@+id/profileLayout"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@drawable/freind01_circle_profile">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="프로필"
+                android:textSize="10sp"
+                android:textColor="#666666"/>
+        </LinearLayout>
+
+        <!-- 이름 -->
+        <TextView
+            android:id="@+id/tvName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="이름"
+            android:fontFamily="@font/noto_sans_kr_medium"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="3dp"
+            android:textColor="#0F0F0F"/>
+
+        <!-- 경계선 -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.95dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="3dp"
+            android:background="#7770FE" />
+
+        <!-- 하단 텍스트 -->
+        <TextView
+            android:id="@+id/tvDesc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="사용자가 작성한 제목"
+            android:fontFamily="@font/noto_sans_kr_regular"
+            android:textSize="12sp"
+            android:textColor="#0F0F0F"
+            android:layout_marginTop="2dp"/>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>
