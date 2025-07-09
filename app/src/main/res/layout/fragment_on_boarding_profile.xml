@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
+    tools:context=".SignUp.OnBoardingProfileFragment">
+
+    <TextView
+        android:id="@+id/title_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="닉네임 님"
+        style="@style/Header1"
+        android:textSize="28sp"
+        android:textColor="@color/black"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="159dp"
+        android:includeFontPadding="false"
+        />
+
+    <TextView
+        android:id="@+id/sub_title_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="다른 사람에게 보여질 프로필 사진을 선택해주세요"
+        style="@style/Header2"
+        android:textSize="14sp"
+        android:textColor="@color/black"
+        app:layout_constraintTop_toBottomOf="@+id/title_tv"
+        app:layout_constraintStart_toStartOf="@+id/title_tv"
+        android:layout_marginTop="10dp"
+        android:includeFontPadding="false"
+        />
+
+    <View
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:background="@drawable/circle_bg"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="388dp"
+        android:layout_marginStart="135dp"
+        android:layout_marginEnd="135dp"
+        android:layout_marginBottom="336dp"
+        />
+
+    <FrameLayout
+        android:id="@+id/gallery_fl"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="388dp"
+        android:layout_marginStart="135dp"
+        android:layout_marginEnd="135dp"
+        android:layout_marginBottom="336dp"
+        android:layout_gravity="center"
+        >
+
+        <View
+            android:id="@+id/circle_bg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/circle_bg" />
+
+        <ImageButton
+            android:id="@+id/camera_btn"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/camera_btn"
+            android:scaleType="centerInside"
+            android:layout_gravity="center"
+            android:contentDescription="카메라 버튼" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/nickname_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="닉네임"
+        style="@style/Header2"
+        android:textSize="20sp"
+        android:textColor="@color/black"
+        app:layout_constraintTop_toBottomOf="@+id/gallery_fl"
+        app:layout_constraintStart_toStartOf="@+id/gallery_fl"
+        app:layout_constraintEnd_toEndOf="@+id/gallery_fl"
+        android:layout_marginTop="16dp"
+        android:includeFontPadding="false"
+        />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/next_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="다음으로"
+        style="@style/Md16"
+        app:cornerRadius="8dp"
+        android:backgroundTint="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginStart="19dp"
+        android:layout_marginEnd="19dp"
+        android:layout_marginBottom="18.5dp"
+        />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

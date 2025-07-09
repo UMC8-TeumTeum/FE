@@ -6,12 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.teumteum.R
-import com.example.teumteum.databinding.FragmentAgreementBinding
 import com.example.teumteum.databinding.FragmentOnBoardingNicknameBinding
+import com.example.teumteum.databinding.FragmentOnBoardingProfileBinding
+import kotlin.plus
 
-class OnBoardingNicknameFragment : Fragment() {
+class OnBoardingProfileFragment : Fragment() {
 
-    private lateinit var binding: FragmentOnBoardingNicknameBinding
+    private lateinit var binding: FragmentOnBoardingProfileBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,7 +22,7 @@ class OnBoardingNicknameFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentOnBoardingNicknameBinding.inflate(inflater, container, false)
+        binding = FragmentOnBoardingProfileBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -29,17 +30,12 @@ class OnBoardingNicknameFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         (activity as? SignUpActivity)?.setProgressBar(25)
 
-        binding.nextBtn.setOnClickListener {
-            val fragment = OnBoardingProfileFragment().apply {
-                arguments = Bundle().apply {
-                    putString("nickname", binding.nicknameEt.text.toString())
-                }
-            }
+        val nickname = arguments?.getString("nickname")
+        setNickname(nickname.toString())
+    }
 
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, fragment)
-                .addToBackStack(null)
-                .commit()
-        }
+    private fun setNickname(nickname: String){
+        binding.titleTv.text = nickname + " 님"
+        binding.nicknameTv.text = nickname
     }
 }
