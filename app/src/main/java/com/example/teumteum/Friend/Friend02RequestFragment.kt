@@ -32,7 +32,7 @@ class Friend02RequestFragment : Fragment() {
         //  뒤로가기 버튼 처리
         binding.backButton.setOnClickListener {
             parentFragmentManager.beginTransaction()
-                .replace(R.id.main_container, FriendFragment())
+                .replace(R.id.fragment_friend_container, FriendFragment())
                 .addToBackStack(null)
                 .commit()
         }

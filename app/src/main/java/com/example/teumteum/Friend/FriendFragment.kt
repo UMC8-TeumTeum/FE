@@ -29,7 +29,7 @@ class FriendFragment : Fragment() {
         // 추천 카드 RecyclerView 설정
         val recommendAdapter = RecommendAdapter { // 카드 클릭 시
             parentFragmentManager.beginTransaction()
-                .replace(R.id.main_container, Friend02RequestFragment()) // 프래그먼트 교체
+                .replace(R.id.main_frm, Friend02RequestFragment()) // 프래그먼트 교체
                 .addToBackStack(null)
                 .commit()
         }
@@ -39,7 +39,7 @@ class FriendFragment : Fragment() {
 
         binding.btnSearch.setOnClickListener {
             parentFragmentManager.beginTransaction()
-                .replace(R.id.main_container, Friend01SearchFragment()) // container는 main_container로 되어 있어야 함
+                .replace(R.id.main_frm, Friend01SearchFragment()) // container는 main_container로 되어 있어야 함
                 .addToBackStack(null) // 뒤로 가기 가능하도록
                 .commit()
         }

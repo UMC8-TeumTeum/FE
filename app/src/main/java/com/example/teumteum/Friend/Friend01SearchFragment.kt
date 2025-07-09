@@ -36,7 +36,7 @@ class Friend01SearchFragment : Fragment() {
         //  뒤로가기 버튼 → FriendFragment로 이동
         binding.backButton.setOnClickListener {
             parentFragmentManager.beginTransaction()
-                .replace(R.id.main_container, FriendFragment())
+                .replace(R.id.fragment_friend_container, FriendFragment())
                 .addToBackStack(null)
                 .commit()
         }
