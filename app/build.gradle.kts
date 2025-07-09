@@ -60,4 +60,7 @@ dependencies {
 
     //grid
     implementation("androidx.gridlayout:gridlayout:1.0.0")
+
+    //Material Component
+    implementation("com.google.android.material:material:1.12.0")
 }
