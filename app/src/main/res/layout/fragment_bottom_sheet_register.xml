@@ -78,13 +78,13 @@
         android:layout_marginTop="15dp"
         android:padding="8dp">
 
-        <!-- 시작 시간 -->
         <LinearLayout
+            android:id="@+id/todo_start_time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginBottom="4dp">
+            android:layout_marginBottom="4dp" >
 
             <ImageView
                 android:layout_width="20dp"
@@ -107,23 +107,39 @@
                 android:layout_height="wrap_content"
                 android:text="오후 3:00"
                 android:textColor="@android:color/black"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                android:clickable="true"
+                android:focusable="true" />
         </LinearLayout>
 
-        <TimePicker
-            android:id="@+id/timePicker"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/time_picker_layout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:timePickerMode="spinner"
+            android:orientation="horizontal"
+            android:gravity="center"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
-            android:theme="@style/TimePickerStyle"
-            android:background="@android:color/transparent"
-            />
+            android:visibility="gone" >
 
-        <!-- 종료 시간 -->
+            <NumberPicker
+                android:id="@+id/ampm_picker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <NumberPicker
+                android:id="@+id/hour_picker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <NumberPicker
+                android:id="@+id/minute_picker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
         <LinearLayout
+            android:id="@+id/todo_end_time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
