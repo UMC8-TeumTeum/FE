@@ -1,5 +1,6 @@
 package com.example.teumteum.SignUp
 
+import android.R.attr.fragment
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -12,6 +13,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentOnBoardingNicknameBinding
 import com.example.teumteum.databinding.FragmentOnBoardingProfileBinding
+import com.example.teumteum.ui.main.MainActivity
 import kotlin.plus
 
 class OnBoardingProfileFragment : Fragment() {
@@ -23,7 +25,6 @@ class OnBoardingProfileFragment : Fragment() {
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             val imageUri = result.data?.data
-            // imageUri로 원하는 작업 수행 (예: 이미지뷰에 표시)
             Log.d("Gallery", "선택된 이미지: $imageUri")
         }
     }
@@ -52,6 +53,10 @@ class OnBoardingProfileFragment : Fragment() {
                 type = "image/*"
             }
             galleryLauncher.launch(intent)
+        }
+
+        binding.nextBtn.setOnClickListener {
+            startActivity(Intent(requireContext(), MainActivity::class.java))
         }
     }
 
