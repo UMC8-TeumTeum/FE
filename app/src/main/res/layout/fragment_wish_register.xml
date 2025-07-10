@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:orientation="vertical" >
 
     <ScrollView
@@ -289,7 +290,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:layout_marginBottom="80dp" >
+                    android:layout_marginBottom="40dp" >
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_wish_category_04"
@@ -341,15 +342,15 @@
                 android:layout_height="wrap_content"
                 android:background="@android:color/white"
                 android:padding="8dp"
-                android:layout_marginBottom="16dp" >
+                android:layout_marginBottom="30dp" >
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_wish_register"
                     android:layout_width="match_parent"
                     android:layout_height="65dp"
                     android:text="등록할게요"
                     android:textSize="16sp"
+                    android:fontFamily="@font/noto_sans_kr_medium"
                     android:layout_marginTop="22dp"
-                    android:padding="12dp"
                     android:textColor="@color/white"
                     app:cornerRadius="12dp"
                     app:backgroundTint="@color/black"
