@@ -1,15 +1,11 @@
-package com.example.teumteum.SignIn
+package com.example.teumteum.ui.signin
 
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.example.teumteum.R
-import com.example.teumteum.SignUp.SignUpActivity
+import com.example.teumteum.ui.singup.SignUpActivity
 import com.example.teumteum.databinding.ActivityLoginBinding
-import com.example.teumteum.databinding.ActivitySignUpBinding
 
 class LoginActivity : AppCompatActivity() {
 
