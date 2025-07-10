@@ -1,6 +1,7 @@
-package com.example.teumteum.SignUp
+package com.example.teumteum.ui.singup
 
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -75,7 +76,7 @@ class AgreementFragment : Fragment() {
             if (allChecked)
                 requireContext().getColor(R.color.black)
             else
-                android.graphics.Color.parseColor("#F6F6F6")
+                Color.parseColor("#F6F6F6")
         )
 
         // 글자색 변경

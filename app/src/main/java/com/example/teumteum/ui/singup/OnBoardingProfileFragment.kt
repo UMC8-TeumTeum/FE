@@ -1,6 +1,5 @@
-package com.example.teumteum.SignUp
+package com.example.teumteum.ui.singup
 
-import android.R.attr.fragment
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -10,11 +9,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
-import com.example.teumteum.R
-import com.example.teumteum.databinding.FragmentOnBoardingNicknameBinding
 import com.example.teumteum.databinding.FragmentOnBoardingProfileBinding
 import com.example.teumteum.ui.main.MainActivity
-import kotlin.plus
 
 class OnBoardingProfileFragment : Fragment() {
 
@@ -54,12 +50,14 @@ class OnBoardingProfileFragment : Fragment() {
             }
             galleryLauncher.launch(intent)
         }
+
         binding.cameraBtn.setOnClickListener {
             val intent = Intent(Intent.ACTION_PICK).apply {
                 type = "image/*"
             }
             galleryLauncher.launch(intent)
         }
+
 
         binding.nextBtn.setOnClickListener {
             startActivity(Intent(requireContext(), MainActivity::class.java))

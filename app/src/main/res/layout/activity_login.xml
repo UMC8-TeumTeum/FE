@@ -6,7 +6,7 @@
     android:background="@color/white"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SignIn.LoginActivity">
+    tools:context=".ui.signin.LoginActivity">
 
     <!-- 전체 화면 안쪽에 UI를 담는 컨테이너 -->
     <androidx.constraintlayout.widget.ConstraintLayout
