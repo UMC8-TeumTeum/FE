@@ -1,4 +1,4 @@
-package com.example.teumteum.Splash
+package com.example.teumteum.ui.splash
 
 import android.content.Intent
 import android.os.Bundle
@@ -9,8 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.teumteum.R
-import com.example.teumteum.SignIn.LoginActivity
-import com.example.teumteum.ui.main.MainActivity
+import com.example.teumteum.ui.signin.LoginActivity
 
 class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
