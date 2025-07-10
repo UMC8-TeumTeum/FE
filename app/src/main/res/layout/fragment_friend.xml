@@ -14,6 +14,16 @@
         android:layout_height="440dp"
         android:background="#7770FE">
 
+        <ImageView
+            android:id="@+id/home_background_iv"
+            android:layout_width="match_parent"
+            android:layout_height="230dp"
+            android:layout_marginTop="125dp"
+            android:src="@drawable/bg_home"
+            android:scaleType="centerCrop"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
         <!-- 메뉴, 검색, 알림 아이콘 -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -131,18 +141,14 @@
     </LinearLayout>
 
     <!-- 팔로잉 리스트 (세로 스크롤 RecyclerView) -->
-    <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="vertical"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/followingRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:nestedScrollingEnabled="true"
+        android:padding="12dp"
+        tools:listitem="@layout/friend01_item_following" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/followingRecyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:padding="12dp"
-            tools:listitem="@layout/friend01_item_following"/>
-    </LinearLayout>
 </LinearLayout>

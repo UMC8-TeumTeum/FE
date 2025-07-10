@@ -1,4 +1,4 @@
-package com.example.teumteum.Friend
+package com.example.teumteum.ui.friend
 
 import android.content.res.ColorStateList
 import android.graphics.Color
@@ -56,7 +56,7 @@ class Friend02RejectBottomSheetFragment : BottomSheetDialogFragment() {
             if (selectedOption == SelectedOption.SUGGEST) {
                 // 화면 전환 (가능한 시간 제안)
                 parentFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_friend_container, Friend02PossibleTimeFragment())
+                    .replace(R.id.main_frm, Friend02PossibleTimeFragment())
                     .addToBackStack(null)
                     .commit()
                 dismiss()

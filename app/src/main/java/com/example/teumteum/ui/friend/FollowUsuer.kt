@@ -1,4 +1,4 @@
-package com.example.teumteum.Friend
+package com.example.teumteum.ui.friend
 
 data class FollowUser(
     val name: String,
