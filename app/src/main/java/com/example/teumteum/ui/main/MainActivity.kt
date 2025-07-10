@@ -1,6 +1,7 @@
 package com.example.teumteum.ui.main
 
 import android.os.Bundle
+import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -70,5 +71,13 @@ class MainActivity : AppCompatActivity() {
             }
             false
         }
+    }
+
+    fun hideBottomBar() {
+        binding.mainBnv.visibility = View.GONE
+    }
+
+    fun showBottomBar() {
+        binding.mainBnv.visibility = View.VISIBLE
     }
 }
