@@ -272,10 +272,19 @@
                 android:background="@android:color/white"
                 android:padding="8dp"
                 android:layout_marginBottom="16dp" >
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/btn_register_sv" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_wish_register"
+                    android:layout_width="match_parent"
+                    android:layout_height="65dp"
+                    android:text="등록할게요"
+                    android:textSize="16sp"
+                    android:layout_marginTop="22dp"
+                    android:padding="12dp"
+                    android:textColor="@color/white"
+                    app:cornerRadius="12dp"
+                    app:backgroundTint="@color/black"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
             </FrameLayout>
 
         </LinearLayout>
