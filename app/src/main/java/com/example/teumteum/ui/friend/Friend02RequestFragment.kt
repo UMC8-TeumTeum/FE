@@ -1,4 +1,4 @@
-package com.example.teumteum.Friend
+package com.example.teumteum.ui.friend
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentFriend02RequestBinding
+import com.example.teumteum.ui.main.MainActivity
 import com.tbuonomo.viewpagerdotsindicator.WormDotsIndicator
 
 class Friend02RequestFragment : Fragment() {
@@ -29,10 +30,13 @@ class Friend02RequestFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        //  바텀 네비게이션 숨기기
+        (activity as? MainActivity)?.hideBottomBar()
+
         //  뒤로가기 버튼 처리
         binding.backButton.setOnClickListener {
             parentFragmentManager.beginTransaction()
-                .replace(R.id.fragment_friend_container, FriendFragment())
+                .replace(R.id.main_frm, FriendFragment())
                 .addToBackStack(null)
                 .commit()
         }

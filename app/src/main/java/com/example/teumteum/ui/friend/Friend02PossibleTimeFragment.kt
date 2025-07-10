@@ -1,4 +1,4 @@
-package com.example.teumteum.Friend
+package com.example.teumteum.ui.friend
 
 import android.app.TimePickerDialog
 import android.os.Bundle
@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.TimePicker
 import androidx.fragment.app.Fragment
 import com.example.teumteum.databinding.FragmentFriend02PossibleTimeBinding
+import com.example.teumteum.ui.main.MainActivity
 import java.util.*
 
 class Friend02PossibleTimeFragment : Fragment() {
@@ -28,6 +29,9 @@ class Friend02PossibleTimeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        //  바텀 네비게이션 숨기기
+        (activity as? MainActivity)?.hideBottomBar()
 
         // 1. ViewPager2 + Adapter 연결
         adapter = FriendRequestCardAdapter(getDummyList())

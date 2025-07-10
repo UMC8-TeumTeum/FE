@@ -1,4 +1,4 @@
-package com.example.teumteum.Friend
+package com.example.teumteum.ui.friend
 
 import android.graphics.Color
 import android.os.Bundle
@@ -13,6 +13,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentFriend01SearchBinding
+import com.example.teumteum.ui.main.MainActivity
 
 class Friend01SearchFragment : Fragment() {
 
@@ -31,12 +32,17 @@ class Friend01SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
+
+        //  바텀 네비게이션 숨기기
+        (activity as? MainActivity)?.hideBottomBar()
+
         updateSearchList()
 
         //  뒤로가기 버튼 → FriendFragment로 이동
         binding.backButton.setOnClickListener {
             parentFragmentManager.beginTransaction()
-                .replace(R.id.fragment_friend_container, FriendFragment())
+                .replace(R.id.main_frm, FriendFragment())
                 .addToBackStack(null)
                 .commit()
         }
@@ -49,7 +55,7 @@ class Friend01SearchFragment : Fragment() {
             }
         }
 
-        // 🔍 키보드 검색(Enter) 시 검색어 추가
+        //  키보드 검색(Enter) 시 검색어 추가
         binding.searchEditText.setOnEditorActionListener { _, actionId, event ->
             val isSearchAction = actionId == EditorInfo.IME_ACTION_SEARCH
             val isEnterKey = event?.action == KeyEvent.ACTION_DOWN && event.keyCode == KeyEvent.KEYCODE_ENTER
