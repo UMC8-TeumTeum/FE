@@ -11,11 +11,16 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.teumteum.ui.register.BottomSheetRegisterFragment
 import com.example.teumteum.ui.calendar.IDateClickListener
 import com.example.teumteum.R
+import com.example.teumteum.TodoAdapter
+import com.example.teumteum.data.local.AppDatabase
 import com.example.teumteum.databinding.FragmentHomeBinding
 import com.example.teumteum.ui.calendar.CalendarMode
 
 import org.threeten.bp.LocalDate
 import org.threeten.bp.format.DateTimeFormatter
+
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment(), IDateClickListener {
 
@@ -23,6 +28,8 @@ class HomeFragment : Fragment(), IDateClickListener {
 
     private val today: LocalDate = LocalDate.now()
     private lateinit var selectedDate: LocalDate
+
+    private lateinit var adapter: TodoAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -84,6 +91,21 @@ class HomeFragment : Fragment(), IDateClickListener {
         showWeeklyCalendar()
 
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        adapter = TodoAdapter(emptyList())
+        binding.todolistRv.adapter = adapter
+
+        val db = AppDatabase.getInstance(requireContext())
+
+        db?.let {
+            lifecycleScope.launch {
+                val todoList = it.todoDao().getAllHomeTodos()
+                adapter = TodoAdapter(todoList)
+                binding.todolistRv.adapter = adapter
+            }
+        }
     }
 
     /** 주간 달력 연결 */

@@ -283,7 +283,7 @@
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
-                        android:text="알림 추가하기"
+                        android:text="알림 편집하기"
                         android:textColor="@android:color/black"
                         android:textSize="15sp" />
 

@@ -246,12 +246,17 @@
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/todolist_rv"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
                         tools:listitem="@layout/item_todolist"
                         android:overScrollMode="never"
                         android:orientation="vertical"
-                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+                        android:nestedScrollingEnabled="false"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        app:layout_constraintTop_toBottomOf="@+id/home_todolist_tv"
+                        app:layout_constraintBottom_toTopOf="@+id/btn_load_wishlist_tv"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_load_wishlist_tv"
@@ -264,7 +269,7 @@
                         android:textColor="@color/white"
                         app:cornerRadius="12dp"
                         app:backgroundTint="@color/black"
-                        app:layout_constraintTop_toBottomOf="@+id/home_todolist_tv"
+                        app:layout_constraintTop_toBottomOf="@+id/todolist_rv"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent" />
 
