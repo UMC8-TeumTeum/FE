@@ -1,5 +1,6 @@
 package com.example.teumteum.ui.singup
 
+import android.R.attr.fragment
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -9,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentOnBoardingProfileBinding
 import com.example.teumteum.ui.main.MainActivity
 
@@ -60,7 +62,11 @@ class OnBoardingProfileFragment : Fragment() {
 
 
         binding.nextBtn.setOnClickListener {
-            startActivity(Intent(requireContext(), MainActivity::class.java))
+//            startActivity(Intent(requireContext(), MainActivity::class.java))
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, OnBoardingScheduleFragment())
+                .addToBackStack(null)
+                .commit()
         }
 
     }
