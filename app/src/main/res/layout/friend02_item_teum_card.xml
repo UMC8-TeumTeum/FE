@@ -4,13 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
+    android:padding="10dp"
     android:background="@android:color/white">
 
     <!-- 상단: 보라색 카드 (MaterialCardView로 둥근 모서리 처리) -->
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
-        android:layout_height="67dp"
+        android:layout_height="70dp"
         app:cardCornerRadius="10dp"
         app:cardElevation="2dp"
         app:cardBackgroundColor="#7770FE"
@@ -83,7 +83,7 @@
     <!-- 하단 흰색 틈 요청 내용 카드 -->
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="205dp"
+        android:layout_height="210dp"
         android:background="@drawable/friend02_bg_teum_card"
         android:layout_marginTop="0dp"
         android:elevation="1dp">

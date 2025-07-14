@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentFriendBinding
+import com.example.teumteum.ui.main.MainActivity
 
 class FriendFragment : Fragment() {
 
@@ -59,6 +60,11 @@ class FriendFragment : Fragment() {
         val followingAdapter = FollowingAdapter(dummyFollowingList)
         binding.followingRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.followingRecyclerView.adapter = followingAdapter
+    }
+
+    override fun onResume() {
+        super.onResume()
+        (activity as? MainActivity)?.showBottomBar()
     }
 
     override fun onDestroyView() {
