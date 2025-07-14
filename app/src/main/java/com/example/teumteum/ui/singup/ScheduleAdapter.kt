@@ -14,8 +14,10 @@ class ScheduleAdapter : ListAdapter<Schedule, ScheduleAdapter.ScheduleViewHolder
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: Schedule) {
-            binding.timeStartTv.text = item.startTime
-            binding.timeEndTv.text = item.endTime
+            val startTime = item.startTime.replace("오전 ", "").replace("오후 ", "")
+            val endTime = item.endTime.replace("오전 ", "").replace("오후 ", "")
+            binding.timeStartTv.text = startTime
+            binding.timeEndTv.text = endTime
             binding.titleTv.text = item.title
         }
     }
