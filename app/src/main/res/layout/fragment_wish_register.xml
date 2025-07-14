@@ -51,8 +51,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="4dp" >
+                    android:gravity="center_vertical" >
 
                     <ImageView
                         android:layout_width="20dp"
@@ -66,6 +65,7 @@
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
                         android:text="언젠가"
+                        android:fontFamily="@font/noto_sans_kr_regular"
                         android:textColor="@android:color/black"
                         android:textSize="15sp" />
 
@@ -89,6 +89,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="상세 내용 입력"
+                        android:fontFamily="@font/noto_sans_kr_regular"
                         android:textColorHint="@color/black"
                         android:minHeight="28dp"
                         android:textSize="15sp"
