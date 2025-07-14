@@ -20,7 +20,9 @@ import org.threeten.bp.LocalDate
 import org.threeten.bp.format.DateTimeFormatter
 
 import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class HomeFragment : Fragment(), IDateClickListener {
 
@@ -65,26 +67,6 @@ class HomeFragment : Fragment(), IDateClickListener {
             bottomSheet.show(parentFragmentManager, bottomSheet.tag)
         }
 
-//        binding.fabAddIv.setOnClickListener {
-//            val bottomSheetDialog = BottomSheetDialog(requireContext())
-//            val bottomSheetView = layoutInflater.inflate(R.layout.fragment_bottom_sheet_register, null)
-//            bottomSheetDialog.setContentView(bottomSheetView)
-//
-//            bottomSheetDialog.setOnShowListener { dialog ->
-//                val bottomSheet =
-//                    (dialog as BottomSheetDialog).findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
-//                bottomSheet?.let {
-//                    val screenHeight = resources.displayMetrics.heightPixels
-//                    it.layoutParams?.height = (screenHeight * 0.84).toInt()
-//                    val behavior = BottomSheetBehavior.from(it)
-//                    behavior.peekHeight = (screenHeight * 0.84).toInt()
-//                    it.requestLayout()
-//                }
-//            }
-//
-//            bottomSheetDialog.show()
-//        }
-
         setWeeklyCalendarViewPager()
         setMonthlyCalendarViewPager()
         setCalendarModeToggleListeners()
@@ -94,19 +76,25 @@ class HomeFragment : Fragment(), IDateClickListener {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        adapter = TodoAdapter(emptyList())
+        adapter = TodoAdapter(emptyList(), parentFragmentManager)
         binding.todolistRv.adapter = adapter
 
         val db = AppDatabase.getInstance(requireContext())
 
         db?.let {
             lifecycleScope.launch {
-                val todoList = it.todoDao().getAllHomeTodos()
-                adapter = TodoAdapter(todoList)
+                // Dispatchers.IO에서 DB 접근 (비동기 처리)
+                val todoList = withContext(Dispatchers.IO) {
+                    it.todoDao().getAllHomeTodos()
+                }
+
+                // MainThread에서 어댑터 설정 (UI 작업)
+                adapter = TodoAdapter(todoList, parentFragmentManager)
                 binding.todolistRv.adapter = adapter
             }
         }
     }
+
 
     /** 주간 달력 연결 */
     private fun setWeeklyCalendarViewPager() {

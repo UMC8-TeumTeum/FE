@@ -23,7 +23,6 @@ abstract class AppDatabase : RoomDatabase() {
                         "app-database"
                     )
                         .fallbackToDestructiveMigration() // 기존 데이터 삭제 허용
-                        .allowMainThreadQueries()
                         .build()
                 }
             }

@@ -15,8 +15,7 @@
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="20dp">
+            android:layout_height="wrap_content" >
 
             <EditText
                 android:id="@+id/wish_title_et"
@@ -24,7 +23,8 @@
                 android:layout_height="wrap_content"
                 android:hint="새롭게 떠오른 위시가 있나요?"
                 android:minHeight="28dp"
-                android:textSize="16sp"
+                android:textSize="20sp"
+                android:fontFamily="@font/noto_sans_kr_medium"
                 android:background="@android:color/transparent"
                 android:inputType="textMultiLine"
                 android:maxLines="5"

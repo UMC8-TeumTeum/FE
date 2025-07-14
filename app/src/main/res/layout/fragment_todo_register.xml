@@ -15,8 +15,7 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="20dp">
+        android:layout_height="wrap_content" >
 
         <EditText
             android:id="@+id/todo_title_et"
@@ -24,7 +23,8 @@
             android:layout_height="wrap_content"
             android:hint="새로운 투두를 작성해주세요"
             android:minHeight="28dp"
-            android:textSize="16sp"
+            android:textSize="20sp"
+            android:fontFamily="@font/noto_sans_kr_medium"
             android:background="@android:color/transparent"
             android:inputType="textMultiLine"
             android:maxLines="5"
@@ -373,7 +373,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginTop="10dp"
-            android:layout_marginBottom="60dp" >
+            android:layout_marginBottom="60dp"
+            android:padding="8dp" >
 
             <ImageView
                 android:id="@+id/detail_text_iv"

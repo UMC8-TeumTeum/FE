@@ -53,4 +53,10 @@
         <item name="android:enabled">true</item>
     </style>
 
+    <style name="RoundedAlertDialog">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:windowMinWidthMajor">85%</item>
+        <item name="android:windowMinWidthMinor">85%</item>
+    </style>
+
 </resources>

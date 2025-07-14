@@ -18,7 +18,9 @@ import com.example.teumteum.data.entities.Todo
 import com.example.teumteum.data.local.AppDatabase
 
 import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class TodoRegisterFragment : Fragment() {
 
@@ -79,8 +81,16 @@ class TodoRegisterFragment : Fragment() {
         }
 
         binding.btnTodoRegister.setOnClickListener {
+
+            val titleText = binding.todoTitleEt.text.toString().trim()
+
+            if (titleText.isEmpty()) {
+                Toast.makeText(requireContext(), "제목을 입력해주세요.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             val todo = Todo(
-                title = binding.todoTitleEt.text.toString(),
+                title = titleText,
                 startTime = binding.startTimeTv.text.toString(),
                 endTime = binding.endTimeTv.text.toString(),
                 alarms = selectedItems.joinToString(","),
@@ -89,13 +99,18 @@ class TodoRegisterFragment : Fragment() {
             )
 
             val db = AppDatabase.getInstance(requireContext())
+
             db?.let {
                 lifecycleScope.launch {
-                    it.todoDao().insert(todo)
+                    withContext(Dispatchers.IO) {
+                        it.todoDao().insert(todo)
+                    }
+
                     Toast.makeText(requireContext(), "등록되었습니다.", Toast.LENGTH_SHORT).show()
                     parentFragmentManager.popBackStack()
                 }
             }
+
         }
     }
 
