@@ -14,8 +14,8 @@ class ScheduleAdapter : ListAdapter<Schedule, ScheduleAdapter.ScheduleViewHolder
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: Schedule) {
-            val startTime = item.startTime.replace("오전 ", "").replace("오후 ", "")
-            val endTime = item.endTime.replace("오전 ", "").replace("오후 ", "")
+            val startTime = formatTime(item.startTime)
+            val endTime = formatTime(item.endTime)
             binding.timeStartTv.text = startTime
             binding.timeEndTv.text = endTime
             binding.titleTv.text = item.title
@@ -29,6 +29,17 @@ class ScheduleAdapter : ListAdapter<Schedule, ScheduleAdapter.ScheduleViewHolder
 
     override fun onBindViewHolder(holder: ScheduleViewHolder, position: Int) {
         holder.bind(getItem(position))
+    }
+
+    private fun formatTime(time: String): String {
+        val cleaned = time.replace("오전 ", "").replace("오후 ", "")
+        val parts = cleaned.split(":")
+        if (parts.size != 2) return cleaned // 예외 처리: 형식이 이상하면 원본 반환
+
+        val hour = parts[0].toIntOrNull() ?: return cleaned
+        val minute = parts[1].toIntOrNull() ?: return cleaned
+
+        return String.format("%02d:%02d", hour, minute)
     }
 
     companion object {
