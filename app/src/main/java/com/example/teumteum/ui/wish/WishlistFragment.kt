@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import com.example.teumteum.R
 import com.example.teumteum.data.entities.WishItem
 import com.example.teumteum.databinding.FragmentWishlistBinding
+import com.example.teumteum.ui.home.HomeFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class WishlistFragment : Fragment() {
@@ -45,7 +46,13 @@ class WishlistFragment : Fragment() {
         // 바텀 내비게이션 숨기기
         val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
         bottomNav?.visibility = View.GONE
-    }
 
+        binding.backArrowIv.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, HomeFragment())
+                .addToBackStack(null)
+                .commit()
+        }
+    }
 
 }
