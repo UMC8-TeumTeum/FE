@@ -1,19 +1,15 @@
 package com.example.teumteum.ui.singup
 
 import BottomSheetScheduleFragment
-import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentOnBoardingScheduleBinding
-import com.example.teumteum.ui.main.MainActivity
-import com.example.teumteum.ui.register.BottomSheetRegisterFragment
 import kotlin.collections.toList
 import com.example.teumteum.data.Schedule
 
@@ -47,7 +43,11 @@ class OnBoardingScheduleFragment : Fragment(){
         (activity as? SignUpActivity)?.setProgressBar(50)
 
         binding.nextBtn.setOnClickListener {
-            startActivity(Intent(requireContext(), MainActivity::class.java))
+//            startActivity(Intent(requireContext(), MainActivity::class.java))
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, OnBoardingSleepPatternFragment())
+                .addToBackStack(null)
+                .commit()
         }
 
         // RecyclerView 세팅
