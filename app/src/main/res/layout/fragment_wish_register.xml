@@ -34,7 +34,7 @@
                 android:id="@+id/horizon_01_iv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="8dp"
                 android:src="@drawable/ic_horizon_sv"
                 android:scaleType="centerCrop" />
 
@@ -44,14 +44,15 @@
                 android:orientation="vertical"
                 android:background="@android:color/white"
                 android:layout_marginTop="10dp"
-                android:padding="8dp">
+                android:padding="5dp">
 
                 <LinearLayout
-                    android:id="@+id/todo_start_time"
+                    android:id="@+id/wish_date"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:gravity="center_vertical" >
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="-3dp" >
 
                     <ImageView
                         android:layout_width="20dp"
@@ -60,7 +61,7 @@
                         android:layout_marginEnd="8dp" />
 
                     <TextView
-                        android:id="@+id/start_date_tv"
+                        android:id="@+id/wish_date_tv"
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
@@ -72,11 +73,12 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/todo_end_time"
+                    android:id="@+id/wish_detail_ll"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:gravity="center_vertical">
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="-3dp" >
 
                     <ImageView
                         android:layout_width="20dp"
@@ -107,22 +109,23 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="21dp"
                 android:src="@drawable/ic_horizon_sv"
-                android:scaleType="centerCrop" />
+                android:scaleType="centerCrop"
+                android:layout_marginBottom="-3dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:background="@android:color/white"
-                android:layout_marginTop="13dp"
-                android:padding="8dp">
+                android:layout_marginTop="13dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:layout_marginBottom="8dp" >
+                    android:padding="5dp"
+                    android:layout_marginBottom="-3dp">
 
                     <TextView
                         android:id="@+id/wish_time_tv"
@@ -140,7 +143,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:gravity="center_vertical" >
+                    android:gravity="center_vertical"
+                    android:padding="5dp">
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_wish_time_01"
@@ -208,22 +212,23 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="21dp"
                 android:src="@drawable/ic_horizon_sv"
-                android:scaleType="centerCrop" />
+                android:scaleType="centerCrop"
+                android:layout_marginBottom="-3dp"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:background="@android:color/white"
-                android:layout_marginTop="13dp"
-                android:padding="8dp">
+                android:layout_marginTop="13dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:layout_marginBottom="8dp" >
+                    android:layout_marginBottom="-3dp"
+                    android:padding="5dp">
 
                     <TextView
                         android:id="@+id/wish_category_tv"
@@ -241,11 +246,12 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:layout_marginBottom="8dp" >
+                    android:layout_marginBottom="8dp"
+                    android:padding="5dp">
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_wish_category_01"
-                        android:layout_width="110dp"
+                        android:layout_width="100dp"
                         android:layout_height="50dp"
                         android:layout_weight="1"
                         android:text="자기계발"
@@ -259,7 +265,7 @@
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_wish_category_02"
-                        android:layout_width="110dp"
+                        android:layout_width="100dp"
                         android:layout_height="50dp"
                         android:layout_weight="1"
                         android:text="운동"
@@ -273,7 +279,7 @@
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_wish_category_03"
-                        android:layout_width="110dp"
+                        android:layout_width="100dp"
                         android:layout_height="50dp"
                         android:layout_weight="1"
                         android:text="취미"
@@ -291,11 +297,12 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:layout_marginBottom="40dp" >
+                    android:layout_marginBottom="34dp"
+                    android:padding="5dp">
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_wish_category_04"
-                        android:layout_width="110dp"
+                        android:layout_width="100dp"
                         android:layout_height="50dp"
                         android:layout_weight="1"
                         android:text="일상"
@@ -309,7 +316,7 @@
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_wish_category_05"
-                        android:layout_width="110dp"
+                        android:layout_width="100dp"
                         android:layout_height="50dp"
                         android:layout_weight="1"
                         android:text="문화생활"
@@ -323,7 +330,7 @@
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_wish_category_06"
-                        android:layout_width="110dp"
+                        android:layout_width="100dp"
                         android:layout_height="50dp"
                         android:layout_weight="1"
                         android:text="휴식"

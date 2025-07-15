@@ -102,7 +102,7 @@
                 android:id="@+id/calendar_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="-40dp"
+                android:layout_marginTop="-20dp"
                 app:cardElevation="8dp"
                 app:cardBackgroundColor="@android:color/white"
                 app:shapeAppearanceOverlay="@style/TopRoundedCard"
@@ -114,7 +114,8 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="16dp">
+                    android:padding="16dp"
+                    android:layout_marginTop="20dp" >
 
                     <TextView
                         android:id="@+id/home_selected_date_tv"
@@ -124,8 +125,8 @@
                         android:text="2025년 6월"
                         android:textSize="20sp"
                         android:textColor="@color/black"
-                        android:fontFamily="@font/noto_sans_kr"
-                        android:layout_marginStart="24dp"
+                        android:fontFamily="@font/pretendard_medium"
+                        android:layout_marginStart="16dp"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintStart_toStartOf="parent" />
 
@@ -134,7 +135,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:layout_marginStart="9dp"
+                        android:layout_marginStart="10dp"
                         app:layout_constraintStart_toEndOf="@id/home_selected_date_tv"
                         app:layout_constraintTop_toTopOf="@id/home_selected_date_tv"
                         app:layout_constraintBottom_toBottomOf="@id/home_selected_date_tv">
@@ -155,9 +156,9 @@
 
                     <ImageView
                         android:id="@+id/home_calendar_previous_date_iv"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_marginEnd="28dp"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:layout_marginEnd="25dp"
                         android:layout_marginTop="2dp"
                         android:src="@drawable/ic_calendar_previous_sv"
                         app:layout_constraintTop_toTopOf="@+id/calendar_mode_buttons"
@@ -165,19 +166,19 @@
 
                     <ImageView
                         android:id="@+id/home_calendar_next_date_iv"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_marginEnd="24dp"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:layout_marginEnd="14dp"
                         android:src="@drawable/ic_calendar_next_sv"
                         app:layout_constraintTop_toTopOf="@+id/home_calendar_previous_date_iv"
                         app:layout_constraintEnd_toEndOf="parent" />
 
                     <LinearLayout
                         android:id="@+id/home_weekly_calendar_day_of_month_ll"
-                        android:layout_width="0dp"
+                        android:layout_width="383dp"
                         android:layout_height="40dp"
                         android:orientation="horizontal"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="28dp"
                         app:layout_constraintTop_toBottomOf="@id/home_selected_date_tv"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent" >
@@ -256,10 +257,11 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="20dp"
-                        android:layout_marginStart="10dp"
+                        android:layout_marginStart="15dp"
                         android:text="투두리스트"
                         android:textSize="20sp"
                         android:textColor="@color/black"
+                        android:fontFamily="@font/noto_sans_kr_medium"
                         app:layout_constraintTop_toBottomOf="@+id/horizon_iv"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent" />

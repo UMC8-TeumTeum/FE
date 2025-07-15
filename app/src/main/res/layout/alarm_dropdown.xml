@@ -15,6 +15,7 @@
         android:layout_weight="1"
         android:text="30분 전"
         android:textSize="12sp"
+        android:fontFamily="@font/noto_sans_kr_regular"
         android:textColor="@android:color/black" />
 
     <ImageView
