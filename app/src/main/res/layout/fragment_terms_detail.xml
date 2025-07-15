@@ -14,13 +14,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="서비스 이용 약관 동의(필수)"
-        style="@style/Header1"
+        style="@style/notoSansSemiBold"
         android:textSize="18sp"
         android:textColor="@color/black"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="95dp"
+        android:includeFontPadding="false"
         />
     
     <ScrollView
