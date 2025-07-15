@@ -26,7 +26,7 @@ class OnBoardingNicknameFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (activity as? SignUpActivity)?.setProgressBar(25)
+        (activity as? SignUpActivity)?.setProgressBar(20)
 
         binding.nextBtn.setOnClickListener {
             val fragment = OnBoardingProfileFragment().apply {
