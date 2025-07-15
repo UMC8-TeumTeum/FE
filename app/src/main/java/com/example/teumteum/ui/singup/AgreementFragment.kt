@@ -45,6 +45,13 @@ class AgreementFragment : Fragment() {
                 .commit()
         }
 
+        //체크박스 초기 색상
+        setCheckBoxTint(binding.term1Checkbox, binding.term1Checkbox.isChecked)
+        setCheckBoxTint(binding.term2Checkbox, binding.term2Checkbox.isChecked)
+        setCheckBoxTint(binding.term3Checkbox, binding.term3Checkbox.isChecked)
+        setCheckBoxTint(binding.term4Checkbox, binding.term4Checkbox.isChecked)
+        setCheckBoxTint(binding.allCheckbox, binding.allCheckbox.isChecked)
+
         // 약관 텍스트뷰 클릭 시 상세 프래그먼트로 이동
         binding.term1Tv.setOnClickListener { openTermsDetail("term1","서비스 이용 약관 동의 (필수)") }
         binding.term2Tv.setOnClickListener { openTermsDetail("term2","개인정보 수집 및 이용 동의 (필수)") }
