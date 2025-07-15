@@ -16,16 +16,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="투두를"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:fontFamily="@font/noto_sans_kr_medium"
-            android:textColor="@color/text_primary" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=" 삭제"
+            android:text="수정을 취소"
             android:textSize="18sp"
             android:textStyle="bold"
             android:fontFamily="@font/noto_sans_kr_medium"
@@ -34,7 +25,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="할까요?"
+            android:text="하고 나가시겠어요?"
             android:textSize="18sp"
             android:textStyle="bold"
             android:fontFamily="@font/noto_sans_kr_medium"
@@ -44,7 +35,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="삭제 후 되돌리기 어려워요"
+        android:text="수정하신 내용들은 모두 사라져요"
         android:textSize="15sp"
         android:fontFamily="@font/noto_sans_kr_regular"
         android:textColor="@color/text_secondary"
@@ -65,7 +56,7 @@
         android:orientation="horizontal"
         android:gravity="end"
         android:layout_marginEnd="30dp"
-        android:layout_marginBottom="10dp">
+        android:layout_marginBottom="-20dp">
 
         <TextView
             android:id="@+id/todo_confirm_tv"

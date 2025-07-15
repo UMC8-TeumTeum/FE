@@ -24,6 +24,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import androidx.lifecycle.lifecycleScope
 import com.example.teumteum.data.entities.TodoHomeItem
 import com.example.teumteum.databinding.DialogConfirmTodoDeleteBinding
+import com.example.teumteum.databinding.DialogConfirmTodoEditBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.coroutines.Dispatchers
@@ -137,71 +138,46 @@ class TodoEditFragment : BottomSheetDialogFragment() {
             bottomSheet?.setBackgroundResource(R.drawable.calendar_background)
         }
 
+        dialog.setOnKeyListener { _, keyCode, event ->
+            if (keyCode == android.view.KeyEvent.KEYCODE_BACK && event.action == android.view.KeyEvent.ACTION_UP) {
+                showCancelEditDialog()
+                true
+            } else {
+                false
+            }
+        }
+
         return dialog
     }
 
-    private fun bindTodoToUI(todo: Todo) {
-        binding.todoTitleEt.setText(todo.title)
-        binding.startTimeTv.text = todo.startTime
-        binding.endTimeTv.text = todo.endTime
-        binding.categoryToggle03Iv.isChecked = todo.isPublic
-        binding.categoryToggle04Iv.isChecked = todo.isIncluded
-
-        // 알람 설정
-        val alarms = todo.alarms.split(",").map { it.trim() }
-        selectedItems.clear()
-        selectedItems.addAll(alarms)
-
-        // UI 초기화
-        binding.alarmLayoutContainer.removeAllViews()
-        binding.alarmItem01Ll.visibility = View.GONE
-        binding.alarmItem02Ll.visibility = View.GONE
-
-        alarms.forEach { label ->
-            addAlarmItem(label)
-        }
-    }
-
-    private fun addAlarmItem(label: String) {
-        when (label) {
-            "30분 전" -> {
-                // 설정된 알람일 때만 보이게
-                if (selectedItems.contains("30분 전")) {
-                    binding.alarmItem01Ll.visibility = View.VISIBLE
-                }
-            }
-            "10분 전" -> {
-                if (selectedItems.contains("10분 전")) {
-                    binding.alarmItem02Ll.visibility = View.VISIBLE
-                }
-            }
-            else -> {
-                val layout = layoutInflater.inflate(R.layout.item_alarm, binding.alarmLayoutContainer, false)
-                val labelText = layout.findViewById<TextView>(R.id.alarm_set_tv)
-                labelText.text = label
-                layout.tag = label
-                binding.alarmLayoutContainer.addView(layout)
-            }
-        }
-    }
-
-    private fun removeAlarmItem(label: String) {
-        when (label) {
-            "30분 전" -> binding.alarmItem01Ll.visibility = View.GONE
-            "10분 전" -> binding.alarmItem02Ll.visibility = View.GONE
-            else -> {
-                for (i in 0 until binding.alarmLayoutContainer.childCount) {
-                    val child = binding.alarmLayoutContainer.getChildAt(i)
-                    if (child.tag == label) {
-                        binding.alarmLayoutContainer.removeView(child)
-                        break
-                    }
-                }
-            }
-        }
-    }
+//    private fun bindTodoToUI(todo: Todo) {
+//        binding.todoTitleEt.setText(todo.title)
+//        binding.startTimeTv.text = todo.startTime
+//        binding.endTimeTv.text = todo.endTime
+//        binding.categoryToggle03Iv.isChecked = todo.isPublic
+//        binding.categoryToggle04Iv.isChecked = todo.isIncluded
+//
+//        // 알람 설정
+//        val alarms = todo.alarms.split(",").map { it.trim() }
+//        selectedItems.clear()
+//        selectedItems.addAll(alarms)
+//
+//        // UI 초기화
+//        binding.alarmLayoutContainer.removeAllViews()
+//        binding.alarmItem01Ll.visibility = View.GONE
+//        binding.alarmItem02Ll.visibility = View.GONE
+//
+//        alarms.forEach { label ->
+//            addAlarmItem(label)
+//        }
+//    }
 
     private fun showAlarmPopupWindow(anchor: View) {
+        if (popupWindow?.isShowing == true) {
+            popupWindow?.dismiss()
+            return
+        }
+
         val popupView = LinearLayout(requireContext()).apply {
             orientation = LinearLayout.VERTICAL
             setBackgroundResource(R.drawable.bg_dropdown)
@@ -209,6 +185,7 @@ class TodoEditFragment : BottomSheetDialogFragment() {
             elevation = 16f
         }
 
+        // 항목 추가
         alarmOptions.forEachIndexed { index, label ->
             val itemView = layoutInflater.inflate(R.layout.alarm_dropdown, popupView, false)
             val labelText = itemView.findViewById<TextView>(R.id.alarm_label_tv)
@@ -244,7 +221,9 @@ class TodoEditFragment : BottomSheetDialogFragment() {
         }
 
         val popupWidth = resources.displayMetrics.widthPixels / 2
-        val popupWindow = PopupWindow(
+
+        // 팝업 설정
+        popupWindow = PopupWindow(
             popupView,
             popupWidth,
             ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -263,6 +242,44 @@ class TodoEditFragment : BottomSheetDialogFragment() {
         }
     }
 
+    private fun addAlarmItem(label: String) {
+        when (label) {
+            "30분 전" -> {
+                binding.alarmItem01Ll.visibility = View.VISIBLE
+            }
+            "10분 전" -> {
+                binding.alarmItem02Ll.visibility = View.VISIBLE
+            }
+            else -> {
+                val layout = layoutInflater.inflate(R.layout.item_alarm, binding.alarmLayoutContainer, false)
+                val labelText = layout.findViewById<TextView>(R.id.alarm_set_tv)
+                labelText.text = label
+                layout.tag = label
+                binding.alarmLayoutContainer.addView(layout)
+            }
+        }
+    }
+
+    private fun removeAlarmItem(label: String) {
+        when (label) {
+            "30분 전" -> {
+                binding.alarmItem01Ll.visibility = View.GONE
+            }
+            "10분 전" -> {
+                binding.alarmItem02Ll.visibility = View.GONE
+            }
+            else -> {
+                for (i in 0 until binding.alarmLayoutContainer.childCount) {
+                    val child = binding.alarmLayoutContainer.getChildAt(i)
+                    if (child.tag == label) {
+                        binding.alarmLayoutContainer.removeView(child)
+                        break
+                    }
+                }
+            }
+        }
+    }
+
     companion object {
         fun newInstanceWithDummy(item: TodoHomeItem): TodoEditFragment {
             return TodoEditFragment().apply {
@@ -276,62 +293,6 @@ class TodoEditFragment : BottomSheetDialogFragment() {
                 }
             }
         }
-    }
-
-//    companion object {
-//        fun newInstance(todoId: Int): TodoEditFragment {
-//            return TodoEditFragment().apply {
-//                arguments = Bundle().apply {
-//                    putInt("todo_id", todoId)
-//                }
-//            }
-//        }
-//    }
-
-    private fun deleteTodo(todoId: Int) {
-        val dialogBinding = DialogConfirmTodoDeleteBinding.inflate(layoutInflater)
-
-        val dialog = AlertDialog.Builder(requireContext(), R.style.RoundedAlertDialog)
-            .setView(dialogBinding.root)
-            .create()
-
-        dialogBinding.todoConfirmTv.setOnClickListener {
-            lifecycleScope.launch {
-                withContext(Dispatchers.IO) {
-                    val db = AppDatabase.getInstance(requireContext())
-                    db?.todoDao()?.deleteTodoById(todoId)
-                }
-
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(requireContext(), "삭제되었습니다.", Toast.LENGTH_SHORT).show()
-                    dialog.dismiss()
-                    dismiss()  // BottomSheetDialogFragment 닫기
-                }
-            }
-        }
-
-        dialogBinding.todoCancelTv.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-
-        dialog.setOnShowListener {
-            dialog.window?.let { window ->
-                val layoutParams = window.attributes
-                layoutParams.width = (resources.displayMetrics.widthPixels * 0.85).toInt()
-                layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
-                layoutParams.gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
-                layoutParams.y = (resources.displayMetrics.heightPixels * 0.37).toInt()
-                layoutParams.dimAmount = 0.5f
-                window.attributes = layoutParams
-
-                window.setDimAmount(0.5f)
-                window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
-            }
-        }
-
-        dialog.show()
     }
 
     private fun setupPickers() {
@@ -377,6 +338,42 @@ class TodoEditFragment : BottomSheetDialogFragment() {
 
         dialogBinding.todoConfirmTv.setOnClickListener {
             Toast.makeText(requireContext(), "삭제되었습니다. (더미)", Toast.LENGTH_SHORT).show()
+            dialog.dismiss()
+            dismiss()
+        }
+
+        dialogBinding.todoCancelTv.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        dialog.setOnShowListener {
+            dialog.window?.let { window ->
+                val layoutParams = window.attributes
+                layoutParams.width = (resources.displayMetrics.widthPixels * 0.85).toInt()
+                layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
+                layoutParams.gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
+                layoutParams.y = (resources.displayMetrics.heightPixels * 0.37).toInt()
+                layoutParams.dimAmount = 0.5f
+                window.attributes = layoutParams
+
+                window.setDimAmount(0.5f)
+                window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+            }
+        }
+
+        dialog.show()
+    }
+
+    private fun showCancelEditDialog() {
+        val dialogBinding = DialogConfirmTodoEditBinding.inflate(layoutInflater)
+
+        val dialog = AlertDialog.Builder(requireContext(), R.style.RoundedAlertDialog)
+            .setView(dialogBinding.root)
+            .create()
+
+        dialogBinding.todoConfirmTv.setOnClickListener {
             dialog.dismiss()
             dismiss()
         }
