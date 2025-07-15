@@ -1,5 +1,6 @@
 package com.example.teumteum.ui.register
 
+import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,6 +8,7 @@ import android.view.ViewGroup
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentBottomSheetRegisterBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class BottomSheetRegisterFragment : BottomSheetDialogFragment() {
@@ -74,5 +76,17 @@ class BottomSheetRegisterFragment : BottomSheetDialogFragment() {
                 behavior.isDraggable = false // 확장 불가능
             }
         }
+    }
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
+
+        dialog.setOnShowListener { dialogInterface ->
+            val bottomSheet = (dialogInterface as BottomSheetDialog)
+                .findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+            bottomSheet?.setBackgroundResource(R.drawable.calendar_background)
+        }
+
+        return dialog
     }
 }

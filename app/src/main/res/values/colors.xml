@@ -28,4 +28,5 @@
     <color name="teumteum_gray">#D3D3D3</color>
     <color name="teumteum_line">#EAEAEA</color>
     <color name="teumteum_deactive">#B1B2B3</color>
+    <color name="teumteum_bg">#F6F6F6</color>
 </resources>
