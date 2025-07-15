@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#FFFFFF"
+    android:minHeight="270dp"
+    android:padding="16dp">
+
+    <!-- 버튼 영역 (위쪽) -->
+    <LinearLayout
+        android:id="@+id/buttonContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+    </LinearLayout>
+
+    <!-- Picker 영역 (아래쪽) -->
+    <LinearLayout
+        android:id="@+id/pickerContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        app:layout_constraintTop_toBottomOf="@id/buttonContainer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp">
+
+        <!-- AM/PM -->
+        <NumberPicker
+            android:id="@+id/ampmPicker01Np"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <!-- : 기호 -->
+        <TextView
+            android:id="@+id/colonAmHour"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=":"
+            android:textSize="20sp"
+            android:textColor="#0F0F0F"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:gravity="center_vertical" />
+
+        <!-- Hour -->
+        <NumberPicker
+            android:id="@+id/hourPicker01Np"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <!-- Minute -->
+        <NumberPicker
+            android:id="@+id/minutePicker01Np"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp" />
+    </LinearLayout>
+
+    <!-- 취소 버튼 -->
+    <Button
+        android:id="@+id/btnCancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="-30dp"
+        android:layout_marginStart="0dp"
+        android:text="취소"
+        android:textSize="16dp"
+        android:textColor="#0F0F0F"
+        android:fontFamily="@font/noto_sans_kr_medium"
+        android:backgroundTint="@android:color/transparent"
+        android:background="@null"
+        app:layout_constraintBottom_toTopOf="@+id/pickerContainer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- 확인 버튼 -->
+    <Button
+        android:id="@+id/btnOk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="-30dp"
+        android:layout_marginStart="0dp"
+        android:text="확인"
+        android:textSize="16dp"
+        android:textColor="#0F0F0F"
+        android:fontFamily="@font/noto_sans_kr_medium"
+        android:backgroundTint="@android:color/transparent"
+        android:background="@null"
+        app:layout_constraintBottom_toTopOf="@+id/pickerContainer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
