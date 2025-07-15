@@ -1,6 +1,9 @@
 package com.example.teumteum.ui.singup
 
+import android.graphics.Color
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -47,5 +50,84 @@ class OnBoardingNicknameFragment : Fragment() {
         binding.fieldClearBtn.setOnClickListener {
             binding.fieldEt.setText("")
         }
+
+        binding.nicknameEt.addTextChangedListener(object: TextWatcher{
+            //텍스트 변경 전 호출
+            override fun beforeTextChanged(
+                s: CharSequence?,
+                start: Int,
+                count: Int,
+                after: Int
+            ) {
+                //Todo: 닉네임 중복 검사
+            }
+
+            override fun onTextChanged(
+                s: CharSequence?,
+                start: Int,
+                before: Int,
+                count: Int
+            ) {
+                //Todo: 닉네임 중복 검사
+                updateNextButtonState()
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+
+                //Todo: 닉네임 중복 검사
+                updateNextButtonState()
+            }
+
+        })
+
+        binding.fieldEt.addTextChangedListener(object: TextWatcher{
+            //텍스트 변경 전 호출
+            override fun beforeTextChanged(
+                s: CharSequence?,
+                start: Int,
+                count: Int,
+                after: Int
+            ) {
+                //Todo: 닉네임 중복 검사
+            }
+
+            override fun onTextChanged(
+                s: CharSequence?,
+                start: Int,
+                before: Int,
+                count: Int
+            ) {
+                //Todo: 닉네임 중복 검사
+                updateNextButtonState()
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+
+                //Todo: 닉네임 중복 검사
+                updateNextButtonState()
+            }
+
+        })
+    }
+
+    private fun updateNextButtonState() {
+        val allChecked = binding.nicknameEt.text.isNotEmpty() && binding.fieldEt.text.isNotEmpty()
+        binding.nextBtn.isEnabled = allChecked
+
+        // 배경색 변경
+        binding.nextBtn.setBackgroundColor(
+            if (allChecked)
+                requireContext().getColor(R.color.black)
+            else
+                Color.parseColor("#F6F6F6")
+        )
+
+        // 글자색 변경
+        binding.nextBtn.setTextColor(
+            if (allChecked)
+                requireContext().getColor(R.color.white)
+            else
+                requireContext().getColor(R.color.black)
+        )
     }
 }
