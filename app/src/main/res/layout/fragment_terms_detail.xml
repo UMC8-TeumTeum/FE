@@ -63,7 +63,7 @@
         android:text="확인"
         style="@style/Md16"
         android:textColor="@color/white"
-        app:cornerRadius="8dp"
+        app:cornerRadius="12dp"
         android:backgroundTint="@color/black"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

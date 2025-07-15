@@ -171,7 +171,7 @@
         android:text="다음으로"
         style="@style/Md16"
         android:textColor="#0F0F0F"
-        app:cornerRadius="8dp"
+        app:cornerRadius="12dp"
         android:backgroundTint="#F6F6F6"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
