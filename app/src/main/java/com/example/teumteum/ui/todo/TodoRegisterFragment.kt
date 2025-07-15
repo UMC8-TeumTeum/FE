@@ -1,4 +1,4 @@
-package com.example.teumteum.ui.register
+package com.example.teumteum.ui.todo
 
 import android.os.Bundle
 import android.view.Gravity

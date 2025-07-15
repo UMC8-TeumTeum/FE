@@ -1,4 +1,4 @@
-package com.example.teumteum.ui.edit
+package com.example.teumteum.ui.todo
 
 import android.app.Dialog
 import android.os.Bundle
@@ -15,21 +15,15 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import com.example.teumteum.R
-import com.example.teumteum.data.entities.Todo
-import com.example.teumteum.data.local.AppDatabase
 import com.example.teumteum.data.local.TodoDao
 import com.example.teumteum.databinding.FragmentTodoEditBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-import androidx.lifecycle.lifecycleScope
 import com.example.teumteum.data.entities.TodoHomeItem
 import com.example.teumteum.databinding.DialogConfirmTodoDeleteBinding
 import com.example.teumteum.databinding.DialogConfirmTodoEditBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class TodoEditFragment : BottomSheetDialogFragment() {
 

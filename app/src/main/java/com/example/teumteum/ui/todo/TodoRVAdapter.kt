@@ -1,12 +1,12 @@
-package com.example.teumteum
+package com.example.teumteum.ui.todo
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.teumteum.R
 import com.example.teumteum.data.entities.TodoHomeItem
 import com.example.teumteum.databinding.ItemTodolistBinding
-import com.example.teumteum.ui.edit.TodoEditFragment
 
 class TodoRVAdapter(private val fragmentManager: FragmentManager, private val todoList: List<TodoHomeItem>) : RecyclerView.Adapter<TodoRVAdapter.ViewHolder>() {
 

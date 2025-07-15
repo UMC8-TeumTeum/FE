@@ -1,4 +1,4 @@
-package com.example.teumteum.ui.main
+package com.example.teumteum.ui.home
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,7 +8,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
-import com.example.teumteum.ui.register.BottomSheetRegisterFragment
 import com.example.teumteum.ui.calendar.IDateClickListener
 import com.example.teumteum.R
 import com.example.teumteum.ui.todo.TodoRVAdapter
@@ -19,6 +18,9 @@ import org.threeten.bp.LocalDate
 import org.threeten.bp.format.DateTimeFormatter
 
 import com.example.teumteum.data.entities.TodoHomeItem
+import com.example.teumteum.ui.singup.CompleteFragment
+import com.example.teumteum.ui.wish.WishlistFragment
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class HomeFragment : Fragment(), IDateClickListener {
 
@@ -69,6 +71,13 @@ class HomeFragment : Fragment(), IDateClickListener {
             bottomSheet.show(parentFragmentManager, bottomSheet.tag)
         }
 
+        binding.btnLoadWishlistTv.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, WishlistFragment())
+                .addToBackStack(null)
+                .commit()
+        }
+
         setWeeklyCalendarViewPager()
         setMonthlyCalendarViewPager()
         setCalendarModeToggleListeners()
@@ -81,6 +90,12 @@ class HomeFragment : Fragment(), IDateClickListener {
 
         adapter = TodoRVAdapter(parentFragmentManager, dummyList)
         binding.todolistRv.adapter = adapter
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
+        bottomNav?.visibility = View.VISIBLE
     }
 
     /** 주간 달력 연결 */

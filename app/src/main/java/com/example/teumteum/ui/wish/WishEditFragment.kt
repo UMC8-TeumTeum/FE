@@ -1,4 +1,4 @@
-package com.example.teumteum.ui.edit
+package com.example.teumteum.ui.wish
 
 import android.app.Dialog
 import android.os.Bundle
@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.teumteum.R
+import com.example.teumteum.data.entities.WishItem
 import com.example.teumteum.databinding.FragmentWishEditBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -33,5 +34,19 @@ class WishEditFragment : BottomSheetDialogFragment() {
         }
 
         return dialog
+    }
+
+    companion object {
+        fun newInstanceWithDummy(item: WishItem): WishEditFragment {
+            return WishEditFragment().apply {
+                arguments = Bundle().apply {
+                    putBoolean("is_dummy", true)
+                    putInt("wish_id", item.id)
+                    putString("title", item.title)
+                    putString("time", item.time)
+                    putString("category", item.category)
+                }
+            }
+        }
     }
 }

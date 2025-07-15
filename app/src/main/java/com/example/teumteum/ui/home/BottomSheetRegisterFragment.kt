@@ -1,4 +1,4 @@
-package com.example.teumteum.ui.register
+package com.example.teumteum.ui.home
 
 import android.app.Dialog
 import android.os.Bundle

@@ -2,125 +2,147 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_marginTop="68dp"
+    android:layout_marginStart="10dp"
+    android:layout_marginEnd="10dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="68dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp">
+    <ImageView
+        android:id="@+id/back_arrow_iv"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:src="@drawable/ic_back_arrow_sv"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
-        <ImageView
-            android:id="@+id/back_arrow_iv"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:src="@drawable/ic_back_arrow_sv"
-            android:layout_marginStart="16dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+    <TextView
+        android:id="@+id/wishlist_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-18dp"
+        android:layout_marginStart="12dp"
+        android:text="위시리스트"
+        android:fontFamily="@font/noto_sans_kr_medium"
+        android:textColor="@color/text_primary"
+        android:textSize="20sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/back_arrow_iv"/>
 
-        <TextView
-            android:id="@+id/wishlist_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="-18dp"
-            android:layout_marginStart="12dp"
-            android:text="위시리스트"
-            android:fontFamily="@font/noto_sans_kr_medium"
-            android:textSize="20sp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toEndOf="@id/back_arrow_iv"/>
+    <TextView
+        android:id="@+id/edit_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="편집"
+        android:fontFamily="@font/pretendard_medium"
+        android:textColor="@color/text_primary"
+        android:textSize="16sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-        <TextView
-            android:id="@+id/edit_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="편집"
-            android:fontFamily="@font/pretendard_medium"
-            android:textSize="16sp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+    <LinearLayout
+        android:id="@+id/wishlist_time_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="60dp"
+        app:layout_constraintTop_toBottomOf="@id/edit_tv"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" >
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:padding="5dp"
-            android:layout_marginTop="20dp">
-
-            <com.google.android.material.button.MaterialButton
+        <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_wishlist_time_01"
-                android:layout_width="75dp"
-                android:layout_height="45dp"
+                android:layout_width="55dp"
+                android:layout_height="35dp"
                 android:layout_weight="1"
                 android:text="전체"
                 android:textSize="12sp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginEnd="10dp"
                 android:fontFamily="@font/noto_sans_kr_medium"
                 android:textColor="@color/white"
                 android:padding="0dp"
-                app:cornerRadius="10dp"
+                android:includeFontPadding="false"
+                app:cornerRadius="8dp"
                 app:backgroundTint="@color/text_primary" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_wishlist_time_02"
-                android:layout_width="75dp"
-                android:layout_height="45dp"
+                android:layout_width="55dp"
+                android:layout_height="35dp"
                 android:layout_weight="1"
                 android:text="10m"
                 android:textSize="12sp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginEnd="10dp"
                 android:fontFamily="@font/noto_sans_kr_medium"
-                android:textColor="@color/black"
+                android:textColor="@color/text_primary"
                 android:padding="0dp"
-                app:cornerRadius="10dp"
+                android:includeFontPadding="false"
+                app:cornerRadius="8dp"
                 app:backgroundTint="@color/teumteum_line" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_wishlist_time_03"
-                android:layout_width="75dp"
-                android:layout_height="45dp"
+                android:layout_width="55dp"
+                android:layout_height="35dp"
                 android:layout_weight="1"
                 android:text="20m"
                 android:textSize="12sp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginEnd="10dp"
                 android:fontFamily="@font/noto_sans_kr_medium"
-                android:textColor="@color/black"
+                android:textColor="@color/text_primary"
                 android:padding="0dp"
-                app:cornerRadius="10dp"
+                android:includeFontPadding="false"
+                app:cornerRadius="8dp"
                 app:backgroundTint="@color/teumteum_line" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_wishlist_time_04"
-                android:layout_width="75dp"
-                android:layout_height="45dp"
+                android:layout_width="55dp"
+                android:layout_height="35dp"
                 android:layout_weight="1"
                 android:text="30m"
                 android:textSize="12sp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginEnd="10dp"
                 android:fontFamily="@font/noto_sans_kr_medium"
-                android:textColor="@color/black"
+                android:textColor="@color/text_primary"
                 android:padding="0dp"
-                app:cornerRadius="10dp"
+                android:includeFontPadding="false"
+                app:cornerRadius="8dp"
                 app:backgroundTint="@color/teumteum_line" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_wishlist_time_05"
-                android:layout_width="75dp"
-                android:layout_height="45dp"
+                android:layout_width="55dp"
+                android:layout_height="35dp"
                 android:layout_weight="1"
                 android:text="1h~"
                 android:textSize="12sp"
-                android:layout_marginEnd="8dp"
                 android:fontFamily="@font/noto_sans_kr_medium"
-                android:textColor="@color/black"
+                android:textColor="@color/text_primary"
                 android:padding="0dp"
-                app:cornerRadius="10dp"
+                android:includeFontPadding="false"
+                app:cornerRadius="8dp"
                 app:backgroundTint="@color/teumteum_line" />
 
         </LinearLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/wishlist_rv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            tools:listitem="@layout/item_wishlist"
+            android:overScrollMode="never"
+            android:orientation="vertical"
+            android:nestedScrollingEnabled="false"
+            android:clipToPadding="false"
+            android:paddingBottom="16dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintTop_toBottomOf="@id/wishlist_time_container"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
