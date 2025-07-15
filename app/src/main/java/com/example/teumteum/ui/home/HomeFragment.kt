@@ -11,19 +11,14 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.teumteum.ui.register.BottomSheetRegisterFragment
 import com.example.teumteum.ui.calendar.IDateClickListener
 import com.example.teumteum.R
-import com.example.teumteum.TodoAdapter
-import com.example.teumteum.data.local.AppDatabase
+import com.example.teumteum.ui.todo.TodoRVAdapter
 import com.example.teumteum.databinding.FragmentHomeBinding
 import com.example.teumteum.ui.calendar.CalendarMode
 
 import org.threeten.bp.LocalDate
 import org.threeten.bp.format.DateTimeFormatter
 
-import androidx.lifecycle.lifecycleScope
 import com.example.teumteum.data.entities.TodoHomeItem
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class HomeFragment : Fragment(), IDateClickListener {
 
@@ -32,7 +27,7 @@ class HomeFragment : Fragment(), IDateClickListener {
     private val today: LocalDate = LocalDate.now()
     private lateinit var selectedDate: LocalDate
 
-    private lateinit var adapter: TodoAdapter
+    private lateinit var adapter: TodoRVAdapter
 
     private var dummyList = mutableListOf(
         TodoHomeItem(1, "UX디자인 수업", "오후 12:00", "오후 2:30", isPublic = true),
@@ -84,11 +79,9 @@ class HomeFragment : Fragment(), IDateClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        adapter = TodoAdapter(dummyList, parentFragmentManager)
+        adapter = TodoRVAdapter(parentFragmentManager, dummyList)
         binding.todolistRv.adapter = adapter
-
     }
-
 
     /** 주간 달력 연결 */
     private fun setWeeklyCalendarViewPager() {
