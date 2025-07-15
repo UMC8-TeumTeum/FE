@@ -6,7 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TimePicker
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentFriend02PossibleTimeBinding
 import com.example.teumteum.ui.main.MainActivity
 import java.util.*
@@ -36,6 +38,17 @@ class Friend02PossibleTimeFragment : Fragment() {
         // 1. ViewPager2 + Adapter 연결
         adapter = FriendRequestCardAdapter(getDummyList())
         binding.requestViewPager.adapter = adapter
+
+        // 함께할래요 버튼 클릭 시 바텀시트 띄우기 + Toast 메시지
+        binding.btnFind.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, Friend02SuggestFragment())
+                .addToBackStack(null)      // 뒤로 가기 가능하게
+                .commit()
+
+            Toast.makeText(requireContext(),
+                "함께할래요 화면으로 이동합니다.", Toast.LENGTH_SHORT).show()
+        }
 
 
     }
