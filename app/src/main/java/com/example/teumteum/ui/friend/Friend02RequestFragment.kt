@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentFriend02RequestBinding
 import com.example.teumteum.ui.main.MainActivity
+import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
 import com.tbuonomo.viewpagerdotsindicator.WormDotsIndicator
 
 class Friend02RequestFragment : Fragment() {
@@ -46,7 +47,7 @@ class Friend02RequestFragment : Fragment() {
         binding.requestViewPager.adapter = adapter
 
         // 2. DotsIndicator 연결
-        val dotsIndicator: WormDotsIndicator = binding.dotsIndicator
+        val dotsIndicator: DotsIndicator = binding.dotsIndicator
         dotsIndicator.setViewPager2(binding.requestViewPager)
 
         // 3. 버튼 클릭 리스너
