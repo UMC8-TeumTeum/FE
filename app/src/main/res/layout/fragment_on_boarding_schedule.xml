@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="요일마다 반복되는\n일정이 있나요?"
-        style="@style/Header1"
+        style="@style/notoSansBold"
         android:textSize="28sp"
         android:textColor="@color/black"
         app:layout_constraintTop_toTopOf="parent"
