@@ -1,3 +1,4 @@
+import android.app.Dialog
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
@@ -8,8 +9,10 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.NumberPicker
 import androidx.core.view.isVisible
+import com.example.teumteum.R
 import com.example.teumteum.data.Schedule
 import com.example.teumteum.databinding.FragmentBottomSheetScheduleBinding
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class BottomSheetScheduleFragment(
@@ -110,6 +113,18 @@ class BottomSheetScheduleFragment(
             binding.endTimeTv.text = timeText
             binding.timePickerEndLl.isVisible = false
         }
+    }
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
+
+        dialog.setOnShowListener { dialogInterface ->
+            val bottomSheet = (dialogInterface as BottomSheetDialog)
+                .findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+            bottomSheet?.setBackgroundResource(R.drawable.calendar_background)
+        }
+
+        return dialog
     }
 
 }
