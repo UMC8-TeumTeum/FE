@@ -105,7 +105,7 @@
         android:id="@+id/field_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="직종/분야"
+        android:text="분야/직종"
         style="@style/Header2"
         android:textSize="16sp"
         android:textColor="@color/black"
