@@ -20,6 +20,7 @@ import org.threeten.bp.LocalDate
 import org.threeten.bp.format.DateTimeFormatter
 
 import androidx.lifecycle.lifecycleScope
+import com.example.teumteum.data.entities.TodoHomeItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -32,6 +33,12 @@ class HomeFragment : Fragment(), IDateClickListener {
     private lateinit var selectedDate: LocalDate
 
     private lateinit var adapter: TodoAdapter
+
+    private var dummyList = mutableListOf(
+        TodoHomeItem(1, "UX디자인 수업", "오후 12:00", "오후 2:30", isPublic = true),
+        TodoHomeItem(2, "교내 근로", "오후 3:30", "오후 5:30", isPublic = false),
+        TodoHomeItem(3, "중랑천 산책", "오후 6:30", "오후 8:00", isPublic = true)
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -76,23 +83,10 @@ class HomeFragment : Fragment(), IDateClickListener {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        adapter = TodoAdapter(emptyList(), parentFragmentManager)
+
+        adapter = TodoAdapter(dummyList, parentFragmentManager)
         binding.todolistRv.adapter = adapter
 
-        val db = AppDatabase.getInstance(requireContext())
-
-        db?.let {
-            lifecycleScope.launch {
-                // Dispatchers.IO에서 DB 접근 (비동기 처리)
-                val todoList = withContext(Dispatchers.IO) {
-                    it.todoDao().getAllHomeTodos()
-                }
-
-                // MainThread에서 어댑터 설정 (UI 작업)
-                adapter = TodoAdapter(todoList, parentFragmentManager)
-                binding.todolistRv.adapter = adapter
-            }
-        }
     }
 
 

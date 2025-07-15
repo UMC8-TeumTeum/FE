@@ -29,8 +29,8 @@ class TodoAdapter(private val todoList: List<TodoHomeItem>, private val fragment
     override fun onBindViewHolder(holder: TodoViewHolder, position: Int) {
         val item = todoList[position]
         holder.title.text = item.title
-        holder.startTime.text = item.startTime
-        holder.endTime.text = item.endTime
+        holder.startTime.text = convertTo24HourFormat(item.startTime)
+        holder.endTime.text = convertTo24HourFormat(item.endTime)
 
         if (item.isPublic) {
             holder.lockIcon.setImageResource(R.drawable.ic_unlock_sv)
@@ -39,11 +39,22 @@ class TodoAdapter(private val todoList: List<TodoHomeItem>, private val fragment
         }
 
         holder.itemView.setOnClickListener {
-            val bottomSheet = TodoEditFragment.newInstance(item.id)
+            val bottomSheet = TodoEditFragment.newInstanceWithDummy(item)
             bottomSheet.show(fragmentManager, bottomSheet.tag)
         }
 
     }
 
     override fun getItemCount(): Int = todoList.size
+
+    private fun convertTo24HourFormat(time: String): String {
+        return try {
+            val inputFormat = java.text.SimpleDateFormat("a h:mm", java.util.Locale.KOREAN)
+            val outputFormat = java.text.SimpleDateFormat("HH:mm", java.util.Locale.KOREAN)
+            val date = inputFormat.parse(time)
+            outputFormat.format(date!!)
+        } catch (e: Exception) {
+            time // 변환 실패 시 원본 반환
+        }
+    }
 }

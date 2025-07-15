@@ -30,8 +30,9 @@
                 android:layout_height="wrap_content"
                 android:text="12:00"
                 android:textSize="12sp"
+                android:layout_marginBottom="-10dp"
                 android:textColor="@color/text_primary"
-                android:fontFamily="@font/noto_sans_kr" />
+                android:fontFamily="@font/noto_sans_kr_regular" />
 
             <TextView
                 android:id="@+id/tv_end_time"
@@ -40,7 +41,7 @@
                 android:text="14:30"
                 android:textSize="12sp"
                 android:textColor="@color/teumteum_deactive"
-                android:fontFamily="@font/noto_sans_kr" />
+                android:fontFamily="@font/noto_sans_kr_regular" />
         </LinearLayout>
 
         <View
@@ -74,7 +75,7 @@
             android:id="@+id/iv_lock"
             android:layout_width="16dp"
             android:layout_height="16dp"
-            android:layout_marginStart="4dp"
+            android:layout_marginStart="6dp"
             android:src="@drawable/ic_lock_sv"
             app:layout_constraintStart_toEndOf="@id/tv_todo_title"
             app:layout_constraintTop_toTopOf="@id/tv_todo_title"
@@ -84,6 +85,7 @@
             android:id="@+id/iv_alarm"
             android:layout_width="24dp"
             android:layout_height="24dp"
+            android:layout_marginEnd="2dp"
             android:src="@drawable/ic_alarm_on_sv"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"

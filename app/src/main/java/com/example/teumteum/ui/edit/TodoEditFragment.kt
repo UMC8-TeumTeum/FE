@@ -13,6 +13,7 @@ import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isVisible
 import com.example.teumteum.R
 import com.example.teumteum.data.entities.Todo
 import com.example.teumteum.data.local.AppDatabase
@@ -21,6 +22,7 @@ import com.example.teumteum.databinding.FragmentTodoEditBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 import androidx.lifecycle.lifecycleScope
+import com.example.teumteum.data.entities.TodoHomeItem
 import com.example.teumteum.databinding.DialogConfirmTodoDeleteBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -32,12 +34,12 @@ class TodoEditFragment : BottomSheetDialogFragment() {
 
     private lateinit var binding: FragmentTodoEditBinding
 
-    private lateinit var db: AppDatabase
     private lateinit var todoDao: TodoDao
 
     private var todoId: Int = -1
     private val selectedItems = mutableSetOf<String>()
     private val alarmOptions = listOf("30분 전", "10분 전", "5분 전", "3분 전", "1분 전")
+    private var popupWindow: PopupWindow? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,14 +56,33 @@ class TodoEditFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        db = AppDatabase.getInstance(requireContext())!!
-        todoDao = db.todoDao()
+        val isDummy = arguments?.getBoolean("is_dummy") ?: false
+        if (isDummy) {
+            val title = arguments?.getString("title") ?: ""
+            val start = arguments?.getString("start_time") ?: ""
+            val end = arguments?.getString("end_time") ?: ""
+            val isPublic = arguments?.getBoolean("is_public") ?: false
 
-        lifecycleScope.launch {
-            val todo = withContext(Dispatchers.IO) {
-                todoDao.getTodoById(todoId)
-            }
-            bindTodoToUI(todo)
+            binding.todoTitleEt.setText(title)
+            binding.startTimeTv.text = start
+            binding.endTimeTv.text = end
+            binding.categoryToggle03Iv.isChecked = isPublic
+        }
+
+        setupPickers()
+
+        binding.startTimeTv.setOnClickListener {
+            val isVisibleNow = binding.timePickerStartLl.isVisible
+            if (isVisibleNow) applySelectedTime(true)
+            binding.timePickerStartLl.isVisible = !isVisibleNow
+            binding.timePickerEndLl.isVisible = false
+        }
+
+        binding.endTimeTv.setOnClickListener {
+            val isVisibleNow = binding.timePickerEndLl.isVisible
+            if (isVisibleNow) applySelectedTime(false)
+            binding.timePickerEndLl.isVisible = !isVisibleNow
+            binding.timePickerStartLl.isVisible = false
         }
 
         binding.btnPlus.setOnClickListener {
@@ -69,7 +90,6 @@ class TodoEditFragment : BottomSheetDialogFragment() {
         }
 
         binding.btnTodoSave.setOnClickListener {
-
             val titleText = binding.todoTitleEt.text.toString().trim()
 
             if (titleText.isEmpty()) {
@@ -77,26 +97,13 @@ class TodoEditFragment : BottomSheetDialogFragment() {
                 return@setOnClickListener
             }
 
-            val updatedTodo = Todo(
-                title = titleText,
-                startTime = binding.startTimeTv.text.toString(),
-                endTime = binding.endTimeTv.text.toString(),
-                alarms = selectedItems.joinToString(","),
-                isPublic = binding.categoryToggle03Iv.isChecked,
-                isIncluded = binding.categoryToggle04Iv.isChecked
-            ).apply { id = todoId }
-
-            lifecycleScope.launch {
-                withContext(Dispatchers.IO) {
-                    todoDao.updateTodo(updatedTodo)
-                }
-                Toast.makeText(requireContext(), "수정되었습니다.", Toast.LENGTH_SHORT).show()
-                dismiss()
-            }
+            // 더미 처리
+            Toast.makeText(requireContext(), "수정되었습니다. (더미)", Toast.LENGTH_SHORT).show()
+            dismiss()
         }
 
         binding.btnTodoDelete.setOnClickListener {
-            deleteTodo(todoId)
+            showDummyDeleteDialog()
         }
 
     }
@@ -257,14 +264,29 @@ class TodoEditFragment : BottomSheetDialogFragment() {
     }
 
     companion object {
-        fun newInstance(todoId: Int): TodoEditFragment {
+        fun newInstanceWithDummy(item: TodoHomeItem): TodoEditFragment {
             return TodoEditFragment().apply {
                 arguments = Bundle().apply {
-                    putInt("todo_id", todoId)
+                    putBoolean("is_dummy", true)
+                    putInt("todo_id", item.id)
+                    putString("title", item.title)
+                    putString("start_time", item.startTime)
+                    putString("end_time", item.endTime)
+                    putBoolean("is_public", item.isPublic)
                 }
             }
         }
     }
+
+//    companion object {
+//        fun newInstance(todoId: Int): TodoEditFragment {
+//            return TodoEditFragment().apply {
+//                arguments = Bundle().apply {
+//                    putInt("todo_id", todoId)
+//                }
+//            }
+//        }
+//    }
 
     private fun deleteTodo(todoId: Int) {
         val dialogBinding = DialogConfirmTodoDeleteBinding.inflate(layoutInflater)
@@ -311,5 +333,77 @@ class TodoEditFragment : BottomSheetDialogFragment() {
 
         dialog.show()
     }
+
+    private fun setupPickers() {
+        listOf(binding.ampmPicker01Np, binding.ampmPicker02Np).forEach {
+            it.minValue = 0
+            it.maxValue = 1
+            it.displayedValues = arrayOf("오전", "오후")
+        }
+        listOf(binding.hourPicker01Np, binding.hourPicker02Np).forEach {
+            it.minValue = 1
+            it.maxValue = 12
+            it.wrapSelectorWheel = true
+        }
+        listOf(binding.minutePicker01Np, binding.minutePicker02Np).forEach {
+            it.minValue = 0
+            it.maxValue = 5
+            it.displayedValues = arrayOf("00", "10", "20", "30", "40", "50")
+            it.wrapSelectorWheel = true
+        }
+    }
+
+    private fun applySelectedTime(isStart: Boolean) {
+        val ampm = if (isStart) binding.ampmPicker01Np else binding.ampmPicker02Np
+        val hour = if (isStart) binding.hourPicker01Np else binding.hourPicker02Np
+        val minute = if (isStart) binding.minutePicker01Np else binding.minutePicker02Np
+
+        val timeText = "${if (ampm.value == 0) "오전" else "오후"} ${hour.value}:${minute.displayedValues[minute.value]}"
+        if (isStart) {
+            binding.startTimeTv.text = timeText
+            binding.timePickerStartLl.isVisible = false
+        } else {
+            binding.endTimeTv.text = timeText
+            binding.timePickerEndLl.isVisible = false
+        }
+    }
+
+    private fun showDummyDeleteDialog() {
+        val dialogBinding = DialogConfirmTodoDeleteBinding.inflate(layoutInflater)
+
+        val dialog = AlertDialog.Builder(requireContext(), R.style.RoundedAlertDialog)
+            .setView(dialogBinding.root)
+            .create()
+
+        dialogBinding.todoConfirmTv.setOnClickListener {
+            Toast.makeText(requireContext(), "삭제되었습니다. (더미)", Toast.LENGTH_SHORT).show()
+            dialog.dismiss()
+            dismiss()
+        }
+
+        dialogBinding.todoCancelTv.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        dialog.setOnShowListener {
+            dialog.window?.let { window ->
+                val layoutParams = window.attributes
+                layoutParams.width = (resources.displayMetrics.widthPixels * 0.85).toInt()
+                layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
+                layoutParams.gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
+                layoutParams.y = (resources.displayMetrics.heightPixels * 0.37).toInt()
+                layoutParams.dimAmount = 0.5f
+                window.attributes = layoutParams
+
+                window.setDimAmount(0.5f)
+                window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+            }
+        }
+
+        dialog.show()
+    }
+
 
 }

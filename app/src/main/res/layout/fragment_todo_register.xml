@@ -294,8 +294,6 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-
         <ImageView
             android:id="@+id/horizon_03_iv"
             android:layout_width="match_parent"
