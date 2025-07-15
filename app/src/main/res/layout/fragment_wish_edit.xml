@@ -44,7 +44,7 @@
                 android:layout_marginTop="28dp"
                 android:minHeight="28dp"
                 android:textSize="16sp"
-                android:background="@android:color/transparent"
+                android:background="@color/transparent"
                 android:inputType="textMultiLine"
                 android:maxLines="5"
                 android:gravity="top|start" />
@@ -61,7 +61,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@android:color/white"
+                android:background="@color/white"
                 android:layout_marginTop="10dp"
                 android:padding="8dp">
 
@@ -85,7 +85,7 @@
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
                         android:text="언젠가"
-                        android:textColor="@android:color/black"
+                        android:textColor="@color/text_primary"
                         android:textSize="15sp" />
 
                 </LinearLayout>
@@ -108,7 +108,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="상세 내용 입력"
-                        android:textColorHint="@color/black"
+                        android:textColorHint="@color/text_primary"
                         android:minHeight="28dp"
                         android:textSize="15sp"
                         android:background="@android:color/transparent"
@@ -131,7 +131,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@android:color/white"
+                android:background="@color/white"
                 android:layout_marginTop="13dp"
                 android:padding="8dp">
 
@@ -148,7 +148,7 @@
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
                         android:text="해당 위시를 진행하는 데 얼마나 걸릴까요?"
-                        android:textColor="@android:color/black"
+                        android:textColor="@color/text_primary"
                         android:textSize="16sp"
                         android:fontFamily="@font/noto_sans_kr_medium" />
 
@@ -168,7 +168,7 @@
                         android:textSize="12sp"
                         android:layout_marginEnd="8dp"
                         android:fontFamily="@font/noto_sans_kr_medium"
-                        android:textColor="@color/black"
+                        android:textColor="@color/text_primary"
                         android:padding="0dp"
                         app:cornerRadius="10dp"
                         app:backgroundTint="@color/main_2" />
@@ -181,7 +181,7 @@
                         android:textSize="12sp"
                         android:layout_marginEnd="8dp"
                         android:fontFamily="@font/noto_sans_kr_medium"
-                        android:textColor="@color/black"
+                        android:textColor="@color/text_primary"
                         android:padding="0dp"
                         app:cornerRadius="10dp"
                         app:backgroundTint="@color/main_2" />
@@ -194,7 +194,7 @@
                         android:textSize="12sp"
                         android:layout_marginEnd="8dp"
                         android:fontFamily="@font/noto_sans_kr_medium"
-                        android:textColor="@color/black"
+                        android:textColor="@color/text_primary"
                         android:padding="0dp"
                         app:cornerRadius="10dp"
                         app:backgroundTint="@color/main_2" />
@@ -207,7 +207,7 @@
                         android:textSize="12sp"
                         android:layout_marginEnd="8dp"
                         android:fontFamily="@font/noto_sans_kr_medium"
-                        android:textColor="@color/black"
+                        android:textColor="@color/text_primary"
                         android:padding="0dp"
                         app:cornerRadius="10dp"
                         app:backgroundTint="@color/main_2" />
@@ -228,7 +228,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@android:color/white"
+                android:background="@color/white"
                 android:layout_marginTop="13dp"
                 android:padding="8dp">
 
@@ -245,7 +245,7 @@
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
                         android:text="위시의 카테고리를 지정해주세요"
-                        android:textColor="@android:color/black"
+                        android:textColor="@color/text_primary"
                         android:textSize="16sp"
                         android:fontFamily="@font/noto_sans_kr_medium" />
 
@@ -265,7 +265,7 @@
                         android:textSize="12sp"
                         android:layout_marginEnd="8dp"
                         android:fontFamily="@font/noto_sans_kr_medium"
-                        android:textColor="@color/black"
+                        android:textColor="@color/text_primary"
                         android:padding="0dp"
                         app:cornerRadius="10dp"
                         app:backgroundTint="@color/main_2" />
@@ -278,7 +278,7 @@
                         android:textSize="12sp"
                         android:layout_marginEnd="8dp"
                         android:fontFamily="@font/noto_sans_kr_medium"
-                        android:textColor="@color/black"
+                        android:textColor="@color/text_primary"
                         android:padding="0dp"
                         app:cornerRadius="10dp"
                         app:backgroundTint="@color/main_2" />
@@ -291,7 +291,7 @@
                         android:textSize="12sp"
                         android:layout_marginEnd="8dp"
                         android:fontFamily="@font/noto_sans_kr_medium"
-                        android:textColor="@color/black"
+                        android:textColor="@color/text_primary"
                         android:padding="0dp"
                         app:cornerRadius="10dp"
                         app:backgroundTint="@color/main_2" />
@@ -312,7 +312,7 @@
                         android:textSize="12sp"
                         android:layout_marginEnd="8dp"
                         android:fontFamily="@font/noto_sans_kr_medium"
-                        android:textColor="@color/black"
+                        android:textColor="@color/text_primary"
                         android:padding="0dp"
                         app:cornerRadius="10dp"
                         app:backgroundTint="@color/main_2" />
@@ -325,7 +325,7 @@
                         android:textSize="12sp"
                         android:layout_marginEnd="8dp"
                         android:fontFamily="@font/noto_sans_kr_medium"
-                        android:textColor="@color/black"
+                        android:textColor="@color/text_primary"
                         android:padding="0dp"
                         app:cornerRadius="10dp"
                         app:backgroundTint="@color/main_2" />
@@ -338,7 +338,7 @@
                         android:textSize="12sp"
                         android:layout_marginEnd="8dp"
                         android:fontFamily="@font/noto_sans_kr_medium"
-                        android:textColor="@color/black"
+                        android:textColor="@color/text_primary"
                         android:padding="0dp"
                         app:cornerRadius="10dp"
                         app:backgroundTint="@color/main_2" />
@@ -349,9 +349,10 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/white"
+                android:background="@color/white"
                 android:padding="8dp"
                 android:layout_marginBottom="16dp" >
+
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_wish_register"
                     android:layout_width="match_parent"
@@ -362,7 +363,7 @@
                     android:padding="12dp"
                     android:textColor="@color/white"
                     app:cornerRadius="12dp"
-                    app:backgroundTint="@color/black"
+                    app:backgroundTint="@color/text_primary"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent" />
             </FrameLayout>

@@ -25,7 +25,7 @@
             android:minHeight="28dp"
             android:textSize="20sp"
             android:fontFamily="@font/noto_sans_kr_medium"
-            android:background="@android:color/transparent"
+            android:background="@color/transparent"
             android:inputType="textMultiLine"
             android:maxLines="5"
             android:gravity="top|start" />
@@ -48,7 +48,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@android:color/white"
+            android:background="@color/white"
             android:layout_marginTop="10dp"
             android:padding="5dp" >
 
@@ -72,7 +72,7 @@
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:text="4월 2일 (수)"
-                    android:textColor="@android:color/black"
+                    android:textColor="@color/text_primary"
                     android:fontFamily="@font/noto_sans_kr_regular"
                     android:textSize="15sp" />
 
@@ -81,7 +81,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="오후 3:00"
-                    android:textColor="@android:color/black"
+                    android:textColor="@color/text_primary"
                     android:fontFamily="@font/noto_sans_kr_regular"
                     android:textSize="15sp"
                     android:clickable="true"
@@ -134,7 +134,7 @@
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:text="4월 2일 (수)"
-                    android:textColor="@android:color/black"
+                    android:textColor="@color/text_primary"
                     android:fontFamily="@font/noto_sans_kr_regular"
                     android:textSize="15sp" />
 
@@ -143,7 +143,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="오후 9:00"
-                    android:textColor="@android:color/black"
+                    android:textColor="@color/text_primary"
                     android:fontFamily="@font/noto_sans_kr_regular"
                     android:textSize="15sp"
                     android:clickable="true"
@@ -223,7 +223,7 @@
                         android:layout_height="wrap_content"
                         android:text="30분 전"
                         android:fontFamily="@font/noto_sans_kr_regular"
-                        android:textColor="@android:color/black"
+                        android:textColor="@color/text_primary"
                         android:textSize="15sp" />
 
                     <androidx.appcompat.widget.SwitchCompat
@@ -248,7 +248,7 @@
                         android:layout_height="wrap_content"
                         android:text="10분 전"
                         android:fontFamily="@font/noto_sans_kr_regular"
-                        android:textColor="@android:color/black"
+                        android:textColor="@color/text_primary"
                         android:textSize="15sp" />
 
                     <androidx.appcompat.widget.SwitchCompat
@@ -279,7 +279,7 @@
                         android:layout_height="wrap_content"
                         android:text="알림 편집하기"
                         android:fontFamily="@font/noto_sans_kr_regular"
-                        android:textColor="@android:color/black"
+                        android:textColor="@color/text_primary"
                         android:textSize="15sp" />
 
                     <ImageView
@@ -307,7 +307,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@android:color/white"
+            android:background="@color/white"
             android:layout_marginTop="10dp"
             android:padding="5dp">
 
@@ -331,7 +331,7 @@
                     android:layout_height="wrap_content"
                     android:text="공개 설정"
                     android:fontFamily="@font/noto_sans_kr_regular"
-                    android:textColor="@android:color/black"
+                    android:textColor="@color/text_primary"
                     android:textSize="15sp" />
 
                 <androidx.appcompat.widget.SwitchCompat
@@ -361,7 +361,7 @@
                     android:layout_height="wrap_content"
                     android:text="빈틈시간 기록에 포함하기"
                     android:fontFamily="@font/noto_sans_kr_regular"
-                    android:textColor="@android:color/black"
+                    android:textColor="@color/text_primary"
                     android:textSize="15sp" />
 
                 <androidx.appcompat.widget.SwitchCompat
@@ -404,10 +404,10 @@
                 android:layout_height="wrap_content"
                 android:hint="상세 내용 입력"
                 android:fontFamily="@font/noto_sans_kr_regular"
-                android:textColorHint="@color/black"
+                android:textColorHint="@color/text_primary"
                 android:minHeight="28dp"
                 android:textSize="15sp"
-                android:background="@android:color/transparent"
+                android:background="@color/transparent"
                 android:inputType="textMultiLine"
                 android:maxLines="5"
                 android:gravity="top|start" />
@@ -417,9 +417,10 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/white"
+            android:background="@color/white"
             android:padding="8dp"
             android:layout_marginBottom="30dp">
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_todo_register"
                 android:layout_width="match_parent"
@@ -430,7 +431,7 @@
                 android:layout_marginTop="22dp"
                 android:textColor="@color/white"
                 app:cornerRadius="12dp"
-                app:backgroundTint="@color/black"
+                app:backgroundTint="@color/text_primary"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
         </FrameLayout>
