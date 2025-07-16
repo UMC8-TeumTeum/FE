@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_checked="true">
+        <layer-list>
+            <item android:bottom="3.38dp" android:left="3.38dp" android:right="3.38dp" android:top="3.38dp">
+                <shape android:shape="oval">
+                    <size android:width="20.25dp" android:height="20.25dp" />
+                    <corners android:radius="45dp" />
+                    <solid android:color="@color/white" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+
+    <item android:state_checked="false">
+        <layer-list>
+            <item android:bottom="3.38dp" android:left="3.38dp" android:right="3.38dp" android:top="3.38dp">
+                <shape android:shape="oval">
+                    <size android:width="20.25dp" android:height="20.25dp" />
+                    <corners android:radius="45dp" />
+                    <solid android:color="@color/teumteum_deactive" />
+                </shape>
+            </item>
+        </layer-list>
+
+    </item>
+</selector>
