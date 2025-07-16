@@ -5,13 +5,13 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@android:color/white"
-    android:padding="16dp">
+    android:padding="25dp">
 
     <!-- 상단 뒤로가기 + 검색창 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="50dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:paddingStart="0dp"
@@ -22,6 +22,9 @@
             android:id="@+id/backButton"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="0dp"
+            android:layout_marginStart="-15dp"
             android:padding="12dp"
             android:background="@android:color/transparent"
             android:src="@drawable/ic_arrow_back"
@@ -31,10 +34,12 @@
         <EditText
             android:id="@+id/searchEditText"
             android:layout_width="0dp"
-            android:layout_height="40dp"
+            android:layout_height="50dp"
             android:layout_weight="1"
-            android:layout_marginStart="4dp"
-            android:background="#F7F7F7"
+            android:layout_marginStart="2dp"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="0dp"
+            android:background="@drawable/friend_search_edittext_bg"
             android:hint="닉네임을 입력하세요."
             android:drawableStart="@drawable/friend01_search"
             android:drawablePadding="8dp"
@@ -51,7 +56,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="0dp"
+        android:layout_marginTop="-8dp"
         android:lineSpacingExtra="0dp"
         android:includeFontPadding="false"
         android:orientation="horizontal">
@@ -70,6 +75,7 @@
             android:layout_width="wrap_content"
             android:layout_height="48dp"
             android:minWidth="48dp"
+            android:layout_marginRight="-13dp"
             android:text="삭제"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
@@ -83,20 +89,24 @@
 
     </LinearLayout>
 
+    <!-- 🔽 여기에 추가 -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="6dp"
+        android:background="#EAEAEA" />
+
     <!-- 최근 검색어 리스트 -->
     <LinearLayout
         android:id="@+id/recentSearchList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginTop="5dp">
+        android:layout_marginTop="-3dp">
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#EAEAEA"/>
 
-<!--        <TextView-->
+
+        <!--        <TextView-->
 <!--            android:layout_width="match_parent"-->
 <!--            android:layout_height="wrap_content"-->
 <!--            android:text="미나리"-->
