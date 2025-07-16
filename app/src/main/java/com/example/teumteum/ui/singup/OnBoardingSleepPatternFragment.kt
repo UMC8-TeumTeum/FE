@@ -40,7 +40,11 @@ class OnBoardingSleepPatternFragment : Fragment() {
         (activity as? SignUpActivity)?.setProgressBar(75)
 
         binding.nextBtn.setOnClickListener {
-            startActivity(Intent(requireContext(), MainActivity::class.java))
+//            startActivity(Intent(requireContext(), MainActivity::class.java))
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, OnBoardingRemindFragment())
+                .addToBackStack(null)
+                .commit()
         }
 
         binding.sleepStartContainer.setOnClickListener {
