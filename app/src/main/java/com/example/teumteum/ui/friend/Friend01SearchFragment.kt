@@ -75,14 +75,13 @@ class Friend01SearchFragment : Fragment() {
     }
 
     private fun updateSearchList() {
-        binding.recentSearchList.removeAllViews() // 기존 뷰들 삭제
+        binding.recentSearchList.removeAllViews()
 
         for ((index, keyword) in recentKeywords.withIndex()) {
-            // 최근 검색어 텍스트뷰 생성
             val textView = TextView(requireContext()).apply {
                 text = keyword
                 textSize = 16f
-                setPadding(0, 12, 0, 12)
+                setPadding(0, 2, 0, 2)
                 setTextColor(Color.parseColor("#0F0F0F"))
                 typeface = ResourcesCompat.getFont(requireContext(), R.font.noto_sans_kr_medium)
                 layoutParams = LinearLayout.LayoutParams(
@@ -93,20 +92,21 @@ class Friend01SearchFragment : Fragment() {
 
             binding.recentSearchList.addView(textView)
 
-            // 마지막 항목 뒤에는 선 안 추가
-            if (index < recentKeywords.size - 1) {
-                val dividerHeightPx = (1 * resources.displayMetrics.density).toInt().coerceAtLeast(1)
-                val divider = View(requireContext()).apply {
-                    layoutParams = LinearLayout.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        dividerHeightPx
-                    )
-                    setBackgroundColor(Color.parseColor("#EAEAEA"))
+            // ✅ 항상 선 추가 (마지막 항목도 포함)
+            val dividerHeightPx = (1.2 * resources.displayMetrics.density).toInt().coerceAtLeast(1)
+            val divider = View(requireContext()).apply {
+                layoutParams = LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    dividerHeightPx
+                ).apply {
+                    topMargin = (0.5f * resources.displayMetrics.density).toInt()
                 }
-                binding.recentSearchList.addView(divider)
+                setBackgroundColor(Color.parseColor("#EAEAEA"))
             }
+            binding.recentSearchList.addView(divider)
         }
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
