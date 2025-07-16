@@ -29,7 +29,13 @@ class WishlistFragment(private val wishlist: MutableList<WishItem>) : Fragment()
                 .replace(R.id.main_frm, WishlistEditFragment(wishlist))
                 .addToBackStack(null)
                 .commit()
-        } 
+        }
+
+        binding.fabAddIv.setOnClickListener {
+            val bottomSheet = WishOnlyBottomSheetFragment()
+            bottomSheet.show(parentFragmentManager, bottomSheet.tag)
+        }
+
         return binding.root
     }
 

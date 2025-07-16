@@ -49,9 +49,10 @@
                         android:id="@+id/todo_title_et"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="새로운 투두를 작성해주세요"
+                        android:hint="제목"
                         android:minHeight="28dp"
                         android:textSize="20sp"
+                        android:textColorHint="@color/text_primary"
                         android:fontFamily="@font/noto_sans_kr_medium"
                         android:background="@color/transparent"
                         android:inputType="textMultiLine"
@@ -334,7 +335,7 @@
                         android:orientation="vertical"
                         android:background="@color/white"
                         android:layout_marginTop="10dp"
-                        android:padding="8dp">
+                        android:padding="5dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -412,8 +413,8 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:layout_marginTop="10dp"
-                        android:layout_marginBottom="15dp"
-                        android:padding="8dp" >
+                        android:layout_marginBottom="55dp"
+                        android:padding="5dp" >
 
                         <ImageView
                             android:id="@+id/detail_text_iv"
@@ -439,48 +440,40 @@
 
                     </LinearLayout>
 
-                    <FrameLayout
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@color/white"
-                        android:padding="8dp"
-                        android:layout_marginBottom="30dp">
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center"
-                            android:weightSum="2">
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:weightSum="2">
 
-                            <com.google.android.material.button.MaterialButton
-                                android:id="@+id/btn_todo_delete"
-                                android:layout_width="0dp"
-                                android:layout_height="65dp"
-                                android:layout_weight="1"
-                                android:text="삭제"
-                                android:textColor="@color/text_primary"
-                                android:textSize="16sp"
-                                android:fontFamily="@font/noto_sans_kr_medium"
-                                app:cornerRadius="12dp"
-                                app:backgroundTint="@color/teumteum_bg"
-                                android:layout_marginEnd="8dp" />
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_todo_delete"
+                            android:layout_width="0dp"
+                            android:layout_height="65dp"
+                            android:layout_weight="1"
+                            android:text="삭제"
+                            android:textColor="@color/text_primary"
+                            android:textSize="16sp"
+                            android:fontFamily="@font/noto_sans_kr_medium"
+                            app:cornerRadius="12dp"
+                            app:backgroundTint="@color/teumteum_bg"
+                            android:layout_marginEnd="8dp"/>
 
-                            <com.google.android.material.button.MaterialButton
-                                android:id="@+id/btn_todo_save"
-                                android:layout_width="0dp"
-                                android:layout_height="65dp"
-                                android:layout_weight="1"
-                                android:text="저장"
-                                android:textColor="@color/white"
-                                android:textSize="16sp"
-                                android:fontFamily="@font/noto_sans_kr_medium"
-                                app:cornerRadius="12dp"
-                                app:backgroundTint="@color/text_primary"
-                                android:layout_marginStart="8dp" />
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_todo_save"
+                            android:layout_width="0dp"
+                            android:layout_height="65dp"
+                            android:layout_weight="1"
+                            android:text="저장"
+                            android:textColor="@color/white"
+                            android:textSize="16sp"
+                            android:fontFamily="@font/noto_sans_kr_medium"
+                            app:cornerRadius="12dp"
+                            app:backgroundTint="@color/text_primary"
+                            android:layout_marginStart="8dp" />
 
-                        </LinearLayout>
-                    </FrameLayout>
-
+                    </LinearLayout>
                 </LinearLayout>
             </androidx.core.widget.NestedScrollView>
         </LinearLayout>

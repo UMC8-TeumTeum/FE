@@ -29,7 +29,7 @@ class TodoRVAdapter(private val fragmentManager: FragmentManager, private val to
         )
 
         binding.root.setOnClickListener {
-            val bottomSheet = TodoEditFragment.newInstanceWithDummy(item)
+            val bottomSheet = TodoEditFragment.newInstanceWithTodoDummy(item)
             bottomSheet.show(fragmentManager, bottomSheet.tag)
         }
 

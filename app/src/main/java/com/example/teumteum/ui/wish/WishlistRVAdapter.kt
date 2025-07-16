@@ -22,7 +22,7 @@ class WishlistRVAdapter(private val wishlist: List<WishItem>, private val fragme
         binding.tvWishTitle.text = item.title
 
         binding.root.setOnClickListener {
-            val bottomSheet = WishEditFragment.newInstanceWithDummy(item)
+            val bottomSheet = WishEditFragment.newInstanceWithWishDummy(item)
             bottomSheet.show(fragmentManager, bottomSheet.tag)
         }
     }

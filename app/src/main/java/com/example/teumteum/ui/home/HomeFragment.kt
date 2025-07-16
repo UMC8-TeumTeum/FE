@@ -19,7 +19,6 @@ import org.threeten.bp.format.DateTimeFormatter
 
 import com.example.teumteum.data.entities.TodoHomeItem
 import com.example.teumteum.data.entities.WishItem
-import com.example.teumteum.ui.singup.CompleteFragment
 import com.example.teumteum.ui.wish.WishlistFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 

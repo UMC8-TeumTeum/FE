@@ -98,7 +98,7 @@ class TodoEditFragment : BottomSheetDialogFragment() {
         }
 
         binding.btnTodoDelete.setOnClickListener {
-            showDummyDeleteDialog()
+            showTodoDummyDeleteDialog()
         }
 
     }
@@ -134,7 +134,7 @@ class TodoEditFragment : BottomSheetDialogFragment() {
 
         dialog.setOnKeyListener { _, keyCode, event ->
             if (keyCode == android.view.KeyEvent.KEYCODE_BACK && event.action == android.view.KeyEvent.ACTION_UP) {
-                showCancelEditDialog()
+                showTodoCancelEditDialog()
                 true
             } else {
                 false
@@ -143,28 +143,6 @@ class TodoEditFragment : BottomSheetDialogFragment() {
 
         return dialog
     }
-
-//    private fun bindTodoToUI(todo: Todo) {
-//        binding.todoTitleEt.setText(todo.title)
-//        binding.startTimeTv.text = todo.startTime
-//        binding.endTimeTv.text = todo.endTime
-//        binding.categoryToggle03Iv.isChecked = todo.isPublic
-//        binding.categoryToggle04Iv.isChecked = todo.isIncluded
-//
-//        // 알람 설정
-//        val alarms = todo.alarms.split(",").map { it.trim() }
-//        selectedItems.clear()
-//        selectedItems.addAll(alarms)
-//
-//        // UI 초기화
-//        binding.alarmLayoutContainer.removeAllViews()
-//        binding.alarmItem01Ll.visibility = View.GONE
-//        binding.alarmItem02Ll.visibility = View.GONE
-//
-//        alarms.forEach { label ->
-//            addAlarmItem(label)
-//        }
-//    }
 
     private fun showAlarmPopupWindow(anchor: View) {
         if (popupWindow?.isShowing == true) {
@@ -275,7 +253,7 @@ class TodoEditFragment : BottomSheetDialogFragment() {
     }
 
     companion object {
-        fun newInstanceWithDummy(item: TodoHomeItem): TodoEditFragment {
+        fun newInstanceWithTodoDummy(item: TodoHomeItem): TodoEditFragment {
             return TodoEditFragment().apply {
                 arguments = Bundle().apply {
                     putBoolean("is_dummy", true)
@@ -323,7 +301,7 @@ class TodoEditFragment : BottomSheetDialogFragment() {
         }
     }
 
-    private fun showDummyDeleteDialog() {
+    private fun showTodoDummyDeleteDialog() {
         val dialogBinding = DialogConfirmTodoDeleteBinding.inflate(layoutInflater)
 
         val dialog = AlertDialog.Builder(requireContext(), R.style.RoundedAlertDialog)
@@ -360,7 +338,7 @@ class TodoEditFragment : BottomSheetDialogFragment() {
         dialog.show()
     }
 
-    private fun showCancelEditDialog() {
+    private fun showTodoCancelEditDialog() {
         val dialogBinding = DialogConfirmTodoEditBinding.inflate(layoutInflater)
 
         val dialog = AlertDialog.Builder(requireContext(), R.style.RoundedAlertDialog)
