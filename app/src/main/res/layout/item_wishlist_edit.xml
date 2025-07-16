@@ -52,22 +52,15 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/fill_button"
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/wish_checkbox"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
-            android:layout_marginEnd="5dp"
-            android:text="빈틈 채우기"
-            android:textColor="@color/text_secondary"
-            android:textSize="12sp"
-            android:paddingHorizontal="20dp"
-            app:cornerRadius="30dp"
-            app:backgroundTint="@color/teumteum_line"
-            app:strokeWidth="0dp"
-            app:elevation="0dp"
-            android:fontFamily="@font/pretendard_medium"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            android:buttonTint="@color/deactive"
+            app:layout_constraintTop_toTopOf="@id/tv_wish_title"
+            app:layout_constraintBottom_toBottomOf="@id/tv_wish_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:minWidth="0dp" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

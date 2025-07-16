@@ -4,5 +4,6 @@ data class WishItem(
     val id: Int,
     val title: String,
     val time: String,
-    val category: String
+    val category: String,
+    var isChecked: Boolean = false
 )

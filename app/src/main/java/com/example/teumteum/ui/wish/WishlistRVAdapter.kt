@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.teumteum.data.entities.WishItem
 import com.example.teumteum.databinding.ItemWishlistBinding
 
-class WishRVAdapter(private val wishlist: List<WishItem>, private val fragmentManager: FragmentManager) : RecyclerView.Adapter<WishRVAdapter.ViewHolder>() {
+class WishlistRVAdapter(private val wishlist: List<WishItem>, private val fragmentManager: FragmentManager) : RecyclerView.Adapter<WishlistRVAdapter.ViewHolder>() {
 
     inner class ViewHolder(val binding: ItemWishlistBinding) : RecyclerView.ViewHolder(binding.root)
 
