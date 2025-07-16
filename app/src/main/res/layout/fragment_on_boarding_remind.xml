@@ -77,12 +77,211 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/remind_1m_cl"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_remind_bg"
+            android:paddingStart="20dp"
+            android:paddingEnd="11dp"
             >
+
+            <TextView
+                android:id="@+id/remind_1m_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1분 전"
+                style="@style/Md15Medium"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="14dp"
+                android:includeFontPadding="false"/>
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/remind_1m_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:switchMinWidth="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:trackTint="@null"
+                app:thumbTint="@null"
+                android:thumb="@drawable/btn_remind_toggle_thumb"
+                app:track="@drawable/btn_remind_toggle_track"
+                />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/remind_3m_cl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_remind_bg"
+            android:paddingStart="20dp"
+            android:paddingEnd="11dp"
+            android:layout_marginTop="14dp"
+            >
+
+            <TextView
+                android:id="@+id/remind_3m_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="3분 전"
+                style="@style/Md15Medium"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="14dp"
+                android:includeFontPadding="false"/>
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/remind_3m_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:switchMinWidth="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:trackTint="@null"
+                app:thumbTint="@null"
+                android:thumb="@drawable/btn_remind_toggle_thumb"
+                app:track="@drawable/btn_remind_toggle_track"
+                />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/remind_5m_cl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_remind_bg"
+            android:paddingStart="20dp"
+            android:paddingEnd="11dp"
+            android:layout_marginTop="14dp"
+            >
+
+            <TextView
+                android:id="@+id/remind_5m_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="5분 전"
+                style="@style/Md15Medium"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="14dp"
+                android:includeFontPadding="false"/>
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/remind_5m_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:switchMinWidth="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:trackTint="@null"
+                app:thumbTint="@null"
+                android:thumb="@drawable/btn_remind_toggle_thumb"
+                app:track="@drawable/btn_remind_toggle_track"
+                />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/remind_10m_cl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_remind_bg"
+            android:paddingStart="20dp"
+            android:paddingEnd="11dp"
+            android:layout_marginTop="14dp"
+            >
+
+            <TextView
+                android:id="@+id/remind_10m_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="10분 전"
+                style="@style/Md15Medium"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="14dp"
+                android:includeFontPadding="false"/>
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/remind_10m_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:switchMinWidth="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:trackTint="@null"
+                app:thumbTint="@null"
+                android:thumb="@drawable/btn_remind_toggle_thumb"
+                app:track="@drawable/btn_remind_toggle_track"
+                />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/remind_30m_cl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_remind_bg"
+            android:paddingStart="20dp"
+            android:paddingEnd="11dp"
+            android:layout_marginTop="14dp"
+            >
+
+            <TextView
+                android:id="@+id/remind_30m_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="30분 전"
+                style="@style/Md15Medium"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="14dp"
+                android:includeFontPadding="false"/>
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/remind_30m_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:switchMinWidth="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:trackTint="@null"
+                app:thumbTint="@null"
+                android:thumb="@drawable/btn_remind_toggle_thumb"
+                app:track="@drawable/btn_remind_toggle_track"
+                />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </LinearLayout>
 

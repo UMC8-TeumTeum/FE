@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentOnBoardingRemindBinding
+import com.example.teumteum.ui.main.MainActivity
 
 class OnBoardingRemindFragment : Fragment() {
 
@@ -30,6 +31,9 @@ class OnBoardingRemindFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         (activity as? SignUpActivity)?.setProgressBar(100)
 
+        binding.nextBtn.setOnClickListener {
+            startActivity(Intent(requireContext(), MainActivity::class.java))
+        }
 
     }
 
