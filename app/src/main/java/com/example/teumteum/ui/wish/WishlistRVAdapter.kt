@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.teumteum.data.entities.WishItem
 import com.example.teumteum.databinding.ItemWishlistBinding
 
-class WishlistRVAdapter(private val wishlist: List<WishItem>, private val fragmentManager: FragmentManager) : RecyclerView.Adapter<WishlistRVAdapter.ViewHolder>() {
+class WishlistRVAdapter(private var wishlist: List<WishItem>, private val fragmentManager: FragmentManager) : RecyclerView.Adapter<WishlistRVAdapter.ViewHolder>() {
 
     inner class ViewHolder(val binding: ItemWishlistBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -20,6 +20,7 @@ class WishlistRVAdapter(private val wishlist: List<WishItem>, private val fragme
         val item = wishlist[position]
         val binding = holder.binding
         binding.tvWishTitle.text = item.title
+        binding.wishTimeTv.text = item.time
 
         binding.root.setOnClickListener {
             val bottomSheet = WishEditFragment.newInstanceWithWishDummy(item)
@@ -28,4 +29,9 @@ class WishlistRVAdapter(private val wishlist: List<WishItem>, private val fragme
     }
 
     override fun getItemCount(): Int = wishlist.size
+
+    fun updateList(newList: List<WishItem>) {
+        wishlist = newList.toMutableList()
+        notifyDataSetChanged()
+    }
 }
