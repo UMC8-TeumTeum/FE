@@ -59,4 +59,21 @@
         <item name="android:textSize">11sp</item>
     </style>
 
+    <!-- Noto Sans textsize 제거 -->
+    <style name="notoSansBold">
+        <item name="fontFamily">@font/noto_sans_kr_bold</item>
+    </style>
+
+    <style name="notoSansSemiBold">
+        <item name="fontFamily">@font/noto_sans_kr_semibold</item>
+    </style>
+
+    <style name="notoSansMedium">
+        <item name="fontFamily">@font/noto_sans_kr_medium</item>
+    </style>
+
+    <style name="notoSansRegular">
+        <item name="fontFamily">@font/noto_sans_kr_regular</item>
+    </style>
+
 </resources>
