@@ -4,7 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import com.example.teumteum.ui.singup.SignUpActivity
+import com.example.teumteum.ui.signup.SignUpActivity
 import com.example.teumteum.databinding.ActivityLoginBinding
 
 class LoginActivity : AppCompatActivity() {

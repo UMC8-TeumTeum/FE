@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".ui.singup.SignUpActivity">
+    tools:context=".ui.signup.SignUpActivity">
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragment_container"
@@ -16,7 +16,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:name="com.example.teumteum.ui.singup.AgreementFragment"
+        android:name="com.example.teumteum.ui.signup.AgreementFragment"
         />
 
     <!-- 상단 진행바 -->

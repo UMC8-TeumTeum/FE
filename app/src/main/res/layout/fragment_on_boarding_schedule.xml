@@ -6,14 +6,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".ui.singup.OnBoardingScheduleFragment">
+    tools:context=".ui.signup.OnBoardingScheduleFragment">
 
     <TextView
         android:id="@+id/title_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="요일마다 반복되는\n일정이 있나요?"
-        style="@style/Header1"
+        style="@style/notoSansBold"
         android:textSize="28sp"
         android:textColor="@color/black"
         app:layout_constraintTop_toTopOf="parent"
@@ -173,7 +173,7 @@
         android:layout_height="wrap_content"
         android:text="다음으로"
         style="@style/Md16"
-        app:cornerRadius="8dp"
+        app:cornerRadius="12dp"
         android:backgroundTint="@color/black"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
