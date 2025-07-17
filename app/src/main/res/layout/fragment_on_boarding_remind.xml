@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="시작 전에 알려드릴게요"
-        style="@style/Header1"
+        style="@style/notoSansBold"
         android:textSize="28sp"
         android:textColor="@color/black"
         app:layout_constraintTop_toTopOf="parent"
