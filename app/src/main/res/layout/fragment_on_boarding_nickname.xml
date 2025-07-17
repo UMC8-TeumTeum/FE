@@ -5,14 +5,14 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white"
-    tools:context=".ui.singup.OnBoardingNicknameFragment">
+    tools:context=".ui.signup.OnBoardingNicknameFragment">
 
     <TextView
         android:id="@+id/title_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="안녕하세요!"
-        style="@style/Header1"
+        style="@style/notoSansBold"
         android:textSize="28sp"
         android:textColor="@color/black"
         app:layout_constraintTop_toTopOf="parent"
@@ -105,7 +105,7 @@
         android:id="@+id/field_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="직종/분야"
+        android:text="분야/직종"
         style="@style/Header2"
         android:textSize="16sp"
         android:textColor="@color/black"
@@ -158,14 +158,16 @@
         android:layout_height="wrap_content"
         android:text="다음으로"
         style="@style/Md16"
-        app:cornerRadius="8dp"
-        android:backgroundTint="@color/black"
+        android:textColor="#0F0F0F"
+        app:cornerRadius="12dp"
+        android:backgroundTint="#F6F6F6"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginStart="19dp"
         android:layout_marginEnd="19dp"
         android:layout_marginBottom="18.5dp"
+        android:enabled="false"
         />
 
 

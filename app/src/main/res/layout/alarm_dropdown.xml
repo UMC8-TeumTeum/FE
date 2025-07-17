@@ -17,7 +17,7 @@
         android:textSize="12sp"
         android:layout_marginBottom="-5dp"
         android:fontFamily="@font/noto_sans_kr_regular"
-        android:textColor="@android:color/black" />
+        android:textColor="@color/text_primary" />
 
     <ImageView
         android:id="@+id/check_icon"

@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white"
-    tools:context=".ui.singup.CompleteFragment"
+    tools:context=".ui.signup.CompleteFragment"
     >
 
     <!-- 제목 -->
@@ -14,7 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="만나서 반가워요!"
-        style="@style/Header1"
+        style="@style/notoSansBold"
         android:textSize="28sp"
         android:textColor="@color/black"
         app:layout_constraintTop_toTopOf="parent"
@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:text="완료했어요"
         style="@style/Md16"
-        app:cornerRadius="8dp"
+        app:cornerRadius="12dp"
         android:backgroundTint="@color/black"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

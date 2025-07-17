@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="60dp"
+    android:layout_height="70dp"
     android:orientation="horizontal"
-    android:paddingHorizontal="12dp"
+    android:paddingHorizontal="10dp"
     android:gravity="center_vertical">
 
     <!-- 별 아이콘 -->
@@ -20,6 +20,7 @@
         android:id="@+id/profileLayout"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:layout_marginLeft="-8dp"
         android:orientation="vertical"
         android:gravity="center"
         android:background="@drawable/freind01_circle_profile">
@@ -64,8 +65,8 @@
     <!-- 비행기 아이콘 -->
     <ImageButton
         android:id="@+id/sendBtn"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
         android:src="@drawable/friend01_following_send"
         android:background="@android:color/transparent"
         android:scaleType="centerInside" />

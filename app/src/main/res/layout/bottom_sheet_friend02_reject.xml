@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="360dp"
+    android:layout_height="wrap_content"
+    android:maxHeight="360dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="@drawable/friend_bg_bottom_sheet"
-    android:paddingTop="24dp"
+    android:paddingTop="10dp"
     android:paddingBottom="24dp"
     android:paddingStart="32dp"
     android:paddingEnd="32dp"
     android:gravity="center_horizontal">
 
     <View
-        android:layout_width="74dp"
+        android:layout_width="54dp"
         android:layout_height="4dp"
+        android:layout_marginTop="0dp"
         android:layout_marginBottom="16dp"
         android:background="@drawable/friend_bottom_sheet_handle" />
 
@@ -21,10 +23,13 @@
         android:id="@+id/rejectTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:lineSpacingExtra="0dp"
+        android:includeFontPadding="false"
         android:text="요청된 틈을 거절하시겠어요?"
         android:textColor="#0F0F0F"
         android:textSize="20sp"
         android:fontFamily="@font/noto_sans_kr_medium"
+        android:layout_marginTop="20dp"
         android:layout_marginBottom="20dp" />
 
     <!-- 선택된 메시지 -->
@@ -37,6 +42,7 @@
         app:cornerRadius="12dp"
         android:textSize="14sp"
         android:layout_marginBottom="12dp"
+        android:gravity="start|center_vertical"
         app:strokeColor="#7770FE"
         app:strokeWidth="0dp"
         app:backgroundTint="#F6F6F6"
@@ -51,6 +57,7 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:text="가능한 다른 시간대 제안하기"
+        android:gravity="start|center_vertical"
         android:textColor="#0F0F0F"
         app:cornerRadius="12dp"
         android:textSize="14sp"

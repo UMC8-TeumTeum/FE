@@ -11,6 +11,7 @@ import com.example.teumteum.ui.friend.FriendFragment
 import com.example.teumteum.ui.myhome.MyhomeFragment
 import com.example.teumteum.R
 import com.example.teumteum.databinding.ActivityMainBinding
+import com.example.teumteum.ui.home.HomeFragment
 
 class MainActivity : AppCompatActivity() {
 
