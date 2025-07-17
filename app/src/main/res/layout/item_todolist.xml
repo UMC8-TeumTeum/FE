@@ -50,10 +50,10 @@
             android:layout_height="40dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
-            android:background="#D3D3D3"
+            android:background="@color/teumteum_line"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/todo_time_layout" />
+            app:layout_constraintStart_toEndOf="@id/todo_time_layout" />
 
         <TextView
             android:id="@+id/tv_todo_title"

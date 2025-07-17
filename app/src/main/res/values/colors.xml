@@ -21,7 +21,7 @@
     <color name="line">#DFE2E3</color>
     <color name="bg">#F0F0F0</color>
 
-    <color name="transparent">#00ff0000</color>
+    <color name="transparent">#00000000</color>
 
     <color name="Jblue">#20DDF4</color>
 

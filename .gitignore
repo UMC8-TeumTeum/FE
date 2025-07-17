@@ -75,6 +75,7 @@ gen-external-apklibs
 bin/
 gen/
 out/
+schemas/
 
 # Gradle files
 .gradle

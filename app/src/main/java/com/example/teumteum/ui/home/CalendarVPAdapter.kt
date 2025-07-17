@@ -1,4 +1,4 @@
-package com.example.teumteum.ui.main
+package com.example.teumteum.ui.home
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
