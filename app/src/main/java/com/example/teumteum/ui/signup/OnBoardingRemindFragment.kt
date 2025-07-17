@@ -1,4 +1,4 @@
-package com.example.teumteum.ui.singup
+package com.example.teumteum.ui.signup
 
 import android.content.Intent
 import android.os.Bundle
@@ -6,7 +6,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentOnBoardingRemindBinding
 import com.example.teumteum.ui.main.MainActivity
 

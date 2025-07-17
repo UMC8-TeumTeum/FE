@@ -1,4 +1,4 @@
-package com.example.teumteum.ui.singup
+package com.example.teumteum.ui.signup
 
 import android.graphics.Color
 import android.os.Bundle

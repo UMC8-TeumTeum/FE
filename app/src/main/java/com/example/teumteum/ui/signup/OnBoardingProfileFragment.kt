@@ -1,6 +1,5 @@
-package com.example.teumteum.ui.singup
+package com.example.teumteum.ui.signup
 
-import android.R.attr.fragment
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -12,7 +11,6 @@ import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentOnBoardingProfileBinding
-import com.example.teumteum.ui.main.MainActivity
 
 class OnBoardingProfileFragment : Fragment() {
 

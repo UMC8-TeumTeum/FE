@@ -1,6 +1,5 @@
-package com.example.teumteum.ui.singup
+package com.example.teumteum.ui.signup
 
-import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -12,7 +11,6 @@ import android.widget.NumberPicker
 import android.widget.TextView
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentOnBoardingSleepPatternBinding
-import com.example.teumteum.ui.main.MainActivity
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
 class OnBoardingSleepPatternFragment : Fragment() {

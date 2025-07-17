@@ -1,4 +1,4 @@
-package com.example.teumteum.ui.singup
+package com.example.teumteum.ui.signup
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

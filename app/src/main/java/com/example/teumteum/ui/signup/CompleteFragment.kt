@@ -1,4 +1,4 @@
-package com.example.teumteum.ui.singup
+package com.example.teumteum.ui.signup
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
