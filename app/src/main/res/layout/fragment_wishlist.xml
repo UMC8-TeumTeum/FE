@@ -39,7 +39,7 @@
         android:id="@+id/edit_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="12dp"
+        android:layout_marginEnd="15dp"
         android:text="편집"
         android:fontFamily="@font/pretendard_medium"
         android:textColor="@color/text_primary"
