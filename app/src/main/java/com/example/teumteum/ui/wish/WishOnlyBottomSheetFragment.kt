@@ -1,4 +1,4 @@
-package com.example.teumteum.ui.register
+package com.example.teumteum.ui.wish
 
 import android.app.Dialog
 import android.os.Bundle
@@ -11,10 +11,9 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-class BottomSheetRegisterFragment : BottomSheetDialogFragment() {
+class WishOnlyBottomSheetFragment : BottomSheetDialogFragment() {
 
-    lateinit var binding: FragmentBottomSheetRegisterBinding
-    private var isTodoSelected = true
+    private lateinit var binding: FragmentBottomSheetRegisterBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -23,39 +22,13 @@ class BottomSheetRegisterFragment : BottomSheetDialogFragment() {
     ): View {
         binding = FragmentBottomSheetRegisterBinding.inflate(inflater, container, false)
 
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        binding.btnTodo.visibility = View.GONE
 
         childFragmentManager.beginTransaction()
-            .replace(R.id.register_fragment_container, TodoRegisterFragment())
+            .replace(R.id.register_fragment_container, WishRegisterFragment())
             .commit()
 
-        binding.btnTodo.setOnClickListener {
-            if (!isTodoSelected) {
-                binding.btnTodo.setImageResource(R.drawable.btn_todo_active_sv)
-                binding.btnWish.setImageResource(R.drawable.btn_wish_deactive_sv)
-                isTodoSelected = true
-
-                childFragmentManager.beginTransaction()
-                    .replace(R.id.register_fragment_container, TodoRegisterFragment())
-                    .commit()
-            }
-        }
-
-        binding.btnWish.setOnClickListener {
-            if (isTodoSelected) {
-                binding.btnTodo.setImageResource(R.drawable.btn_todo_deactive_sv)
-                binding.btnWish.setImageResource(R.drawable.btn_wish_active_sv)
-                isTodoSelected = false
-
-                childFragmentManager.beginTransaction()
-                    .replace(R.id.register_fragment_container, WishRegisterFragment())
-                    .commit()
-            }
-        }
+        return binding.root
     }
 
     override fun onStart() {
@@ -73,7 +46,7 @@ class BottomSheetRegisterFragment : BottomSheetDialogFragment() {
                 val behavior = BottomSheetBehavior.from(it)
                 behavior.peekHeight = desiredHeight
                 behavior.state = BottomSheetBehavior.STATE_COLLAPSED
-                behavior.isDraggable = false // 확장 불가능
+                behavior.isDraggable = false
             }
         }
     }

@@ -1,4 +1,4 @@
-package com.example.teumteum.ui.register
+package com.example.teumteum.ui.wish
 
 import android.content.res.ColorStateList
 import android.os.Bundle
