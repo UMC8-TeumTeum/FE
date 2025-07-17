@@ -367,12 +367,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
+            android:layout_marginTop="10dp"
             android:orientation="horizontal"
-            android:padding="12dp"
+            android:padding="10dp"
             android:background="@color/white"
-            android:weightSum="2"
-            android:elevation="8dp"
-            android:layout_marginTop="10dp">
+            android:weightSum="2">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_wish_delete"

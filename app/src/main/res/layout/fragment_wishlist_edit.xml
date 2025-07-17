@@ -79,6 +79,7 @@
                 android:layout_marginTop="22dp"
                 android:nestedScrollingEnabled="false"
                 android:overScrollMode="never"
+                android:clipToPadding="false"
                 tools:listitem="@layout/item_wishlist_edit"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
         </LinearLayout>
@@ -92,8 +93,7 @@
         android:orientation="horizontal"
         android:padding="12dp"
         android:background="@color/white"
-        android:weightSum="2"
-        android:elevation="8dp">
+        android:weightSum="2">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_wish_cancel"
