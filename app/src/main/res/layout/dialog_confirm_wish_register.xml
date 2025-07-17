@@ -16,7 +16,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="투두를"
+            android:text="선택한 시간에"
             android:textSize="18sp"
             android:fontFamily="@font/noto_sans_kr_medium"
             android:textColor="@color/text_primary" />
@@ -24,25 +24,17 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=" 삭제"
+            android:text=" 이미 투두가 있어요!"
             android:textSize="18sp"
             android:fontFamily="@font/noto_sans_kr_medium"
             android:textColor="@color/main_1" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="할까요?"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:fontFamily="@font/noto_sans_kr_medium"
-            android:textColor="@color/text_primary" />
     </LinearLayout>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="삭제 후 되돌리기 어려워요"
+        android:text="투두와 겹치게 등록할까요?"
         android:textSize="15sp"
         android:fontFamily="@font/noto_sans_kr_regular"
         android:textColor="@color/text_secondary"
@@ -66,7 +58,7 @@
         android:layout_marginBottom="10dp">
 
         <TextView
-            android:id="@+id/todo_confirm_tv"
+            android:id="@+id/wish_confirm_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="네"
@@ -76,7 +68,7 @@
             android:padding="12dp" />
 
         <TextView
-            android:id="@+id/todo_cancel_tv"
+            android:id="@+id/wish_cancel_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="아니요"

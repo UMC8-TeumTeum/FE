@@ -29,7 +29,7 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:text="10m"
-                android:textColor="@android:color/white"
+                android:textColor="@color/white"
                 android:background="@drawable/circle_purple"
                 android:textSize="12sp"
                 android:fontFamily="@font/noto_sans_kr_medium"/>

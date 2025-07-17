@@ -1,6 +1,277 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:paddingStart="10dp"
+    android:paddingEnd="10dp"
+    android:paddingTop="68dp">
+
+    <ImageView
+        android:id="@+id/back_arrow_iv"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_marginStart="5dp"
+        android:src="@drawable/ic_arrow_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/wishlist_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="-18dp"
+        android:text="위시리스트"
+        android:fontFamily="@font/noto_sans_kr_medium"
+        android:textColor="@color/text_primary"
+        android:textSize="20sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/back_arrow_iv" />
+
+    <TextView
+        android:id="@+id/wish_select_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="5dp"
+        android:text="선택한 시간에 위시를 등록할까요?"
+        android:fontFamily="@font/noto_sans_kr_medium"
+        android:textColor="@color/text_primary"
+        android:textSize="20sp"
+        android:includeFontPadding="false"
+        app:layout_constraintTop_toBottomOf="@id/wishlist_tv"
+        app:layout_constraintStart_toStartOf="@id/back_arrow_iv"/>
+
+    <TextView
+        android:id="@+id/wish_register_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="위시를 등록하면 오늘의 투두리스트에 추가돼요"
+        android:fontFamily="@font/noto_sans_kr_regular"
+        android:textColor="@color/text_primary"
+        android:textSize="14sp"
+        android:includeFontPadding="false"
+        app:layout_constraintTop_toBottomOf="@id/wish_select_tv"
+        app:layout_constraintStart_toStartOf="@id/wish_select_tv"/>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/wish_cv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardElevation="0dp"
+        app:cardCornerRadius="10dp"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="30dp"
+        android:backgroundTint="@color/main_1"
+        app:layout_constraintTop_toBottomOf="@id/wish_register_tv"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp">
+
+            <LinearLayout
+                android:id="@+id/wish_time_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <TextView
+                    android:id="@+id/wish_time_tv"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="10dp"
+                    android:gravity="center"
+                    android:text="30m"
+                    android:textColor="@color/text_tertiary"
+                    android:background="@drawable/circle_white"
+                    android:fontFamily="@font/pretendard_semibold"
+                    android:textSize="11sp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/wish_title_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text="방 구조 바꾸기"
+                android:fontFamily="@font/noto_sans_kr_regular"
+                android:textSize="15sp"
+                android:textColor="@color/white"
+                app:layout_constraintStart_toEndOf="@id/wish_time_layout"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <View
+                android:id="@+id/view_vertical_divider"
+                android:layout_width="1dp"
+                android:layout_height="13dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@color/white"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/wish_title_tv" />
+
+            <TextView
+                android:id="@+id/wish_time_setting_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text="20:00~22:00"
+                android:fontFamily="@font/noto_sans_kr_regular"
+                android:textSize="15sp"
+                android:textColor="@color/white"
+                app:layout_constraintStart_toEndOf="@id/view_vertical_divider"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+    <LinearLayout
+        android:id="@+id/wish_time_pick_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/wish_cv"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/register_btn"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="11dp"
+        android:layout_marginEnd="11dp"
+        android:paddingTop="14dp"
+        android:paddingStart="14dp"
+        android:paddingBottom="9dp"
+        android:paddingEnd="16dp"
+        android:background="@drawable/rounded_sleep_pattern">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/wish_start_container"
+            android:layout_width="0dp"
+            android:layout_height="53dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="31dp">
+
+            <TextView
+                android:id="@+id/start_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="시작"
+                android:fontFamily="@font/noto_sans_kr_regular"
+                android:textSize="12sp"
+                android:textColor="@color/text_secondary"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:includeFontPadding="false"/>
+
+            <TextView
+                android:id="@+id/start_choice_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="20:00"
+                android:fontFamily="@font/noto_sans_kr_semibold"
+                android:textSize="22sp"
+                android:textColor="@color/text_primary"
+                app:layout_constraintTop_toBottomOf="@id/start_tv"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginTop="4dp"
+                android:includeFontPadding="false"/>
+
+            <ImageView
+                android:id="@+id/start_up_arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_arrow_up"
+                app:layout_constraintTop_toTopOf="@+id/start_choice_tv"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="8dp"
+                />
+
+            <ImageView
+                android:id="@+id/start_down_arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_arrow_down"
+                app:layout_constraintTop_toBottomOf="@+id/start_up_arrow"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="6dp"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/wish_end_container"
+            android:layout_width="0dp"
+            android:layout_height="53dp"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/end_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="종료"
+                android:fontFamily="@font/noto_sans_kr_regular"
+                android:textSize="12sp"
+                android:textColor="@color/text_secondary"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:includeFontPadding="false"/>
+
+            <TextView
+                android:id="@+id/end_choice_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="22:00"
+                android:fontFamily="@font/noto_sans_kr_semibold"
+                android:textSize="22sp"
+                android:textColor="@color/text_primary"
+                app:layout_constraintTop_toBottomOf="@id/end_tv"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginTop="4dp"
+                android:includeFontPadding="false"/>
+
+            <ImageView
+                android:id="@+id/end_up_arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_arrow_up"
+                app:layout_constraintTop_toTopOf="@+id/end_choice_tv"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="8dp" />
+
+            <ImageView
+                android:id="@+id/end_down_arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_arrow_down"
+                app:layout_constraintTop_toBottomOf="@+id/end_up_arrow"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="6dp" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/register_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="등록할게요"
+        android:textColor="@color/white"
+        android:fontFamily="@font/noto_sans_kr_medium"
+        app:cornerRadius="12dp"
+        android:backgroundTint="@color/text_primary"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="19dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

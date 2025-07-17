@@ -33,28 +33,31 @@
         android:id="@+id/wish_select_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:layout_marginStart="5dp"
-        android:layout_marginTop="5dp"
         android:text="위시를 진행할 시간을 선택해주세요"
         android:fontFamily="@font/noto_sans_kr_medium"
         android:textColor="@color/text_primary"
         android:textSize="20sp"
+        android:includeFontPadding="false"
         app:layout_constraintTop_toBottomOf="@id/wishlist_tv"
         app:layout_constraintStart_toStartOf="@id/back_arrow_iv"/>
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/wish_cv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardElevation="0dp"
         app:cardCornerRadius="10dp"
         android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="10dp"
         android:backgroundTint="@color/main_1"
         app:layout_constraintTop_toBottomOf="@id/wish_select_tv">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="11dp">
+            android:padding="5dp">
 
         <LinearLayout
             android:id="@+id/wish_time_layout"
@@ -69,7 +72,8 @@
                 android:id="@+id/wish_time_tv"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:gravity="center"
                 android:text="30m"
                 android:textColor="@color/text_tertiary"
                 android:background="@drawable/circle_white"
@@ -78,7 +82,7 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/tv_wish_title"
+            android:id="@+id/wish_title_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
@@ -86,9 +90,237 @@
             android:fontFamily="@font/noto_sans_kr_regular"
             android:textSize="15sp"
             android:textColor="@color/white"
-            app:layout_constraintStart_toEndOf="@id/wish_time_layout"/>
+            app:layout_constraintStart_toEndOf="@id/wish_time_layout"
+            app:layout_constraintTop_toTopOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 
+    <androidx.cardview.widget.CardView
+        android:id="@+id/time_01_cv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="350dp"
+        app:cardElevation="0dp"
+        app:cardCornerRadius="10dp"
+        android:layout_marginHorizontal="10dp"
+        android:backgroundTint="@color/teumteum_bg"
+        app:layout_constraintTop_toBottomOf="@id/wish_cv"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp">
+
+            <TextView
+                android:id="@+id/time_select_01_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text="직접 입력하기"
+                android:fontFamily="@font/noto_sans_kr_regular"
+                android:textSize="14sp"
+                android:textColor="@color/text_primary"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/select_01_button"
+                android:layout_width="60dp"
+                android:layout_height="35dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginTop="5dp"
+                android:text="선택"
+                android:padding="0dp"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp"
+                android:includeFontPadding="false"
+                android:paddingHorizontal="20dp"
+                app:cornerRadius="30dp"
+                app:backgroundTint="@color/teumteum_gray"
+                app:strokeWidth="0dp"
+                app:elevation="0dp"
+                android:fontFamily="@font/noto_sans_kr_medium"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/time_02_cv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        app:cardElevation="0dp"
+        app:cardCornerRadius="10dp"
+        android:layout_marginHorizontal="10dp"
+        android:backgroundTint="@color/teumteum_bg"
+        app:layout_constraintTop_toBottomOf="@id/time_01_cv"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp">
+
+            <TextView
+                android:id="@+id/time_select_02_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text="14:30~15:30"
+                android:fontFamily="@font/noto_sans_kr_regular"
+                android:textSize="14sp"
+                android:textColor="@color/text_primary"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/select_02_button"
+                android:layout_width="60dp"
+                android:layout_height="35dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginTop="5dp"
+                android:text="선택"
+                android:padding="0dp"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp"
+                android:includeFontPadding="false"
+                android:paddingHorizontal="20dp"
+                app:cornerRadius="30dp"
+                app:backgroundTint="@color/teumteum_gray"
+                app:strokeWidth="0dp"
+                app:elevation="0dp"
+                android:fontFamily="@font/noto_sans_kr_medium"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/time_03_cv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        app:cardElevation="0dp"
+        app:cardCornerRadius="10dp"
+        android:layout_marginHorizontal="10dp"
+        android:backgroundTint="@color/teumteum_bg"
+        app:layout_constraintTop_toBottomOf="@id/time_02_cv">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp">
+
+            <TextView
+                android:id="@+id/time_select_03_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text="17:30~18:30"
+                android:fontFamily="@font/noto_sans_kr_regular"
+                android:textSize="14sp"
+                android:textColor="@color/text_primary"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/select_03_button"
+                android:layout_width="60dp"
+                android:layout_height="35dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginTop="5dp"
+                android:text="선택"
+                android:padding="0dp"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp"
+                android:includeFontPadding="false"
+                android:paddingHorizontal="20dp"
+                app:cornerRadius="30dp"
+                app:backgroundTint="@color/teumteum_gray"
+                app:strokeWidth="0dp"
+                app:elevation="0dp"
+                android:fontFamily="@font/noto_sans_kr_medium"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/time_04_cv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        app:cardElevation="0dp"
+        app:cardCornerRadius="10dp"
+        android:layout_marginHorizontal="10dp"
+        android:backgroundTint="@color/teumteum_bg"
+        app:layout_constraintTop_toBottomOf="@id/time_03_cv">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp">
+
+            <TextView
+                android:id="@+id/time_select_04_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text="20:00~22:00"
+                android:fontFamily="@font/noto_sans_kr_regular"
+                android:textSize="14sp"
+                android:textColor="@color/text_primary"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/select_04_button"
+                android:layout_width="60dp"
+                android:layout_height="35dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginTop="5dp"
+                android:text="선택"
+                android:padding="0dp"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp"
+                android:includeFontPadding="false"
+                android:paddingHorizontal="20dp"
+                app:cornerRadius="30dp"
+                app:backgroundTint="@color/teumteum_gray"
+                app:strokeWidth="0dp"
+                app:elevation="0dp"
+                android:fontFamily="@font/noto_sans_kr_medium"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/next_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="다음으로"
+        android:fontFamily="@font/noto_sans_kr_medium"
+        android:textSize="16sp"
+        android:textColor="@color/white"
+        app:cornerRadius="12dp"
+        android:backgroundTint="@color/text_primary"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="15dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:enabled="false"
+        app:layout_constraintTop_toBottomOf="@id/time_04_cv"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
