@@ -17,15 +17,15 @@
         android:id="@+id/bottom_nav_divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#D3D3D3"
-        app:layout_constraintBottom_toTopOf="@+id/main_bnv" />
+        android:background="@color/teumteum_line"
+        app:layout_constraintBottom_toTopOf="@id/main_bnv" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/main_bnv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
-        app:itemBackground="@android:color/transparent"
+        app:itemBackground="@color/transparent"
         app:itemIconSize="30dp"
         app:itemIconTint="@drawable/btm_color_selector"
         app:itemTextColor="@drawable/btm_color_selector"

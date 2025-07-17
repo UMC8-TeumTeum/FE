@@ -3,9 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:orientation="vertical" >
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"
@@ -14,8 +15,7 @@
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="20dp">
+            android:layout_height="wrap_content" >
 
             <EditText
                 android:id="@+id/wish_title_et"
@@ -23,8 +23,9 @@
                 android:layout_height="wrap_content"
                 android:hint="새롭게 떠오른 위시가 있나요?"
                 android:minHeight="28dp"
-                android:textSize="16sp"
-                android:background="@android:color/transparent"
+                android:textSize="20sp"
+                android:fontFamily="@font/noto_sans_kr_medium"
+                android:background="@color/transparent"
                 android:inputType="textMultiLine"
                 android:maxLines="5"
                 android:gravity="top|start" />
@@ -33,7 +34,7 @@
                 android:id="@+id/horizon_01_iv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="8dp"
                 android:src="@drawable/ic_horizon_sv"
                 android:scaleType="centerCrop" />
 
@@ -41,17 +42,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@android:color/white"
+                android:background="@color/white"
                 android:layout_marginTop="10dp"
-                android:padding="8dp">
+                android:padding="5dp">
 
                 <LinearLayout
-                    android:id="@+id/todo_start_time"
+                    android:id="@+id/wish_date"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:layout_marginBottom="4dp" >
+                    android:layout_marginBottom="-3dp" >
 
                     <ImageView
                         android:layout_width="20dp"
@@ -60,22 +61,24 @@
                         android:layout_marginEnd="8dp" />
 
                     <TextView
-                        android:id="@+id/start_date_tv"
+                        android:id="@+id/wish_date_tv"
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
                         android:text="언젠가"
-                        android:textColor="@android:color/black"
+                        android:fontFamily="@font/noto_sans_kr_regular"
+                        android:textColor="@color/text_primary"
                         android:textSize="15sp" />
 
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/todo_end_time"
+                    android:id="@+id/wish_detail_ll"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:gravity="center_vertical">
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="-3dp" >
 
                     <ImageView
                         android:layout_width="20dp"
@@ -88,10 +91,11 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="상세 내용 입력"
-                        android:textColorHint="@color/black"
+                        android:fontFamily="@font/noto_sans_kr_regular"
+                        android:textColorHint="@color/text_primary"
                         android:minHeight="28dp"
                         android:textSize="15sp"
-                        android:background="@android:color/transparent"
+                        android:background="@color/transparent"
                         android:inputType="textMultiLine"
                         android:maxLines="5"
                         android:gravity="top|start" />
@@ -105,22 +109,23 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="21dp"
                 android:src="@drawable/ic_horizon_sv"
-                android:scaleType="centerCrop" />
+                android:scaleType="centerCrop"
+                android:layout_marginBottom="-3dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@android:color/white"
-                android:layout_marginTop="13dp"
-                android:padding="8dp">
+                android:background="@color/white"
+                android:layout_marginTop="13dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:layout_marginBottom="8dp" >
+                    android:padding="5dp"
+                    android:layout_marginBottom="-3dp">
 
                     <TextView
                         android:id="@+id/wish_time_tv"
@@ -128,7 +133,7 @@
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
                         android:text="해당 위시를 진행하는 데 얼마나 걸릴까요?"
-                        android:textColor="@android:color/black"
+                        android:textColor="@color/text_primary"
                         android:textSize="16sp"
                         android:fontFamily="@font/noto_sans_kr_medium" />
 
@@ -138,35 +143,64 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:gravity="center_vertical" >
+                    android:gravity="center_vertical"
+                    android:padding="5dp">
 
-                    <ImageView
-                        android:layout_width="0dp"
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_wish_time_01"
+                        android:layout_width="75dp"
+                        android:layout_height="45dp"
                         android:layout_weight="1"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/btn_time_01_sv"
-                        android:layout_marginEnd="8dp" />
+                        android:text="10m"
+                        android:textSize="12sp"
+                        android:layout_marginEnd="8dp"
+                        android:fontFamily="@font/noto_sans_kr_medium"
+                        android:textColor="@color/text_primary"
+                        android:padding="0dp"
+                        app:cornerRadius="10dp"
+                        app:backgroundTint="@color/main_2" />
 
-                    <ImageView
-                        android:layout_width="0dp"
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_wish_time_02"
+                        android:layout_width="75dp"
+                        android:layout_height="45dp"
                         android:layout_weight="1"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/btn_time_02_sv"
-                        android:layout_marginEnd="8dp" />
+                        android:text="20m"
+                        android:textSize="12sp"
+                        android:layout_marginEnd="8dp"
+                        android:fontFamily="@font/noto_sans_kr_medium"
+                        android:textColor="@color/text_primary"
+                        android:padding="0dp"
+                        app:cornerRadius="10dp"
+                        app:backgroundTint="@color/main_2" />
 
-                    <ImageView
-                        android:layout_width="0dp"
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_wish_time_03"
+                        android:layout_width="75dp"
+                        android:layout_height="45dp"
                         android:layout_weight="1"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/btn_time_03_sv"
-                        android:layout_marginEnd="8dp" />
+                        android:text="30m"
+                        android:textSize="12sp"
+                        android:layout_marginEnd="8dp"
+                        android:fontFamily="@font/noto_sans_kr_medium"
+                        android:textColor="@color/text_primary"
+                        android:padding="0dp"
+                        app:cornerRadius="10dp"
+                        app:backgroundTint="@color/main_2" />
 
-                    <ImageView
-                        android:layout_width="0dp"
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_wish_time_04"
+                        android:layout_width="75dp"
+                        android:layout_height="45dp"
                         android:layout_weight="1"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/btn_time_04_sv"
-                        android:layout_marginEnd="8dp" />
+                        android:text="1h~"
+                        android:textSize="12sp"
+                        android:layout_marginEnd="8dp"
+                        android:fontFamily="@font/noto_sans_kr_medium"
+                        android:textColor="@color/text_primary"
+                        android:padding="0dp"
+                        app:cornerRadius="10dp"
+                        app:backgroundTint="@color/main_2" />
 
                 </LinearLayout>
 
@@ -178,22 +212,23 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="21dp"
                 android:src="@drawable/ic_horizon_sv"
-                android:scaleType="centerCrop" />
+                android:scaleType="centerCrop"
+                android:layout_marginBottom="-3dp"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@android:color/white"
-                android:layout_marginTop="13dp"
-                android:padding="8dp">
+                android:background="@color/white"
+                android:layout_marginTop="13dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:layout_marginBottom="8dp" >
+                    android:layout_marginBottom="-3dp"
+                    android:padding="5dp">
 
                     <TextView
                         android:id="@+id/wish_category_tv"
@@ -201,7 +236,7 @@
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
                         android:text="위시의 카테고리를 지정해주세요"
-                        android:textColor="@android:color/black"
+                        android:textColor="@color/text_primary"
                         android:textSize="16sp"
                         android:fontFamily="@font/noto_sans_kr_medium" />
 
@@ -211,28 +246,50 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:layout_marginBottom="8dp" >
+                    android:layout_marginBottom="8dp"
+                    android:padding="5dp">
 
-                    <ImageView
-                        android:layout_width="0dp"
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_wish_category_01"
+                        android:layout_width="100dp"
+                        android:layout_height="50dp"
                         android:layout_weight="1"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/btn_category_01_sv"
-                        android:layout_marginEnd="8dp" />
+                        android:text="자기계발"
+                        android:textSize="12sp"
+                        android:layout_marginEnd="8dp"
+                        android:fontFamily="@font/noto_sans_kr_medium"
+                        android:textColor="@color/text_primary"
+                        android:padding="0dp"
+                        app:cornerRadius="10dp"
+                        app:backgroundTint="@color/main_2" />
 
-                    <ImageView
-                        android:layout_width="0dp"
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_wish_category_02"
+                        android:layout_width="100dp"
+                        android:layout_height="50dp"
                         android:layout_weight="1"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/btn_category_02_sv"
-                        android:layout_marginEnd="8dp" />
+                        android:text="운동"
+                        android:textSize="12sp"
+                        android:layout_marginEnd="8dp"
+                        android:fontFamily="@font/noto_sans_kr_medium"
+                        android:textColor="@color/text_primary"
+                        android:padding="0dp"
+                        app:cornerRadius="10dp"
+                        app:backgroundTint="@color/main_2" />
 
-                    <ImageView
-                        android:layout_width="0dp"
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_wish_category_03"
+                        android:layout_width="100dp"
+                        android:layout_height="50dp"
                         android:layout_weight="1"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/btn_category_03_sv"
-                        android:layout_marginEnd="8dp" />
+                        android:text="취미"
+                        android:textSize="12sp"
+                        android:layout_marginEnd="8dp"
+                        android:fontFamily="@font/noto_sans_kr_medium"
+                        android:textColor="@color/text_primary"
+                        android:padding="0dp"
+                        app:cornerRadius="10dp"
+                        app:backgroundTint="@color/main_2" />
 
                 </LinearLayout>
                 <LinearLayout
@@ -240,28 +297,50 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:layout_marginBottom="80dp" >
+                    android:layout_marginBottom="34dp"
+                    android:padding="5dp">
 
-                    <ImageView
-                        android:layout_width="0dp"
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_wish_category_04"
+                        android:layout_width="100dp"
+                        android:layout_height="50dp"
                         android:layout_weight="1"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/btn_category_04_sv"
-                        android:layout_marginEnd="8dp" />
+                        android:text="일상"
+                        android:textSize="12sp"
+                        android:layout_marginEnd="8dp"
+                        android:fontFamily="@font/noto_sans_kr_medium"
+                        android:textColor="@color/text_primary"
+                        android:padding="0dp"
+                        app:cornerRadius="10dp"
+                        app:backgroundTint="@color/main_2" />
 
-                    <ImageView
-                        android:layout_width="0dp"
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_wish_category_05"
+                        android:layout_width="100dp"
+                        android:layout_height="50dp"
                         android:layout_weight="1"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/btn_category_05_sv"
-                        android:layout_marginEnd="8dp" />
+                        android:text="문화생활"
+                        android:textSize="12sp"
+                        android:layout_marginEnd="8dp"
+                        android:fontFamily="@font/noto_sans_kr_medium"
+                        android:textColor="@color/text_primary"
+                        android:padding="0dp"
+                        app:cornerRadius="10dp"
+                        app:backgroundTint="@color/main_2" />
 
-                    <ImageView
-                        android:layout_width="0dp"
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_wish_category_06"
+                        android:layout_width="100dp"
+                        android:layout_height="50dp"
                         android:layout_weight="1"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/btn_category_06_sv"
-                        android:layout_marginEnd="8dp" />
+                        android:text="휴식"
+                        android:textSize="12sp"
+                        android:layout_marginEnd="8dp"
+                        android:fontFamily="@font/noto_sans_kr_medium"
+                        android:textColor="@color/text_primary"
+                        android:padding="0dp"
+                        app:cornerRadius="10dp"
+                        app:backgroundTint="@color/main_2" />
 
                 </LinearLayout>
             </LinearLayout>
@@ -269,15 +348,24 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/white"
+                android:background="@color/white"
                 android:padding="8dp"
-                android:layout_marginBottom="16dp" >
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/btn_register_sv" />
+                android:layout_marginBottom="30dp" >
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_wish_register"
+                    android:layout_width="match_parent"
+                    android:layout_height="65dp"
+                    android:text="등록할게요"
+                    android:textSize="16sp"
+                    android:fontFamily="@font/noto_sans_kr_medium"
+                    android:layout_marginTop="22dp"
+                    android:textColor="@color/white"
+                    app:cornerRadius="12dp"
+                    app:backgroundTint="@color/text_primary"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
             </FrameLayout>
 
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 </LinearLayout>

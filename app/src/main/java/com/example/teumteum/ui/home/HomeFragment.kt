@@ -1,4 +1,4 @@
-package com.example.teumteum.ui.main
+package com.example.teumteum.ui.home
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,14 +8,19 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
-import com.example.teumteum.ui.register.BottomSheetRegisterFragment
 import com.example.teumteum.ui.calendar.IDateClickListener
 import com.example.teumteum.R
+import com.example.teumteum.ui.todo.TodoRVAdapter
 import com.example.teumteum.databinding.FragmentHomeBinding
 import com.example.teumteum.ui.calendar.CalendarMode
 
 import org.threeten.bp.LocalDate
 import org.threeten.bp.format.DateTimeFormatter
+
+import com.example.teumteum.data.entities.TodoHomeItem
+import com.example.teumteum.data.entities.WishItem
+import com.example.teumteum.ui.wish.WishlistFragment
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class HomeFragment : Fragment(), IDateClickListener {
 
@@ -23,6 +28,28 @@ class HomeFragment : Fragment(), IDateClickListener {
 
     private val today: LocalDate = LocalDate.now()
     private lateinit var selectedDate: LocalDate
+
+    private lateinit var adapter: TodoRVAdapter
+
+    private var todoDummyList = mutableListOf(
+        TodoHomeItem(1, "UX디자인 수업", "오후 12:00", "오후 2:30", isPublic = true),
+        TodoHomeItem(2, "교내 근로", "오후 3:30", "오후 5:30", isPublic = false),
+        TodoHomeItem(3, "중랑천 산책", "오후 6:30", "오후 8:00", isPublic = true)
+    )
+
+    private var wishDummyList = mutableListOf(
+        WishItem(1, "화분 물 주기", "10m", "일상"),
+        WishItem(2, "무신사 아이 쇼핑", "10m", "일상"),
+        WishItem(3, "뜨개질하기", "30m", "취미"),
+        WishItem(4, "피그마 파일 정리", "20m", "일상"),
+        WishItem(5, "인센스 & 명상", "10m", "휴식"),
+        WishItem(6, "방 구조 바꾸기", "30m", "일상"),
+        WishItem(7, "매거진 3장 읽기", "10m", "일상"),
+        WishItem(8, "사진첩 정리", "30m", "일상"),
+        WishItem(9, "중랑천 산책", "1h~", "운동"),
+        WishItem(10, "테스트용1", "10m", "문화생활"),
+        WishItem(11, "테스트용2", "20m", "자기계발")
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -58,25 +85,12 @@ class HomeFragment : Fragment(), IDateClickListener {
             bottomSheet.show(parentFragmentManager, bottomSheet.tag)
         }
 
-//        binding.fabAddIv.setOnClickListener {
-//            val bottomSheetDialog = BottomSheetDialog(requireContext())
-//            val bottomSheetView = layoutInflater.inflate(R.layout.fragment_bottom_sheet_register, null)
-//            bottomSheetDialog.setContentView(bottomSheetView)
-//
-//            bottomSheetDialog.setOnShowListener { dialog ->
-//                val bottomSheet =
-//                    (dialog as BottomSheetDialog).findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
-//                bottomSheet?.let {
-//                    val screenHeight = resources.displayMetrics.heightPixels
-//                    it.layoutParams?.height = (screenHeight * 0.84).toInt()
-//                    val behavior = BottomSheetBehavior.from(it)
-//                    behavior.peekHeight = (screenHeight * 0.84).toInt()
-//                    it.requestLayout()
-//                }
-//            }
-//
-//            bottomSheetDialog.show()
-//        }
+        binding.btnLoadWishlistTv.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, WishlistFragment(wishDummyList))
+                .addToBackStack(null)
+                .commit()
+        }
 
         setWeeklyCalendarViewPager()
         setMonthlyCalendarViewPager()
@@ -84,6 +98,18 @@ class HomeFragment : Fragment(), IDateClickListener {
         showWeeklyCalendar()
 
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
+        adapter = TodoRVAdapter(parentFragmentManager, todoDummyList)
+        binding.todolistRv.adapter = adapter
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
+        bottomNav?.visibility = View.VISIBLE
     }
 
     /** 주간 달력 연결 */

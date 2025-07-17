@@ -6,6 +6,8 @@
         <item name="android:textSize">12sp</item>
         <item name="android:layout_weight">1</item>
         <item name="android:textAlignment">center</item>
+        <item name="android:fontFamily">@font/pretendard_regular</item>
+        <item name="android:textColor">@color/text_primary</item>
     </style>
 
     <style name="calendar_date_layout">
@@ -13,17 +15,18 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:gravity">center</item>
         <item name="android:layout_weight">1</item>
-        <item name="android:textColor">@color/black</item>
+        <item name="android:textColor">@color/text_primary</item>
     </style>
 
     <style name="calendar_date_tv">
-        <item name="android:layout_width">30dp</item>
-        <item name="android:layout_height">30dp</item>
+        <item name="android:layout_width">35dp</item>
+        <item name="android:layout_height">35dp</item>
         <item name="android:gravity">center</item>
         <item name="android:layout_gravity">center</item>
         <item name="android:textAlignment">center</item>
         <item name="android:textSize">12sp</item>
-        <item name="android:textColor">@color/black</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:fontFamily">@font/noto_sans_kr_regular</item>
     </style>
 
     <style name="CalendarToggleTextStyle">
@@ -40,8 +43,8 @@
 
     <style name="TopRoundedCard" parent="">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSizeTopLeft">30dp</item>
-        <item name="cornerSizeTopRight">30dp</item>
+        <item name="cornerSizeTopLeft">15dp</item>
+        <item name="cornerSizeTopRight">15dp</item>
         <item name="cornerSizeBottomLeft">0dp</item>
         <item name="cornerSizeBottomRight">0dp</item>
     </style>
@@ -50,6 +53,18 @@
         <item name="android:thumb">@drawable/style_toggle_thumb</item>
         <item name="track">@drawable/style_toggle_btn</item>
         <item name="thumbTint">@null</item>
+        <item name="android:enabled">true</item>
+    </style>
+
+    <style name="RoundedAlertDialog">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:windowMinWidthMajor">85%</item>
+        <item name="android:windowMinWidthMinor">85%</item>
+    </style>
+
+    <style name="remind_toggle">
+        <item name="track">@drawable/btn_remind_toggle_track</item>
+        <item name="android:thumb">@drawable/btn_remind_toggle_thumb</item>
         <item name="android:enabled">true</item>
     </style>
 

@@ -1,5 +1,6 @@
 package com.example.teumteum.ui.friend
 
+import android.app.Dialog
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
@@ -12,6 +13,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import com.example.teumteum.R
 import com.example.teumteum.databinding.BottomSheetFriend02RejectBinding
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class Friend02RejectBottomSheetFragment : BottomSheetDialogFragment() {
@@ -22,6 +24,19 @@ class Friend02RejectBottomSheetFragment : BottomSheetDialogFragment() {
 
     enum class SelectedOption {
         REJECT, SUGGEST
+    }
+
+    /** ↓ BottomSheetDialog 배경 커스텀 */
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
+
+        dialog.setOnShowListener { dialogInterface ->
+            val bottomSheet = (dialogInterface as BottomSheetDialog)
+                .findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+            bottomSheet?.setBackgroundResource(R.drawable.calendar_background)
+        }
+
+        return dialog
     }
 
     override fun onCreateView(
