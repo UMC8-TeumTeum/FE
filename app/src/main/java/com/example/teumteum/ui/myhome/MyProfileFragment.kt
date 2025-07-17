@@ -5,11 +5,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentMyProfileBinding
-import com.example.teumteum.ui.friend.Friend02SuggestFragment
-import com.example.teumteum.ui.friend.FriendRequestCardAdapter
 import com.example.teumteum.ui.main.MainActivity
 
 class MyProfileFragment : Fragment() {
@@ -35,7 +32,7 @@ class MyProfileFragment : Fragment() {
 
         binding.backBtn.setOnClickListener {
             parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, MyhomeFragment())
+                .replace(R.id.main_frm, MyHomeFragment())
                 .addToBackStack(null)
                 .commit()
         }

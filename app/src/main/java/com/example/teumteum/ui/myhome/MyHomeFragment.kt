@@ -1,29 +1,24 @@
 package com.example.teumteum.ui.myhome
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.teumteum.R
-import com.example.teumteum.databinding.FragmentMyhomeBinding
+import com.example.teumteum.databinding.FragmentMyHomeBinding
 import com.example.teumteum.ui.main.MainActivity
-import com.example.teumteum.ui.signup.OnBoardingProfileFragment
-import com.example.teumteum.ui.signup.OnBoardingScheduleFragment
-import com.example.teumteum.ui.signup.SignUpActivity
 
-class MyhomeFragment : Fragment() {
+class MyHomeFragment : Fragment() {
 
-    lateinit var binding: FragmentMyhomeBinding
+    lateinit var binding: FragmentMyHomeBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentMyhomeBinding.inflate(inflater, container, false)
+        binding = FragmentMyHomeBinding.inflate(inflater, container, false)
 
         return binding.root
     }
