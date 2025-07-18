@@ -263,8 +263,8 @@
         android:id="@+id/register_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
         android:text="등록할게요"
+        android:textSize="16sp"
         android:textColor="@color/white"
         android:fontFamily="@font/noto_sans_kr_medium"
         app:cornerRadius="12dp"
@@ -275,6 +275,7 @@
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="19dp"
-        android:enabled="false" />
+        android:enabled="false"
+        app:layout_constraintTop_toBottomOf="@id/wish_time_pick_layout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
