@@ -61,7 +61,6 @@ class WishSetting01Fragment : Fragment() {
             binding.select01Button.setTextColor(selectedText)
             selectedButtonId = R.id.select_01_button
             selectedTimeText = binding.timeSelect01Tv.text.toString()
-
             enableNextButton()
         }
 

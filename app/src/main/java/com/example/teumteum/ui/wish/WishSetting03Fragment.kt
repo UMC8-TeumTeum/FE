@@ -136,12 +136,6 @@ class WishSetting03Fragment : Fragment() {
                 selectedEndTime = timeText
             }
 
-            // 선택한 시간대 반영
-            if (!selectedStartTime.isNullOrEmpty() && !selectedEndTime.isNullOrEmpty()) {
-                val timeRangeText = getString(R.string.time_range_format, selectedStartTime, selectedEndTime)
-                binding.wishTimeSettingTv.text = timeRangeText
-            }
-
             enableNextButton()
 
             dialog.dismiss()
