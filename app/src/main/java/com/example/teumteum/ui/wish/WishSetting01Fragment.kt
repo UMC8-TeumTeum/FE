@@ -15,7 +15,10 @@ class WishSetting01Fragment : Fragment() {
     private lateinit var binding: FragmentWishSetting01Binding
 
     private var selectedButtonId: Int? = null
+
     private var selectedTimeText: String? = null
+    private var selectedStartTime: String? = null
+    private var selectedEndTime: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -58,6 +61,7 @@ class WishSetting01Fragment : Fragment() {
             binding.select01Button.setTextColor(selectedText)
             selectedButtonId = R.id.select_01_button
             selectedTimeText = binding.timeSelect01Tv.text.toString()
+
             enableNextButton()
         }
 
@@ -67,6 +71,16 @@ class WishSetting01Fragment : Fragment() {
             binding.select02Button.setTextColor(selectedText)
             selectedButtonId = R.id.select_02_button
             selectedTimeText = binding.timeSelect02Tv.text.toString()
+
+            // 시간 분리
+            selectedTimeText?.let {
+                val parts = it.split("~")
+                if (parts.size == 2) {
+                    selectedStartTime = parts[0]
+                    selectedEndTime = parts[1]
+                }
+            }
+
             enableNextButton()
         }
 
@@ -76,6 +90,16 @@ class WishSetting01Fragment : Fragment() {
             binding.select03Button.setTextColor(selectedText)
             selectedButtonId = R.id.select_03_button
             selectedTimeText = binding.timeSelect03Tv.text.toString()
+
+            // 시간 분리
+            selectedTimeText?.let {
+                val parts = it.split("~")
+                if (parts.size == 2) {
+                    selectedStartTime = parts[0]
+                    selectedEndTime = parts[1]
+                }
+            }
+
             enableNextButton()
         }
 
@@ -85,6 +109,16 @@ class WishSetting01Fragment : Fragment() {
             binding.select04Button.setTextColor(selectedText)
             selectedButtonId = R.id.select_04_button
             selectedTimeText = binding.timeSelect04Tv.text.toString()
+
+            // 시간 분리
+            selectedTimeText?.let {
+                val parts = it.split("~")
+                if (parts.size == 2) {
+                    selectedStartTime = parts[0]
+                    selectedEndTime = parts[1]
+                }
+            }
+
             enableNextButton()
         }
 
@@ -108,6 +142,8 @@ class WishSetting01Fragment : Fragment() {
                         arguments = Bundle().apply {
                             putString("title", title)
                             putString("time", selectedTimeText)
+                            putString("startTime", selectedStartTime)
+                            putString("endTime", selectedEndTime)
                         }
                     }
 

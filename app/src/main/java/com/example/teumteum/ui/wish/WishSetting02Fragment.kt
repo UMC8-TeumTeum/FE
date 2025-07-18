@@ -41,7 +41,17 @@ class WishSetting02Fragment : Fragment() {
         setTitle(title.toString())
 
         val selectedTime = arguments?.getString("time")
+        val startTime = arguments?.getString("startTime")
+        val endTime = arguments?.getString("endTime")
+
         binding.wishTimeSettingTv.text = selectedTime
+
+        if (!startTime.isNullOrEmpty() && !endTime.isNullOrEmpty()) {
+            binding.startChoiceTv.text = startTime
+            binding.endChoiceTv.text = endTime
+            selectedStartTime = startTime
+            selectedEndTime = endTime
+        }
 
         // 바텀 내비게이션 숨기기
         val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
