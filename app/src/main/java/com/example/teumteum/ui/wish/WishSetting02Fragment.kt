@@ -31,6 +31,9 @@ class WishSetting02Fragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
+        val title = arguments?.getString("title")
+        setTitle(title.toString())
+
         // 바텀 내비게이션 숨기기
         val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
         bottomNav?.visibility = View.GONE
@@ -160,5 +163,9 @@ class WishSetting02Fragment : Fragment() {
                 targetTextView.text = newTime
             }
         }
+    }
+
+    private fun setTitle(title: String){
+        binding.wishTitleTv.text = title
     }
 }
