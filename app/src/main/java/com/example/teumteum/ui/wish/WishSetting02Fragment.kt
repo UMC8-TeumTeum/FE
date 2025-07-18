@@ -13,7 +13,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import com.example.teumteum.R
-import com.example.teumteum.databinding.DialogConfirmWishDeleteBinding
 import com.example.teumteum.databinding.DialogConfirmWishRegisterBinding
 import com.example.teumteum.databinding.FragmentWishSetting02Binding
 import com.example.teumteum.ui.home.HomeFragment
@@ -40,6 +39,9 @@ class WishSetting02Fragment : Fragment() {
 
         val title = arguments?.getString("title")
         setTitle(title.toString())
+
+        val selectedTime = arguments?.getString("time")
+        binding.wishTimeSettingTv.text = selectedTime
 
         // 바텀 내비게이션 숨기기
         val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)

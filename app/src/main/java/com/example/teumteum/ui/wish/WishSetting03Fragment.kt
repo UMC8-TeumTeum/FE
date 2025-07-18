@@ -40,6 +40,9 @@ class WishSetting03Fragment : Fragment() {
         val title = arguments?.getString("title")
         setTitle(title.toString())
 
+        val selectedTime = arguments?.getString("time")
+        binding.wishTimeSettingTv.text = selectedTime
+
         // 바텀 내비게이션 숨기기
         val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
         bottomNav?.visibility = View.GONE
@@ -139,6 +142,8 @@ class WishSetting03Fragment : Fragment() {
                 binding.wishTimeSettingTv.text = timeRangeText
             }
 
+            enableNextButton()
+
             dialog.dismiss()
         }
 
@@ -217,5 +222,24 @@ class WishSetting03Fragment : Fragment() {
         }
 
         dialog.show()
+    }
+
+    private fun enableNextButton() {
+        val allSet = selectedStartTime != null && selectedEndTime != null
+        binding.registerBtn.isEnabled = allSet
+
+        binding.registerBtn.setBackgroundColor(
+            if (allSet)
+                requireContext().getColor(R.color.text_primary)
+            else
+                requireContext().getColor(R.color.teumteum_bg)
+        )
+
+        binding.registerBtn.setTextColor(
+            if (allSet)
+                requireContext().getColor(R.color.white)
+            else
+                requireContext().getColor(R.color.text_primary)
+        )
     }
 }

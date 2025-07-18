@@ -15,6 +15,7 @@ class WishSetting01Fragment : Fragment() {
     private lateinit var binding: FragmentWishSetting01Binding
 
     private var selectedButtonId: Int? = null
+    private var selectedTimeText: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -56,6 +57,7 @@ class WishSetting01Fragment : Fragment() {
             binding.select01Button.setBackgroundColor(selectedBg)
             binding.select01Button.setTextColor(selectedText)
             selectedButtonId = R.id.select_01_button
+            selectedTimeText = binding.timeSelect01Tv.text.toString()
             enableNextButton()
         }
 
@@ -64,6 +66,7 @@ class WishSetting01Fragment : Fragment() {
             binding.select02Button.setBackgroundColor(selectedBg)
             binding.select02Button.setTextColor(selectedText)
             selectedButtonId = R.id.select_02_button
+            selectedTimeText = binding.timeSelect02Tv.text.toString()
             enableNextButton()
         }
 
@@ -72,6 +75,7 @@ class WishSetting01Fragment : Fragment() {
             binding.select03Button.setBackgroundColor(selectedBg)
             binding.select03Button.setTextColor(selectedText)
             selectedButtonId = R.id.select_03_button
+            selectedTimeText = binding.timeSelect03Tv.text.toString()
             enableNextButton()
         }
 
@@ -80,6 +84,7 @@ class WishSetting01Fragment : Fragment() {
             binding.select04Button.setBackgroundColor(selectedBg)
             binding.select04Button.setTextColor(selectedText)
             selectedButtonId = R.id.select_04_button
+            selectedTimeText = binding.timeSelect04Tv.text.toString()
             enableNextButton()
         }
 
@@ -89,6 +94,7 @@ class WishSetting01Fragment : Fragment() {
                     val fragment = WishSetting03Fragment().apply {
                         arguments = Bundle().apply {
                             putString("title", title)
+                            putString("time", selectedTimeText)
                         }
                     }
 
@@ -101,6 +107,7 @@ class WishSetting01Fragment : Fragment() {
                     val fragment = WishSetting02Fragment().apply {
                         arguments = Bundle().apply {
                             putString("title", title)
+                            putString("time", selectedTimeText)
                         }
                     }
 
@@ -120,7 +127,7 @@ class WishSetting01Fragment : Fragment() {
     private fun enableNextButton() {
         binding.nextBtn.isEnabled = true
         binding.nextBtn.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
-        binding.nextBtn.setTextColor(ContextCompat.getColor(requireContext(), R.color.teumteum_bg))
+        binding.nextBtn.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
     }
 
     private fun setTitle(title: String){
