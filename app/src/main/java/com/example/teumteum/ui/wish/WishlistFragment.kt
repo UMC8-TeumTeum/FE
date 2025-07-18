@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment
 import com.example.teumteum.R
 import com.example.teumteum.data.entities.WishItem
 import com.example.teumteum.databinding.FragmentWishlistBinding
-import com.example.teumteum.ui.home.HomeFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.button.MaterialButton
 
@@ -51,11 +50,9 @@ class WishlistFragment(private val wishlist: MutableList<WishItem>) : Fragment()
         bottomNav?.visibility = View.GONE
 
         binding.backArrowIv.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, HomeFragment())
-                .addToBackStack(null)
-                .commit()
+            parentFragmentManager.popBackStack()
         }
+
         setupTimeFilterButtons()
     }
 

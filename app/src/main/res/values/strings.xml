@@ -201,6 +201,6 @@
         \n
         "틈틈(TeumTeum)" 서비스(이하 "서비스")는 정보의 과도한 발송이나 스팸성 광고를 지양하며, 이용자의 정보 및 권리를 최우선으로 고려하여 운영합니다.\n
     ]]></string>
-
+    <string name="time_range_format">%1$s ~ %2$s</string>
 
 </resources>
