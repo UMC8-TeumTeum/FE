@@ -146,6 +146,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginStart="11dp"
         android:layout_marginEnd="11dp"
+        android:layout_marginBottom="480dp"
         android:paddingTop="14dp"
         android:paddingStart="14dp"
         android:paddingBottom="9dp"

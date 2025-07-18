@@ -119,6 +119,8 @@ class WishSetting01Fragment : Fragment() {
 
     private fun enableNextButton() {
         binding.nextBtn.isEnabled = true
+        binding.nextBtn.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
+        binding.nextBtn.setTextColor(ContextCompat.getColor(requireContext(), R.color.teumteum_bg))
     }
 
     private fun setTitle(title: String){
