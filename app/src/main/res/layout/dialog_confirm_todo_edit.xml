@@ -64,7 +64,8 @@
             android:fontFamily="@font/noto_sans_kr_medium"
             android:textSize="15sp"
             android:textColor="@color/text_primary"
-            android:padding="12dp" />
+            android:padding="12dp"
+            android:includeFontPadding="false"/>
 
         <TextView
             android:id="@+id/todo_cancel_tv"
@@ -74,6 +75,7 @@
             android:fontFamily="@font/noto_sans_kr_medium"
             android:textSize="15sp"
             android:textColor="@color/main_1"
-            android:padding="12dp" />
+            android:padding="12dp"
+            android:includeFontPadding="false"/>
     </LinearLayout>
 </LinearLayout>
