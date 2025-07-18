@@ -39,6 +39,9 @@ class WishSetting01Fragment : Fragment() {
         val title = arguments?.getString("title")
         setTitle(title.toString())
 
+        val time = arguments?.getString("time")
+        setTime(time.toString())
+
         // 바텀 내비게이션 숨기기
         val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
         bottomNav?.visibility = View.GONE
@@ -127,7 +130,8 @@ class WishSetting01Fragment : Fragment() {
                     val fragment = WishSetting03Fragment().apply {
                         arguments = Bundle().apply {
                             putString("title", title)
-                            putString("time", selectedTimeText)
+                            putString("time", time)
+                            putString("selected_time", selectedTimeText)
                         }
                     }
 
@@ -140,7 +144,8 @@ class WishSetting01Fragment : Fragment() {
                     val fragment = WishSetting02Fragment().apply {
                         arguments = Bundle().apply {
                             putString("title", title)
-                            putString("time", selectedTimeText)
+                            putString("time", time)
+                            putString("selected_time", selectedTimeText)
                             putString("startTime", selectedStartTime)
                             putString("endTime", selectedEndTime)
                         }
@@ -167,5 +172,9 @@ class WishSetting01Fragment : Fragment() {
 
     private fun setTitle(title: String){
         binding.wishTitleTv.text = title
+    }
+
+    private fun setTime(time: String){
+        binding.wishTimeTv.text = time
     }
 }

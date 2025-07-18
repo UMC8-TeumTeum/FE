@@ -40,7 +40,10 @@ class WishSetting02Fragment : Fragment() {
         val title = arguments?.getString("title")
         setTitle(title.toString())
 
-        val selectedTime = arguments?.getString("time")
+        val time = arguments?.getString("time")
+        setTime(time.toString())
+
+        val selectedTime = arguments?.getString("selected_time")
         val startTime = arguments?.getString("startTime")
         val endTime = arguments?.getString("endTime")
 
@@ -190,6 +193,10 @@ class WishSetting02Fragment : Fragment() {
 
     private fun setTitle(title: String){
         binding.wishTitleTv.text = title
+    }
+
+    private fun setTime(time: String){
+        binding.wishTimeTv.text = time
     }
 
     private fun showWishRegisterDialog() {

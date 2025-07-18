@@ -40,7 +40,10 @@ class WishSetting03Fragment : Fragment() {
         val title = arguments?.getString("title")
         setTitle(title.toString())
 
-        val selectedTime = arguments?.getString("time")
+        val time = arguments?.getString("time")
+        setTime(time.toString())
+
+        val selectedTime = arguments?.getString("selected_time")
         binding.wishTimeSettingTv.text = selectedTime
 
         // 바텀 내비게이션 숨기기
@@ -176,6 +179,10 @@ class WishSetting03Fragment : Fragment() {
 
     private fun setTitle(title: String){
         binding.wishTitleTv.text = title
+    }
+
+    private fun setTime(time: String){
+        binding.wishTimeTv.text = time
     }
 
     private fun showWishRegisterDialog() {
