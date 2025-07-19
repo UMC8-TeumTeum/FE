@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentMySettingBinding
+import com.example.teumteum.ui.main.MainActivity
 
 class MySettingFragment : Fragment() {
 
@@ -25,4 +26,16 @@ class MySettingFragment : Fragment() {
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        (activity as? MainActivity)?.hideBottomBar()
+
+        binding.backArrowIv.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, MyHomeFragment())
+                .addToBackStack(null)
+                .commit()
+        }
+
+    }
 }
