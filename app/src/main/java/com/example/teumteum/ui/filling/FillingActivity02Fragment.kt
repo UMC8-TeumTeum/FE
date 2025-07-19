@@ -63,6 +63,22 @@ class FillingActivity02Fragment : Fragment() {
                 .commit()
         }
 
+        binding.fabRefreshIv.setOnClickListener {
+
+            // 새로고침 되는지 테스트
+            aiRecommendDummyList = mutableListOf(
+                AiRecommend(5, "캠퍼스 풍경 사진 찍기", "20m", "취미"),
+                AiRecommend(6, "음악 감상하면서 산책하기", "30m", "취미"),
+                AiRecommend(6, "계단 오르기 운동 해보기", "20m", "취미")
+            )
+            wishRecommendDummyList = mutableListOf(
+                WishRecommend(4, "카페 가서 새로운 음료 도전", "10m", "취미"),
+                WishRecommend(5, "기숙사에서 브이로그 촬영", "20m", "취미"),
+            )
+
+            aiAdapter.updateList(aiRecommendDummyList)
+            wishAdapter.updateList(wishRecommendDummyList)
+        }
 
     }
 }

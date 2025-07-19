@@ -41,4 +41,9 @@ class AiRecommendRVAdapter( private var aiList: List<AiRecommend>, private val f
     }
 
     override fun getItemCount(): Int = 3
+
+    fun updateList(newList: List<AiRecommend>) {
+        aiList = newList
+        notifyDataSetChanged()
+    }
 }

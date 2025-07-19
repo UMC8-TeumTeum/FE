@@ -39,5 +39,10 @@ class WishRecommendRVAdapter(private var wishList: List<WishRecommend>, private 
         }
     }
 
-    override fun getItemCount(): Int = 3
+    override fun getItemCount(): Int = minOf(wishList.size, 3)
+
+    fun updateList(newList: List<WishRecommend>) {
+        wishList = newList
+        notifyDataSetChanged()
+    }
 }
