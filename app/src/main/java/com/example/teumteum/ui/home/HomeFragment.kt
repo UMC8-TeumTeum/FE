@@ -19,6 +19,7 @@ import org.threeten.bp.format.DateTimeFormatter
 
 import com.example.teumteum.data.entities.TodoHomeItem
 import com.example.teumteum.data.entities.WishItem
+import com.example.teumteum.ui.filling.FillingActivity01Fragment
 import com.example.teumteum.ui.wish.WishlistFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
@@ -88,6 +89,13 @@ class HomeFragment : Fragment(), IDateClickListener {
         binding.btnLoadWishlistTv.setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.main_frm, WishlistFragment(wishDummyList))
+                .addToBackStack(null)
+                .commit()
+        }
+
+        binding.bannerCard.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, FillingActivity01Fragment())
                 .addToBackStack(null)
                 .commit()
         }

@@ -46,7 +46,7 @@ class WishRegisterFragment : Fragment() {
                     backgroundTintList = ColorStateList.valueOf(
                         resources.getColor(R.color.main_2, null)
                     )
-                    setTextColor(resources.getColor(R.color.black, null))
+                    setTextColor(resources.getColor(R.color.text_primary, null))
                 }
 
                 (button as? MaterialButton)?.apply {
@@ -77,7 +77,7 @@ class WishRegisterFragment : Fragment() {
                     backgroundTintList = ColorStateList.valueOf(
                         resources.getColor(R.color.main_2, null)
                     )
-                    setTextColor(resources.getColor(R.color.black, null))
+                    setTextColor(resources.getColor(R.color.text_primary, null))
                 }
 
                 (button as? MaterialButton)?.apply {
