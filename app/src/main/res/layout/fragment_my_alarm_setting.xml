@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white">
+
+    <ImageView
+        android:id="@+id/back_arrow_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_arrow_back"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="70dp"
+        android:layout_marginStart="16dp"/>
+
+    <TextView
+        android:id="@+id/title_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/noto_sans_kr_medium"
+        android:includeFontPadding="false"
+        android:text="설정"
+        android:textColor="@color/text_primary"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/back_arrow_iv"
+        app:layout_constraintStart_toEndOf="@+id/back_arrow_iv"
+        app:layout_constraintTop_toTopOf="@+id/back_arrow_iv"
+        android:layout_marginStart="12dp"/>
+
+
+    <TextView
+        android:id="@+id/push_alarm_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="푸쉬 알림"
+        android:fontFamily="@font/noto_sans_kr_regular"
+        android:textColor="@color/text_tertiary"
+        android:textSize="14sp"
+        android:includeFontPadding="false"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="140dp"
+        android:layout_marginStart="17dp"/>
+
+    <LinearLayout
+        android:id="@+id/push_alarm_pause_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/push_alarm_tv"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="17dp"
+        android:layout_marginEnd="17dp">
+
+        <TextView
+            android:id="@+id/push_alarm_pause_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/noto_sans_kr_medium"
+            android:includeFontPadding="false"
+            android:text="모두 일시 중단"
+            android:layout_weight="1"
+            android:textColor="@color/text_primary"
+            android:textSize="18sp" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/push_alarm_pause_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="27dp"
+            app:switchMinWidth="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:trackTint="@null"
+            app:thumbTint="@null"
+            android:thumb="@drawable/btn_remind_toggle_thumb"
+            app:track="@drawable/btn_remind_toggle_track"
+            />
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/push_alarm_pause_underline"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/teumteum_line"
+        app:layout_constraintTop_toBottomOf="@id/push_alarm_pause_ll"
+        android:layout_marginTop="24dp"/>
+
+    <LinearLayout
+        android:id="@+id/new_follower_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/push_alarm_pause_underline"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="17dp"
+        android:layout_marginEnd="17dp">
+
+        <TextView
+            android:id="@+id/new_follower_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/noto_sans_kr_medium"
+            android:includeFontPadding="false"
+            android:text="새로운 팔로워"
+            android:layout_weight="1"
+            android:textColor="@color/text_primary"
+            android:textSize="18sp" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/new_follower_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="27dp"
+            app:switchMinWidth="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:trackTint="@null"
+            app:thumbTint="@null"
+            android:thumb="@drawable/btn_remind_toggle_thumb"
+            app:track="@drawable/btn_remind_toggle_track"
+            />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/new_follower_description_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="나를 팔로우한 새로운 친구가 있을 때 알려드려요"
+        android:fontFamily="@font/noto_sans_kr_regular"
+        android:textColor="@color/text_primary"
+        android:textSize="14sp"
+        android:includeFontPadding="false"
+        app:layout_constraintTop_toBottomOf="@id/new_follower_ll"
+        app:layout_constraintStart_toStartOf="@id/new_follower_ll"
+        android:layout_marginTop="10dp"/>
+
+    <View
+        android:id="@+id/new_follower_underline"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/teumteum_line"
+        app:layout_constraintTop_toBottomOf="@id/new_follower_description_tv"
+        android:layout_marginTop="24dp"/>
+
+    <TextView
+        android:id="@+id/todo_setting_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="투두"
+        android:fontFamily="@font/noto_sans_kr_regular"
+        android:textColor="@color/text_tertiary"
+        android:textSize="14sp"
+        android:includeFontPadding="false"
+        app:layout_constraintTop_toBottomOf="@id/new_follower_underline"
+        app:layout_constraintStart_toStartOf="@id/push_alarm_pause_ll"
+        android:layout_marginTop="24dp"/>
+
+    <LinearLayout
+        android:id="@+id/todo_setting_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/todo_setting_tv"
+        app:layout_constraintStart_toStartOf="@id/push_alarm_pause_ll"
+        app:layout_constraintEnd_toEndOf="@+id/push_alarm_pause_ll"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="17dp"
+        android:layout_marginEnd="17dp"
+        >
+
+        <LinearLayout
+            android:id="@+id/today_todo_ll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            >
+
+            <TextView
+                android:id="@+id/today_todo_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/noto_sans_kr_medium"
+                android:includeFontPadding="false"
+                android:text="오늘의 일정"
+                android:layout_weight="1"
+                android:textColor="@color/text_primary"
+                android:textSize="18sp" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/today_todo_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="27dp"
+                app:switchMinWidth="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:trackTint="@null"
+                app:thumbTint="@null"
+                android:thumb="@drawable/btn_remind_toggle_thumb"
+                app:track="@drawable/btn_remind_toggle_track"
+                />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/today_todo_description_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="투두가 있을 때 오전 09:00에 알려드려요"
+            android:fontFamily="@font/noto_sans_kr_regular"
+            android:textColor="@color/text_primary"
+            android:textSize="14sp"
+            android:includeFontPadding="false"
+            android:layout_marginTop="10dp"/>
+
+        <LinearLayout
+            android:id="@+id/remind_setting_ll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="24dp"
+            >
+
+            <TextView
+                android:id="@+id/remind_setting_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/noto_sans_kr_medium"
+                android:includeFontPadding="false"
+                android:text="리마인드 알림"
+                android:layout_weight="1"
+                android:textColor="@color/text_primary"
+                android:textSize="18sp" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/remind_setting_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="27dp"
+                app:switchMinWidth="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:trackTint="@null"
+                app:thumbTint="@null"
+                android:thumb="@drawable/btn_remind_toggle_thumb"
+                app:track="@drawable/btn_remind_toggle_track"
+                />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/remind_setting_description_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="투두가 있을 때 오전 09:00에 알려드려요"
+            android:fontFamily="@font/noto_sans_kr_regular"
+            android:textColor="@color/text_primary"
+            android:textSize="14sp"
+            android:includeFontPadding="false"
+            android:layout_marginTop="10dp"/>
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/todo_setting_underline"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/teumteum_line"
+        app:layout_constraintTop_toBottomOf="@id/todo_setting_ll"
+        android:layout_marginTop="24dp"/>
+
+    <TextView
+        android:id="@+id/friend_setting_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="투두"
+        android:fontFamily="@font/noto_sans_kr_regular"
+        android:textColor="@color/text_tertiary"
+        android:textSize="14sp"
+        android:includeFontPadding="false"
+        app:layout_constraintTop_toBottomOf="@id/todo_setting_underline"
+        app:layout_constraintStart_toStartOf="@id/push_alarm_pause_ll"
+        android:layout_marginTop="24dp"/>
+
+    <LinearLayout
+        android:id="@+id/teum_request_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/friend_setting_tv"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="17dp"
+        android:layout_marginEnd="17dp">
+
+        <TextView
+            android:id="@+id/teum_request_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/noto_sans_kr_medium"
+            android:includeFontPadding="false"
+            android:text="틈 요청"
+            android:layout_weight="1"
+            android:textColor="@color/text_primary"
+            android:textSize="18sp" />
+
+        <ImageView
+            android:id="@+id/teum_request_arrow_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_arrow_sv"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="3dp"
+            app:tint="@color/teumteum_deactive"/>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

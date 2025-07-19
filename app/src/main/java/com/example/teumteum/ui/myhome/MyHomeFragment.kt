@@ -51,6 +51,13 @@ class MyHomeFragment : Fragment() {
                 .addToBackStack(null)
                 .commit()
         }
+
+        binding.settingIv.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, MySettingFragment())
+                .addToBackStack(null)
+                .commit()
+        }
     }
 
     override fun onResume() {

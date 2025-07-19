@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white">
+
+    <ImageView
+        android:id="@+id/back_arrow_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_arrow_back"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="70dp"
+        android:layout_marginStart="16dp"/>
+
+    <TextView
+        android:id="@+id/title_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/noto_sans_kr_medium"
+        android:includeFontPadding="false"
+        android:text="계정 설정"
+        android:textColor="@color/text_primary"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/back_arrow_iv"
+        app:layout_constraintStart_toEndOf="@+id/back_arrow_iv"
+        app:layout_constraintTop_toTopOf="@+id/back_arrow_iv"
+        android:layout_marginStart="12dp"/>
+
+    <LinearLayout
+        android:id="@+id/password_setting_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="143dp"
+        android:layout_marginStart="17dp"
+        android:layout_marginEnd="17dp">
+
+        <TextView
+            android:id="@+id/password_setting_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/noto_sans_kr_medium"
+            android:includeFontPadding="false"
+            android:text="비밀번호 재설정"
+            android:layout_weight="1"
+            android:textColor="@color/text_primary"
+            android:textSize="18sp" />
+
+        <ImageView
+            android:id="@+id/password_setting_arrow_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_arrow_sv"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="3dp"
+            app:tint="@color/teumteum_deactive"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/logout_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/password_setting_ll"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="28dp"
+        android:layout_marginStart="17dp"
+        android:layout_marginEnd="17dp">
+
+        <TextView
+            android:id="@+id/logout_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/noto_sans_kr_medium"
+            android:includeFontPadding="false"
+            android:text="로그아웃"
+            android:layout_weight="1"
+            android:textColor="@color/text_primary"
+            android:textSize="18sp" />
+
+        <ImageView
+            android:id="@+id/logout_arrow_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_arrow_sv"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="3dp"
+            app:tint="@color/teumteum_deactive"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/withdraw_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/logout_ll"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="28dp"
+        android:layout_marginStart="17dp"
+        android:layout_marginEnd="17dp">
+
+        <TextView
+            android:id="@+id/withdraw_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/noto_sans_kr_medium"
+            android:includeFontPadding="false"
+            android:text="회원 탈퇴"
+            android:layout_weight="1"
+            android:textColor="@color/text_primary"
+            android:textSize="18sp" />
+
+        <ImageView
+            android:id="@+id/withdraw_arrow_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_arrow_sv"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="3dp"
+            app:tint="@color/teumteum_deactive"/>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

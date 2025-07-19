@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white">
+
+    <ImageView
+        android:id="@+id/back_arrow_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_arrow_back"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="70dp"
+        android:layout_marginStart="16dp"/>
+
+    <TextView
+        android:id="@+id/title_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/noto_sans_kr_medium"
+        android:includeFontPadding="false"
+        android:text="설정"
+        android:textColor="@color/text_primary"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/back_arrow_iv"
+        app:layout_constraintStart_toEndOf="@+id/back_arrow_iv"
+        app:layout_constraintTop_toTopOf="@+id/back_arrow_iv"
+        android:layout_marginStart="12dp"/>
+
+    <LinearLayout
+        android:id="@+id/account_setting_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="143dp"
+        android:layout_marginStart="17dp"
+        android:layout_marginEnd="17dp">
+
+        <TextView
+            android:id="@+id/account_setting_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/noto_sans_kr_medium"
+            android:includeFontPadding="false"
+            android:text="계정 설정"
+            android:layout_weight="1"
+            android:textColor="@color/text_primary"
+            android:textSize="18sp" />
+
+        <ImageView
+            android:id="@+id/account_setting_arrow_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_arrow_sv"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="3dp"
+            app:tint="@color/teumteum_deactive"/>
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/account_setting_underline"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/teumteum_line"
+        app:layout_constraintTop_toBottomOf="@id/account_setting_ll"
+        android:layout_marginTop="24dp"/>
+
+    <TextView
+        android:id="@+id/service_setting_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="서비스 설정"
+        android:fontFamily="@font/noto_sans_kr_regular"
+        android:textColor="@color/text_tertiary"
+        android:textSize="14sp"
+        android:includeFontPadding="false"
+        app:layout_constraintTop_toBottomOf="@id/account_setting_underline"
+        app:layout_constraintStart_toStartOf="@id/account_setting_ll"
+        android:layout_marginTop="24dp"/>
+
+    <LinearLayout
+        android:id="@+id/service_setting_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/service_setting_tv"
+        app:layout_constraintStart_toStartOf="@id/account_setting_ll"
+        app:layout_constraintEnd_toEndOf="@+id/account_setting_ll"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="17dp"
+        android:layout_marginEnd="17dp"
+        >
+
+        <LinearLayout
+            android:id="@+id/alarm_setting_ll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            >
+
+            <TextView
+                android:id="@+id/alarm_setting_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/noto_sans_kr_medium"
+                android:includeFontPadding="false"
+                android:text="알림 설정"
+                android:layout_weight="1"
+                android:textColor="@color/text_primary"
+                android:textSize="18sp" />
+
+            <ImageView
+                android:id="@+id/alarm_setting_arrow_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_arrow_sv"
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="3dp"
+                app:tint="@color/teumteum_deactive"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/remind_setting_ll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="24dp"
+            >
+
+            <TextView
+                android:id="@+id/remind_setting_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/noto_sans_kr_medium"
+                android:includeFontPadding="false"
+                android:text="리마인드 알림 변경"
+                android:layout_weight="1"
+                android:textColor="@color/text_primary"
+                android:textSize="18sp" />
+
+            <ImageView
+                android:id="@+id/remind_setting_arrow_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_arrow_sv"
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="3dp"
+                app:tint="@color/teumteum_deactive"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/sleep_setting_ll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="24dp"
+            >
+
+            <TextView
+                android:id="@+id/sleep_setting_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/noto_sans_kr_medium"
+                android:includeFontPadding="false"
+                android:text="수면 패턴 변경"
+                android:layout_weight="1"
+                android:textColor="@color/text_primary"
+                android:textSize="18sp" />
+
+            <ImageView
+                android:id="@+id/sleep_setting_arrow_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_arrow_sv"
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="3dp"
+                app:tint="@color/teumteum_deactive"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/teummate_setting_ll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="24dp"
+            >
+
+            <TextView
+                android:id="@+id/teummate_setting_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/noto_sans_kr_medium"
+                android:includeFontPadding="false"
+                android:text="틈메이트 매칭 설정"
+                android:layout_weight="1"
+                android:textColor="@color/text_primary"
+                android:textSize="18sp" />
+
+            <ImageView
+                android:id="@+id/teummate_setting_arrow_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_arrow_sv"
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="3dp"
+                app:tint="@color/teumteum_deactive"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/agreement_setting_ll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="24dp"
+            >
+
+            <TextView
+                android:id="@+id/agreement_setting_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/noto_sans_kr_medium"
+                android:includeFontPadding="false"
+                android:text="개인정보 제공 동의 관리"
+                android:layout_weight="1"
+                android:textColor="@color/text_primary"
+                android:textSize="18sp" />
+
+            <ImageView
+                android:id="@+id/agreement_setting_arrow_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_arrow_sv"
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="3dp"
+                app:tint="@color/teumteum_deactive"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
