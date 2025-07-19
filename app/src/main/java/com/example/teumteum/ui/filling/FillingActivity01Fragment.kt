@@ -1,7 +1,6 @@
 package com.example.teumteum.ui.filling
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,6 +32,13 @@ class FillingActivity01Fragment : Fragment() {
         // 바텀 내비게이션 숨기기
         val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
         bottomNav?.visibility = View.GONE
+
+        binding.fillingActivityLocationClearBtn.setOnClickListener {
+            binding.fillingActivityLocationEt.setText("")
+        }
+        binding.fillingActivityCategoryClearBtn.setOnClickListener {
+            binding.fillingActivityCategoryEt.setText("")
+        }
 
         val selectedStroke = ContextCompat.getColor(requireContext(), R.color.main_1)
         val defaultStroke = ContextCompat.getColor(requireContext(), R.color.teumteum_bg)
@@ -115,6 +121,13 @@ class FillingActivity01Fragment : Fragment() {
 
         binding.backArrowIv.setOnClickListener {
             parentFragmentManager.popBackStack()
+        }
+
+        binding.searchBtn.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, FillingActivity02Fragment())
+                .addToBackStack(null)
+                .commit()
         }
     }
 

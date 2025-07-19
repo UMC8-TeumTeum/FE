@@ -13,7 +13,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import com.example.teumteum.R
-import com.example.teumteum.databinding.DialogConfirmWishRegisterBinding
+import com.example.teumteum.databinding.DialogConfirmRegisterBinding
 import com.example.teumteum.databinding.FragmentWishSetting02Binding
 import com.example.teumteum.ui.home.HomeFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -200,7 +200,7 @@ class WishSetting02Fragment : Fragment() {
     }
 
     private fun showWishRegisterDialog() {
-        val dialogBinding = DialogConfirmWishRegisterBinding.inflate(layoutInflater)
+        val dialogBinding = DialogConfirmRegisterBinding.inflate(layoutInflater)
 
         val dialog = AlertDialog.Builder(requireContext(), R.style.RoundedAlertDialog)
             .setView(dialogBinding.root)

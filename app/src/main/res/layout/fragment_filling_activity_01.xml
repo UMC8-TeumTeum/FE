@@ -56,7 +56,6 @@
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/filling_activity_time_01_cv"
-                android:tag="10분"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
@@ -92,7 +91,6 @@
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/filling_activity_time_02_cv"
-                android:tag="20분"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
@@ -128,7 +126,6 @@
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/filling_activity_time_03_cv"
-                android:tag="30분"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
@@ -162,7 +159,6 @@
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/filling_activity_time_04_cv"
-                android:tag="1시간"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
@@ -221,7 +217,6 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_filling_activity_location_01"
-                    android:tag="집"
                     android:layout_width="100dp"
                     android:layout_height="50dp"
                     android:layout_marginEnd="8dp"
@@ -236,7 +231,6 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_filling_activity_location_02"
-                    android:tag="학교"
                     android:layout_width="100dp"
                     android:layout_height="50dp"
                     android:layout_marginEnd="8dp"
@@ -251,7 +245,6 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_filling_activity_location_03"
-                    android:tag="회사"
                     android:layout_width="100dp"
                     android:layout_height="50dp"
                     android:layout_marginEnd="8dp"
@@ -279,7 +272,6 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_filling_activity_location_04"
-                    android:tag="이동중"
                     android:layout_width="100dp"
                     android:layout_height="50dp"
                     android:layout_marginEnd="8dp"
@@ -294,7 +286,6 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_filling_activity_location_05"
-                    android:tag="실외"
                     android:layout_width="100dp"
                     android:layout_height="50dp"
                     android:layout_marginEnd="8dp"
@@ -309,7 +300,6 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_filling_activity_location_06"
-                    android:tag="실내"
                     android:layout_width="100dp"
                     android:layout_height="50dp"
                     android:layout_marginEnd="8dp"
@@ -387,7 +377,6 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_filling_activity_category_01"
-                    android:tag="자기계발"
                     android:layout_width="100dp"
                     android:layout_height="50dp"
                     android:layout_marginEnd="8dp"
@@ -402,7 +391,6 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_filling_activity_category_02"
-                    android:tag="운동"
                     android:layout_width="100dp"
                     android:layout_height="50dp"
                     android:layout_marginEnd="8dp"
@@ -417,7 +405,6 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_filling_activity_category_03"
-                    android:tag="취미"
                     android:layout_width="100dp"
                     android:layout_height="50dp"
                     android:layout_marginEnd="8dp"
@@ -445,7 +432,6 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_filling_activity_category_04"
-                    android:tag="일상"
                     android:layout_width="100dp"
                     android:layout_height="50dp"
                     android:layout_marginEnd="8dp"
@@ -460,7 +446,6 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_filling_activity_category_05"
-                    android:tag="문화생활"
                     android:layout_width="100dp"
                     android:layout_height="50dp"
                     android:layout_marginEnd="8dp"
@@ -475,7 +460,6 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_filling_activity_category_06"
-                    android:tag="휴식"
                     android:layout_width="100dp"
                     android:layout_height="50dp"
                     android:layout_marginEnd="8dp"
