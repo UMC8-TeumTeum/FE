@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="10dp"
+    android:background="@android:color/white">
+
+    <!-- 상단: 보라색 카드 (MaterialCardView로 둥근 모서리 처리) -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="2dp"
+        app:cardBackgroundColor="#E8ECFF"
+        android:layout_marginBottom="12dp"
+        app:strokeColor="@android:color/transparent"
+        app:strokeWidth="0dp" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:padding="11dp"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/imgProfile"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="20dp"
+                android:scaleType="centerCrop"
+                android:background="@drawable/freind01_circle_profile" />
+
+            <!-- 이름, 날짜, 시간 수평 배치 -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/tvName"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="이름"
+                    android:textColor="#0F0F0F"
+                    android:textSize="16sp"
+                    android:layout_marginEnd="18dp"
+                    android:fontFamily="@font/noto_sans_kr_medium" />
+
+                <TextView
+                    android:id="@+id/tvDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="25.05.02     |"
+                    android:textColor="#0F0F0F"
+                    android:textSize="11sp"
+                    android:fontFamily="@font/noto_sans_kr_regular"
+                    android:layout_marginEnd="14dp" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="13dp"
+                    android:layout_height="13dp"
+                    android:layout_marginEnd="4dp"
+                    app:srcCompat="@drawable/friend_timer_outline"
+                    app:tint="#0F0F0F"
+                    app:tintMode="src_in"
+                    android:contentDescription="시간 아이콘" />
+
+                <TextView
+                    android:id="@+id/tvTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="14dp"
+                    android:text="15:20 ~ 16:10"
+                    android:textColor="#0F0F0F"
+                    android:textSize="11sp"
+                    android:fontFamily="@font/noto_sans_kr_regular" />
+            </LinearLayout>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- 하단 흰색 틈 요청 내용 카드 -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="210dp"
+        android:background="@drawable/friend02_bg_teum_card"
+        android:layout_marginTop="0dp"
+        android:elevation="1dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="22dp">
+
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="강아지 산책 가자"
+                android:textColor="#0F0F0F"
+                android:textSize="15sp"
+                android:fontFamily="@font/noto_sans_kr_medium"
+                android:layout_marginBottom="6dp"
+                android:includeFontPadding="false" />
+
+            <TextView
+                android:id="@+id/tvDesc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="모모랑 초코랑 종합천 한바퀴 쓰윽 돌고\n돌아오는 길에 호떡 먹자!"
+                android:textColor="#788084"
+                android:textSize="12sp"
+                android:fontFamily="@font/noto_sans_kr_regular"
+                android:includeFontPadding="false"
+                android:lineSpacingExtra="0dp" />
+        </LinearLayout>
+
+        <!-- 고정된 이미지 -->
+        <ImageView
+            android:id="@+id/imgTeum"
+            android:layout_width="230dp"
+            android:layout_height="220dp"
+            android:layout_gravity="end|bottom"
+            android:layout_marginEnd="-18dp"
+            android:layout_marginBottom="-40dp"
+            android:src="@drawable/friend_teum_logo"
+            android:scaleType="fitCenter"
+            android:contentDescription="틈 이미지" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/tvSuggestionTime"
+        android:layout_width="match_parent"
+        android:layout_height="53dp"
+        android:layout_marginBottom="50dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/friend02_bg_response_time"
+        android:fontFamily="@font/noto_sans_kr_regular"
+        android:gravity="start|center_vertical"
+        android:paddingStart="20dp"
+        android:paddingEnd="10dp"
+        android:text="친구가 원하는 시간 | 16:00 ~ 18:00"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@+id/requestViewPager"
+        app:layout_constraintStart_toStartOf="parent" />
+</LinearLayout>
