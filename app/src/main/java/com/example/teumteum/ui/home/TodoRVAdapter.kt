@@ -1,12 +1,14 @@
-package com.example.teumteum.ui.todo
+package com.example.teumteum.ui.home
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.teumteum.R
 import com.example.teumteum.data.entities.TodoHomeItem
 import com.example.teumteum.databinding.ItemTodolistBinding
+import com.example.teumteum.ui.todo.TodoEditFragment
 
 class TodoRVAdapter(private val fragmentManager: FragmentManager, private val todoList: List<TodoHomeItem>) : RecyclerView.Adapter<TodoRVAdapter.ViewHolder>() {
 
@@ -33,6 +35,24 @@ class TodoRVAdapter(private val fragmentManager: FragmentManager, private val to
             bottomSheet.show(fragmentManager, bottomSheet.tag)
         }
 
+        if (item.isAlarmOn == null) {
+            binding.ivAlarm.visibility = View.GONE
+            binding.ivAlarm.setOnClickListener(null)
+        } else {
+            binding.ivAlarm.visibility = View.VISIBLE
+            binding.ivAlarm.setImageResource(
+                if (item.isAlarmOn == true) R.drawable.ic_alarm_on_sv
+                else R.drawable.ic_alarm_off_sv
+            )
+
+            binding.ivAlarm.setOnClickListener {
+                item.isAlarmOn = !(item.isAlarmOn ?: false)
+                binding.ivAlarm.setImageResource(
+                    if (item.isAlarmOn == true) R.drawable.ic_alarm_on_sv
+                    else R.drawable.ic_alarm_off_sv
+                )
+            }
+        }
     }
 
     override fun getItemCount(): Int = todoList.size

@@ -10,7 +10,6 @@ import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import com.example.teumteum.ui.calendar.IDateClickListener
 import com.example.teumteum.R
-import com.example.teumteum.ui.todo.TodoRVAdapter
 import com.example.teumteum.databinding.FragmentHomeBinding
 import com.example.teumteum.ui.calendar.CalendarMode
 
@@ -19,6 +18,7 @@ import org.threeten.bp.format.DateTimeFormatter
 
 import com.example.teumteum.data.entities.TodoHomeItem
 import com.example.teumteum.data.entities.WishItem
+import com.example.teumteum.ui.calendar.CalendarVPAdapter
 import com.example.teumteum.ui.filling.FillingActivity01Fragment
 import com.example.teumteum.ui.wish.WishlistFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -33,9 +33,9 @@ class HomeFragment : Fragment(), IDateClickListener {
     private lateinit var adapter: TodoRVAdapter
 
     private var todoDummyList = mutableListOf(
-        TodoHomeItem(1, "UX디자인 수업", "오후 12:00", "오후 2:30", isPublic = true),
-        TodoHomeItem(2, "교내 근로", "오후 3:30", "오후 5:30", isPublic = false),
-        TodoHomeItem(3, "중랑천 산책", "오후 6:30", "오후 8:00", isPublic = true)
+        TodoHomeItem(1, "UX디자인 수업", "오후 12:00", "오후 2:30", isPublic = true, isAlarmOn = true),
+        TodoHomeItem(2, "교내 근로", "오후 3:30", "오후 5:30", isPublic = false, isAlarmOn = null),
+        TodoHomeItem(3, "중랑천 산책", "오후 6:30", "오후 8:00", isPublic = true, isAlarmOn = false)
     )
 
     private var wishDummyList = mutableListOf(
