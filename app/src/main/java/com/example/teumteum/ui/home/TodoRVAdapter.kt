@@ -3,6 +3,7 @@ package com.example.teumteum.ui.home
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.teumteum.R
@@ -29,6 +30,13 @@ class TodoRVAdapter(private val fragmentManager: FragmentManager, private val to
         binding.ivLock.setImageResource(
             if (item.isPublic) R.drawable.ic_unlock_sv else R.drawable.ic_lock_sv
         )
+
+        // 반복일정 관련 작업 시 수정 필요
+        if (item.id == 3) {
+            binding.root.setCardBackgroundColor(ContextCompat.getColor(binding.root.context, R.color.main_2))
+        } else {
+            binding.root.setCardBackgroundColor(ContextCompat.getColor(binding.root.context, R.color.white))
+        }
 
         binding.root.setOnClickListener {
             val bottomSheet = TodoEditFragment.newInstanceWithTodoDummy(item)
