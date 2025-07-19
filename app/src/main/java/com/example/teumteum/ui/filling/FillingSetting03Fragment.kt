@@ -1,4 +1,4 @@
-package com.example.teumteum.ui.wish
+package com.example.teumteum.ui.filling
 
 import android.os.Bundle
 import android.view.Gravity
@@ -14,14 +14,14 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import com.example.teumteum.R
 import com.example.teumteum.databinding.DialogConfirmRegisterBinding
-import com.example.teumteum.databinding.FragmentWishSetting02Binding
+import com.example.teumteum.databinding.FragmentFillingSetting03Binding
 import com.example.teumteum.ui.home.HomeFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
-class WishSetting02Fragment : Fragment() {
+class FillingSetting03Fragment : Fragment() {
 
-    private lateinit var binding: FragmentWishSetting02Binding
+    private lateinit var binding: FragmentFillingSetting03Binding
 
     private var selectedStartTime: String? = null
     private var selectedEndTime: String? = null
@@ -31,7 +31,7 @@ class WishSetting02Fragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentWishSetting02Binding.inflate(inflater, container, false)
+        binding = FragmentFillingSetting03Binding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -44,27 +44,17 @@ class WishSetting02Fragment : Fragment() {
         setTime(time.toString())
 
         val selectedTime = arguments?.getString("selected_time")
-        val startTime = arguments?.getString("startTime")
-        val endTime = arguments?.getString("endTime")
-
-        binding.wishTimeSettingTv.text = selectedTime
-
-        if (!startTime.isNullOrEmpty() && !endTime.isNullOrEmpty()) {
-            binding.startChoiceTv.text = startTime
-            binding.endChoiceTv.text = endTime
-            selectedStartTime = startTime
-            selectedEndTime = endTime
-        }
+        binding.fillingActivityTimeSettingTv.text = selectedTime
 
         // 바텀 내비게이션 숨기기
         val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
         bottomNav?.visibility = View.GONE
 
-        binding.wishStartContainer.setOnClickListener {
+        binding.fillingActivityStartContainer.setOnClickListener {
             showCustomTimePicker(binding.startChoiceTv)
         }
 
-        binding.wishEndContainer.setOnClickListener {
+        binding.fillingActivityEndContainer.setOnClickListener {
             showCustomTimePicker(binding.endChoiceTv)
         }
 
@@ -149,11 +139,7 @@ class WishSetting02Fragment : Fragment() {
                 selectedEndTime = timeText
             }
 
-            // 선택한 시간대 반영
-            if (!selectedStartTime.isNullOrEmpty() && !selectedEndTime.isNullOrEmpty()) {
-                val timeRangeText = getString(R.string.time_range_format, selectedStartTime, selectedEndTime)
-                binding.wishTimeSettingTv.text = timeRangeText
-            }
+            enableNextButton()
 
             dialog.dismiss()
         }
@@ -192,11 +178,11 @@ class WishSetting02Fragment : Fragment() {
     }
 
     private fun setTitle(title: String){
-        binding.wishTitleTv.text = title
+        binding.fillingActivityTitleTv.text = title
     }
 
     private fun setTime(time: String){
-        binding.wishTimeTv.text = time
+        binding.fillingActivityTimeTv.text = time
     }
 
     private fun showWishRegisterDialog() {
@@ -237,5 +223,24 @@ class WishSetting02Fragment : Fragment() {
         }
 
         dialog.show()
+    }
+
+    private fun enableNextButton() {
+        val allSet = selectedStartTime != null && selectedEndTime != null
+        binding.registerBtn.isEnabled = allSet
+
+        binding.registerBtn.setBackgroundColor(
+            if (allSet)
+                requireContext().getColor(R.color.text_primary)
+            else
+                requireContext().getColor(R.color.teumteum_bg)
+        )
+
+        binding.registerBtn.setTextColor(
+            if (allSet)
+                requireContext().getColor(R.color.white)
+            else
+                requireContext().getColor(R.color.text_primary)
+        )
     }
 }

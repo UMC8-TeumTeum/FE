@@ -13,6 +13,7 @@ import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.example.teumteum.R
 import com.example.teumteum.data.local.TodoDao
@@ -28,8 +29,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 class TodoEditFragment : BottomSheetDialogFragment() {
 
     private lateinit var binding: FragmentTodoEditBinding
-
-    private lateinit var todoDao: TodoDao
 
     private var todoId: Int = -1
     private val selectedItems = mutableSetOf<String>()

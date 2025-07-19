@@ -1,4 +1,4 @@
-package com.example.teumteum.ui.wish
+package com.example.teumteum.ui.filling
 
 import android.os.Bundle
 import android.view.Gravity
@@ -14,14 +14,14 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import com.example.teumteum.R
 import com.example.teumteum.databinding.DialogConfirmRegisterBinding
-import com.example.teumteum.databinding.FragmentWishSetting02Binding
+import com.example.teumteum.databinding.FragmentFillingSetting02Binding
 import com.example.teumteum.ui.home.HomeFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
-class WishSetting02Fragment : Fragment() {
+class FillingSetting02Fragment : Fragment() {
 
-    private lateinit var binding: FragmentWishSetting02Binding
+    private lateinit var binding: FragmentFillingSetting02Binding
 
     private var selectedStartTime: String? = null
     private var selectedEndTime: String? = null
@@ -31,11 +31,15 @@ class WishSetting02Fragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentWishSetting02Binding.inflate(inflater, container, false)
+        binding = FragmentFillingSetting02Binding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
+        // 바텀 내비게이션 숨기기
+        val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
+        bottomNav?.visibility = View.GONE
 
         val title = arguments?.getString("title")
         setTitle(title.toString())
@@ -47,7 +51,7 @@ class WishSetting02Fragment : Fragment() {
         val startTime = arguments?.getString("startTime")
         val endTime = arguments?.getString("endTime")
 
-        binding.wishTimeSettingTv.text = selectedTime
+        binding.fillActivityTimeSettingTv.text = selectedTime
 
         if (!startTime.isNullOrEmpty() && !endTime.isNullOrEmpty()) {
             binding.startChoiceTv.text = startTime
@@ -56,15 +60,11 @@ class WishSetting02Fragment : Fragment() {
             selectedEndTime = endTime
         }
 
-        // 바텀 내비게이션 숨기기
-        val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
-        bottomNav?.visibility = View.GONE
-
-        binding.wishStartContainer.setOnClickListener {
+        binding.fillActivityStartContainer.setOnClickListener {
             showCustomTimePicker(binding.startChoiceTv)
         }
 
-        binding.wishEndContainer.setOnClickListener {
+        binding.fillActivityEndContainer.setOnClickListener {
             showCustomTimePicker(binding.endChoiceTv)
         }
 
@@ -152,7 +152,7 @@ class WishSetting02Fragment : Fragment() {
             // 선택한 시간대 반영
             if (!selectedStartTime.isNullOrEmpty() && !selectedEndTime.isNullOrEmpty()) {
                 val timeRangeText = getString(R.string.time_range_format, selectedStartTime, selectedEndTime)
-                binding.wishTimeSettingTv.text = timeRangeText
+                binding.fillActivityTimeSettingTv.text = timeRangeText
             }
 
             dialog.dismiss()
@@ -192,11 +192,11 @@ class WishSetting02Fragment : Fragment() {
     }
 
     private fun setTitle(title: String){
-        binding.wishTitleTv.text = title
+        binding.fillActivityTitleTv.text = title
     }
 
     private fun setTime(time: String){
-        binding.wishTimeTv.text = time
+        binding.fillActivityTimeTv.text = time
     }
 
     private fun showWishRegisterDialog() {
