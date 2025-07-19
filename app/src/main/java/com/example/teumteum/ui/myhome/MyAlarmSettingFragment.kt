@@ -6,12 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.teumteum.R
-import com.example.teumteum.databinding.FragmentMySettingBinding
+import com.example.teumteum.databinding.FragmentMyAlarmSettingBinding
 import com.example.teumteum.ui.main.MainActivity
 
-class MySettingFragment : Fragment() {
+class MyAlarmSettingFragment : Fragment() {
 
-    private lateinit var binding: FragmentMySettingBinding
+    private lateinit var binding: FragmentMyAlarmSettingBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,7 +22,7 @@ class MySettingFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentMySettingBinding.inflate(inflater,container,false)
+        binding = FragmentMyAlarmSettingBinding.inflate(inflater,container,false)
         return binding.root
     }
 
@@ -32,24 +32,10 @@ class MySettingFragment : Fragment() {
 
         binding.backArrowIv.setOnClickListener {
             parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, MyHomeFragment())
+                .replace(R.id.main_frm, MySettingFragment())
                 .addToBackStack(null)
                 .commit()
         }
-
-        binding.accountSettingLl.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, MyAccountSettingFragment())
-                .addToBackStack(null)
-                .commit()
-        }
-
-        binding.alarmSettingLl.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, MyAlarmSettingFragment())
-                .addToBackStack(null)
-                .commit()
-        }
-
     }
+
 }
