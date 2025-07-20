@@ -68,4 +68,9 @@
         <item name="cornerSize">50%</item>
     </style>
 
+    // 달력
+    <style name="CalendarOnlyTheme">
+        <item name="colorControlActivated">@color/main_1</item>
+    </style>
+
 </resources>

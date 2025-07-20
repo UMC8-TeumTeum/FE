@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bottom_sheet_root"
+    android:background="@drawable/friend_bg_bottom_sheet"
+    android:layout_width="match_parent"
+    android:layout_height="392dp">
+
+    <!-- 드래그 핸들 -->
+    <View
+        android:id="@+id/handle"
+        android:layout_width="65dp"
+        android:layout_height="5dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="128dp"
+        android:layout_marginStart="128dp"
+        android:background="@drawable/friend_bottom_sheet_handle"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- 타이틀 -->
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="42dp"
+        android:layout_marginStart="20dp"
+        android:text="홍대 소품샵 투어"
+        android:includeFontPadding="false"
+        android:lineSpacingExtra="0dp"
+        android:textSize="20sp"
+        android:fontFamily="@font/noto_sans_kr_medium"
+        android:textColor="#0F0F0F"
+        app:layout_constraintTop_toBottomOf="@id/handle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- 구분선 #1 -->
+    <View
+        android:id="@+id/divider1"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="86dp"
+        android:background="#D3D3D3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/handle" />
+
+    <!-- 1번째 줄: 아이콘 + 날짜 + 시간 -->
+    <ImageView
+        android:id="@+id/icTime1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="23dp"
+        android:layout_marginStart="20dp"
+        android:src="@drawable/time"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/divider1" />
+
+    <TextView
+        android:id="@+id/tvDate1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="11dp"
+        android:layout_marginTop="22dp"
+        android:fontFamily="@font/noto_sans_kr_regular"
+        android:includeFontPadding="false"
+        android:lineSpacingExtra="0dp"
+        android:text="6월 4일 (수)"
+        android:textColor="#0F0F0F"
+        android:textSize="14sp"
+        app:layout_constraintStart_toEndOf="@+id/icTime1"
+        app:layout_constraintTop_toBottomOf="@+id/divider1" />
+
+    <TextView
+        android:id="@+id/tvTime1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="22dp"
+        android:layout_marginEnd="18dp"
+        android:layout_marginStart="188dp"
+        android:fontFamily="@font/noto_sans_kr_regular"
+        android:includeFontPadding="false"
+        android:lineSpacingExtra="0dp"
+        android:text="오후 5:30"
+        android:textColor="#0F0F0F"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tvDate1"
+        app:layout_constraintTop_toBottomOf="@+id/divider1" />
+
+    <!-- 구분선 #2 -->
+    <View
+        android:id="@+id/divider2"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:background="#D3D3D3"
+        android:layout_marginTop="101dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider1" />
+
+
+    <TextView
+        android:id="@+id/tvDate2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:layout_marginStart="11dp"
+        android:fontFamily="@font/noto_sans_kr_regular"
+        android:includeFontPadding="false"
+        android:lineSpacingExtra="0dp"
+        android:text="6월 4일 (수)"
+        android:textColor="#0F0F0F"
+        android:textSize="14sp"
+        app:layout_constraintStart_toEndOf="@+id/icTime1"
+        app:layout_constraintTop_toBottomOf="@+id/tvDate1" />
+
+    <TextView
+        android:id="@+id/tvTime2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="17dp"
+        android:layout_marginEnd="18dp"
+        android:layout_marginStart="188dp"
+        android:fontFamily="@font/noto_sans_kr_regular"
+        android:includeFontPadding="false"
+        android:lineSpacingExtra="0dp"
+        android:text="오후 6:30"
+        android:textColor="#0F0F0F"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tvDate2"
+        app:layout_constraintTop_toBottomOf="@+id/tvTime1" />
+
+    <!-- 프로필 썸네일 리스트 -->
+    <ImageView
+        android:id="@+id/imgProfile"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="23dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="48dp"
+        android:background="@drawable/freind01_circle_profile"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toTopOf="@+id/btnCancelPromise"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider2" />
+
+    <ImageView
+        android:id="@+id/imgProfile2"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="23dp"
+        android:layout_marginStart="68dp"
+        android:layout_marginBottom="48dp"
+        android:background="@drawable/freind01_circle_profile"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toTopOf="@+id/btnCancelPromise"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider2" />
+
+    <ImageView
+        android:id="@+id/imgProfile3"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="23dp"
+        android:layout_marginStart="116dp"
+        android:layout_marginBottom="48dp"
+        android:background="@drawable/freind01_circle_profile"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toTopOf="@+id/btnCancelPromise"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider2" />
+
+    <!-- 버튼: 약속된 틈 취소하기 -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnCancelPromise"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="19dp"
+        android:layout_marginEnd="19dp"
+        android:layout_marginBottom="0dp"
+        android:layout_marginTop="305dp"
+        android:fontFamily="@font/noto_sans_kr_medium"
+        android:text="약속된 틈 취소하기"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        app:backgroundTint="#0F0F0F"
+        app:cornerRadius="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/handle" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
