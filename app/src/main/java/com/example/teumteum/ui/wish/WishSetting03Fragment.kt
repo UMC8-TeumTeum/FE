@@ -15,7 +15,7 @@ import androidx.fragment.app.Fragment
 import com.example.teumteum.R
 import com.example.teumteum.databinding.DialogConfirmRegisterBinding
 import com.example.teumteum.databinding.FragmentWishSetting03Binding
-import com.example.teumteum.ui.home.HomeFragment
+import com.example.teumteum.ui.main.HomeFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 

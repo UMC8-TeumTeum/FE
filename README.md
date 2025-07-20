@@ -174,6 +174,6 @@ ex) [FEAT/#6] 로그인 뷰 구현
 
 targetSDK : 35
 
-minSDK : 24
+minSDK : 26
 
 테스트 환경 : Emulator(Pixel 8a)

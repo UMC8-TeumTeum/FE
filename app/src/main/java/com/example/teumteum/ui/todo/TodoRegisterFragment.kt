@@ -1,5 +1,6 @@
 package com.example.teumteum.ui.todo
 
+import android.app.Dialog
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -10,6 +11,7 @@ import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.example.teumteum.databinding.FragmentTodoRegisterBinding
@@ -18,11 +20,15 @@ import com.example.teumteum.data.entities.Todo
 import com.example.teumteum.data.local.AppDatabase
 
 import androidx.lifecycle.lifecycleScope
+import com.example.teumteum.ui.wish.WishRegisterFragment
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class TodoRegisterFragment : Fragment() {
+class TodoRegisterFragment : BottomSheetDialogFragment() {
 
     private lateinit var binding: FragmentTodoRegisterBinding
 
@@ -30,6 +36,8 @@ class TodoRegisterFragment : Fragment() {
     private var popupWindow: PopupWindow? = null
     private val selectedItems = mutableSetOf("30분 전", "10분 전")
     private val alarmOptions = listOf("30분 전", "10분 전", "5분 전", "3분 전", "1분 전")
+
+    private var isTodoSelected = true
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -111,6 +119,21 @@ class TodoRegisterFragment : Fragment() {
                 }
             }
 
+        }
+
+        binding.btnWish.setOnClickListener {
+            if (isTodoSelected) {
+                binding.btnWish.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
+                binding.btnWish.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+
+                binding.btnTodo.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.teumteum_bg))
+                binding.btnTodo.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
+                isTodoSelected = false
+
+                childFragmentManager.beginTransaction()
+                    .replace(R.id.register_fragment_container, WishRegisterFragment())
+                    .commit()
+            }
         }
     }
 
@@ -275,6 +298,38 @@ class TodoRegisterFragment : Fragment() {
                 }
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        dialog?.let { dialog ->
+            val bottomSheet = dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+            bottomSheet?.let {
+                val screenHeight = resources.displayMetrics.heightPixels
+                val desiredHeight = (screenHeight * 0.84).toInt()
+
+                it.layoutParams.height = desiredHeight
+                it.requestLayout()
+
+                val behavior = BottomSheetBehavior.from(it)
+                behavior.peekHeight = desiredHeight
+                behavior.state = BottomSheetBehavior.STATE_COLLAPSED
+                behavior.isDraggable = false // 확장 불가능
+            }
+        }
+    }
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
+
+        dialog.setOnShowListener { dialogInterface ->
+            val bottomSheet = (dialogInterface as BottomSheetDialog)
+                .findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+            bottomSheet?.setBackgroundResource(R.drawable.calendar_background)
+        }
+
+        return dialog
     }
 
 }
