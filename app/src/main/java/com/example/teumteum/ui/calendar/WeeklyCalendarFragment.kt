@@ -14,6 +14,7 @@ class WeeklyCalendarFragment : Fragment() {
 
     private lateinit var binding: FragmentWeeklyCalendarBinding
     private lateinit var textViewList: List<TextView>
+    private lateinit var dotViewList: List<View>
     private lateinit var dates: List<LocalDate>
 
     private var position: Int = 0
@@ -51,6 +52,7 @@ class WeeklyCalendarFragment : Fragment() {
     private fun initViews() {
         with(binding) {
             textViewList = listOf(tv1, tv2, tv3, tv4, tv5, tv6, tv7)
+            dotViewList = listOf(dot1, dot2, dot3, dot4, dot5, dot6, dot7)
         }
     }
 
@@ -70,10 +72,16 @@ class WeeklyCalendarFragment : Fragment() {
     }
 
     private fun setOneWeekDateIntoTextView() {
+        val today = LocalDate.now()
+
         for (i in textViewList.indices) {
             val date = dates[i]
             val textView = textViewList[i]
+            val dotView = dotViewList[i]
+
             textView.text = date.dayOfMonth.toString()
+            dotView.visibility = if (date == today) View.VISIBLE else View.GONE
+
             textView.setOnClickListener {
                 resetUi()
                 setSelectedDate(requireContext(), textView)
@@ -108,10 +116,14 @@ class WeeklyCalendarFragment : Fragment() {
         for (i in textViewList.indices) {
             val date = dates[i]
             val textView = textViewList[i]
+            val dotView = dotViewList[i]
+
             if (date == today) {
                 setTodayStyle(requireContext(), textView)
+                dotView.visibility = View.VISIBLE
             } else {
                 resetDateStyle(requireContext(), textView)
+                dotView.visibility = View.GONE
             }
         }
     }

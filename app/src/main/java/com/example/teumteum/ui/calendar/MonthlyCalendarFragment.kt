@@ -78,14 +78,22 @@ class MonthlyCalendarFragment : Fragment() {
         dateList.forEachIndexed { index, date ->
             val cellView = inflater.inflate(R.layout.item_day_cell, binding.monthlyCalendarGrid, false)
             val dayText = cellView.findViewById<TextView>(R.id.day_text)
+            val dotView = cellView.findViewById<View>(R.id.dot_view)
 
             if (date == null) {
                 dayText.text = ""
                 dayText.background = null
                 dayText.setTextColor(resources.getColor(R.color.transparent, null))
+                dotView.visibility = View.INVISIBLE
             } else {
                 dayText.text = date.dayOfMonth.toString()
                 updateDayUi(requireContext(), dayText, date, selectedDate, today)
+
+                if (date.isEqual(today)) {
+                    dotView.visibility = View.VISIBLE
+                } else {
+                    dotView.visibility = View.INVISIBLE
+                }
 
                 dayText.setOnClickListener {
                     selectedDate = date
