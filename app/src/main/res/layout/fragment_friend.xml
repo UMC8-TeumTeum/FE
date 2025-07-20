@@ -8,7 +8,7 @@
     android:orientation="vertical"
     android:background="@android:color/white">
 
-    <!-- 상단 배경 및 추천 영역 -->
+    <!-- 팔로잉 / 팔로워 탭 -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="450dp"
@@ -19,110 +19,99 @@
             android:layout_width="match_parent"
             android:layout_height="230dp"
             android:layout_marginTop="146dp"
-            android:layout_marginRight="40dp"
-            android:src="@drawable/bg_home"
+            android:layout_marginRight="0dp"
             android:scaleType="centerCrop"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            android:src="@drawable/bg_home"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- 메뉴, 검색, 알림 아이콘 -->
-        <LinearLayout
-            android:layout_width="match_parent"
+        <!-- 메뉴 로고 -->
+        <ImageView
+            android:id="@+id/home_logo_iv"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
-            android:orientation="horizontal"
-            android:padding="16dp"
-            android:gravity="center_vertical">
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="68dp"
+            android:src="@drawable/friend_teumteum_logo"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageView
-                android:layout_width="22dp"
-                android:layout_height="20dp"
-                android:layout_marginLeft="5dp"
-                android:src="@drawable/friend_teumteum_logo" />
+        <!-- 알림 버튼 -->
+        <ImageButton
+            android:id="@+id/btn_alarm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="321dp"
+            android:layout_marginTop="68dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_top_alarm"
+            app:layout_constraintBaseline_toBaselineOf="@id/home_logo_iv"
+            android:layout_marginEnd="14dp" />
 
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <ImageButton
-                android:id="@+id/btn_alarm"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginEnd="5dp"
-                android:background="@android:color/transparent"
-                android:src="@drawable/ic_top_alarm"
-                android:padding="11dp"
-                android:scaleType="centerInside" />
+        <!-- 검색 버튼 -->
+        <ImageButton
+            android:id="@+id/btn_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="68dp"
+            android:layout_marginStart="365dp"
+            android:layout_marginEnd="224dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_search"
+            app:layout_constraintBaseline_toBaselineOf="@id/home_logo_iv"
+            app:tint="#FFFFFF" />
 
 
-            <ImageButton
-                android:id="@+id/btn_search"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:padding="11dp"
-                android:layout_marginLeft="-15dp"
-                android:lineSpacingExtra="0dp"
-                android:includeFontPadding="false"
-                android:src="@drawable/ic_search"
-                android:background="@android:color/transparent"
-                android:scaleType="centerInside"
-                app:tint="#FFFFFF" />
-
-        </LinearLayout>
-
-        <!-- 텍스트 -->
+        <!-- 추천 프로필 카드 (가로 스크롤) -->
         <TextView
             android:id="@+id/textName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="98dp"
+            android:fontFamily="@font/noto_sans_kr_semibold"
             android:text="나와 하루의 빈틈이 맞는\n친구를 찾아볼까요?"
             android:textColor="@android:color/white"
-            android:fontFamily="@font/noto_sans_kr_semibold"
-            android:textSize="20sp"
-            android:layout_marginTop="98dp"
-            android:layout_marginStart="20dp" />
+            android:textSize="20sp" />
 
-        <!-- 추천 프로필 카드 (가로 스크롤) -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recommendRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="180dp"
+            android:layout_marginLeft="21dp"
             android:layout_marginTop="183dp"
-            android:layout_marginLeft="20dp"
             android:clipToPadding="false"
             android:overScrollMode="never"
             android:paddingStart="0dp"
             android:paddingEnd="0dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:orientation="horizontal"
-            tools:listitem="@layout/friend01_item_recommend_card" />
-
+            tools:listitem="@layout/friend01_item_recommend_card"
+            tools:orientation="horizontal" />
 
 
         <!-- 약속된 톰 보러가기 버튼 -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/viewPromiseBtn"
             android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginTop="366dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="21dp"
+            android:layout_marginEnd="19dp"
+            android:layout_marginBottom="26dp"
+            android:fontFamily="@font/noto_sans_kr_medium"
+            android:insetLeft="0dp"
+            android:insetTop="0dp"
+            android:insetRight="0dp"
+            android:insetBottom="0dp"
             android:text="약속된 틈 보러가기"
             android:textColor="#FFFFFF"
             android:textSize="16sp"
-            android:fontFamily="@font/noto_sans_kr_medium"
-            android:insetTop="0dp"
-            android:insetBottom="0dp"
-            android:insetLeft="0dp"
-            android:insetRight="0dp"
-            app:cornerRadius="12dp"
-            app:backgroundTint="#0F0F0F"/>
+            app:backgroundTint="#0F0F0F"
+            app:cornerRadius="12dp" />
 
 
     </RelativeLayout>
 
-    <!-- 팔로잉 / 팔로워 탭 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
