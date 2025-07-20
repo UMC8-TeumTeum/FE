@@ -9,15 +9,13 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp"
-        android:paddingTop="68dp">
+        android:layout_marginTop="70dp">
 
     <ImageView
         android:id="@+id/back_arrow_iv"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:layout_marginStart="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:src="@drawable/ic_arrow_back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -39,7 +37,7 @@
         android:id="@+id/edit_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="17dp"
+        android:layout_marginEnd="16dp"
         android:text="편집"
         android:fontFamily="@font/pretendard_medium"
         android:textColor="@color/text_primary"
@@ -54,10 +52,8 @@
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:layout_marginTop="40dp"
-        android:layout_marginEnd="60dp"
         app:layout_constraintTop_toBottomOf="@id/edit_tv"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintStart_toStartOf="@id/back_arrow_iv">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_wishlist_time_01"

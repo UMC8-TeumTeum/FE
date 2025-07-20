@@ -5,13 +5,13 @@
     android:layout_height="match_parent"
     android:paddingStart="10dp"
     android:paddingEnd="10dp"
-    android:paddingTop="68dp">
+    android:paddingTop="70dp">
 
     <ImageView
         android:id="@+id/back_arrow_iv"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:layout_marginStart="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:src="@drawable/ic_arrow_back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -48,6 +48,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
+        android:layout_marginStart="1dp"
         android:text="활동을 등록하면 오늘의 투두리스트에 추가돼요"
         android:fontFamily="@font/noto_sans_kr_regular"
         android:textColor="@color/text_primary"
@@ -64,9 +65,11 @@
         app:cardCornerRadius="10dp"
         android:layout_marginHorizontal="10dp"
         android:layout_marginTop="30dp"
+        android:layout_marginStart="18dp"
+        android:layout_marginEnd="16dp"
         android:backgroundTint="@color/main_1"
         app:layout_constraintTop_toBottomOf="@id/filling_activity_register_tv"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@id/filling_activity_register_tv"
         app:layout_constraintEnd_toEndOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -140,12 +143,12 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintTop_toBottomOf="@id/filling_activity_cv"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@id/filling_activity_cv"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@id/register_btn"
         android:layout_marginTop="10dp"
-        android:layout_marginStart="11dp"
-        android:layout_marginEnd="11dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:layout_marginBottom="480dp"
         android:paddingTop="14dp"
         android:paddingStart="14dp"
