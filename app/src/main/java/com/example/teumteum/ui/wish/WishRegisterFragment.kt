@@ -22,6 +22,7 @@ class WishRegisterFragment : BottomSheetDialogFragment() {
     private var selectedCategoryButton: View? = null
 
     private var isWishSelected = true
+    private var isFromWish: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,6 +35,14 @@ class WishRegisterFragment : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        isFromWish = arguments?.getBoolean("isFromWish") ?: false
+
+        if (isFromWish) {
+            binding.btnTodo.visibility = View.GONE
+        } else {
+            binding.btnTodo.visibility = View.VISIBLE
+        }
 
         binding.btnTodo.setOnClickListener {
             if (isWishSelected) {

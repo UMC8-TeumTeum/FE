@@ -1,10 +1,12 @@
 package com.example.teumteum.ui.main
 
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
@@ -167,12 +169,12 @@ class HomeFragment : Fragment(), IDateClickListener {
 
     /** 주간/월간 토글 버튼 클릭 이벤트 설정 */
     private fun setCalendarModeToggleListeners() {
-        binding.homeWeeklyCalendarIv.setOnClickListener {
+        binding.btnHomeWeeklyCalendar.setOnClickListener {
             updateCalendarToggle(true)
             showWeeklyCalendar()
         }
 
-        binding.homeMonthlyCalendarIv.setOnClickListener {
+        binding.btnHomeMonthlyCalendar.setOnClickListener {
             updateCalendarToggle(false)
             showMonthlyCalendar()
         }
@@ -180,10 +182,31 @@ class HomeFragment : Fragment(), IDateClickListener {
 
     /** 주간/월간 버튼 이미지 변경 */
     private fun updateCalendarToggle(isWeekly: Boolean) {
-        val weeklyRes = if (isWeekly) R.drawable.btn_weekly_calendar_active_sv else R.drawable.btn_weekly_calendar_deactive_sv
-        val monthlyRes = if (isWeekly) R.drawable.btn_monthly_calendar_deactive_sv else R.drawable.btn_monthly_calendar_active_sv
-        binding.homeWeeklyCalendarIv.setImageResource(weeklyRes)
-        binding.homeMonthlyCalendarIv.setImageResource(monthlyRes)
+        if (isWeekly) {
+            binding.btnHomeWeeklyCalendar.apply {
+                setBackgroundColor(ContextCompat.getColor(context, R.color.text_primary))
+                setTextColor(ContextCompat.getColor(context, R.color.white))
+                strokeWidth = 0
+            }
+            binding.btnHomeMonthlyCalendar.apply {
+                setBackgroundColor(ContextCompat.getColor(context, android.R.color.transparent))
+                setTextColor(ContextCompat.getColor(context, R.color.teumteum_deactive))
+                strokeWidth = 2
+                strokeColor = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.teumteum_line))
+            }
+        } else {
+            binding.btnHomeMonthlyCalendar.apply {
+                setBackgroundColor(ContextCompat.getColor(context, R.color.text_primary))
+                setTextColor(ContextCompat.getColor(context, R.color.white))
+                strokeWidth = 0
+            }
+            binding.btnHomeWeeklyCalendar.apply {
+                setBackgroundColor(ContextCompat.getColor(context, android.R.color.transparent))
+                setTextColor(ContextCompat.getColor(context, R.color.teumteum_deactive))
+                strokeWidth = 2
+                strokeColor = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.teumteum_line))
+            }
+        }
     }
 
     /** 주간 달력 표시 */
