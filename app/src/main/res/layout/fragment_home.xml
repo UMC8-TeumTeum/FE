@@ -367,14 +367,12 @@
 
     <ImageView
         android:id="@+id/fab_add_iv"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="25dp"
         android:layout_marginBottom="120dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:backgroundTint="@color/text_primary"
-        android:elevation="20dp"
+        android:elevation="0dp"
         android:src="@drawable/ic_fab_add_sv"
         android:translationZ="20dp" />
 
