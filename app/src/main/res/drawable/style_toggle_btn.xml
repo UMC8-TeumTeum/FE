@@ -4,15 +4,15 @@
         <shape android:shape="rectangle">
             <size android:height="20dp" android:width="36dp"/>
             <solid android:color="@color/main_1"/>
-            <corners android:radius="46dp"/>
+            <corners android:radius="20dp"/>
         </shape>
     </item>
     <item android:state_checked="false">
         <shape android:shape="rectangle">
             <size android:height="20dp" android:width="36dp"/>
             <solid android:color="@color/white"/>
-            <stroke android:width="1.27dp" android:color="@color/teumteum_deactive"/>
-            <corners android:radius="46dp"/>
+            <stroke android:width="1dp" android:color="@color/teumteum_deactive"/>
+            <corners android:radius="20dp"/>
         </shape>
     </item>
 </selector>

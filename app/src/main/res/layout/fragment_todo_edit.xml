@@ -208,7 +208,8 @@
                         android:id="@+id/horizon_02_iv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="21dp"
+                        android:layout_marginTop="14dp"
+                        android:layout_marginBottom="7dp"
                         android:src="@drawable/ic_horizon_sv"
                         android:scaleType="centerCrop" />
 
@@ -258,7 +259,9 @@
                                     android:id="@+id/category_toggle_01_iv"
                                     android:layout_width="wrap_content"
                                     android:layout_height="20dp"
-                                    style="@style/category_toggle" />
+                                    style="@style/category_toggle"
+                                    app:trackTint="@null"
+                                    app:thumbTint="@null"/>
                             </LinearLayout>
 
                             <LinearLayout
@@ -283,7 +286,9 @@
                                     android:id="@+id/category_toggle_02_iv"
                                     android:layout_width="wrap_content"
                                     android:layout_height="20dp"
-                                    style="@style/category_toggle" />
+                                    style="@style/category_toggle"
+                                    app:trackTint="@null"
+                                    app:thumbTint="@null"/>
                             </LinearLayout>
 
                             <LinearLayout
@@ -366,7 +371,9 @@
                                 android:id="@+id/category_toggle_03_iv"
                                 android:layout_width="wrap_content"
                                 android:layout_height="20dp"
-                                style="@style/category_toggle" />
+                                style="@style/category_toggle"
+                                app:trackTint="@null"
+                                app:thumbTint="@null"/>
 
                         </LinearLayout>
                         <LinearLayout
@@ -397,7 +404,9 @@
                                 android:id="@+id/category_toggle_04_iv"
                                 android:layout_width="wrap_content"
                                 android:layout_height="20dp"
-                                style="@style/category_toggle" />
+                                style="@style/category_toggle"
+                                app:trackTint="@null"
+                                app:thumbTint="@null"/>
 
                         </LinearLayout>
                     </LinearLayout>
