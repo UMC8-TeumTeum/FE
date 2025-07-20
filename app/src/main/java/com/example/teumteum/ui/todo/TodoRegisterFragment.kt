@@ -11,6 +11,7 @@ import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.example.teumteum.databinding.FragmentTodoRegisterBinding
@@ -122,8 +123,11 @@ class TodoRegisterFragment : BottomSheetDialogFragment() {
 
         binding.btnWish.setOnClickListener {
             if (isTodoSelected) {
-                binding.btnTodo.setImageResource(R.drawable.btn_todo_deactive_sv)
-                binding.btnWish.setImageResource(R.drawable.btn_wish_active_sv)
+                binding.btnWish.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
+                binding.btnWish.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+
+                binding.btnTodo.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.teumteum_bg))
+                binding.btnTodo.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
                 isTodoSelected = false
 
                 childFragmentManager.beginTransaction()

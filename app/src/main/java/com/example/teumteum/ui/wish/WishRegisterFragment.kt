@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentWishRegisterBinding
@@ -46,8 +47,11 @@ class WishRegisterFragment : BottomSheetDialogFragment() {
 
         binding.btnTodo.setOnClickListener {
             if (isWishSelected) {
-                binding.btnTodo.setImageResource(R.drawable.btn_todo_active_sv)
-                binding.btnWish.setImageResource(R.drawable.btn_wish_deactive_sv)
+                binding.btnWish.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.teumteum_bg))
+                binding.btnWish.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
+
+                binding.btnTodo.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
+                binding.btnTodo.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
                 isWishSelected = false
 
                 childFragmentManager.beginTransaction()
