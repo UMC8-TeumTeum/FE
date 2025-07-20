@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.example.teumteum.databinding.FragmentWeeklyCalendarBinding
 import com.example.teumteum.util.*
-import org.threeten.bp.LocalDate
+import java.time.LocalDate
 
 class WeeklyCalendarFragment : Fragment() {
 

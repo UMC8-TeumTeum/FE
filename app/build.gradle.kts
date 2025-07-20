@@ -14,7 +14,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.teumteum"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -66,9 +66,6 @@ dependencies {
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
     implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
     implementation("com.google.android.material:material:1.11.0")
-
-    //ThreeTenABP
-    implementation("com.jakewharton.threetenabp:threetenabp:1.4.5")
 
     //grid
     implementation("androidx.gridlayout:gridlayout:1.0.0")

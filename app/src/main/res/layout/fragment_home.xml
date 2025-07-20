@@ -121,7 +121,7 @@
                         android:id="@+id/home_selected_date_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
+                        android:layout_marginStart="20dp"
                         android:fontFamily="@font/pretendard_medium"
                         android:gravity="center"
                         android:text="2025년 6월"
@@ -151,7 +151,7 @@
                             android:textColor="@color/white"
                             android:padding="0dp"
                             android:includeFontPadding="false"
-                            app:cornerRadius="10dp"
+                            app:cornerRadius="6dp"
                             app:backgroundTint="@color/text_primary" />
 
                         <com.google.android.material.button.MaterialButton
@@ -167,7 +167,7 @@
                             app:strokeWidth="1dp"
                             app:strokeColor="@color/teumteum_line"
                             android:includeFontPadding="false"
-                            app:cornerRadius="10dp"
+                            app:cornerRadius="6dp"
                             app:backgroundTint="@color/white" />
                     </LinearLayout>
 
@@ -176,7 +176,7 @@
                         android:layout_width="18dp"
                         android:layout_height="18dp"
                         android:layout_marginTop="8dp"
-                        android:layout_marginEnd="25dp"
+                        android:layout_marginEnd="30dp"
                         android:src="@drawable/ic_calendar_previous_sv"
                         app:layout_constraintEnd_toStartOf="@id/home_calendar_next_date_iv"
                         app:layout_constraintTop_toTopOf="@id/calendar_mode_buttons" />
@@ -185,14 +185,14 @@
                         android:id="@+id/home_calendar_next_date_iv"
                         android:layout_width="18dp"
                         android:layout_height="18dp"
-                        android:layout_marginEnd="14dp"
+                        android:layout_marginEnd="20dp"
                         android:src="@drawable/ic_calendar_next_sv"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="@id/home_calendar_previous_date_iv" />
 
                     <LinearLayout
                         android:id="@+id/home_weekly_calendar_day_of_month_ll"
-                        android:layout_width="380dp"
+                        android:layout_width="375dp"
                         android:layout_height="40dp"
                         android:layout_marginStart="20dp"
                         android:layout_marginEnd="20dp"

@@ -2,7 +2,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginVertical="4dp"
-    android:layout_marginHorizontal="0dp"
+    android:layout_marginHorizontal="4dp"
     android:layout_columnWeight="1">
 
     <TextView

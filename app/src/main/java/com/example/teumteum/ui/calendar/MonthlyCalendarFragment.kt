@@ -4,13 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.GridLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentMonthlyCalendarBinding
 import com.example.teumteum.util.*
-import org.threeten.bp.LocalDate
-import org.threeten.bp.YearMonth
+import java.time.LocalDate
+import java.time.YearMonth
 
 class MonthlyCalendarFragment : Fragment() {
 
@@ -59,7 +60,7 @@ class MonthlyCalendarFragment : Fragment() {
         }
 
         val nextMonth = yearMonth.plusMonths(1)
-        while (tempDateList.size < 42) {
+        while (tempDateList.size < 35) {
             tempDateList.add(nextMonth.atDay(tempDateList.size - daysInMonth - firstDayOfWeek + 1))
         }
 
@@ -93,6 +94,15 @@ class MonthlyCalendarFragment : Fragment() {
                     onClickListener.onClickDate(date)
                 }
             }
+
+            val params = GridLayout.LayoutParams().apply {
+                rowSpec = GridLayout.spec(index / 7)
+                columnSpec = GridLayout.spec(index % 7)
+                width = GridLayout.LayoutParams.WRAP_CONTENT
+                height = GridLayout.LayoutParams.WRAP_CONTENT
+                setMargins(20, 8, 29, 8)
+            }
+            cellView.layoutParams = params
 
             binding.monthlyCalendarGrid.addView(cellView)
         }
