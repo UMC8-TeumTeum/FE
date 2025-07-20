@@ -79,7 +79,7 @@
             android:id="@+id/wish_cancel_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="아니요"
+            android:text="아니오"
             android:fontFamily="@font/noto_sans_kr_medium"
             android:textSize="15sp"
             android:textColor="@color/main_1"

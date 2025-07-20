@@ -6,7 +6,7 @@ import android.graphics.Typeface
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.example.teumteum.R
-import org.threeten.bp.LocalDate
+import java.time.LocalDate
 
 fun saveSelectedDate(context: Context, date: LocalDate) {
     val sharedPref = context.getSharedPreferences("CALENDAR-APP", Context.MODE_PRIVATE)

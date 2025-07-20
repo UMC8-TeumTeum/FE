@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".ui.home.HomeFragment">
+    tools:context=".ui.main.HomeFragment">
 
     <!-- 메인 ScrollView 콘텐츠 -->
     <androidx.core.widget.NestedScrollView
@@ -38,9 +38,9 @@
 
                 <ImageView
                     android:id="@+id/home_logo_iv"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginLeft="24dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
                     android:layout_marginTop="68dp"
                     android:src="@drawable/ic_logo_sv"
                     app:layout_constraintStart_toStartOf="parent"
@@ -48,9 +48,9 @@
 
                 <ImageView
                     android:id="@+id/home_notification_iv"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginRight="24dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="22dp"
                     android:src="@drawable/ic_notification_default_sv"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/home_logo_iv" />
@@ -121,7 +121,7 @@
                         android:id="@+id/home_selected_date_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
+                        android:layout_marginStart="20dp"
                         android:fontFamily="@font/pretendard_medium"
                         android:gravity="center"
                         android:text="2025년 6월"
@@ -140,26 +140,43 @@
                         app:layout_constraintStart_toEndOf="@id/home_selected_date_tv"
                         app:layout_constraintTop_toTopOf="@id/home_selected_date_tv">
 
-                        <ImageView
-                            android:id="@+id/home_weekly_calendar_iv"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="6dp"
-                            android:src="@drawable/btn_weekly_calendar_active_sv" />
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_home_weekly_calendar"
+                            android:layout_width="50dp"
+                            android:layout_height="35dp"
+                            android:text="주별"
+                            android:textSize="12sp"
+                            android:layout_marginEnd="8dp"
+                            android:fontFamily="@font/noto_sans_kr_medium"
+                            android:textColor="@color/white"
+                            android:padding="0dp"
+                            android:includeFontPadding="false"
+                            app:cornerRadius="6dp"
+                            app:backgroundTint="@color/text_primary" />
 
-                        <ImageView
-                            android:id="@+id/home_monthly_calendar_iv"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/btn_monthly_calendar_deactive_sv" />
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_home_monthly_calendar"
+                            android:layout_width="50dp"
+                            android:layout_height="35dp"
+                            android:text="월별"
+                            android:textSize="12sp"
+                            android:layout_marginEnd="10dp"
+                            android:fontFamily="@font/noto_sans_kr_medium"
+                            android:textColor="@color/teumteum_deactive"
+                            android:padding="0dp"
+                            app:strokeWidth="1dp"
+                            app:strokeColor="@color/teumteum_line"
+                            android:includeFontPadding="false"
+                            app:cornerRadius="6dp"
+                            app:backgroundTint="@color/white" />
                     </LinearLayout>
 
                     <ImageView
                         android:id="@+id/home_calendar_previous_date_iv"
                         android:layout_width="18dp"
                         android:layout_height="18dp"
-                        android:layout_marginTop="2dp"
-                        android:layout_marginEnd="25dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="30dp"
                         android:src="@drawable/ic_calendar_previous_sv"
                         app:layout_constraintEnd_toStartOf="@id/home_calendar_next_date_iv"
                         app:layout_constraintTop_toTopOf="@id/calendar_mode_buttons" />
@@ -168,15 +185,17 @@
                         android:id="@+id/home_calendar_next_date_iv"
                         android:layout_width="18dp"
                         android:layout_height="18dp"
-                        android:layout_marginEnd="14dp"
+                        android:layout_marginEnd="20dp"
                         android:src="@drawable/ic_calendar_next_sv"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="@id/home_calendar_previous_date_iv" />
 
                     <LinearLayout
                         android:id="@+id/home_weekly_calendar_day_of_month_ll"
-                        android:layout_width="383dp"
+                        android:layout_width="375dp"
                         android:layout_height="40dp"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginEnd="20dp"
                         android:layout_marginTop="28dp"
                         android:orientation="horizontal"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -223,7 +242,7 @@
                     <FrameLayout
                         android:id="@+id/home_calendar_container_fl"
                         android:layout_width="0dp"
-                        android:layout_height="100dp"
+                        android:layout_height="wrap_content"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/home_weekly_calendar_day_of_month_ll">
@@ -367,14 +386,12 @@
 
     <ImageView
         android:id="@+id/fab_add_iv"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_marginEnd="25dp"
+        android:layout_marginEnd="24dp"
         android:layout_marginBottom="120dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:backgroundTint="@color/text_primary"
-        android:elevation="20dp"
+        android:elevation="6.2dp"
         android:src="@drawable/ic_fab_add_sv"
         android:translationZ="20dp" />
 

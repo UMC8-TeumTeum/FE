@@ -33,8 +33,13 @@ class WishlistFragment(private val wishlist: MutableList<WishItem>) : Fragment()
         }
 
         binding.fabAddIv.setOnClickListener {
-            val bottomSheet = WishOnlyBottomSheetFragment()
+            val bottomSheet = WishRegisterFragment().apply {
+                arguments = Bundle().apply {
+                    putBoolean("isFromWish", true)  // 위시에서 열렸음을 전달
+                }
+            }
             bottomSheet.show(parentFragmentManager, bottomSheet.tag)
+
         }
 
         return binding.root

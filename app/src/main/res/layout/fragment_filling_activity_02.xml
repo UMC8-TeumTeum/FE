@@ -8,15 +8,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingStart="10dp"
-        android:paddingTop="68dp"
+        android:paddingTop="70dp"
         android:paddingEnd="10dp"
         android:paddingBottom="30dp">
 
         <ImageView
             android:id="@+id/back_arrow_iv"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_marginStart="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
             android:src="@drawable/ic_arrow_back"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -40,11 +40,13 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
             android:layout_marginTop="30dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
             android:backgroundTint="@color/main_1"
             app:cardCornerRadius="10dp"
             app:cardElevation="0dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toStartOf="@id/back_arrow_iv"
             app:layout_constraintTop_toBottomOf="@id/filling_activity_tv"
             app:strokeWidth="0dp">
 
@@ -188,8 +190,8 @@
 
     <ImageView
         android:id="@+id/fab_refresh_iv"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginTop="20dp"
