@@ -1,4 +1,4 @@
-package com.example.teumteum.ui.home
+package com.example.teumteum.ui.main
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -20,6 +20,7 @@ import com.example.teumteum.data.entities.TodoHomeItem
 import com.example.teumteum.data.entities.WishItem
 import com.example.teumteum.ui.calendar.CalendarVPAdapter
 import com.example.teumteum.ui.filling.FillingActivity01Fragment
+import com.example.teumteum.ui.todo.TodoRVAdapter
 import com.example.teumteum.ui.todo.TodoRegisterFragment
 import com.example.teumteum.ui.wish.WishlistFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
