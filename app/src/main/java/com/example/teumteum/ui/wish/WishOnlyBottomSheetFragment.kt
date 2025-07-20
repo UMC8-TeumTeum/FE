@@ -22,7 +22,7 @@ class WishOnlyBottomSheetFragment : BottomSheetDialogFragment() {
     ): View {
         binding = FragmentBottomSheetRegisterBinding.inflate(inflater, container, false)
 
-        binding.btnTodo.visibility = View.GONE
+//        binding.btnTodo.visibility = View.GONE
 
         childFragmentManager.beginTransaction()
             .replace(R.id.register_fragment_container, WishRegisterFragment())

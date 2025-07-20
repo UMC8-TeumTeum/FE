@@ -1,353 +1,386 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/register_fragment_container"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/calendar_background"
         android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="17dp"
+            android:background="@drawable/calendar_background">
 
-            <EditText
-                android:id="@+id/wish_title_et"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/transparent"
-                android:fontFamily="@font/noto_sans_kr_medium"
-                android:gravity="top|start"
-                android:hint="새롭게 떠오른 위시가 있나요?"
-                android:inputType="textMultiLine"
-                android:maxLines="5"
-                android:minHeight="28dp"
-                android:textColor="@color/teumteum_gray"
-                android:textSize="20sp" />
+            <View
+                android:layout_width="54dp"
+                android:layout_height="4dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="15dp"
+                android:background="@drawable/bg_bottom_sheet_handle" />
 
-            <ImageView
-                android:id="@+id/horizon_01_iv"
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_horizon_sv" />
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/btn_todo"
+                    android:layout_width="60dp"
+                    android:layout_height="28dp"
+                    android:layout_marginEnd="8dp"
+                    android:src="@drawable/btn_todo_deactive_sv"
+                    android:contentDescription="투두 버튼" />
+
+                <ImageView
+                    android:id="@+id/btn_wish"
+                    android:layout_width="60dp"
+                    android:layout_height="28dp"
+                    android:src="@drawable/btn_wish_active_sv"
+                    android:contentDescription="위시 버튼" />
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:background="@color/white"
-                android:orientation="vertical"
-                android:padding="5dp">
+                android:orientation="vertical">
 
-                <LinearLayout
-                    android:id="@+id/wish_date"
+                <EditText
+                    android:id="@+id/wish_title_et"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="-3dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                    android:background="@color/transparent"
+                    android:fontFamily="@font/noto_sans_kr_medium"
+                    android:gravity="top|start"
+                    android:hint="새롭게 떠오른 위시가 있나요?"
+                    android:inputType="textMultiLine"
+                    android:maxLines="5"
+                    android:minHeight="28dp"
+                    android:textColor="@color/teumteum_gray"
+                    android:textSize="20sp" />
 
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_marginEnd="8dp"
-                        android:src="@drawable/ic_timer_sv" />
-
-                    <TextView
-                        android:id="@+id/wish_date_tv"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:fontFamily="@font/noto_sans_kr_regular"
-                        android:text="언젠가"
-                        android:textColor="@color/text_primary"
-                        android:textSize="15sp" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/wish_detail_ll"
+                <ImageView
+                    android:id="@+id/horizon_01_iv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="-3dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                    android:layout_marginTop="8dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_horizon_sv" />
 
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_marginEnd="8dp"
-                        android:src="@drawable/ic_detail_text_sv" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="@color/white"
+                    android:orientation="vertical"
+                    android:padding="5dp">
 
-                    <EditText
-                        android:id="@+id/detail_text_et_02"
+                    <LinearLayout
+                        android:id="@+id/wish_date"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@color/transparent"
-                        android:fontFamily="@font/noto_sans_kr_regular"
-                        android:gravity="top|start"
-                        android:hint="상세 내용 입력"
-                        android:inputType="textMultiLine"
-                        android:maxLines="5"
-                        android:minHeight="28dp"
-                        android:textColorHint="@color/text_primary"
-                        android:textSize="15sp" />
+                        android:layout_marginBottom="-3dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
 
-                </LinearLayout>
-            </LinearLayout>
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_marginEnd="8dp"
+                            android:src="@drawable/ic_timer_sv" />
 
-            <ImageView
-                android:id="@+id/horizon_02_iv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="21dp"
-                android:layout_marginBottom="-3dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_horizon_sv" />
+                        <TextView
+                            android:id="@+id/wish_date_tv"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/noto_sans_kr_regular"
+                            android:text="언젠가"
+                            android:textColor="@color/text_primary"
+                            android:textSize="15sp" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="13dp"
-                android:background="@color/white"
-                android:orientation="vertical">
+                    </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="-5dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="5dp">
-
-                    <TextView
-                        android:id="@+id/wish_time_tv"
-                        android:layout_width="0dp"
+                    <LinearLayout
+                        android:id="@+id/wish_detail_ll"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:fontFamily="@font/noto_sans_kr_medium"
-                        android:text="해당 위시를 진행하는 데 얼마나 걸릴까요?"
-                        android:textColor="@color/text_primary"
-                        android:textSize="16sp" />
+                        android:layout_marginBottom="-3dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
 
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_marginEnd="8dp"
+                            android:src="@drawable/ic_detail_text_sv" />
+
+                        <EditText
+                            android:id="@+id/detail_text_et_02"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/transparent"
+                            android:fontFamily="@font/noto_sans_kr_regular"
+                            android:gravity="top|start"
+                            android:hint="상세 내용 입력"
+                            android:inputType="textMultiLine"
+                            android:maxLines="5"
+                            android:minHeight="28dp"
+                            android:textColorHint="@color/text_primary"
+                            android:textSize="15sp" />
+
+                    </LinearLayout>
                 </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="5dp">
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_wish_time_01"
-                        android:layout_width="75dp"
-                        android:layout_height="45dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_weight="1"
-                        android:fontFamily="@font/noto_sans_kr_medium"
-                        android:padding="0dp"
-                        android:text="10m"
-                        android:textColor="@color/text_primary"
-                        android:textSize="12sp"
-                        app:backgroundTint="@color/main_2"
-                        app:cornerRadius="10dp" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_wish_time_02"
-                        android:layout_width="75dp"
-                        android:layout_height="45dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_weight="1"
-                        android:fontFamily="@font/noto_sans_kr_medium"
-                        android:padding="0dp"
-                        android:text="20m"
-                        android:textColor="@color/text_primary"
-                        android:textSize="12sp"
-                        app:backgroundTint="@color/main_2"
-                        app:cornerRadius="10dp" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_wish_time_03"
-                        android:layout_width="75dp"
-                        android:layout_height="45dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_weight="1"
-                        android:fontFamily="@font/noto_sans_kr_medium"
-                        android:padding="0dp"
-                        android:text="30m"
-                        android:textColor="@color/text_primary"
-                        android:textSize="12sp"
-                        app:backgroundTint="@color/main_2"
-                        app:cornerRadius="10dp" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_wish_time_04"
-                        android:layout_width="75dp"
-                        android:layout_height="45dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_weight="1"
-                        android:fontFamily="@font/noto_sans_kr_medium"
-                        android:padding="0dp"
-                        android:text="1h~"
-                        android:textColor="@color/text_primary"
-                        android:textSize="12sp"
-                        app:backgroundTint="@color/main_2"
-                        app:cornerRadius="10dp" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <ImageView
-                android:id="@+id/horizon_03_iv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="21dp"
-                android:layout_marginBottom="-3dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_horizon_sv" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="13dp"
-                android:background="@color/white"
-                android:orientation="vertical">
-
-                <LinearLayout
+                <ImageView
+                    android:id="@+id/horizon_02_iv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="21dp"
                     android:layout_marginBottom="-3dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="5dp">
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_horizon_sv" />
 
-                    <TextView
-                        android:id="@+id/wish_category_tv"
-                        android:layout_width="0dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="13dp"
+                    android:background="@color/white"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:fontFamily="@font/noto_sans_kr_medium"
-                        android:text="위시의 카테고리를 지정해주세요"
-                        android:textColor="@color/text_primary"
-                        android:textSize="16sp" />
+                        android:layout_marginBottom="-5dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="5dp">
+
+                        <TextView
+                            android:id="@+id/wish_time_tv"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/noto_sans_kr_medium"
+                            android:text="해당 위시를 진행하는 데 얼마나 걸릴까요?"
+                            android:textColor="@color/text_primary"
+                            android:textSize="16sp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="5dp">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_wish_time_01"
+                            android:layout_width="75dp"
+                            android:layout_height="45dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/noto_sans_kr_medium"
+                            android:padding="0dp"
+                            android:text="10m"
+                            android:textColor="@color/text_primary"
+                            android:textSize="12sp"
+                            app:backgroundTint="@color/main_2"
+                            app:cornerRadius="10dp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_wish_time_02"
+                            android:layout_width="75dp"
+                            android:layout_height="45dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/noto_sans_kr_medium"
+                            android:padding="0dp"
+                            android:text="20m"
+                            android:textColor="@color/text_primary"
+                            android:textSize="12sp"
+                            app:backgroundTint="@color/main_2"
+                            app:cornerRadius="10dp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_wish_time_03"
+                            android:layout_width="75dp"
+                            android:layout_height="45dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/noto_sans_kr_medium"
+                            android:padding="0dp"
+                            android:text="30m"
+                            android:textColor="@color/text_primary"
+                            android:textSize="12sp"
+                            app:backgroundTint="@color/main_2"
+                            app:cornerRadius="10dp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_wish_time_04"
+                            android:layout_width="75dp"
+                            android:layout_height="45dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/noto_sans_kr_medium"
+                            android:padding="0dp"
+                            android:text="1h~"
+                            android:textColor="@color/text_primary"
+                            android:textSize="12sp"
+                            app:backgroundTint="@color/main_2"
+                            app:cornerRadius="10dp" />
+
+                    </LinearLayout>
 
                 </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/horizon_03_iv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="21dp"
+                    android:layout_marginBottom="-3dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_horizon_sv" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="-7dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="5dp">
+                    android:layout_marginTop="13dp"
+                    android:background="@color/white"
+                    android:orientation="vertical">
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_wish_category_01"
-                        android:layout_width="100dp"
-                        android:layout_height="50dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_weight="1"
-                        android:fontFamily="@font/noto_sans_kr_medium"
-                        android:padding="0dp"
-                        android:text="자기계발"
-                        android:textColor="@color/text_primary"
-                        android:textSize="12sp"
-                        app:backgroundTint="@color/main_2"
-                        app:cornerRadius="10dp" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="-3dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="5dp">
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_wish_category_02"
-                        android:layout_width="100dp"
-                        android:layout_height="50dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_weight="1"
-                        android:fontFamily="@font/noto_sans_kr_medium"
-                        android:padding="0dp"
-                        android:text="운동"
-                        android:textColor="@color/text_primary"
-                        android:textSize="12sp"
-                        app:backgroundTint="@color/main_2"
-                        app:cornerRadius="10dp" />
+                        <TextView
+                            android:id="@+id/wish_category_tv"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/noto_sans_kr_medium"
+                            android:text="위시의 카테고리를 지정해주세요"
+                            android:textColor="@color/text_primary"
+                            android:textSize="16sp" />
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_wish_category_03"
-                        android:layout_width="100dp"
-                        android:layout_height="50dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_weight="1"
-                        android:fontFamily="@font/noto_sans_kr_medium"
-                        android:padding="0dp"
-                        android:text="취미"
-                        android:textColor="@color/text_primary"
-                        android:textSize="12sp"
-                        app:backgroundTint="@color/main_2"
-                        app:cornerRadius="10dp" />
+                    </LinearLayout>
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="-7dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="5dp">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_wish_category_01"
+                            android:layout_width="100dp"
+                            android:layout_height="50dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/noto_sans_kr_medium"
+                            android:padding="0dp"
+                            android:text="자기계발"
+                            android:textColor="@color/text_primary"
+                            android:textSize="12sp"
+                            app:backgroundTint="@color/main_2"
+                            app:cornerRadius="10dp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_wish_category_02"
+                            android:layout_width="100dp"
+                            android:layout_height="50dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/noto_sans_kr_medium"
+                            android:padding="0dp"
+                            android:text="운동"
+                            android:textColor="@color/text_primary"
+                            android:textSize="12sp"
+                            app:backgroundTint="@color/main_2"
+                            app:cornerRadius="10dp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_wish_category_03"
+                            android:layout_width="100dp"
+                            android:layout_height="50dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/noto_sans_kr_medium"
+                            android:padding="0dp"
+                            android:text="취미"
+                            android:textColor="@color/text_primary"
+                            android:textSize="12sp"
+                            app:backgroundTint="@color/main_2"
+                            app:cornerRadius="10dp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="34dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="5dp">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_wish_category_04"
+                            android:layout_width="100dp"
+                            android:layout_height="50dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/noto_sans_kr_medium"
+                            android:padding="0dp"
+                            android:text="일상"
+                            android:textColor="@color/text_primary"
+                            android:textSize="12sp"
+                            app:backgroundTint="@color/main_2"
+                            app:cornerRadius="10dp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_wish_category_05"
+                            android:layout_width="100dp"
+                            android:layout_height="50dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/noto_sans_kr_medium"
+                            android:padding="0dp"
+                            android:text="문화생활"
+                            android:textColor="@color/text_primary"
+                            android:textSize="12sp"
+                            app:backgroundTint="@color/main_2"
+                            app:cornerRadius="10dp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_wish_category_06"
+                            android:layout_width="100dp"
+                            android:layout_height="50dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/noto_sans_kr_medium"
+                            android:padding="0dp"
+                            android:text="휴식"
+                            android:textColor="@color/text_primary"
+                            android:textSize="12sp"
+                            app:backgroundTint="@color/main_2"
+                            app:cornerRadius="10dp" />
+
+                    </LinearLayout>
                 </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="34dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="5dp">
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_wish_category_04"
-                        android:layout_width="100dp"
-                        android:layout_height="50dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_weight="1"
-                        android:fontFamily="@font/noto_sans_kr_medium"
-                        android:padding="0dp"
-                        android:text="일상"
-                        android:textColor="@color/text_primary"
-                        android:textSize="12sp"
-                        app:backgroundTint="@color/main_2"
-                        app:cornerRadius="10dp" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_wish_category_05"
-                        android:layout_width="100dp"
-                        android:layout_height="50dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_weight="1"
-                        android:fontFamily="@font/noto_sans_kr_medium"
-                        android:padding="0dp"
-                        android:text="문화생활"
-                        android:textColor="@color/text_primary"
-                        android:textSize="12sp"
-                        app:backgroundTint="@color/main_2"
-                        app:cornerRadius="10dp" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_wish_category_06"
-                        android:layout_width="100dp"
-                        android:layout_height="50dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_weight="1"
-                        android:fontFamily="@font/noto_sans_kr_medium"
-                        android:padding="0dp"
-                        android:text="휴식"
-                        android:textColor="@color/text_primary"
-                        android:textSize="12sp"
-                        app:backgroundTint="@color/main_2"
-                        app:cornerRadius="10dp" />
-
-                </LinearLayout>
             </LinearLayout>
-
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
@@ -355,16 +388,13 @@
         android:id="@+id/btn_wish_register"
         android:layout_width="match_parent"
         android:layout_height="65dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginStart="19dp"
+        android:layout_marginEnd="19dp"
         android:fontFamily="@font/noto_sans_kr_medium"
         android:text="등록할게요"
         android:textColor="@color/white"
         android:textSize="16sp"
         app:backgroundTint="@color/text_primary"
         app:cornerRadius="12dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_gravity="bottom"/>
+</FrameLayout>
