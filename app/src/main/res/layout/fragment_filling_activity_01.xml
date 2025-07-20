@@ -351,8 +351,8 @@
 
                 <ImageView
                     android:id="@+id/filling_activity_location_clear_btn"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:src="@drawable/clear_btn" />
@@ -507,8 +507,8 @@
 
                 <ImageView
                     android:id="@+id/filling_activity_category_clear_btn"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:src="@drawable/clear_btn" />

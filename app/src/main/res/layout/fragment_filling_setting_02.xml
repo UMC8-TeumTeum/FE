@@ -47,7 +47,7 @@
         android:id="@+id/fill_activity_register_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="1dp"
+        android:layout_marginStart="2dp"
         android:layout_marginTop="10dp"
         android:text="활동을 등록하면 오늘의 투두리스트에 추가돼요"
         android:fontFamily="@font/noto_sans_kr_regular"

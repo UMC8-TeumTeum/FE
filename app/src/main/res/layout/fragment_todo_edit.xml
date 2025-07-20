@@ -116,8 +116,8 @@
                             android:orientation="horizontal">
 
                             <ImageView
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
                                 android:layout_marginEnd="8dp"
                                 android:src="@drawable/ic_timer_sv" />
 
@@ -248,8 +248,8 @@
 
                         <ImageView
                             android:id="@+id/alarm_icon_iv"
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             android:layout_marginTop="11dp"
                             android:src="@drawable/ic_add_alarm_sv"
                             app:layout_constraintStart_toStartOf="parent"
@@ -354,9 +354,9 @@
 
                                 <ImageView
                                     android:id="@+id/btn_plus"
-                                    android:layout_width="15dp"
-                                    android:layout_height="15dp"
-                                    android:layout_marginEnd="10dp"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginEnd="11dp"
                                     android:src="@drawable/btn_plus_sv" />
                             </LinearLayout>
 
@@ -389,8 +389,8 @@
                             android:orientation="horizontal">
 
                             <ImageView
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
                                 android:layout_marginEnd="8dp"
                                 android:src="@drawable/ic_public_sv" />
 
@@ -422,8 +422,8 @@
                             android:orientation="horizontal">
 
                             <ImageView
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
                                 android:layout_marginEnd="8dp"
                                 android:src="@drawable/ic_include_sv" />
 
