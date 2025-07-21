@@ -38,7 +38,7 @@ class HomeFragment : Fragment(), IDateClickListener {
     private var todoDummyList = mutableListOf(
         TodoHomeItem(1, "UX디자인 수업", "오후 12:00", "오후 2:30", isPublic = true, isAlarmOn = true),
         TodoHomeItem(2, "교내 근로", "오후 3:30", "오후 5:30", isPublic = false, isAlarmOn = null),
-        TodoHomeItem(3, "중랑천 산책", "오후 6:30", "오후 8:00", isPublic = true, isAlarmOn = false)
+        TodoHomeItem(3, "중랑천 산책", "오후 6:30", "오후 8:00", isPublic = false, isAlarmOn = false)
     )
 
     private var wishDummyList = mutableListOf(

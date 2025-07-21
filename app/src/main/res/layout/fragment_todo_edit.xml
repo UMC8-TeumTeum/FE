@@ -42,19 +42,6 @@
                     app:cornerRadius="10dp"
                     app:backgroundTint="@color/text_primary" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_wish"
-                    android:layout_width="60dp"
-                    android:layout_height="35dp"
-                    android:text="위시"
-                    android:textSize="12sp"
-                    android:layout_marginEnd="8dp"
-                    android:fontFamily="@font/noto_sans_kr_medium"
-                    android:textColor="@color/text_primary"
-                    android:padding="0dp"
-                    android:includeFontPadding="false"
-                    app:cornerRadius="10dp"
-                    app:backgroundTint="@color/teumteum_bg" />
             </LinearLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -70,7 +57,7 @@
                     android:orientation="vertical"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintBottom_toTopOf="@id/btn_todo_register">
+                    app:layout_constraintBottom_toTopOf="@id/todo_bottom_bar">
 
                     <EditText
                         android:id="@+id/todo_title_et"
@@ -116,6 +103,7 @@
                             android:orientation="horizontal">
 
                             <ImageView
+                                android:id="@+id/timer_icon_iv"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginEnd="8dp"
@@ -509,6 +497,7 @@
                             android:orientation="horizontal">
 
                             <ImageView
+                                android:id="@+id/public_icon_iv"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginEnd="8dp"
@@ -542,6 +531,7 @@
                             android:orientation="horizontal">
 
                             <ImageView
+                                android:id="@+id/include_icon_iv"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginEnd="8dp"

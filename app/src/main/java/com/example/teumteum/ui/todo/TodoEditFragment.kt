@@ -13,6 +13,7 @@ import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentTodoEditBinding
@@ -116,6 +117,50 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
         binding.endDateTv.setOnClickListener {
             isStartDateSelected = false
             toggleCalendarVisibility()
+        }
+
+        if (todoId == 3) {
+            val deactiveColor = ContextCompat.getColor(requireContext(), R.color.teumteum_deactive)
+
+            binding.todoTitleEt.setTextColor(deactiveColor)
+            binding.timerIconIv.setColorFilter(deactiveColor)
+            binding.startDateTv.setTextColor(deactiveColor)
+            binding.startTimeTv.setTextColor(deactiveColor)
+            binding.endDateTv.setTextColor(deactiveColor)
+            binding.endTimeTv.setTextColor(deactiveColor)
+            binding.alarmIconIv.setColorFilter(deactiveColor)
+            binding.alarmSet01Tv.setTextColor(deactiveColor)
+            binding.alarmSet02Tv.setTextColor(deactiveColor)
+            binding.addAlarmTv.setTextColor(deactiveColor)
+            binding.publicIconIv.setColorFilter(deactiveColor)
+            binding.publicSettingTv.setTextColor(deactiveColor)
+            binding.includeIconIv.setColorFilter(deactiveColor)
+            binding.includeReportTv.setTextColor(deactiveColor)
+            binding.detailTextIv.setColorFilter(deactiveColor)
+            binding.detailTextEt.setTextColor(deactiveColor)
+            binding.detailTextEt.setHintTextColor(deactiveColor)
+
+            binding.todoTitleEt.isEnabled = false
+            binding.startDateTv.isEnabled = false
+            binding.startTimeTv.isEnabled = false
+            binding.endDateTv.isEnabled = false
+            binding.endTimeTv.isEnabled = false
+            binding.alarmSet01Tv.isEnabled = false
+            binding.alarmSet02Tv.isEnabled = false
+            binding.addAlarmTv.isEnabled = false
+            binding.btnPlus.isEnabled = false
+            binding.detailTextEt.isEnabled = false
+
+            binding.categoryToggle01Iv.isEnabled = false
+            binding.categoryToggle02Iv.isEnabled = false
+            binding.categoryToggle03Iv.isEnabled = false
+            binding.categoryToggle04Iv.isEnabled = false
+
+            binding.btnTodoDelete.isEnabled = false
+            binding.btnTodoSave.isEnabled = false
+
+            Toast.makeText(requireContext(), "이 일정은 편집할 수 없습니다.", Toast.LENGTH_SHORT).show()
+
         }
 
     }
