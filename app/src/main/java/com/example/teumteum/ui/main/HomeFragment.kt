@@ -1,26 +1,30 @@
-package com.example.teumteum.ui.home
+package com.example.teumteum.ui.main
 
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import com.example.teumteum.ui.calendar.IDateClickListener
 import com.example.teumteum.R
-import com.example.teumteum.ui.todo.TodoRVAdapter
 import com.example.teumteum.databinding.FragmentHomeBinding
 import com.example.teumteum.ui.calendar.CalendarMode
 
-import org.threeten.bp.LocalDate
-import org.threeten.bp.format.DateTimeFormatter
-
 import com.example.teumteum.data.entities.TodoHomeItem
 import com.example.teumteum.data.entities.WishItem
+import com.example.teumteum.ui.calendar.CalendarVPAdapter
+import com.example.teumteum.ui.filling.FillingActivity01Fragment
+import com.example.teumteum.ui.todo.TodoRVAdapter
+import com.example.teumteum.ui.todo.TodoRegisterFragment
 import com.example.teumteum.ui.wish.WishlistFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class HomeFragment : Fragment(), IDateClickListener {
 
@@ -32,9 +36,9 @@ class HomeFragment : Fragment(), IDateClickListener {
     private lateinit var adapter: TodoRVAdapter
 
     private var todoDummyList = mutableListOf(
-        TodoHomeItem(1, "UX디자인 수업", "오후 12:00", "오후 2:30", isPublic = true),
-        TodoHomeItem(2, "교내 근로", "오후 3:30", "오후 5:30", isPublic = false),
-        TodoHomeItem(3, "중랑천 산책", "오후 6:30", "오후 8:00", isPublic = true)
+        TodoHomeItem(1, "UX디자인 수업", "오후 12:00", "오후 2:30", isPublic = true, isAlarmOn = true),
+        TodoHomeItem(2, "교내 근로", "오후 3:30", "오후 5:30", isPublic = false, isAlarmOn = null),
+        TodoHomeItem(3, "중랑천 산책", "오후 6:30", "오후 8:00", isPublic = false, isAlarmOn = false)
     )
 
     private var wishDummyList = mutableListOf(
@@ -81,13 +85,20 @@ class HomeFragment : Fragment(), IDateClickListener {
         }
 
         binding.fabAddIv.setOnClickListener {
-            val bottomSheet = BottomSheetRegisterFragment()
+            val bottomSheet = TodoRegisterFragment()
             bottomSheet.show(parentFragmentManager, bottomSheet.tag)
         }
 
         binding.btnLoadWishlistTv.setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.main_frm, WishlistFragment(wishDummyList))
+                .addToBackStack(null)
+                .commit()
+        }
+
+        binding.bannerCard.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, FillingActivity01Fragment())
                 .addToBackStack(null)
                 .commit()
         }
@@ -157,12 +168,12 @@ class HomeFragment : Fragment(), IDateClickListener {
 
     /** 주간/월간 토글 버튼 클릭 이벤트 설정 */
     private fun setCalendarModeToggleListeners() {
-        binding.homeWeeklyCalendarIv.setOnClickListener {
+        binding.btnHomeWeeklyCalendar.setOnClickListener {
             updateCalendarToggle(true)
             showWeeklyCalendar()
         }
 
-        binding.homeMonthlyCalendarIv.setOnClickListener {
+        binding.btnHomeMonthlyCalendar.setOnClickListener {
             updateCalendarToggle(false)
             showMonthlyCalendar()
         }
@@ -170,10 +181,31 @@ class HomeFragment : Fragment(), IDateClickListener {
 
     /** 주간/월간 버튼 이미지 변경 */
     private fun updateCalendarToggle(isWeekly: Boolean) {
-        val weeklyRes = if (isWeekly) R.drawable.btn_weekly_calendar_active_sv else R.drawable.btn_weekly_calendar_deactive_sv
-        val monthlyRes = if (isWeekly) R.drawable.btn_monthly_calendar_deactive_sv else R.drawable.btn_monthly_calendar_active_sv
-        binding.homeWeeklyCalendarIv.setImageResource(weeklyRes)
-        binding.homeMonthlyCalendarIv.setImageResource(monthlyRes)
+        if (isWeekly) {
+            binding.btnHomeWeeklyCalendar.apply {
+                setBackgroundColor(ContextCompat.getColor(context, R.color.text_primary))
+                setTextColor(ContextCompat.getColor(context, R.color.white))
+                strokeWidth = 0
+            }
+            binding.btnHomeMonthlyCalendar.apply {
+                setBackgroundColor(ContextCompat.getColor(context, android.R.color.transparent))
+                setTextColor(ContextCompat.getColor(context, R.color.teumteum_deactive))
+                strokeWidth = 2
+                strokeColor = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.teumteum_line))
+            }
+        } else {
+            binding.btnHomeMonthlyCalendar.apply {
+                setBackgroundColor(ContextCompat.getColor(context, R.color.text_primary))
+                setTextColor(ContextCompat.getColor(context, R.color.white))
+                strokeWidth = 0
+            }
+            binding.btnHomeWeeklyCalendar.apply {
+                setBackgroundColor(ContextCompat.getColor(context, android.R.color.transparent))
+                setTextColor(ContextCompat.getColor(context, R.color.teumteum_deactive))
+                strokeWidth = 2
+                strokeColor = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.teumteum_line))
+            }
+        }
     }
 
     /** 주간 달력 표시 */

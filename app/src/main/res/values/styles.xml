@@ -15,6 +15,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:gravity">center</item>
         <item name="android:layout_weight">1</item>
+        <item name="android:orientation">vertical</item>
         <item name="android:textColor">@color/text_primary</item>
     </style>
 
@@ -65,6 +66,11 @@
     <style name="CircleImage" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
+    </style>
+
+    // 달력
+    <style name="CalendarOnlyTheme">
+        <item name="colorControlActivated">@color/main_1</item>
     </style>
 
 </resources>

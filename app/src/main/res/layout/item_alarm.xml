@@ -1,9 +1,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:gravity="center_vertical"
-    android:layout_marginBottom="8dp">
+    android:layout_marginBottom="10dp">
 
     <View
         android:layout_width="20dp"
@@ -16,12 +17,18 @@
         android:layout_width="0dp"
         android:layout_weight="1"
         android:layout_height="wrap_content"
+        android:layout_marginTop="-1dp"
+        android:includeFontPadding="false"
         android:textColor="@color/text_primary"
+        android:fontFamily="@font/noto_sans_kr_regular"
         android:textSize="15sp" />
 
     <androidx.appcompat.widget.SwitchCompat
         android:layout_width="wrap_content"
         android:layout_height="20dp"
-        style="@style/category_toggle" />
+        android:layout_marginTop="2dp"
+        style="@style/category_toggle"
+        app:trackTint="@null"
+        app:thumbTint="@null"/>
 
 </LinearLayout>

@@ -4,13 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.GridLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentMonthlyCalendarBinding
 import com.example.teumteum.util.*
-import org.threeten.bp.LocalDate
-import org.threeten.bp.YearMonth
+import java.time.LocalDate
+import java.time.YearMonth
 
 class MonthlyCalendarFragment : Fragment() {
 
@@ -20,6 +21,8 @@ class MonthlyCalendarFragment : Fragment() {
 
     private var position: Int = 0
     private lateinit var onClickListener: IDateClickListener
+
+    private var showDot: Boolean = true
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,6 +40,11 @@ class MonthlyCalendarFragment : Fragment() {
         setupCalendar(displayMonthDate)
 
         return binding.root
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        showDot = arguments?.getBoolean("showDot", true) ?: true
     }
 
     private fun setupCalendar(selectedMonthDate: LocalDate) {
@@ -59,7 +67,7 @@ class MonthlyCalendarFragment : Fragment() {
         }
 
         val nextMonth = yearMonth.plusMonths(1)
-        while (tempDateList.size < 42) {
+        while (tempDateList.size < 35) {
             tempDateList.add(nextMonth.atDay(tempDateList.size - daysInMonth - firstDayOfWeek + 1))
         }
 
@@ -77,14 +85,22 @@ class MonthlyCalendarFragment : Fragment() {
         dateList.forEachIndexed { index, date ->
             val cellView = inflater.inflate(R.layout.item_day_cell, binding.monthlyCalendarGrid, false)
             val dayText = cellView.findViewById<TextView>(R.id.day_text)
+            val dotView = cellView.findViewById<View>(R.id.dot_view)
 
             if (date == null) {
                 dayText.text = ""
                 dayText.background = null
                 dayText.setTextColor(resources.getColor(R.color.transparent, null))
+                dotView.visibility = View.INVISIBLE
             } else {
                 dayText.text = date.dayOfMonth.toString()
                 updateDayUi(requireContext(), dayText, date, selectedDate, today)
+
+                if (date.isEqual(today) && showDot) {
+                    dotView.visibility = View.VISIBLE
+                } else {
+                    dotView.visibility = View.INVISIBLE
+                }
 
                 dayText.setOnClickListener {
                     selectedDate = date
@@ -94,15 +110,27 @@ class MonthlyCalendarFragment : Fragment() {
                 }
             }
 
+            val params = GridLayout.LayoutParams().apply {
+                rowSpec = GridLayout.spec(index / 7)
+                columnSpec = GridLayout.spec(index % 7)
+                width = GridLayout.LayoutParams.WRAP_CONTENT
+                height = GridLayout.LayoutParams.WRAP_CONTENT
+                setMargins(20, 8, 29, 8)
+            }
+            cellView.layoutParams = params
+
             binding.monthlyCalendarGrid.addView(cellView)
         }
     }
 
     companion object {
-        fun newInstance(position: Int, onClickListener: IDateClickListener): MonthlyCalendarFragment {
+        fun newInstance(position: Int, onClickListener: IDateClickListener, showDot: Boolean = true): MonthlyCalendarFragment {
             val fragment = MonthlyCalendarFragment()
             fragment.position = position
             fragment.onClickListener = onClickListener
+            fragment.arguments = Bundle().apply {
+                putBoolean("showDot", showDot)
+            }
             return fragment
         }
     }

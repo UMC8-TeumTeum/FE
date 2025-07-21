@@ -10,6 +10,7 @@ data class Todo(
     val alarms: String,
     val endTime: String,
     val isPublic: Boolean,
+    var isAlarmOn: Boolean? = null,
     val isIncluded: Boolean
 ){
     @PrimaryKey(autoGenerate = true) var id: Int = 0
@@ -20,5 +21,6 @@ data class TodoHomeItem(
     val title: String,
     val startTime: String,
     val endTime: String,
-    val isPublic: Boolean
+    val isPublic: Boolean,
+    var isAlarmOn: Boolean? = null
 )

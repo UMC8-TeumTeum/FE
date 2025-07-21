@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentFriendBinding
 import com.example.teumteum.ui.main.MainActivity
+import com.example.teumteum.ui.friend.FriendPromiseFragment
 
 class FriendFragment : Fragment() {
 
@@ -32,6 +33,16 @@ class FriendFragment : Fragment() {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.main_frm, Friend02RequestFragment()) // 프래그먼트 교체
                 .addToBackStack(null)
+                .commit()
+        }
+
+        binding.viewPromiseBtn.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(
+                    R.id.main_frm,                   // 메인 컨테이너 ID
+                    FriendPromiseFragment()          // 이동할 Fragment
+                )
+                .addToBackStack(null)              // 뒤로 가기 허용
                 .commit()
         }
 

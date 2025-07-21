@@ -1,7 +1,9 @@
 package com.example.teumteum.ui.todo
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.teumteum.R
@@ -28,11 +30,36 @@ class TodoRVAdapter(private val fragmentManager: FragmentManager, private val to
             if (item.isPublic) R.drawable.ic_unlock_sv else R.drawable.ic_lock_sv
         )
 
+        // 반복일정 관련 작업 시 수정 필요
+        if (item.id == 3) {
+            binding.root.setCardBackgroundColor(ContextCompat.getColor(binding.root.context, R.color.main_2))
+        } else {
+            binding.root.setCardBackgroundColor(ContextCompat.getColor(binding.root.context, R.color.white))
+        }
+
         binding.root.setOnClickListener {
             val bottomSheet = TodoEditFragment.newInstanceWithTodoDummy(item)
             bottomSheet.show(fragmentManager, bottomSheet.tag)
         }
 
+        if (item.isAlarmOn == null) {
+            binding.ivAlarm.visibility = View.GONE
+            binding.ivAlarm.setOnClickListener(null)
+        } else {
+            binding.ivAlarm.visibility = View.VISIBLE
+            binding.ivAlarm.setImageResource(
+                if (item.isAlarmOn == true) R.drawable.ic_alarm_on_sv
+                else R.drawable.ic_alarm_off_sv
+            )
+
+            binding.ivAlarm.setOnClickListener {
+                item.isAlarmOn = !(item.isAlarmOn ?: false)
+                binding.ivAlarm.setImageResource(
+                    if (item.isAlarmOn == true) R.drawable.ic_alarm_on_sv
+                    else R.drawable.ic_alarm_off_sv
+                )
+            }
+        }
     }
 
     override fun getItemCount(): Int = todoList.size
