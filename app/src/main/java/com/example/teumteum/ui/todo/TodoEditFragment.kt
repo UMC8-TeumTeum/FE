@@ -13,20 +13,23 @@ import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.example.teumteum.R
-import com.example.teumteum.data.local.TodoDao
 import com.example.teumteum.databinding.FragmentTodoEditBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 import com.example.teumteum.data.entities.TodoHomeItem
 import com.example.teumteum.databinding.DialogConfirmTodoDeleteBinding
 import com.example.teumteum.databinding.DialogConfirmTodoEditBinding
+import com.example.teumteum.ui.calendar.IDateClickListener
+import com.example.teumteum.ui.calendar.MonthlyCalendarFragment
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
-class TodoEditFragment : BottomSheetDialogFragment() {
+class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
 
     private lateinit var binding: FragmentTodoEditBinding
 
@@ -34,6 +37,11 @@ class TodoEditFragment : BottomSheetDialogFragment() {
     private val selectedItems = mutableSetOf<String>()
     private val alarmOptions = listOf("30분 전", "10분 전", "5분 전", "3분 전", "1분 전")
     private var popupWindow: PopupWindow? = null
+
+    private var isCalendarVisible = false
+    private var calendarFragmentStart: MonthlyCalendarFragment? = null
+    private var calendarFragmentEnd: MonthlyCalendarFragment? = null
+    private var isStartDateSelected = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -98,6 +106,16 @@ class TodoEditFragment : BottomSheetDialogFragment() {
 
         binding.btnTodoDelete.setOnClickListener {
             showTodoDummyDeleteDialog()
+        }
+
+        binding.startDateTv.setOnClickListener {
+            isStartDateSelected = true
+            toggleCalendarVisibility()
+        }
+
+        binding.endDateTv.setOnClickListener {
+            isStartDateSelected = false
+            toggleCalendarVisibility()
         }
 
     }
@@ -373,5 +391,49 @@ class TodoEditFragment : BottomSheetDialogFragment() {
         dialog.show()
     }
 
+    private fun toggleCalendarVisibility() {
+        isCalendarVisible = !isCalendarVisible
+
+        if (isStartDateSelected) {
+            binding.homeCalendarViewLl.visibility = if (isCalendarVisible) View.VISIBLE else View.GONE
+
+            if (isCalendarVisible && calendarFragmentStart == null) {
+                calendarFragmentStart = MonthlyCalendarFragment.newInstance(
+                    position = Int.MAX_VALUE / 2,
+                    onClickListener = this
+                )
+                childFragmentManager.beginTransaction()
+                    .replace(R.id.home_calendar_container_fl, calendarFragmentStart!!)
+                    .commit()
+            }
+        } else {
+            binding.homeCalendarView02Ll.visibility = if (isCalendarVisible) View.VISIBLE else View.GONE
+
+            if (isCalendarVisible && calendarFragmentEnd == null) {
+                calendarFragmentEnd = MonthlyCalendarFragment.newInstance(
+                    position = Int.MAX_VALUE / 2,
+                    onClickListener = this
+                )
+                childFragmentManager.beginTransaction()
+                    .replace(R.id.home_calendar_container_02_fl, calendarFragmentEnd!!)
+                    .commit()
+            }
+        }
+    }
+
+    override fun onClickDate(date: LocalDate) {
+        val formatter = DateTimeFormatter.ofPattern("M월 d일 (E)", Locale.KOREAN)
+        val formattedDate = date.format(formatter)
+
+        if (isStartDateSelected) {
+            binding.startDateTv.text = formattedDate
+            binding.homeCalendarViewLl.visibility = View.GONE
+        } else {
+            binding.endDateTv.text = formattedDate
+            binding.homeCalendarView02Ll.visibility = View.GONE
+        }
+
+        isCalendarVisible = false
+    }
 
 }
