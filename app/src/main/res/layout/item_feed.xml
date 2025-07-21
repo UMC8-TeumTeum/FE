@@ -5,7 +5,9 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:backgroundTint="@color/white">
+    android:backgroundTint="@color/white"
+    android:paddingBottom="24dp"
+    >
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/profile_iv"
