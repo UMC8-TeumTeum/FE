@@ -1,3 +1,4 @@
+import android.R.attr.text
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -11,9 +12,8 @@ class FeedContentAdapter : ListAdapter<Feed, FeedContentAdapter.FeedViewHolder>(
     inner class FeedViewHolder(private val binding: ItemFeedBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Feed) {
-            binding.usernameText.text = item.username
-            binding.contentText.text = item.content
-            binding.timeText.text = getRelativeTime(item.createdAt)
+            binding.nicknameTv.text = item.username
+            binding.feedTitle.text = item.content
         }
     }
 

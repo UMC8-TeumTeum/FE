@@ -1,37 +1,183 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:padding="16dp"
-    android:layout_marginBottom="12dp"
-    android:background="@drawable/rounded_border">
+    android:backgroundTint="@color/white">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/profile_iv"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:background="@color/gray"
+        android:scaleType="centerCrop"
+        app:shapeAppearanceOverlay="@style/CircleImage"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        />
 
     <TextView
-        android:id="@+id/usernameText"
+        android:id="@+id/nickname_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="작성자"
-        android:textStyle="bold"
-        android:textSize="14sp"
-        android:textColor="#000000" />
+        android:text="닉네임"
+        android:fontFamily="@font/noto_sans_kr_medium"
+        android:textSize="13sp"
+        android:includeFontPadding="false"
+        android:textColor="@color/text_primary"
+        app:layout_constraintTop_toTopOf="@+id/profile_iv"
+        app:layout_constraintStart_toEndOf="@+id/profile_iv"
+        app:layout_constraintBottom_toBottomOf="@+id/profile_iv"
+        android:layout_marginStart="14dp"
+        />
 
     <TextView
-        android:id="@+id/contentText"
+        android:id="@+id/field_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="피드 내용입니다."
-        android:layout_marginTop="8dp"
-        android:textSize="15sp"
-        android:textColor="#222222" />
+        android:text="  •  UX디자이너"
+        android:fontFamily="@font/noto_sans_kr_medium"
+        android:textColor="@color/teumteum_deactive"
+        android:includeFontPadding="false"
+        app:layout_constraintTop_toTopOf="@id/nickname_tv"
+        app:layout_constraintStart_toEndOf="@+id/nickname_tv"
+        app:layout_constraintBottom_toBottomOf="@id/nickname_tv"
+        />
+
+    <ImageView
+        android:id="@+id/bookmark_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_bookmark_on"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
 
     <TextView
-        android:id="@+id/timeText"
+        android:id="@+id/bookmark_count_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="5분 전"
-        android:textSize="12sp"
-        android:textColor="#888888"
-        android:layout_marginTop="6dp" />
+        android:text="12"
+        android:fontFamily="@font/pretendard_medium"
+        android:textSize="10sp"
+        android:textColor="@color/teumteum_deactive"
+        android:includeFontPadding="false"
+        app:layout_constraintTop_toBottomOf="@+id/bookmark_iv"
+        app:layout_constraintStart_toStartOf="@+id/bookmark_iv"
+        app:layout_constraintEnd_toEndOf="@+id/bookmark_iv"
+        />
 
-</LinearLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/feed_content_cl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/profile_iv"
+        app:layout_constraintStart_toStartOf="@+id/profile_iv"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="2dp"
+        android:layout_marginStart="44dp"
+        >
+        
+        <TextView
+            android:id="@+id/filter_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="10m"
+            android:fontFamily="@font/noto_sans_kr_regular"
+            android:textSize="10sp"
+            android:includeFontPadding="false"
+            android:textColor="@color/white"
+            android:background="@drawable/rounded_filter_tv"
+            android:paddingHorizontal="8dp"
+            android:paddingTop="2.5dp"
+            android:paddingBottom="3.5dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            />
+
+        <TextView
+            android:id="@+id/feed_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="@+id/filter_tv"
+            app:layout_constraintStart_toEndOf="@+id/filter_tv"
+            android:text="무인 세차장 속 숨겨진 기능들"
+            android:fontFamily="@font/pretendard_medium"
+            android:textSize="16sp"
+            android:textColor="@color/text_primary"
+            android:includeFontPadding="false"
+            android:layout_marginStart="6dp"
+            />
+
+        <TextView
+            android:id="@+id/feed_body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="무인 세차장에도 사용자를 고려한 숨겨진 원리들이 있다는\n것 아시나요? 집 앞 드라이브 나갈 겸 세차하고 오세요"
+            android:fontFamily="@font/noto_sans_kr_regular"
+            android:textSize="12sp"
+            android:textColor="@color/text_primary"
+            android:includeFontPadding="false"
+            app:layout_constraintTop_toBottomOf="@+id/filter_tv"
+            app:layout_constraintStart_toStartOf="@+id/filter_tv"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="6dp"
+            />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/border_cl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_border"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/feed_body"
+            android:padding="10dp"
+            >
+            
+            <ImageView
+                android:id="@+id/feed_border_image"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/rounded_feed_image"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                />
+
+            <TextView
+                android:id="@+id/feed_border_title_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="무인 세차장 속 ux 비밀"
+                android:fontFamily="@font/pretendard_medium"
+                android:textSize="12sp"
+                android:textColor="@color/text_primary"
+                android:includeFontPadding="false"
+                app:layout_constraintStart_toEndOf="@id/feed_border_image"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginStart="11dp"
+                android:layout_marginTop="4dp"
+                />
+
+            <TextView
+                android:id="@+id/feed_border_link_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="https://www.youtube.com/watch"
+                android:fontFamily="@font/pretendard_regular"
+                android:textSize="10sp"
+                android:textColor="@color/teumteum_deactive"
+                android:includeFontPadding="false"
+                app:layout_constraintStart_toEndOf="@id/feed_border_image"
+                app:layout_constraintTop_toBottomOf="@id/feed_border_title_tv"
+                android:layout_marginStart="11dp"
+                android:layout_marginTop="4dp"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
