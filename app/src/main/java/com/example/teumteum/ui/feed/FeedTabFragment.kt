@@ -68,15 +68,12 @@ class FeedTabFragment : Fragment() {
 
 
     private fun updateTabStyle(tab: TabLayout.Tab, isSelected: Boolean) {
-        val tabIndicator = tab.customView?.findViewById<View>(R.id.tab_indicator)
         val tabText = tab.customView?.findViewById<TextView>(R.id.tab_text)
-
-        if (isSelected) {
-            tabIndicator?.visibility = View.VISIBLE
-            tabText?.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
-        } else {
-            tabIndicator?.visibility = View.INVISIBLE
-            tabText?.setTextColor(ContextCompat.getColor(requireContext(), R.color.teumteum_deactive))
-        }
+        tabText?.setTextColor(
+            ContextCompat.getColor(
+                requireContext(),
+                if (isSelected) R.color.text_primary else R.color.teumteum_deactive
+            )
+        )
     }
 }

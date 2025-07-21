@@ -12,16 +12,8 @@
         android:text="탭"
         android:textSize="16sp"
         android:fontFamily="@font/pretendard_medium"
-        android:layout_marginTop="15dp"
         android:includeFontPadding="false"
         android:textColor="@color/teumteum_deactive"
         />
 
-    <View
-        android:id="@+id/tab_indicator"
-        android:layout_width="65dp"
-        android:layout_height="1dp"
-        android:layout_marginTop="10dp"
-        android:background="@color/text_primary"
-        android:visibility="invisible" />
 </LinearLayout>

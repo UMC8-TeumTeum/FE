@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 회색 바탕 선 -->
+    <item android:bottom="0dp">
+        <shape>
+            <size android:height="1dp" />
+            <solid android:color="@color/teumteum_deactive" />
+        </shape>
+    </item>
+
+    <!-- 검은 인디케이터 -->
+    <item android:gravity="bottom|center_horizontal">
+        <shape>
+            <size android:width="65dp" android:height="1dp"/>
+            <solid android:color="@color/text_primary"/>
+        </shape>
+    </item>
+</layer-list>

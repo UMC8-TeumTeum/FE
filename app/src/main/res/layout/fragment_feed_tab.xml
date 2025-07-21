@@ -5,25 +5,34 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tabLayout"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        app:tabSelectedTextColor="@color/text_primary"
-        app:tabTextColor="@color/teumteum_deactive"
-        app:tabIndicatorColor="@android:color/transparent"
-        app:tabRippleColor="@android:color/transparent"
-        app:tabIndicatorGravity="bottom"
-        />
+        android:layout_height="wrap_content">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/teumteum_deactive" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_gravity="bottom"
+            android:background="@color/teumteum_deactive" />
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tab_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            app:tabTextColor="@color/teumteum_deactive"
+            app:tabIndicator="@drawable/custom_tab_indicator"
+            app:tabIndicatorColor="@color/text_primary"
+            app:tabSelectedTextColor="@color/text_primary"
+            app:tabIndicatorFullWidth="false"
+            app:tabIndicatorGravity="bottom"
+            app:tabRippleColor="@android:color/transparent"
+            />
+
+    </FrameLayout>
 
     <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/viewPager"
+        android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
