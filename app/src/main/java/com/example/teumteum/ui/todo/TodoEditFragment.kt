@@ -35,6 +35,8 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
     private lateinit var binding: FragmentTodoEditBinding
 
     private var todoId: Int = -1
+    val isAlarmOn = arguments?.getBoolean("isAlarmOn")
+
     private val selectedItems = mutableSetOf<String>()
     private val alarmOptions = listOf("30분 전", "10분 전", "5분 전", "3분 전", "1분 전")
     private var popupWindow: PopupWindow? = null
@@ -160,8 +162,14 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
             binding.btnTodoSave.isEnabled = false
 
             Toast.makeText(requireContext(), "이 일정은 편집할 수 없습니다.", Toast.LENGTH_SHORT).show()
-
         }
+
+        if (isAlarmOn == null) {
+            binding.alarmItem01Ll.visibility = View.GONE
+            binding.alarmItem02Ll.visibility = View.GONE
+            selectedItems.clear()
+        }
+
 
     }
 
@@ -267,12 +275,7 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
             elevation = 16f
             setBackgroundDrawable(null)
 
-            val location = IntArray(2)
-            anchor.getLocationOnScreen(location)
-            val x = location[0]
-            val y = location[1] + anchor.height
-
-            showAtLocation(anchor.rootView, Gravity.TOP or Gravity.START, x + anchor.width - popupWidth, y + 16)
+            showAsDropDown(anchor, -popupWidth + anchor.width, 16)
         }
     }
 

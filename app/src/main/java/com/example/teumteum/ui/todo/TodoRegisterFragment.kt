@@ -273,12 +273,7 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener {
             elevation = 16f
             setBackgroundDrawable(null)
 
-            val location = IntArray(2)
-            anchor.getLocationOnScreen(location)
-            val x = location[0]
-            val y = location[1] + anchor.height
-
-            showAtLocation(anchor.rootView, Gravity.TOP or Gravity.START, x + anchor.width - popupWidth, y + 16)
+            showAsDropDown(anchor, -popupWidth + anchor.width, 16)
         }
     }
 
