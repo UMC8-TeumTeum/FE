@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center">
+
+    <TextView
+        android:id="@+id/tab_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="탭"
+        android:textSize="16sp"
+        android:fontFamily="@font/pretendard_medium"
+        android:layout_marginTop="15dp"
+        android:includeFontPadding="false"
+        android:textColor="@color/teumteum_deactive"
+        />
+
+    <View
+        android:id="@+id/tab_indicator"
+        android:layout_width="65dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/text_primary"
+        android:visibility="invisible" />
+</LinearLayout>

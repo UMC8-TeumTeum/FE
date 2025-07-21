@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentFeedBinding
 
 class FeedFragment : Fragment() {
@@ -18,6 +19,11 @@ class FeedFragment : Fragment() {
     ): View {
         binding = FragmentFeedBinding.inflate(inflater, container, false)
 
+        childFragmentManager.beginTransaction()
+            .replace(R.id.feed_tab_container, FeedTabFragment())
+            .commit()
+
         return binding.root
     }
+
 }
