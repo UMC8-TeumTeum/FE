@@ -144,6 +144,66 @@
                         </LinearLayout>
 
                         <LinearLayout
+                            android:id="@+id/home_calendar_view_ll"
+                            android:layout_width="375dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="15dp"
+                            android:orientation="vertical"
+                            android:visibility="gone"
+                            app:layout_constraintTop_toBottomOf="@id/start_date_tv"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent">
+
+                            <LinearLayout
+                                android:id="@+id/home_weekly_calendar_day_of_month_ll"
+                                android:layout_width="match_parent"
+                                android:layout_height="40dp"
+                                android:layout_marginTop="20dp"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/home_day_of_week_sun_tv"
+                                    style="@style/day_of_week_tv"
+                                    android:text="일" />
+                                <TextView
+                                    android:id="@+id/home_day_of_week_mon_tv"
+                                    style="@style/day_of_week_tv"
+                                    android:text="월" />
+                                <TextView
+                                    android:id="@+id/home_day_of_week_tue_tv"
+                                    style="@style/day_of_week_tv"
+                                    android:text="화" />
+                                <TextView
+                                    android:id="@+id/home_day_of_week_wed_tv"
+                                    style="@style/day_of_week_tv"
+                                    android:text="수" />
+                                <TextView
+                                    android:id="@+id/home_day_of_week_thu_tv"
+                                    style="@style/day_of_week_tv"
+                                    android:text="목" />
+                                <TextView
+                                    android:id="@+id/home_day_of_week_fri_tv"
+                                    style="@style/day_of_week_tv"
+                                    android:text="금" />
+                                <TextView
+                                    android:id="@+id/home_day_of_week_sat_tv"
+                                    style="@style/day_of_week_tv"
+                                    android:text="토" />
+                            </LinearLayout>
+
+                            <FrameLayout
+                                android:id="@+id/home_calendar_container_fl"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <androidx.viewpager2.widget.ViewPager2
+                                    android:id="@+id/home_monthly_calendar_month_vp"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content" />
+                            </FrameLayout>
+                        </LinearLayout>
+
+                        <LinearLayout
                             android:id="@+id/time_picker_start_ll"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -203,6 +263,66 @@
                                 android:text="오후 9:00"
                                 android:textColor="@color/text_primary"
                                 android:textSize="15sp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/home_calendar_view_02_ll"
+                            android:layout_width="375dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="15dp"
+                            android:orientation="vertical"
+                            android:visibility="gone"
+                            app:layout_constraintTop_toBottomOf="@id/start_date_tv"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent">
+
+                            <LinearLayout
+                                android:id="@+id/home_weekly_calendar_day_of_month_02_ll"
+                                android:layout_width="match_parent"
+                                android:layout_height="40dp"
+                                android:layout_marginTop="20dp"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/home_day_of_week_sun_02_tv"
+                                    style="@style/day_of_week_tv"
+                                    android:text="일" />
+                                <TextView
+                                    android:id="@+id/home_day_of_week_mon_02_tv"
+                                    style="@style/day_of_week_tv"
+                                    android:text="월" />
+                                <TextView
+                                    android:id="@+id/home_day_of_week_tue_02_tv"
+                                    style="@style/day_of_week_tv"
+                                    android:text="화" />
+                                <TextView
+                                    android:id="@+id/home_day_of_week_wed_02_tv"
+                                    style="@style/day_of_week_tv"
+                                    android:text="수" />
+                                <TextView
+                                    android:id="@+id/home_day_of_week_thu_02_tv"
+                                    style="@style/day_of_week_tv"
+                                    android:text="목" />
+                                <TextView
+                                    android:id="@+id/home_day_of_week_fri_02_tv"
+                                    style="@style/day_of_week_tv"
+                                    android:text="금" />
+                                <TextView
+                                    android:id="@+id/home_day_of_week_sat_02_tv"
+                                    style="@style/day_of_week_tv"
+                                    android:text="토" />
+                            </LinearLayout>
+
+                            <FrameLayout
+                                android:id="@+id/home_calendar_container_02_fl"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <androidx.viewpager2.widget.ViewPager2
+                                    android:id="@+id/home_monthly_calendar_month_02_vp"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content" />
+                            </FrameLayout>
                         </LinearLayout>
 
                         <LinearLayout

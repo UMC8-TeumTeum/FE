@@ -27,8 +27,14 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import androidx.core.view.isGone
+import com.example.teumteum.ui.calendar.IDateClickListener
+import com.example.teumteum.ui.calendar.MonthlyCalendarFragment
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
-class TodoRegisterFragment : BottomSheetDialogFragment() {
+class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener {
 
     private lateinit var binding: FragmentTodoRegisterBinding
 
@@ -38,6 +44,11 @@ class TodoRegisterFragment : BottomSheetDialogFragment() {
     private val alarmOptions = listOf("30분 전", "10분 전", "5분 전", "3분 전", "1분 전")
 
     private var isTodoSelected = true
+
+    private var isCalendarVisible = false
+    private var calendarFragmentStart: MonthlyCalendarFragment? = null
+    private var calendarFragmentEnd: MonthlyCalendarFragment? = null
+    private var isStartDateSelected = true
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -135,6 +146,17 @@ class TodoRegisterFragment : BottomSheetDialogFragment() {
                     .commit()
             }
         }
+
+        binding.startDateTv.setOnClickListener {
+            isStartDateSelected = true
+            toggleCalendarVisibility()
+        }
+
+        binding.endDateTv.setOnClickListener {
+            isStartDateSelected = false
+            toggleCalendarVisibility()
+        }
+
     }
 
     private fun setupPickers() {
@@ -330,6 +352,51 @@ class TodoRegisterFragment : BottomSheetDialogFragment() {
         }
 
         return dialog
+    }
+
+    private fun toggleCalendarVisibility() {
+        isCalendarVisible = !isCalendarVisible
+
+        if (isStartDateSelected) {
+            binding.homeCalendarViewLl.visibility = if (isCalendarVisible) View.VISIBLE else View.GONE
+
+            if (isCalendarVisible && calendarFragmentStart == null) {
+                calendarFragmentStart = MonthlyCalendarFragment.newInstance(
+                    position = Int.MAX_VALUE / 2,
+                    onClickListener = this
+                )
+                childFragmentManager.beginTransaction()
+                    .replace(R.id.home_calendar_container_fl, calendarFragmentStart!!)
+                    .commit()
+            }
+        } else {
+            binding.homeCalendarView02Ll.visibility = if (isCalendarVisible) View.VISIBLE else View.GONE
+
+            if (isCalendarVisible && calendarFragmentEnd == null) {
+                calendarFragmentEnd = MonthlyCalendarFragment.newInstance(
+                    position = Int.MAX_VALUE / 2,
+                    onClickListener = this
+                )
+                childFragmentManager.beginTransaction()
+                    .replace(R.id.home_calendar_container_02_fl, calendarFragmentEnd!!)
+                    .commit()
+            }
+        }
+    }
+
+    override fun onClickDate(date: LocalDate) {
+        val formatter = DateTimeFormatter.ofPattern("M월 d일 (E)", Locale.KOREAN)
+        val formattedDate = date.format(formatter)
+
+        if (isStartDateSelected) {
+            binding.startDateTv.text = formattedDate
+            binding.homeCalendarViewLl.visibility = View.GONE
+        } else {
+            binding.endDateTv.text = formattedDate
+            binding.homeCalendarView02Ll.visibility = View.GONE
+        }
+
+        isCalendarVisible = false
     }
 
 }
