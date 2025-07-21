@@ -32,6 +32,14 @@ class Friend02PossibleTimeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        //  뒤로가기 버튼 처리
+        binding.backButton.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, Friend02RequestFragment())
+                .addToBackStack(null)
+                .commit()
+        }
+
         //  바텀 네비게이션 숨기기
         (activity as? MainActivity)?.hideBottomBar()
 
