@@ -4,28 +4,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@android:color/white"
-    android:padding="25dp">
+    android:background="@android:color/white">
 
     <!-- 상단 뒤로가기 + 검색창 -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginTop="50dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="70dp"
         android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingStart="0dp"
-        android:paddingEnd="0dp"
-        android:layout_marginStart="0dp">
+        android:gravity="center_vertical">
 
         <ImageButton
             android:id="@+id/backButton"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:includeFontPadding="false"
-            android:lineSpacingExtra="0dp"
-            android:layout_marginStart="-15dp"
-            android:padding="12dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
             android:background="@android:color/transparent"
             android:src="@drawable/ic_arrow_back"
             android:scaleType="centerInside" />
@@ -36,7 +29,8 @@
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_weight="1"
-            android:layout_marginStart="2dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="20dp"
             android:includeFontPadding="false"
             android:lineSpacingExtra="0dp"
             android:background="@drawable/friend_search_edittext_bg"
@@ -56,7 +50,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="-8dp"
         android:lineSpacingExtra="0dp"
         android:includeFontPadding="false"
         android:orientation="horizontal">
@@ -65,6 +58,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:layout_marginLeft="24dp"
             android:text="최근 검색어"
             android:textSize="14sp"
             android:textColor="#788084"
@@ -73,9 +67,9 @@
         <Button
             android:id="@+id/btnDeleteRecent"
             android:layout_width="wrap_content"
-            android:layout_height="48dp"
+            android:layout_height="wrap_content"
             android:minWidth="48dp"
-            android:layout_marginRight="-13dp"
+            android:layout_marginRight="14dp"
             android:text="삭제"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
@@ -93,7 +87,9 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginTop="6dp"
+        android:layout_marginTop="-5dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
         android:background="#EAEAEA" />
 
     <!-- 최근 검색어 리스트 -->
@@ -102,7 +98,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginTop="-3dp">
+        android:layout_marginTop="-3dp"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp">
 
 
 

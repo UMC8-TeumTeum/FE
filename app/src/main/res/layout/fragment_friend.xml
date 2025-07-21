@@ -9,6 +9,7 @@
     android:background="@android:color/white">
 
     <!-- 팔로잉 / 팔로워 탭 -->
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="450dp"
@@ -41,21 +42,20 @@
             android:id="@+id/btn_alarm"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/home_logo_iv"
             android:layout_marginStart="321dp"
-            android:layout_marginTop="68dp"
             android:background="@android:color/transparent"
             android:src="@drawable/ic_top_alarm"
-            app:layout_constraintBaseline_toBaselineOf="@id/home_logo_iv"
-            android:layout_marginEnd="14dp" />
+            app:layout_constraintBaseline_toBaselineOf="@id/home_logo_iv" />
 
         <!-- 검색 버튼 -->
         <ImageButton
             android:id="@+id/btn_search"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="68dp"
+            android:layout_alignTop="@+id/home_logo_iv"
             android:layout_marginStart="365dp"
-            android:layout_marginEnd="224dp"
+            android:layout_marginEnd="22dp"
             android:background="@android:color/transparent"
             android:src="@drawable/ic_search"
             app:layout_constraintBaseline_toBaselineOf="@id/home_logo_iv"
