@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.teumteum.R
 import com.example.teumteum.data.Feed
 import com.example.teumteum.databinding.FragmentFeedContentBinding
@@ -16,6 +17,9 @@ class ContentListFragment : Fragment() {
 
     private lateinit var binding: FragmentFeedContentBinding
     private var contentType: String? = null
+    private lateinit var adapter: FeedContentAdapter
+    private var fullList: List<Feed> = emptyList()
+    private var currentFilter: String = "all" // 현재 필터
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,18 +32,43 @@ class ContentListFragment : Fragment() {
     ): View {
         binding = FragmentFeedContentBinding.inflate(inflater, container, false)
 
-        val dummyData = getDummyItems()
-        val filteredList = when (contentType) {
-            "latest" -> dummyData.sortedByDescending { it.createdAt }
-            "following" -> dummyData.filter { it.isFromFollowedUser }
-            else -> dummyData
+        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+
+        fullList = when (contentType) {
+            "latest" -> getDummyItems().sortedByDescending { it.createdAt }
+            "following" -> getDummyItems().filter { it.isFromFollowedUser }
+            else -> getDummyItems()
         }
 
-        val adapter = FeedContentAdapter()
+        adapter = FeedContentAdapter()
         binding.recyclerView.adapter = adapter
-        adapter.submitList(filteredList)
+
+        // 초기에는 전체 필터 적용
+        applyFilter(currentFilter)
 
         return binding.root
+    }
+
+    fun onFilterSelected(filter: String) {
+        currentFilter = filter
+        applyFilter(filter)
+    }
+
+
+    private fun applyFilter(filter: String) {
+        val filtered = when (filter) {
+            "10m" -> fullList.filter { isWithinMinutes(it.createdAt, 10) }
+            "20m" -> fullList.filter { isWithinMinutes(it.createdAt, 20) }
+            "30m" -> fullList.filter { isWithinMinutes(it.createdAt, 30) }
+            else -> fullList
+        }
+        adapter.submitList(filtered)
+    }
+
+
+    private fun isWithinMinutes(createdAt: Long, minutes: Int): Boolean {
+        val diffMillis = System.currentTimeMillis() - createdAt
+        return diffMillis <= minutes * 60 * 1000
     }
 
     fun getDummyItems(): List<Feed> {

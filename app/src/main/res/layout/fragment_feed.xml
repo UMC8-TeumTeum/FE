@@ -52,26 +52,120 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/feed_tab_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:tabIndicatorColor="@color/black"
-        app:tabSelectedTextColor="@color/black"
-        app:tabTextColor="@color/gray"
-        app:tabIndicatorFullWidth="false"
-        app:tabIndicatorHeight="2dp"
-        />
-
     <LinearLayout
-        android:id="@+id/filter_ll"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="1">
 
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_gravity="bottom"
+                android:background="@color/teumteum_deactive" />
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tab_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                app:tabTextColor="@color/teumteum_deactive"
+                app:tabIndicator="@drawable/custom_tab_indicator"
+                app:tabIndicatorColor="@color/text_primary"
+                app:tabSelectedTextColor="@color/text_primary"
+                app:tabIndicatorFullWidth="false"
+                app:tabIndicatorGravity="bottom"
+                app:tabRippleColor="@android:color/transparent"
+                />
+
+        </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/filter_ll"
+            android:layout_marginTop="24dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_all"
+                android:layout_width="50dp"
+                android:layout_height="35dp"
+                android:text="전체"
+                android:textSize="12sp"
+                android:layout_marginEnd="8dp"
+                android:fontFamily="@font/noto_sans_kr_medium"
+                android:padding="0dp"
+                android:includeFontPadding="false"
+                app:cornerRadius="8dp"
+                android:layout_marginStart="21dp"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/text_primary"
+                />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_10m"
+                android:layout_width="50dp"
+                android:layout_height="35dp"
+                android:text="10m"
+                android:textSize="12sp"
+                android:layout_marginEnd="8dp"
+                android:fontFamily="@font/noto_sans_kr_medium"
+                android:padding="0dp"
+                android:includeFontPadding="false"
+                app:cornerRadius="8dp"
+                android:layout_marginStart="6dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="@color/teumteum_line"
+                android:textColor="@color/text_primary"
+                android:backgroundTint = "@color/teumteum_bg"
+                />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_20m"
+                android:layout_width="50dp"
+                android:layout_height="35dp"
+                android:text="20m"
+                android:textSize="12sp"
+                android:layout_marginEnd="8dp"
+                android:fontFamily="@font/noto_sans_kr_medium"
+                android:padding="0dp"
+                android:includeFontPadding="false"
+                app:cornerRadius="8dp"
+                android:layout_marginStart="6dp"
+                app:strokeColor="@color/teumteum_line"
+                android:textColor="@color/text_primary"
+                android:backgroundTint = "@color/teumteum_bg"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_30m"
+                android:layout_width="50dp"
+                android:layout_height="35dp"
+                android:text="30m"
+                android:textSize="12sp"
+                android:layout_marginEnd="8dp"
+                android:fontFamily="@font/noto_sans_kr_medium"
+                android:padding="0dp"
+                android:includeFontPadding="false"
+                app:cornerRadius="8dp"
+                android:layout_marginStart="6dp"
+                app:strokeColor="@color/teumteum_line"
+                android:textColor="@color/text_primary"
+                android:backgroundTint = "@color/teumteum_bg"/>
+
+        </LinearLayout>
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
 
     </LinearLayout>
-
 
 </LinearLayout>
