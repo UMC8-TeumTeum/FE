@@ -356,7 +356,8 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener {
             if (isCalendarVisible && calendarFragmentStart == null) {
                 calendarFragmentStart = MonthlyCalendarFragment.newInstance(
                     position = Int.MAX_VALUE / 2,
-                    onClickListener = this
+                    onClickListener = this,
+                    showDot = false
                 )
                 childFragmentManager.beginTransaction()
                     .replace(R.id.home_calendar_container_fl, calendarFragmentStart!!)
@@ -368,7 +369,8 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener {
             if (isCalendarVisible && calendarFragmentEnd == null) {
                 calendarFragmentEnd = MonthlyCalendarFragment.newInstance(
                     position = Int.MAX_VALUE / 2,
-                    onClickListener = this
+                    onClickListener = this,
+                    showDot = false
                 )
                 childFragmentManager.beginTransaction()
                     .replace(R.id.home_calendar_container_02_fl, calendarFragmentEnd!!)
