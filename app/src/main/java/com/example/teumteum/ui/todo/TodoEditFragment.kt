@@ -16,24 +16,35 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.example.teumteum.R
-import com.example.teumteum.data.local.TodoDao
 import com.example.teumteum.databinding.FragmentTodoEditBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 import com.example.teumteum.data.entities.TodoHomeItem
 import com.example.teumteum.databinding.DialogConfirmTodoDeleteBinding
 import com.example.teumteum.databinding.DialogConfirmTodoEditBinding
+import com.example.teumteum.ui.calendar.IDateClickListener
+import com.example.teumteum.ui.calendar.MonthlyCalendarFragment
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
-class TodoEditFragment : BottomSheetDialogFragment() {
+class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
 
     private lateinit var binding: FragmentTodoEditBinding
 
     private var todoId: Int = -1
+    val isAlarmOn = arguments?.getBoolean("isAlarmOn")
+
     private val selectedItems = mutableSetOf<String>()
     private val alarmOptions = listOf("30분 전", "10분 전", "5분 전", "3분 전", "1분 전")
     private var popupWindow: PopupWindow? = null
+
+    private var isCalendarVisible = false
+    private var calendarFragmentStart: MonthlyCalendarFragment? = null
+    private var calendarFragmentEnd: MonthlyCalendarFragment? = null
+    private var isStartDateSelected = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -99,6 +110,66 @@ class TodoEditFragment : BottomSheetDialogFragment() {
         binding.btnTodoDelete.setOnClickListener {
             showTodoDummyDeleteDialog()
         }
+
+        binding.startDateTv.setOnClickListener {
+            isStartDateSelected = true
+            toggleCalendarVisibility()
+        }
+
+        binding.endDateTv.setOnClickListener {
+            isStartDateSelected = false
+            toggleCalendarVisibility()
+        }
+
+        if (todoId == 3) {
+            val deactiveColor = ContextCompat.getColor(requireContext(), R.color.teumteum_deactive)
+
+            binding.todoTitleEt.setTextColor(deactiveColor)
+            binding.timerIconIv.setColorFilter(deactiveColor)
+            binding.startDateTv.setTextColor(deactiveColor)
+            binding.startTimeTv.setTextColor(deactiveColor)
+            binding.endDateTv.setTextColor(deactiveColor)
+            binding.endTimeTv.setTextColor(deactiveColor)
+            binding.alarmIconIv.setColorFilter(deactiveColor)
+            binding.alarmSet01Tv.setTextColor(deactiveColor)
+            binding.alarmSet02Tv.setTextColor(deactiveColor)
+            binding.addAlarmTv.setTextColor(deactiveColor)
+            binding.publicIconIv.setColorFilter(deactiveColor)
+            binding.publicSettingTv.setTextColor(deactiveColor)
+            binding.includeIconIv.setColorFilter(deactiveColor)
+            binding.includeReportTv.setTextColor(deactiveColor)
+            binding.detailTextIv.setColorFilter(deactiveColor)
+            binding.detailTextEt.setTextColor(deactiveColor)
+            binding.detailTextEt.setHintTextColor(deactiveColor)
+
+            binding.todoTitleEt.isEnabled = false
+            binding.startDateTv.isEnabled = false
+            binding.startTimeTv.isEnabled = false
+            binding.endDateTv.isEnabled = false
+            binding.endTimeTv.isEnabled = false
+            binding.alarmSet01Tv.isEnabled = false
+            binding.alarmSet02Tv.isEnabled = false
+            binding.addAlarmTv.isEnabled = false
+            binding.btnPlus.isEnabled = false
+            binding.detailTextEt.isEnabled = false
+
+            binding.categoryToggle01Iv.isEnabled = false
+            binding.categoryToggle02Iv.isEnabled = false
+            binding.categoryToggle03Iv.isEnabled = false
+            binding.categoryToggle04Iv.isEnabled = false
+
+            binding.btnTodoDelete.isEnabled = false
+            binding.btnTodoSave.isEnabled = false
+
+            Toast.makeText(requireContext(), "이 일정은 편집할 수 없습니다.", Toast.LENGTH_SHORT).show()
+        }
+
+        if (isAlarmOn == null) {
+            binding.alarmItem01Ll.visibility = View.GONE
+            binding.alarmItem02Ll.visibility = View.GONE
+            selectedItems.clear()
+        }
+
 
     }
 
@@ -204,12 +275,7 @@ class TodoEditFragment : BottomSheetDialogFragment() {
             elevation = 16f
             setBackgroundDrawable(null)
 
-            val location = IntArray(2)
-            anchor.getLocationOnScreen(location)
-            val x = location[0]
-            val y = location[1] + anchor.height
-
-            showAtLocation(anchor.rootView, Gravity.TOP or Gravity.START, x + anchor.width - popupWidth, y + 16)
+            showAsDropDown(anchor, -popupWidth + anchor.width, 16)
         }
     }
 
@@ -373,5 +439,51 @@ class TodoEditFragment : BottomSheetDialogFragment() {
         dialog.show()
     }
 
+    private fun toggleCalendarVisibility() {
+        isCalendarVisible = !isCalendarVisible
+
+        if (isStartDateSelected) {
+            binding.homeCalendarViewLl.visibility = if (isCalendarVisible) View.VISIBLE else View.GONE
+
+            if (isCalendarVisible && calendarFragmentStart == null) {
+                calendarFragmentStart = MonthlyCalendarFragment.newInstance(
+                    position = Int.MAX_VALUE / 2,
+                    onClickListener = this,
+                    showDot = false
+                )
+                childFragmentManager.beginTransaction()
+                    .replace(R.id.home_calendar_container_fl, calendarFragmentStart!!)
+                    .commit()
+            }
+        } else {
+            binding.homeCalendarView02Ll.visibility = if (isCalendarVisible) View.VISIBLE else View.GONE
+
+            if (isCalendarVisible && calendarFragmentEnd == null) {
+                calendarFragmentEnd = MonthlyCalendarFragment.newInstance(
+                    position = Int.MAX_VALUE / 2,
+                    onClickListener = this,
+                    showDot = false
+                )
+                childFragmentManager.beginTransaction()
+                    .replace(R.id.home_calendar_container_02_fl, calendarFragmentEnd!!)
+                    .commit()
+            }
+        }
+    }
+
+    override fun onClickDate(date: LocalDate) {
+        val formatter = DateTimeFormatter.ofPattern("M월 d일 (E)", Locale.KOREAN)
+        val formattedDate = date.format(formatter)
+
+        if (isStartDateSelected) {
+            binding.startDateTv.text = formattedDate
+            binding.homeCalendarViewLl.visibility = View.GONE
+        } else {
+            binding.endDateTv.text = formattedDate
+            binding.homeCalendarView02Ll.visibility = View.GONE
+        }
+
+        isCalendarVisible = false
+    }
 
 }

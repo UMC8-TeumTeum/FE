@@ -22,6 +22,8 @@ class MonthlyCalendarFragment : Fragment() {
     private var position: Int = 0
     private lateinit var onClickListener: IDateClickListener
 
+    private var showDot: Boolean = true
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -38,6 +40,11 @@ class MonthlyCalendarFragment : Fragment() {
         setupCalendar(displayMonthDate)
 
         return binding.root
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        showDot = arguments?.getBoolean("showDot", true) ?: true
     }
 
     private fun setupCalendar(selectedMonthDate: LocalDate) {
@@ -89,7 +96,7 @@ class MonthlyCalendarFragment : Fragment() {
                 dayText.text = date.dayOfMonth.toString()
                 updateDayUi(requireContext(), dayText, date, selectedDate, today)
 
-                if (date.isEqual(today)) {
+                if (date.isEqual(today) && showDot) {
                     dotView.visibility = View.VISIBLE
                 } else {
                     dotView.visibility = View.INVISIBLE
@@ -117,10 +124,13 @@ class MonthlyCalendarFragment : Fragment() {
     }
 
     companion object {
-        fun newInstance(position: Int, onClickListener: IDateClickListener): MonthlyCalendarFragment {
+        fun newInstance(position: Int, onClickListener: IDateClickListener, showDot: Boolean = true): MonthlyCalendarFragment {
             val fragment = MonthlyCalendarFragment()
             fragment.position = position
             fragment.onClickListener = onClickListener
+            fragment.arguments = Bundle().apply {
+                putBoolean("showDot", showDot)
+            }
             return fragment
         }
     }
