@@ -146,12 +146,20 @@ class HomeFragment : Fragment(), IDateClickListener {
         binding.homeWeeklyCalendarWeekVp.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 val weekOffset = position - startPosition
-                val newSelectedDate = today.plusWeeks(weekOffset.toLong())
 
-                selectedDate = newSelectedDate
-                binding.homeSelectedDateTv.text = dateFormat(newSelectedDate)
+                // 오늘 날짜에서 weekOffset만큼 이동
+                val referenceDate = today.plusWeeks(weekOffset.toLong())
+
+                // 해당 주의 요일 (1: 월요일 ~ 7: 일요일)
+                val dayOfWeekValue = referenceDate.dayOfWeek.value % 7
+
+                val saturday = referenceDate.plusDays((6 - dayOfWeekValue).toLong())
+
+                selectedDate = saturday
+                binding.homeSelectedDateTv.text = dateFormat(saturday)
             }
         })
+
     }
 
 
