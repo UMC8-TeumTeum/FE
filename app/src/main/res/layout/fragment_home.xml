@@ -59,7 +59,7 @@
                     android:id="@+id/home_title_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
+                    android:layout_marginTop="22dp"
                     android:fontFamily="@font/noto_sans_kr_semibold"
                     android:text="하루의 빈틈을 발견했어요"
                     android:textColor="@color/white"
@@ -71,7 +71,8 @@
                     android:id="@+id/home_time_info_container"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="-20dp"
+                    android:layout_marginStart="1dp"
+                    android:layout_marginTop="-17dp"
                     android:orientation="horizontal"
                     app:layout_constraintStart_toStartOf="@id/home_title_tv"
                     app:layout_constraintTop_toBottomOf="@id/home_title_tv">
