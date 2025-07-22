@@ -115,7 +115,7 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="35dp"
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="20dp">
 
@@ -380,12 +380,11 @@
 
     <ImageView
         android:id="@+id/fab_add_iv"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="13dp"
-        android:layout_marginBottom="120dp"
-        android:elevation="6.2dp"
+        android:layout_marginBottom="100dp"
         android:src="@drawable/ic_fab_add_sv"
         android:translationZ="20dp" />
 
