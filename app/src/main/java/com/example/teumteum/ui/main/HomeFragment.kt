@@ -17,6 +17,7 @@ import com.example.teumteum.ui.calendar.CalendarMode
 
 import com.example.teumteum.data.entities.TodoHomeItem
 import com.example.teumteum.data.entities.WishItem
+import com.example.teumteum.ui.alarm.AlarmFragment
 import com.example.teumteum.ui.calendar.CalendarVPAdapter
 import com.example.teumteum.ui.filling.FillingActivity01Fragment
 import com.example.teumteum.ui.todo.TodoRVAdapter
@@ -99,6 +100,13 @@ class HomeFragment : Fragment(), IDateClickListener {
         binding.bannerCard.setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.main_frm, FillingActivity01Fragment())
+                .addToBackStack(null)
+                .commit()
+        }
+
+        binding.homeNotificationIv.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, AlarmFragment())
                 .addToBackStack(null)
                 .commit()
         }
