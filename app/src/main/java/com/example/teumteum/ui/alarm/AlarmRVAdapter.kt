@@ -6,7 +6,9 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.teumteum.R
 import com.example.teumteum.data.entities.AlarmItem
+import com.example.teumteum.ui.friend.Friend02RequestFragment
 
 class AlarmRVAdapter(private val fragmentManager: FragmentManager, private val alarmList: MutableList<AlarmItem>) : RecyclerView.Adapter<AlarmRVAdapter.ViewHolder>() {
 
@@ -22,6 +24,15 @@ class AlarmRVAdapter(private val fragmentManager: FragmentManager, private val a
         val binding = holder.binding
         binding.alarmNameTv.text = item.personName
         binding.alarmTitleTv.text = item.title
+
+        binding.root.setOnClickListener {
+            if (item.id == 1) {
+                fragmentManager.beginTransaction()
+                    .replace(R.id.main_frm, Friend02RequestFragment())
+                    .addToBackStack(null)
+                    .commit()
+            }
+        }
 
     }
 
