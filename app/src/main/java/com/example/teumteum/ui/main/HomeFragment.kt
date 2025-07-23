@@ -33,6 +33,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 import androidx.core.graphics.createBitmap
+import com.example.teumteum.util.applyBlurShadow
 
 class HomeFragment : Fragment(), IDateClickListener {
 
@@ -132,32 +133,11 @@ class HomeFragment : Fragment(), IDateClickListener {
         binding.todolistRv.adapter = adapter
 
         binding.fabAddIv.post {
-            applyBlurShadow(binding.fabAddIv)
+            applyBlurShadow(
+                sourceView = binding.fabAddIv,
+                targetImageView = binding.fabShadowIv
+            )
         }
-    }
-
-    private fun applyBlurShadow(view: View) {
-        view.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
-
-        // 원본 뷰 비트맵 생성
-        val bitmap = createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(bitmap)
-        view.draw(canvas)
-
-        val shadowPaint = Paint().apply {
-            color = Color.BLACK
-            maskFilter = BlurMaskFilter(6.2f, BlurMaskFilter.Blur.NORMAL)
-            alpha = (255 * 0.18f).toInt()
-        }
-
-        // 그림자 알파 추출
-        val offset = IntArray(2)
-        val shadowBitmap = bitmap.extractAlpha(shadowPaint, offset)
-
-        binding.fabShadowIv.setImageBitmap(shadowBitmap)
-
-        binding.fabShadowIv.translationX = 0f
-        binding.fabShadowIv.translationY = 4f
     }
 
     override fun onResume() {
