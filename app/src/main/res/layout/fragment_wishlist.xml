@@ -1,171 +1,175 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginTop="70dp">
+    android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/back_arrow_iv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:src="@drawable/ic_arrow_back"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/wishlist_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="-18dp"
-        android:text="위시리스트"
-        android:fontFamily="@font/noto_sans_kr_medium"
-        android:textColor="@color/text_primary"
-        android:textSize="20sp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toEndOf="@id/back_arrow_iv" />
-
-    <TextView
-        android:id="@+id/edit_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:text="편집"
-        android:fontFamily="@font/pretendard_medium"
-        android:textColor="@color/text_primary"
-        android:textSize="16sp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <LinearLayout
-        android:id="@+id/wishlist_time_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginTop="40dp"
-        app:layout_constraintTop_toBottomOf="@id/edit_tv"
-        app:layout_constraintStart_toStartOf="@id/back_arrow_iv"
-        app:layout_constraintBottom_toTopOf="@id/wishlist_rv">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_wishlist_time_01"
-            android:layout_width="55dp"
-            android:layout_height="35dp"
-            android:text="전체"
-            android:textSize="12sp"
-            android:layout_marginEnd="10dp"
-            android:fontFamily="@font/noto_sans_kr_medium"
-            android:textColor="@color/white"
-            android:padding="0dp"
-            android:includeFontPadding="false"
-            app:cornerRadius="8dp"
-            app:backgroundTint="@color/text_primary" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_wishlist_time_02"
-            android:layout_width="55dp"
-            android:layout_height="35dp"
-            android:text="10m"
-            android:textSize="12sp"
-            android:layout_marginEnd="10dp"
-            android:fontFamily="@font/noto_sans_kr_medium"
-            android:textColor="@color/text_primary"
-            android:padding="0dp"
-            android:includeFontPadding="false"
-            app:cornerRadius="8dp"
-            app:strokeWidth="1dp"
-            app:strokeColor="@color/teumteum_line"
-            app:backgroundTint="@color/teumteum_bg" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_wishlist_time_03"
-            android:layout_width="55dp"
-            android:layout_height="35dp"
-            android:text="20m"
-            android:textSize="12sp"
-            android:layout_marginEnd="10dp"
-            android:fontFamily="@font/noto_sans_kr_medium"
-            android:textColor="@color/text_primary"
-            android:padding="0dp"
-            android:includeFontPadding="false"
-            app:cornerRadius="8dp"
-            app:strokeWidth="1dp"
-            app:strokeColor="@color/teumteum_line"
-            app:backgroundTint="@color/teumteum_bg" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_wishlist_time_04"
-            android:layout_width="55dp"
-            android:layout_height="35dp"
-            android:text="30m"
-            android:textSize="12sp"
-            android:layout_marginEnd="10dp"
-            android:fontFamily="@font/noto_sans_kr_medium"
-            android:textColor="@color/text_primary"
-            android:padding="0dp"
-            android:includeFontPadding="false"
-            app:cornerRadius="8dp"
-            app:strokeWidth="1dp"
-            app:strokeColor="@color/teumteum_line"
-            app:backgroundTint="@color/teumteum_bg" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_wishlist_time_05"
-            android:layout_width="55dp"
-            android:layout_height="35dp"
-            android:text="1h~"
-            android:textSize="12sp"
-            android:fontFamily="@font/noto_sans_kr_medium"
-            android:textColor="@color/text_primary"
-            android:padding="0dp"
-            android:includeFontPadding="false"
-            app:cornerRadius="8dp"
-            app:strokeWidth="1dp"
-            app:strokeColor="@color/teumteum_line"
-            app:backgroundTint="@color/teumteum_bg" />
-    </LinearLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/wishlist_rv"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:overScrollMode="never"
-        android:clipToPadding="false"
-        android:paddingBottom="20dp"
-        android:layout_marginTop="18dp"
-        android:nestedScrollingEnabled="true"
-        tools:listitem="@layout/item_wishlist"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintTop_toBottomOf="@id/wishlist_time_container"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:layout_height="match_parent"
+        android:layout_marginTop="70dp">
+
+        <ImageView
+            android:id="@+id/back_arrow_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:src="@drawable/ic_arrow_back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/wishlist_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="-18dp"
+            android:fontFamily="@font/noto_sans_kr_medium"
+            android:text="위시리스트"
+            android:textColor="@color/text_primary"
+            android:textSize="20sp"
+            app:layout_constraintStart_toEndOf="@id/back_arrow_iv"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/edit_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:fontFamily="@font/pretendard_medium"
+            android:text="편집"
+            android:textColor="@color/text_primary"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/wishlist_time_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toTopOf="@id/wishlist_rv"
+            app:layout_constraintStart_toStartOf="@id/back_arrow_iv"
+            app:layout_constraintTop_toBottomOf="@id/edit_tv">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_wishlist_time_01"
+                android:layout_width="55dp"
+                android:layout_height="35dp"
+                android:layout_marginEnd="10dp"
+                android:fontFamily="@font/noto_sans_kr_medium"
+                android:includeFontPadding="false"
+                android:padding="0dp"
+                android:text="전체"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                app:backgroundTint="@color/text_primary"
+                app:cornerRadius="8dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_wishlist_time_02"
+                android:layout_width="55dp"
+                android:layout_height="35dp"
+                android:layout_marginEnd="10dp"
+                android:fontFamily="@font/noto_sans_kr_medium"
+                android:includeFontPadding="false"
+                android:padding="0dp"
+                android:text="10m"
+                android:textColor="@color/text_primary"
+                android:textSize="12sp"
+                app:backgroundTint="@color/teumteum_bg"
+                app:cornerRadius="8dp"
+                app:strokeColor="@color/teumteum_line"
+                app:strokeWidth="1dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_wishlist_time_03"
+                android:layout_width="55dp"
+                android:layout_height="35dp"
+                android:layout_marginEnd="10dp"
+                android:fontFamily="@font/noto_sans_kr_medium"
+                android:includeFontPadding="false"
+                android:padding="0dp"
+                android:text="20m"
+                android:textColor="@color/text_primary"
+                android:textSize="12sp"
+                app:backgroundTint="@color/teumteum_bg"
+                app:cornerRadius="8dp"
+                app:strokeColor="@color/teumteum_line"
+                app:strokeWidth="1dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_wishlist_time_04"
+                android:layout_width="55dp"
+                android:layout_height="35dp"
+                android:layout_marginEnd="10dp"
+                android:fontFamily="@font/noto_sans_kr_medium"
+                android:includeFontPadding="false"
+                android:padding="0dp"
+                android:text="30m"
+                android:textColor="@color/text_primary"
+                android:textSize="12sp"
+                app:backgroundTint="@color/teumteum_bg"
+                app:cornerRadius="8dp"
+                app:strokeColor="@color/teumteum_line"
+                app:strokeWidth="1dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_wishlist_time_05"
+                android:layout_width="55dp"
+                android:layout_height="35dp"
+                android:fontFamily="@font/noto_sans_kr_medium"
+                android:includeFontPadding="false"
+                android:padding="0dp"
+                android:text="1h~"
+                android:textColor="@color/text_primary"
+                android:textSize="12sp"
+                app:backgroundTint="@color/teumteum_bg"
+                app:cornerRadius="8dp"
+                app:strokeColor="@color/teumteum_line"
+                app:strokeWidth="1dp" />
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/wishlist_rv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:clipToPadding="false"
+            android:nestedScrollingEnabled="true"
+            android:overScrollMode="never"
+            android:paddingBottom="20dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/wishlist_time_container"
+            tools:listitem="@layout/item_wishlist" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/fab_add_iv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:layout_marginBottom="40dp"
-        android:layout_marginEnd="10dp"
-        app:cardElevation="2dp"
-        app:cardCornerRadius="30dp"
-        app:cardUseCompatPadding="true"
-        app:cardPreventCornerOverlap="false"
-        app:strokeColor="@color/transparent"
+        android:layout_marginEnd="11dp"
+        android:layout_marginBottom="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
         app:cardBackgroundColor="@color/transparent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:cardCornerRadius="30dp"
+        app:cardElevation="2dp"
+        app:cardPreventCornerOverlap="false"
+        app:cardUseCompatPadding="true"
+        app:strokeColor="@color/transparent">
 
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/ic_fab_add_sv"
-            android:backgroundTint="@null" />
+            android:backgroundTint="@null"
+            android:src="@drawable/ic_fab_add_sv" />
     </com.google.android.material.card.MaterialCardView>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

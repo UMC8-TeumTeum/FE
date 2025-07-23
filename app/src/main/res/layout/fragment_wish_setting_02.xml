@@ -31,8 +31,7 @@
         android:id="@+id/wish_select_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="3dp"
+        android:layout_marginTop="30dp"
         android:text="선택한 시간에 위시를 등록할까요?"
         android:fontFamily="@font/noto_sans_kr_medium"
         android:textColor="@color/text_primary"
@@ -46,7 +45,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:layout_marginStart="2dp"
         android:text="위시를 등록하면 오늘의 투두리스트에 추가돼요"
         android:fontFamily="@font/noto_sans_kr_regular"
         android:textColor="@color/text_primary"
@@ -144,10 +142,10 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@id/register_btn"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="30dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="480dp"
+        android:layout_marginBottom="438dp"
         android:paddingTop="14dp"
         android:paddingStart="14dp"
         android:paddingBottom="9dp"
@@ -275,7 +273,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginStart="19dp"
         android:layout_marginEnd="19dp"
-        android:layout_marginBottom="19dp"
-        app:layout_constraintTop_toBottomOf="@id/wish_time_pick_layout"/>
+        android:layout_marginBottom="19dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
