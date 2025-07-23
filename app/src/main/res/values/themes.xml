@@ -13,8 +13,8 @@
         <item name="itemBackground">@color/transparent</item>
         <item name="itemRippleColor">@color/transparent</item>
 
-        <item name="android:minHeight">80dp</item>
-        <item name="itemIconSize">26dp</item>
+        <item name="android:minHeight">73dp</item>
+        <item name="itemIconSize">28dp</item>
         <item name="itemTextAppearanceActive">@style/BottomNavTextActive</item>
         <item name="itemTextAppearanceInactive">@style/BottomNavTextInactive</item>
     </style>
