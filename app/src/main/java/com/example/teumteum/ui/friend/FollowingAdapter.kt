@@ -8,28 +8,35 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.teumteum.R
 
-class FollowingAdapter(private val data: List<FollowUser>) :
-    RecyclerView.Adapter<FollowingAdapter.ViewHolder>() {
+class FollowingAdapter(
+    private val data: List<FollowUser>,
+    private val onProfileClick: (FollowUser) -> Unit
+) : RecyclerView.Adapter<FollowingAdapter.ViewHolder>() {
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val nameTv: TextView = itemView.findViewById(R.id.nameTv)
         private val jobTv: TextView = itemView.findViewById(R.id.jobTv)
         private val starIv: ImageButton = itemView.findViewById(R.id.starIv)
+        private val profileBtn: ImageButton = itemView.findViewById(R.id.profileLayout)
 
         fun bind(user: FollowUser) {
+            // 이름/직업 세팅
             nameTv.text = user.name
             jobTv.text = " · ${user.job}"
 
-            // 초기 별 아이콘 설정
+            // 별 아이콘 토글
             starIv.setImageResource(
                 if (user.isFavorite) R.drawable.friend01_fill_star
                 else R.drawable.friend01_star
             )
-
-            // 클릭 이벤트로 즐겨찾기 상태 변경
             starIv.setOnClickListener {
                 user.isFavorite = !user.isFavorite
                 notifyItemChanged(adapterPosition)
+            }
+
+            // 프로필 사진 클릭 시 콜백
+            profileBtn.setOnClickListener {
+                onProfileClick(user)
             }
         }
     }

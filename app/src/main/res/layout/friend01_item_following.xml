@@ -15,23 +15,16 @@
         android:background="@android:color/transparent"
         android:layout_marginEnd="12dp" />
 
-    <!-- 프로필 사진 -->
-    <LinearLayout
+    <!-- 프로필 사진 (ImageButton으로 변경) -->
+    <ImageButton
         android:id="@+id/profileLayout"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginLeft="-8dp"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:background="@drawable/freind01_circle_profile">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="프로필"
-            android:textSize="10sp"
-            android:textColor="#666666"/>
-    </LinearLayout>
+        android:background="@drawable/freind01_circle_profile"
+        android:scaleType="centerCrop"
+        android:clickable="true"
+        android:focusable="true" />
 
     <!-- 이름 + 직업 -->
     <LinearLayout

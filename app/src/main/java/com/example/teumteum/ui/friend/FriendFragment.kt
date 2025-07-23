@@ -43,7 +43,6 @@ class FriendFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
         // 2) 5초 뒤 시뮬레이션 시작
         handler.postDelayed(simulateRunnable, 5_000)
 
@@ -101,9 +100,19 @@ class FriendFragment : Fragment() {
 
         )
 
-        val followingAdapter = FollowingAdapter(dummyFollowingList)
-        binding.followingRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-        binding.followingRecyclerView.adapter = followingAdapter
+
+        // 클릭 콜백 넘겨서 프로필 화면으로 이동
+        val followingAdapter = FollowingAdapter(dummyFollowingList) { user ->
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, FriendProfileFollowFragment())
+                .addToBackStack(null)
+                .commit()
+        }
+
+        binding.followingRecyclerView.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = followingAdapter
+        }
     }
 
     override fun onResume() {
