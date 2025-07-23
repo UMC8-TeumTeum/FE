@@ -1,6 +1,11 @@
 package com.example.teumteum.ui.main
 
 import android.content.res.ColorStateList
+import android.graphics.Bitmap
+import android.graphics.BlurMaskFilter
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -26,6 +31,8 @@ import com.example.teumteum.ui.wish.WishlistFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+
+import androidx.core.graphics.createBitmap
 
 class HomeFragment : Fragment(), IDateClickListener {
 
@@ -123,6 +130,34 @@ class HomeFragment : Fragment(), IDateClickListener {
 
         adapter = TodoRVAdapter(parentFragmentManager, todoDummyList)
         binding.todolistRv.adapter = adapter
+
+        binding.fabAddIv.post {
+            applyBlurShadow(binding.fabAddIv)
+        }
+    }
+
+    private fun applyBlurShadow(view: View) {
+        view.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
+
+        // 원본 뷰 비트맵 생성
+        val bitmap = createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        view.draw(canvas)
+
+        val shadowPaint = Paint().apply {
+            color = Color.BLACK
+            maskFilter = BlurMaskFilter(6.2f, BlurMaskFilter.Blur.NORMAL)
+            alpha = (255 * 0.18f).toInt()
+        }
+
+        // 그림자 알파 추출
+        val offset = IntArray(2)
+        val shadowBitmap = bitmap.extractAlpha(shadowPaint, offset)
+
+        binding.fabShadowIv.setImageBitmap(shadowBitmap)
+
+        binding.fabShadowIv.translationX = 0f
+        binding.fabShadowIv.translationY = 4f
     }
 
     override fun onResume() {
