@@ -5,9 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.NumberPicker
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentFriend02SuggestBinding
 import com.example.teumteum.ui.main.MainActivity
@@ -31,6 +33,14 @@ class Friend02SuggestFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        //  뒤로가기 버튼 처리
+        binding.backButton.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, Friend02PossibleTimeFragment())
+                .addToBackStack(null)
+                .commit()
+        }
 
         // 바텀 네비게이션 숨기기
         (activity as? MainActivity)?.hideBottomBar()
