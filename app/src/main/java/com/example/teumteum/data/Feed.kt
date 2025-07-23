@@ -1,9 +1,12 @@
 package com.example.teumteum.data
 
 data class Feed(
-    val id: Int,
     val username: String,
-    val content: String,
-    val createdAt: Long,
+    val userField: String,
+    val title: String,
+    val time: Int,
+    val contents: String,
+    val borderTitle: String,
+    val borderLink: String,
     val isFromFollowedUser: Boolean
 )

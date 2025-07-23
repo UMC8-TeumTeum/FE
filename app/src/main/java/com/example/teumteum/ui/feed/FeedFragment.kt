@@ -19,7 +19,7 @@ class FeedFragment : Fragment() {
     private lateinit var binding: FragmentFeedBinding
     private val tabTitles = listOf("최신", "팔로잉")
     private val tabTypes = listOf("latest", "following")
-    private val fragmentList = mutableListOf<ContentListFragment>()
+    private val fragmentList = mutableListOf<FeedContentFragment>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,7 +40,7 @@ class FeedFragment : Fragment() {
         val adapter = object : FragmentStateAdapter(this) {
             override fun getItemCount() = tabTypes.size
             override fun createFragment(position: Int): Fragment {
-                val fragment = ContentListFragment.newInstance(tabTypes[position])
+                val fragment = FeedContentFragment.newInstance(tabTypes[position])
                 if (fragmentList.size <= position) {
                     fragmentList.add(fragment)
                 }
