@@ -27,8 +27,8 @@ class AlarmRVAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = alarmList[position]
         val binding = holder.binding
-        binding.alarmNameTv.text = item.personName
-        binding.alarmTitleTv.text = item.title
+        binding.alarmNameTv.text = item.friendNickname
+        binding.alarmContentTv.text = item.content
         binding.alarmTimeTv.text = item.elapsedTime
 
         binding.root.setOnClickListener {
@@ -37,7 +37,7 @@ class AlarmRVAdapter(
             val grayColor = ContextCompat.getColor(binding.root.context, R.color.teumteum_gray)
 
             binding.alarmNameTv.setTextColor(grayColor)
-            binding.alarmTitleTv.setTextColor(grayColor)
+            binding.alarmContentTv.setTextColor(grayColor)
             binding.alarmTimeTv.setTextColor(grayColor)
 
             binding.profileIv.colorFilter = null

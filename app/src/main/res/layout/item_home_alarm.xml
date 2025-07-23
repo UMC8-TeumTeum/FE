@@ -28,12 +28,12 @@
         android:text="문혜원"
         android:textSize="11sp"
         android:includeFontPadding="false"
-        app:layout_constraintBottom_toTopOf="@id/alarm_title_tv"
+        app:layout_constraintBottom_toTopOf="@id/alarm_content_tv"
         app:layout_constraintStart_toEndOf="@id/profile_iv"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/alarm_title_tv"
+        android:id="@+id/alarm_content_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
