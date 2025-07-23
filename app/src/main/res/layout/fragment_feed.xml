@@ -1,172 +1,182 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/fragment_friend_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:background="@android:color/white">
-
-    <!-- 상단 패널 -->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/top_panel"
-        android:background="@drawable/bg_gradient"
-        android:layout_width="match_parent"
-        android:layout_height="170dp">
-
-        <ImageView
-            android:id="@+id/logo_iv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="68dp"
-            android:layout_marginStart="24dp"
-            android:src="@drawable/ic_logo_sv"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageView
-            android:id="@+id/search_iv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="68dp"
-            android:layout_marginEnd="24dp"
-            android:src="@drawable/ic_search_sv"
-            app:tint="@color/white"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            />
-
-        <TextView
-            android:id="@+id/title_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="빈틈 콘텐츠로 콕! 채워보세요"
-            android:fontFamily="@font/noto_sans_kr_semibold"
-            android:textSize="20sp"
-            android:includeFontPadding="false"
-            android:textColor="@color/white"
-            app:layout_constraintTop_toBottomOf="@+id/logo_iv"
-            app:layout_constraintStart_toStartOf="@+id/logo_iv"
-            android:layout_marginTop="22dp"/>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:weightSum="1">
+        android:orientation="vertical">
 
-        <FrameLayout
+        <!-- 상단 패널 -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/top_panel"
+            android:background="@drawable/bg_gradient"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="170dp">
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_gravity="bottom"
-                android:background="@color/teumteum_deactive" />
-
-            <com.google.android.material.tabs.TabLayout
-                android:id="@+id/tab_layout"
-                android:layout_width="match_parent"
+            <ImageView
+                android:id="@+id/logo_iv"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                app:tabTextColor="@color/teumteum_deactive"
-                app:tabIndicator="@drawable/custom_tab_indicator"
-                app:tabIndicatorColor="@color/text_primary"
-                app:tabSelectedTextColor="@color/text_primary"
-                app:tabIndicatorFullWidth="false"
-                app:tabIndicatorGravity="bottom"
-                app:tabRippleColor="@android:color/transparent"
-                />
+                android:layout_marginTop="68dp"
+                android:layout_marginStart="24dp"
+                android:src="@drawable/ic_logo_sv"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        </FrameLayout>
+            <ImageView
+                android:id="@+id/search_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="68dp"
+                android:layout_marginEnd="24dp"
+                android:src="@drawable/ic_search_sv"
+                app:tint="@color/white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/title_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="빈틈 콘텐츠로 콕! 채워보세요"
+                android:fontFamily="@font/noto_sans_kr_semibold"
+                android:textSize="20sp"
+                android:includeFontPadding="false"
+                android:textColor="@color/white"
+                app:layout_constraintTop_toBottomOf="@+id/logo_iv"
+                app:layout_constraintStart_toStartOf="@+id/logo_iv"
+                android:layout_marginTop="22dp" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <LinearLayout
-            android:id="@+id/filter_ll"
-            android:layout_marginTop="24dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            >
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:weightSum="1">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_all"
-                android:layout_width="50dp"
-                android:layout_height="35dp"
-                android:text="전체"
-                android:textSize="12sp"
-                android:layout_marginEnd="8dp"
-                android:fontFamily="@font/noto_sans_kr_medium"
-                android:padding="0dp"
-                android:includeFontPadding="false"
-                app:cornerRadius="8dp"
-                android:layout_marginStart="21dp"
-                android:textColor="@color/white"
-                android:backgroundTint="@color/text_primary"
-                />
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_10m"
-                android:layout_width="50dp"
-                android:layout_height="35dp"
-                android:text="10m"
-                android:textSize="12sp"
-                android:layout_marginEnd="8dp"
-                android:fontFamily="@font/noto_sans_kr_medium"
-                android:padding="0dp"
-                android:includeFontPadding="false"
-                app:cornerRadius="8dp"
-                android:layout_marginStart="6dp"
-                app:strokeWidth="1dp"
-                app:strokeColor="@color/teumteum_line"
-                android:textColor="@color/text_primary"
-                android:backgroundTint = "@color/teumteum_bg"
-                />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_gravity="bottom"
+                    android:background="@color/teumteum_deactive" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_20m"
-                android:layout_width="50dp"
-                android:layout_height="35dp"
-                android:text="20m"
-                android:textSize="12sp"
-                android:layout_marginEnd="8dp"
-                android:fontFamily="@font/noto_sans_kr_medium"
-                android:padding="0dp"
-                android:includeFontPadding="false"
-                app:cornerRadius="8dp"
-                android:layout_marginStart="6dp"
-                app:strokeColor="@color/teumteum_line"
-                android:textColor="@color/text_primary"
-                android:backgroundTint = "@color/teumteum_bg"/>
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/tab_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    app:tabTextColor="@color/teumteum_deactive"
+                    app:tabIndicator="@drawable/custom_tab_indicator"
+                    app:tabIndicatorColor="@color/text_primary"
+                    app:tabSelectedTextColor="@color/text_primary"
+                    app:tabIndicatorFullWidth="false"
+                    app:tabIndicatorGravity="bottom"
+                    app:tabRippleColor="@android:color/transparent" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_30m"
-                android:layout_width="50dp"
-                android:layout_height="35dp"
-                android:text="30m"
-                android:textSize="12sp"
-                android:layout_marginEnd="8dp"
-                android:fontFamily="@font/noto_sans_kr_medium"
-                android:padding="0dp"
-                android:includeFontPadding="false"
-                app:cornerRadius="8dp"
-                android:layout_marginStart="6dp"
-                app:strokeColor="@color/teumteum_line"
-                android:textColor="@color/text_primary"
-                android:backgroundTint = "@color/teumteum_bg"/>
+            </FrameLayout>
+
+            <LinearLayout
+                android:id="@+id/filter_ll"
+                android:layout_marginTop="24dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_all"
+                    android:layout_width="50dp"
+                    android:layout_height="35dp"
+                    android:text="전체"
+                    android:textSize="12sp"
+                    android:layout_marginEnd="8dp"
+                    android:fontFamily="@font/noto_sans_kr_medium"
+                    android:padding="0dp"
+                    android:includeFontPadding="false"
+                    app:cornerRadius="8dp"
+                    android:layout_marginStart="21dp"
+                    android:textColor="@color/white"
+                    android:backgroundTint="@color/text_primary" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_10m"
+                    android:layout_width="50dp"
+                    android:layout_height="35dp"
+                    android:text="10m"
+                    android:textSize="12sp"
+                    android:layout_marginEnd="8dp"
+                    android:fontFamily="@font/noto_sans_kr_medium"
+                    android:padding="0dp"
+                    android:includeFontPadding="false"
+                    app:cornerRadius="8dp"
+                    android:layout_marginStart="6dp"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="@color/teumteum_line"
+                    android:textColor="@color/text_primary"
+                    android:backgroundTint="@color/teumteum_bg" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_20m"
+                    android:layout_width="50dp"
+                    android:layout_height="35dp"
+                    android:text="20m"
+                    android:textSize="12sp"
+                    android:layout_marginEnd="8dp"
+                    android:fontFamily="@font/noto_sans_kr_medium"
+                    android:padding="0dp"
+                    android:includeFontPadding="false"
+                    app:cornerRadius="8dp"
+                    android:layout_marginStart="6dp"
+                    app:strokeColor="@color/teumteum_line"
+                    android:textColor="@color/text_primary"
+                    android:backgroundTint="@color/teumteum_bg" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_30m"
+                    android:layout_width="50dp"
+                    android:layout_height="35dp"
+                    android:text="30m"
+                    android:textSize="12sp"
+                    android:layout_marginEnd="8dp"
+                    android:fontFamily="@font/noto_sans_kr_medium"
+                    android:padding="0dp"
+                    android:includeFontPadding="false"
+                    app:cornerRadius="8dp"
+                    android:layout_marginStart="6dp"
+                    app:strokeColor="@color/teumteum_line"
+                    android:textColor="@color/text_primary"
+                    android:backgroundTint="@color/teumteum_bg" />
+
+            </LinearLayout>
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/view_pager"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
 
         </LinearLayout>
 
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/view_pager"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            />
-
     </LinearLayout>
 
-</LinearLayout>
+    <ImageView
+        android:id="@+id/fab_write"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="120dp"
+        android:layout_marginEnd="20dp"
+        android:src="@drawable/ic_pencil_sv"
+        />
+
+</FrameLayout>
