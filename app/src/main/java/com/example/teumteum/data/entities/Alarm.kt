@@ -6,7 +6,7 @@ data class AlarmItem(
     val profileUrl: String,
     val title: String,
     val elapsedTime: String,
-    val isRead: Boolean = false
+    var isRead: Boolean = false
 )
 
 data class PushAlarmItem(
