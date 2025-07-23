@@ -1,4 +1,5 @@
-import android.R.attr.text
+package com.example.teumteum.ui.feed
+
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil

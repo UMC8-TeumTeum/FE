@@ -1,13 +1,11 @@
 package com.example.teumteum.ui.feed
 
-import FeedContentAdapter
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.teumteum.R
 import com.example.teumteum.data.Feed
 import com.example.teumteum.databinding.FragmentFeedContentBinding
 import kotlin.collections.filter

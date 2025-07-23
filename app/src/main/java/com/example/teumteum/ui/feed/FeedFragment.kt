@@ -1,6 +1,5 @@
 package com.example.teumteum.ui.feed
 
-import android.R.attr.button
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
