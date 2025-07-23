@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_my_profile_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+    <!-- 프로필 부분 -->
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/top_panel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_gradient"
+        android:paddingBottom="158dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/background_iv"
+            android:layout_width="match_parent"
+            android:layout_height="348dp"
+            android:layout_marginTop="84dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/bg_home"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/back_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="68dp"
+            android:src="@drawable/ic_arrow_back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/white" />
+
+        <ImageView
+            android:id="@+id/star_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="229dp"
+            android:layout_marginTop="67dp"
+            android:layout_marginRight="93dp"
+            android:src="@drawable/friend_profile_star"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/back_btn"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/send_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="300dp"
+            android:layout_marginTop="67dp"
+            android:src="@drawable/friend_profile_send"
+            app:layout_constraintEnd_toStartOf="@+id/setting_btn"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/setting_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="73dp"
+            android:layout_marginEnd="23dp"
+            android:src="@drawable/friend_setting"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/nickname_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="61.5dp"
+            android:fontFamily="@font/noto_sans_kr_semibold"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:text="3시간 20분"
+            android:textColor="@color/white"
+            android:textSize="22sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/back_btn" />
+
+        <TextView
+            android:id="@+id/description_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:fontFamily="@font/noto_sans_kr_medium"
+            android:includeFontPadding="false"
+            android:text="서로의 빈틈을 함께해봐요"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/nickname_tv" />
+
+        <ImageView
+            android:id="@+id/arrow_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:src="@drawable/ic_profile_arrow"
+            app:layout_constraintEnd_toEndOf="@id/description_tv"
+            app:layout_constraintStart_toStartOf="@id/description_tv"
+            app:layout_constraintTop_toBottomOf="@id/description_tv"
+            app:tint="@color/white" />
+
+        <!-- 일정 카드 박스 -->
+        <LinearLayout
+            android:id="@+id/schedule_card_container"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/rounded_myprofile_bg"
+            android:orientation="vertical"
+            android:padding="17dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/arrow_iv">
+
+            <!-- 일정 항목 1 -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/schedule1_cl"
+                android:layout_width="match_parent"
+                android:layout_height="58dp"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/rounded_border"
+                android:paddingStart="19dp"
+                android:paddingTop="11dp"
+                android:paddingBottom="11dp">
+
+                <TextView
+                    android:id="@+id/schedule1_time_start_tv"
+                    style="@style/Sm12Regular"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:includeFontPadding="false"
+                    android:text="15:20"
+                    android:textColor="@color/text_primary"
+                    android:textSize="12sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/schedule1_time_end_tv"
+                    style="@style/Sm12Regular"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:includeFontPadding="false"
+                    android:text="16:10"
+                    android:textColor="@color/teumteum_deactive"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="@id/schedule1_time_start_tv"
+                    app:layout_constraintTop_toBottomOf="@id/schedule1_time_start_tv" />
+
+                <View
+                    android:id="@+id/schedule1_divider"
+                    android:layout_width="1dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="17dp"
+                    android:layout_marginEnd="12dp"
+                    android:background="@color/teumteum_line"
+                    app:layout_constraintStart_toEndOf="@id/schedule1_time_start_tv"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/schedule1_title_tv"
+                    style="@style/Sm12Regular"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="17dp"
+                    android:includeFontPadding="false"
+                    android:text="강아지 산책 가자"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/schedule1_divider"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- 일정 항목 2 -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/schedule2_cl"
+                android:layout_width="match_parent"
+                android:layout_height="58dp"
+                android:layout_marginBottom="18dp"
+                android:background="@drawable/rounded_border"
+                android:paddingStart="19dp"
+                android:paddingTop="11dp"
+                android:paddingBottom="11dp">
+
+                <TextView
+                    android:id="@+id/schedule2_time_start_tv"
+                    style="@style/Sm12Regular"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:includeFontPadding="false"
+                    android:text="18:00"
+                    android:textColor="@color/text_primary"
+                    android:textSize="12sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/schedule2_time_end_tv"
+                    style="@style/Sm12Regular"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:includeFontPadding="false"
+                    android:text="22:00"
+                    android:textColor="@color/teumteum_deactive"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="@id/schedule2_time_start_tv"
+                    app:layout_constraintTop_toBottomOf="@id/schedule2_time_start_tv" />
+
+                <View
+                    android:id="@+id/schedule2_divider"
+                    android:layout_width="1dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="17dp"
+                    android:layout_marginEnd="12dp"
+                    android:background="@color/teumteum_line"
+                    app:layout_constraintStart_toEndOf="@id/schedule2_time_start_tv"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/schedule2_title_tv"
+                    style="@style/Sm12Regular"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="17dp"
+                    android:includeFontPadding="false"
+                    android:text="이천 드라이브 어때"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/schedule2_divider"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- 더보기 -->
+            <TextView
+                android:id="@+id/see_more_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:fontFamily="@font/pretendard_medium"
+                android:includeFontPadding="false"
+                android:text="더보기 >"
+                android:textColor="@color/text_primary"
+                android:textSize="12sp" />
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:id="@+id/profile_ll"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:translationY="-60dp"
+        app:layout_constraintBottom_toTopOf="@+id/modify_profile_btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/top_panel">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/profile_iv"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:background="@color/gray"
+            android:scaleType="centerCrop"
+            app:shapeAppearanceOverlay="@style/CircleImage" />
+
+        <TextView
+            android:id="@+id/profile_nickname_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:fontFamily="@font/noto_sans_kr_medium"
+            android:includeFontPadding="false"
+            android:text="최아연"
+            android:textColor="@color/text_primary"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/profile_field_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:fontFamily="@font/noto_sans_kr_regular"
+            android:includeFontPadding="false"
+            android:text="UX 디자이너"
+            android:textColor="@color/text_tertiary"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/profile_timer_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="7dp"
+            android:fontFamily="@font/noto_sans_kr_regular"
+            android:includeFontPadding="false"
+            android:text="2일 4시간 10분"
+            android:textColor="@color/text_primary"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/modify_profile_btn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="팔로잉"
+        android:textColor="#0F0F0F"
+        style="@style/Md16"
+        android:backgroundTint="#F6F6F6"
+        app:cornerRadius="12dp"
+        app:strokeWidth="1dp"
+        app:strokeColor="#D3D3D3"
+        android:layout_marginStart="19dp"
+        android:layout_marginEnd="19dp"
+        android:layout_marginBottom="19dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
