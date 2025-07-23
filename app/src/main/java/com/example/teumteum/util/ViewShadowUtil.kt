@@ -1,6 +1,7 @@
 package com.example.teumteum.util
 
 import android.graphics.*
+import android.graphics.Bitmap.createBitmap
 import android.view.View
 import android.widget.ImageView
 
@@ -15,7 +16,7 @@ fun applyBlurShadow(
     // 소프트웨어 레이어로 설정
     sourceView.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
 
-    val bitmap = Bitmap.createBitmap(sourceView.width, sourceView.height, Bitmap.Config.ARGB_8888)
+    val bitmap = createBitmap(sourceView.width, sourceView.height, Bitmap.Config.ARGB_8888)
     val canvas = Canvas(bitmap)
     sourceView.draw(canvas)
 
