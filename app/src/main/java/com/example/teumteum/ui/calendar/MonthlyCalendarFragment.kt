@@ -47,8 +47,8 @@ class MonthlyCalendarFragment : Fragment() {
         showDot = arguments?.getBoolean("showDot", true) ?: true
     }
 
-    private fun setupCalendar(selectedMonthDate: LocalDate) {
-        val yearMonth = YearMonth.from(selectedMonthDate)
+    private fun setupCalendar(displayMonthDate: LocalDate) {
+        val yearMonth = YearMonth.from(displayMonthDate)
         val firstDay = yearMonth.atDay(1)
         val daysInMonth = yearMonth.lengthOfMonth()
 
@@ -72,12 +72,13 @@ class MonthlyCalendarFragment : Fragment() {
         }
 
         this.dateList = tempDateList
-        renderCalendar()
+        renderCalendar(displayMonthDate)
     }
 
-    private fun renderCalendar() {
+    private fun renderCalendar(displayMonthDate: LocalDate) {
         val inflater = LayoutInflater.from(context)
         val today = LocalDate.now()
+        val currentMonth = displayMonthDate.monthValue
 
         binding.monthlyCalendarGrid.removeAllViews()
         binding.monthlyCalendarGrid.columnCount = 7
@@ -96,16 +97,16 @@ class MonthlyCalendarFragment : Fragment() {
                 dayText.text = date.dayOfMonth.toString()
                 updateDayUi(requireContext(), dayText, date, selectedDate, today)
 
-                if (date.isEqual(today) && showDot) {
-                    dotView.visibility = View.VISIBLE
-                } else {
-                    dotView.visibility = View.INVISIBLE
+                if (date.monthValue != currentMonth) {
+                    dayText.setTextColor(requireContext().getColor(R.color.teumteum_deactive))
                 }
+
+                dotView.visibility = if (date.isEqual(today) && showDot) View.VISIBLE else View.INVISIBLE
 
                 dayText.setOnClickListener {
                     selectedDate = date
                     saveSelectedDate(requireContext(), date)
-                    renderCalendar()
+                    renderCalendar(displayMonthDate)
                     onClickListener.onClickDate(date)
                 }
             }

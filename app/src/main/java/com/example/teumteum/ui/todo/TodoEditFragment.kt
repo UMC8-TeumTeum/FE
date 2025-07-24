@@ -35,7 +35,6 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
     private lateinit var binding: FragmentTodoEditBinding
 
     private var todoId: Int = -1
-    val isAlarmOn = arguments?.getBoolean("isAlarmOn")
 
     private val selectedItems = mutableSetOf<String>()
     private val alarmOptions = listOf("30분 전", "10분 전", "5분 전", "3분 전", "1분 전")
@@ -72,6 +71,34 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
             binding.startTimeTv.text = start
             binding.endTimeTv.text = end
             binding.categoryToggle03Iv.isChecked = isPublic
+        }
+
+        val isAlarmOn = arguments?.let {
+            if (it.containsKey("is_alarm_on")) {
+                it.getBoolean("is_alarm_on")
+            } else {
+                null
+            }
+        }
+
+        // isAlarmOn 값에 따른 알림 바텀시트 변경
+        when (isAlarmOn) {
+            null -> {
+                binding.alarmItem01Ll.visibility = View.GONE
+                binding.alarmItem02Ll.visibility = View.GONE
+                selectedItems.clear()
+            }
+            true -> {
+                binding.alarmItem01Ll.visibility = View.VISIBLE
+                binding.alarmItem02Ll.visibility = View.VISIBLE
+                selectedItems.add("30분 전")
+                selectedItems.add("10분 전")
+            }
+            false -> {
+                binding.alarmItem01Ll.visibility = View.VISIBLE
+                binding.alarmItem02Ll.visibility = View.VISIBLE
+                selectedItems.clear()
+            }
         }
 
         setupPickers()
@@ -163,13 +190,6 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
 
             Toast.makeText(requireContext(), "이 일정은 편집할 수 없습니다.", Toast.LENGTH_SHORT).show()
         }
-
-        if (isAlarmOn == null) {
-            binding.alarmItem01Ll.visibility = View.GONE
-            binding.alarmItem02Ll.visibility = View.GONE
-            selectedItems.clear()
-        }
-
 
     }
 
@@ -327,6 +347,7 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
                     putString("start_time", item.startTime)
                     putString("end_time", item.endTime)
                     putBoolean("is_public", item.isPublic)
+                    item.isAlarmOn?.let { putBoolean("is_alarm_on", it) }
                 }
             }
         }

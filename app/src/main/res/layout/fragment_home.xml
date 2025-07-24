@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -59,7 +59,7 @@
                     android:id="@+id/home_title_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
+                    android:layout_marginTop="22dp"
                     android:fontFamily="@font/noto_sans_kr_semibold"
                     android:text="하루의 빈틈을 발견했어요"
                     android:textColor="@color/white"
@@ -71,7 +71,8 @@
                     android:id="@+id/home_time_info_container"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="-20dp"
+                    android:layout_marginStart="1dp"
+                    android:layout_marginTop="-17dp"
                     android:orientation="horizontal"
                     app:layout_constraintStart_toStartOf="@id/home_title_tv"
                     app:layout_constraintTop_toBottomOf="@id/home_title_tv">
@@ -114,14 +115,15 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:padding="16dp">
+                    android:layout_marginTop="35dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp">
 
                     <TextView
                         android:id="@+id/home_selected_date_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="20dp"
+                        android:layout_marginStart="15dp"
                         android:fontFamily="@font/pretendard_medium"
                         android:gravity="center"
                         android:text="2025년 6월"
@@ -185,7 +187,7 @@
                         android:id="@+id/home_calendar_next_date_iv"
                         android:layout_width="18dp"
                         android:layout_height="18dp"
-                        android:layout_marginEnd="20dp"
+                        android:layout_marginEnd="15dp"
                         android:src="@drawable/ic_calendar_next_sv"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="@id/home_calendar_previous_date_iv" />
@@ -194,8 +196,6 @@
                         android:id="@+id/home_weekly_calendar_day_of_month_ll"
                         android:layout_width="375dp"
                         android:layout_height="40dp"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginEnd="20dp"
                         android:layout_marginTop="28dp"
                         android:orientation="horizontal"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -263,9 +263,7 @@
                         android:id="@+id/horizon_iv"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
                         android:layout_marginTop="20dp"
-                        android:layout_marginEnd="10dp"
                         android:scaleType="centerCrop"
                         android:src="@drawable/ic_horizon_sv"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -276,8 +274,9 @@
                         android:id="@+id/home_todolist_tv"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginTop="20dp"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="23dp"
+                        android:includeFontPadding="false"
                         android:fontFamily="@font/noto_sans_kr_medium"
                         android:text="투두리스트"
                         android:textColor="@color/text_primary"
@@ -290,7 +289,7 @@
                         android:id="@+id/todolist_rv"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="15dp"
+                        android:layout_marginTop="22dp"
                         android:nestedScrollingEnabled="false"
                         android:orientation="vertical"
                         android:overScrollMode="never"
@@ -304,14 +303,13 @@
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_load_wishlist_tv"
                         android:layout_width="match_parent"
-                        android:layout_height="65dp"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginTop="22dp"
-                        android:layout_marginEnd="16dp"
-                        android:padding="12dp"
+                        android:layout_height="58dp"
+                        android:layout_marginTop="20dp"
+                        android:padding="0dp"
                         android:text="위시리스트 불러오기"
                         android:textColor="@color/white"
                         android:textSize="16sp"
+                        android:fontFamily="@font/noto_sans_kr_medium"
                         app:backgroundTint="@color/text_primary"
                         app:cornerRadius="12dp"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -322,11 +320,9 @@
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/banner_card"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
+                        android:layout_height="83dp"
                         android:layout_marginTop="20dp"
-                        android:layout_marginEnd="16dp"
-                        android:layout_marginBottom="60dp"
+                        android:layout_marginBottom="140dp"
                         android:background="@drawable/bg_home_card_radius"
                         android:clipChildren="false"
                         android:clipToPadding="false"
@@ -351,7 +347,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="3dp"
                             android:orientation="vertical"
-                            android:padding="16dp"
+                            android:padding="18dp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
@@ -385,14 +381,39 @@
     </androidx.core.widget.NestedScrollView>
 
     <ImageView
+        android:id="@+id/fab_shadow_iv"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="-4dp"
+        android:layout_marginBottom="120dp"
+        android:layout_marginEnd="16dp"
+        android:scaleType="centerInside"
+        android:layout_gravity="center"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/fab_add_iv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginEnd="24dp"
         android:layout_marginBottom="120dp"
-        android:elevation="6.2dp"
-        android:src="@drawable/ic_fab_add_sv"
-        android:translationZ="20dp" />
+        android:layout_marginEnd="16dp"
+        app:cardElevation="2dp"
+        app:cardCornerRadius="30dp"
+        app:cardUseCompatPadding="true"
+        app:cardPreventCornerOverlap="false"
+        app:strokeColor="@color/transparent"
+        app:cardBackgroundColor="@color/transparent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-</FrameLayout>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_fab_add_sv"
+            android:backgroundTint="@null" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

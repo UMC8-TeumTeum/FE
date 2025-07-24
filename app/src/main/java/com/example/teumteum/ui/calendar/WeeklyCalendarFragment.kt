@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentWeeklyCalendarBinding
 import com.example.teumteum.util.*
 import java.time.LocalDate
@@ -73,6 +74,7 @@ class WeeklyCalendarFragment : Fragment() {
 
     private fun setOneWeekDateIntoTextView() {
         val today = LocalDate.now()
+        val baseMonth = dates[6].monthValue // 토요일 기준
 
         for (i in textViewList.indices) {
             val date = dates[i]
@@ -81,6 +83,12 @@ class WeeklyCalendarFragment : Fragment() {
 
             textView.text = date.dayOfMonth.toString()
             dotView.visibility = if (date == today) View.VISIBLE else View.GONE
+
+            if (date.monthValue != baseMonth) {
+                textView.setTextColor(requireContext().getColor(R.color.teumteum_deactive))
+            } else {
+                textView.setTextColor(requireContext().getColor(R.color.text_primary))
+            }
 
             textView.setOnClickListener {
                 resetUi()
@@ -113,6 +121,8 @@ class WeeklyCalendarFragment : Fragment() {
 
     private fun resetUi() {
         val today = LocalDate.now()
+        val baseMonth = dates[6].monthValue
+
         for (i in textViewList.indices) {
             val date = dates[i]
             val textView = textViewList[i]
@@ -125,6 +135,13 @@ class WeeklyCalendarFragment : Fragment() {
                 resetDateStyle(requireContext(), textView)
                 dotView.visibility = View.GONE
             }
+
+            textView.setTextColor(
+                if (date.monthValue != baseMonth)
+                    requireContext().getColor(R.color.teumteum_deactive)
+                else
+                    requireContext().getColor(R.color.text_primary)
+            )
         }
     }
 
