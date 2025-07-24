@@ -169,6 +169,20 @@ ex) [FEAT/#30] 홈 뷰 구현, [ADD/#1] 폰트 파일 추가
 ex) [FEAT/#6] 로그인 뷰 구현
 
 
+# 📑 사용 예정 기술 스택 및 라이브러리
+
+| 구분 | 기술 / 라이브러리 | 설명 |
+| --- | --- | --- |
+| 언어 | Kotlin | 안드로이드 앱 개발을 위한 주요 언어
+| UI 구성 | XML / Jetpack ViewBinding | 뷰 레이아웃 구성 및 바인딩 처리
+| 이미지 로딩 | Glide | 네트워크 또는 리소스에서 이미지 비동기 로딩 및 캐싱 
+| 네트워크 통신 | Retrofit2 + Gson | REST API 요청 및 JSON 파싱
+| 비동기 처리 | Kotlin Coroutines | 비동기 작업을 효율적으로 처리하기 위한 코루틴 사용
+| 로컬 저장소 | Room | 앱 내 로컬 데이터베이스 관리
+| 앱 아키텍처 | MVVM | Model-View-ViewModel 아키텍처 적
+| 푸시 알림 | FCM(Firebase Cloud Messaging) | 알림 메시지 수신 처리
+
+
 # ⚙️Android Studio 환경 설정
 버전 : Meerkat
 
@@ -178,14 +192,3 @@ minSDK : 26
 
 테스트 환경 : Emulator(Pixel 8a)
 
-
-# 사용 예정 기술 스택 및 라이브러리
-
-| 구분 | 기술 / 라이브러리 | 설명 |
-| --- | --- | --- |
-| 언어 | Kotlin | 안드로이드 앱 개발을 위한 주요 언어
-| UI 구성 | XML / Jetpack ViewBinding | 뷰 레이아웃 구성 및 바인딩 처리
-| 네트워크 통신 | Retrofit2 + Gson | REST API 요청 및 JSON 파싱
-| 비동기 처리 | Kotlin Coroutines | 비동기 작업을 효율적으로 처리하기 위한 코루틴 사용
-| 로컬 저장소 | Room | 앱 내 로컬 데이터베이스 관리
-| 푸시 알림 | FCM(Firebase Cloud Messaging) | 알림 메시지 수신 처리
