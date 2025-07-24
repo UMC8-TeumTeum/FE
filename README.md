@@ -138,7 +138,7 @@ class MyClass {
 
 - dev 브랜치에서의 작업은 금지한다. 단, 초기 세팅 및 README 작성은 dev 브랜치에서 수행
 - 본인의 PR은 본인이 Merge
-- Commit, Push, Merge, PR등 모든 작업은 앱이 정상적으로 실행되는 지 확인 후 수행
+- Commit, Push, Merge, PR 등 모든 작업은 앱이 정상적으로 실행되는지 확인 후 수행
 
 ## Issue Convention
 
@@ -167,7 +167,6 @@ ex) [FEAT/#30] 홈 뷰 구현, [ADD/#1] 폰트 파일 추가
 [카테고리/#이슈번호] 제목
 
 ex) [FEAT/#6] 로그인 뷰 구현
-
 
 
 # 📑 사용 예정 기술 스택 및 라이브러리
