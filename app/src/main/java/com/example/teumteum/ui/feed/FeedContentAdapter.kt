@@ -17,8 +17,9 @@ sealed class FeedItem {
     data class ContentsCard(val contentsList: List<Contents>) : FeedItem()
 }
 
-class FeedContentAdapter :
-    ListAdapter<FeedItem, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
+class FeedContentAdapter(
+    private val onBookmarkClick: (Feed) -> Unit
+    ) : ListAdapter<FeedItem, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
 
     companion object {
         private const val VIEW_TYPE_FEED = 0
@@ -87,6 +88,10 @@ class FeedContentAdapter :
                 R.drawable.ic_bookmark_off
             }
             bookmarkIv.setImageResource(bookmarkRes)
+
+            bookmarkIv.setOnClickListener {
+                onBookmarkClick(item)
+            }
 
         }
     }
