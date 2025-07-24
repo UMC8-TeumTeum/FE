@@ -179,7 +179,7 @@ ex) [FEAT/#6] 로그인 뷰 구현
 | 네트워크 통신 | Retrofit2 + Gson | REST API 요청 및 JSON 파싱
 | 비동기 처리 | Kotlin Coroutines | 비동기 작업을 효율적으로 처리하기 위한 코루틴 사용
 | 로컬 저장소 | Room | 앱 내 로컬 데이터베이스 관리
-| 앱 아키텍처 | MVVM | Model-View-ViewModel 아키텍처 적
+| 앱 아키텍처 | MVVM | Model-View-ViewModel 아키텍처 적용
 | 푸시 알림 | FCM(Firebase Cloud Messaging) | 알림 메시지 수신 처리
 
 
