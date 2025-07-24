@@ -134,5 +134,4 @@ class FeedFragment : Fragment() {
             fragmentList[current].onFilterSelected(filter)
         }
     }
-
 }

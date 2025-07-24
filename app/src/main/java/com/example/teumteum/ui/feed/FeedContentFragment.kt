@@ -101,6 +101,16 @@ class FeedContentFragment : Fragment() {
                 borderLink = "https://www.youtube.com/watch",
                 time = 20,
                 isFromFollowedUser = true
+            ),
+            Feed(
+                username = "지니",
+                userField = "개발자",
+                title = "지구온난화로 인한 이상기후",
+                contents = "지구온난화로 인해 지구 곳곳에 이상기후가 관측되고 있어요. 모두의 관심이 필요합니다. 한번씩 보고 가주세요!",
+                borderTitle = "지구온난화 다큐멘터리",
+                borderLink = "https://www.youtube.com/watch",
+                time = 10,
+                isFromFollowedUser = false
             )
         )
     }
