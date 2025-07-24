@@ -415,17 +415,20 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
             minValue = 0
             maxValue = 1
             displayedValues = arrayOf("오전", "오후")
+            post { applyTextStyleToNumberPicker(this, context) }
         }
         binding.hourPicker02Np.apply {
             minValue = 1
             maxValue = 12
             wrapSelectorWheel = true
+            post { applyTextStyleToNumberPicker(this, context) }
         }
         binding.minutePicker02Np.apply {
             minValue = 0
             maxValue = 5
             displayedValues = arrayOf("00", "10", "20", "30", "40", "50")
             wrapSelectorWheel = true
+            post { applyTextStyleToNumberPicker(this, context) }
         }
     }
 

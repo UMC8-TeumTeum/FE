@@ -205,17 +205,20 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener {
             minValue = 0
             maxValue = 1
             displayedValues = arrayOf("오전", "오후")
+            post { applyTextStyleToNumberPicker(this, context) }
         }
         binding.hourPicker02Np.apply {
             minValue = 1
             maxValue = 12
             wrapSelectorWheel = true
+            post { applyTextStyleToNumberPicker(this, context) }
         }
         binding.minutePicker02Np.apply {
             minValue = 0
             maxValue = 5
             displayedValues = arrayOf("00", "10", "20", "30", "40", "50")
             wrapSelectorWheel = true
+            post { applyTextStyleToNumberPicker(this, context) }
         }
     }
 
@@ -237,6 +240,27 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener {
             binding.timePickerEndContainer.isVisible = false
         }
     }
+
+    private fun validateTimePicker(startHour: Int, startMinute: Int, endHour: Int, endMinute: Int) {
+        val startTimeInMinutes = startHour * 60 + startMinute
+        val endTimeInMinutes = endHour * 60 + endMinute
+
+        if (endTimeInMinutes <= startTimeInMinutes) {
+            Toast.makeText(context, "종료시간을 시작시간 이후로 설정해주세요.", Toast.LENGTH_SHORT).show()
+
+            // ❗종료 시간 리셋 (기본값으로 변경 또는 재선택 유도)
+            // 예: 종료시간을 시작시간 + 30분으로 자동 설정
+            val correctedEndTimeInMinutes = startTimeInMinutes + 30
+            val correctedHour = correctedEndTimeInMinutes / 60 % 24
+            val correctedMinute = correctedEndTimeInMinutes % 60
+
+            binding.hourPicker02Np.value = if (correctedHour > 12) correctedHour - 12 else correctedHour
+            binding.minutePicker02Np.value = correctedMinute / 10  // 예: 00, 10, 20...
+
+            binding.ampmPicker02Np.value = if (correctedHour >= 12) 1 else 0
+        }
+    }
+
 
     private fun showAlarmPopupWindow(anchor: View) {
         if (popupWindow?.isShowing == true) {
