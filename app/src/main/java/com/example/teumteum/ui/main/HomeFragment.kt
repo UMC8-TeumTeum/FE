@@ -1,6 +1,11 @@
 package com.example.teumteum.ui.main
 
 import android.content.res.ColorStateList
+import android.graphics.Bitmap
+import android.graphics.BlurMaskFilter
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,6 +22,7 @@ import com.example.teumteum.ui.calendar.CalendarMode
 
 import com.example.teumteum.data.entities.TodoHomeItem
 import com.example.teumteum.data.entities.WishItem
+import com.example.teumteum.ui.alarm.AlarmFragment
 import com.example.teumteum.ui.calendar.CalendarVPAdapter
 import com.example.teumteum.ui.filling.FillingActivity01Fragment
 import com.example.teumteum.ui.todo.TodoRVAdapter
@@ -25,6 +31,9 @@ import com.example.teumteum.ui.wish.WishlistFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+
+import androidx.core.graphics.createBitmap
+import com.example.teumteum.util.applyBlurShadow
 
 class HomeFragment : Fragment(), IDateClickListener {
 
@@ -103,6 +112,13 @@ class HomeFragment : Fragment(), IDateClickListener {
                 .commit()
         }
 
+        binding.homeNotificationIv.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, AlarmFragment())
+                .addToBackStack(null)
+                .commit()
+        }
+
         setWeeklyCalendarViewPager()
         setMonthlyCalendarViewPager()
         setCalendarModeToggleListeners()
@@ -115,6 +131,13 @@ class HomeFragment : Fragment(), IDateClickListener {
 
         adapter = TodoRVAdapter(parentFragmentManager, todoDummyList)
         binding.todolistRv.adapter = adapter
+
+        binding.fabAddIv.post {
+            applyBlurShadow(
+                sourceView = binding.fabAddIv,
+                targetImageView = binding.fabShadowIv
+            )
+        }
     }
 
     override fun onResume() {
@@ -138,12 +161,20 @@ class HomeFragment : Fragment(), IDateClickListener {
         binding.homeWeeklyCalendarWeekVp.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 val weekOffset = position - startPosition
-                val newSelectedDate = today.plusWeeks(weekOffset.toLong())
 
-                selectedDate = newSelectedDate
-                binding.homeSelectedDateTv.text = dateFormat(newSelectedDate)
+                // 오늘 날짜에서 weekOffset만큼 이동
+                val referenceDate = today.plusWeeks(weekOffset.toLong())
+
+                // 해당 주의 요일 (1: 월요일 ~ 7: 일요일)
+                val dayOfWeekValue = referenceDate.dayOfWeek.value % 7
+
+                val saturday = referenceDate.plusDays((6 - dayOfWeekValue).toLong())
+
+                selectedDate = saturday
+                binding.homeSelectedDateTv.text = dateFormat(saturday)
             }
         })
+
     }
 
 

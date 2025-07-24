@@ -22,11 +22,13 @@
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/main_bnv"
+        style="@style/NoIndicatorBottomNav"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingTop="6dp"
+        android:paddingBottom="4dp"
         android:background="@color/white"
-        app:itemBackground="@color/transparent"
-        app:itemIconSize="30dp"
+        app:itemIconSize="28dp"
         app:itemIconTint="@drawable/btm_color_selector"
         app:itemTextColor="@drawable/btm_color_selector"
         app:labelVisibilityMode="labeled"

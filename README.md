@@ -138,7 +138,7 @@ class MyClass {
 
 - dev 브랜치에서의 작업은 금지한다. 단, 초기 세팅 및 README 작성은 dev 브랜치에서 수행
 - 본인의 PR은 본인이 Merge
-- Commit, Push, Merge, PR등 모든 작업은 앱이 정상적으로 실행되는 지 확인 후 수행
+- Commit, Push, Merge, PR 등 모든 작업은 앱이 정상적으로 실행되는지 확인 후 수행
 
 ## Issue Convention
 
@@ -169,6 +169,20 @@ ex) [FEAT/#30] 홈 뷰 구현, [ADD/#1] 폰트 파일 추가
 ex) [FEAT/#6] 로그인 뷰 구현
 
 
+# 📑 사용 예정 기술 스택 및 라이브러리
+
+| 구분 | 기술 / 라이브러리 | 설명 |
+| --- | --- | --- |
+| 언어 | Kotlin | 안드로이드 앱 개발을 위한 주요 언어
+| UI 구성 | XML / Jetpack ViewBinding | 뷰 레이아웃 구성 및 바인딩 처리
+| 이미지 로딩 | Glide | 네트워크 또는 리소스에서 이미지 비동기 로딩 및 캐싱 
+| 네트워크 통신 | Retrofit2 + Gson | REST API 요청 및 JSON 파싱
+| 비동기 처리 | Kotlin Coroutines | 비동기 작업을 효율적으로 처리하기 위한 코루틴 사용
+| 로컬 저장소 | Room | 앱 내 로컬 데이터베이스 관리
+| 앱 아키텍처 | MVVM | Model-View-ViewModel 아키텍처 적용
+| 푸시 알림 | FCM(Firebase Cloud Messaging) | 알림 메시지 수신 처리
+
+
 # ⚙️Android Studio 환경 설정
 버전 : Meerkat
 
@@ -177,3 +191,4 @@ targetSDK : 35
 minSDK : 26
 
 테스트 환경 : Emulator(Pixel 8a)
+

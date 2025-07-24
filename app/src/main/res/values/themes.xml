@@ -5,4 +5,37 @@
     </style>
 
     <style name="Theme.TeumTeum" parent="Base.Theme.TeumTeum" />
+
+    <!-- BottomNavigationView 스타일 -->
+    <style name="NoIndicatorBottomNav" parent="Widget.Material3.BottomNavigationView">
+        <item name="itemActiveIndicatorStyle">@style/NoIndicator</item>
+
+        <item name="itemBackground">@color/transparent</item>
+        <item name="itemRippleColor">@color/transparent</item>
+
+        <item name="android:minHeight">73dp</item>
+        <item name="itemIconSize">28dp</item>
+        <item name="itemTextAppearanceActive">@style/BottomNavTextActive</item>
+        <item name="itemTextAppearanceInactive">@style/BottomNavTextInactive</item>
+    </style>
+
+    <style name="NoIndicator">
+        <item name="android:background">@color/transparent</item>
+        <item name="android:layout_marginTop">0dp</item>
+        <item name="android:layout_marginBottom">0dp</item>
+        <item name="android:minHeight">0dp</item>
+    </style>
+
+    <style name="BottomNavTextActive" parent="@android:style/TextAppearance">
+        <item name="android:fontFamily">@font/noto_sans_kr_regular</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:paddingTop">0dp</item>
+    </style>
+
+    <style name="BottomNavTextInactive" parent="@android:style/TextAppearance">
+        <item name="android:fontFamily">@font/noto_sans_kr_regular</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:paddingTop">0dp</item>
+    </style>
+
 </resources>
