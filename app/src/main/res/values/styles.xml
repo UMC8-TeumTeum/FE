@@ -73,4 +73,11 @@
         <item name="colorControlActivated">@color/main_1</item>
     </style>
 
+    // 타임피커
+    <style name="CustomNumberPicker">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+    </style>
+
 </resources>

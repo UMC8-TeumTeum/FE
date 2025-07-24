@@ -204,31 +204,45 @@
                             </FrameLayout>
                         </LinearLayout>
 
-                        <LinearLayout
-                            android:id="@+id/time_picker_start_ll"
+                        <FrameLayout
+                            android:id="@+id/time_picker_start_container"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="16dp"
                             android:layout_marginBottom="16dp"
-                            android:gravity="center"
-                            android:orientation="horizontal"
                             android:visibility="gone">
 
-                            <NumberPicker
-                                android:id="@+id/ampm_picker_01_np"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content" />
+                            <View
+                                android:id="@+id/highlight_overlay"
+                                android:layout_width="match_parent"
+                                android:layout_height="50dp"
+                                android:layout_gravity="center"
+                                android:background="@drawable/highlight_overlay_bg"/>
 
-                            <NumberPicker
-                                android:id="@+id/hour_picker_01_np"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content" />
+                            <LinearLayout
+                                android:id="@+id/time_picker_start_ll"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:orientation="horizontal">
 
-                            <NumberPicker
-                                android:id="@+id/minute_picker_01_np"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content" />
-                        </LinearLayout>
+                                <NumberPicker
+                                    android:id="@+id/ampm_picker_01_np"
+                                    style="@style/CustomNumberPicker"
+                                    android:theme="@style/TimePickerTheme"/>
+
+                                <NumberPicker
+                                    android:id="@+id/hour_picker_01_np"
+                                    style="@style/CustomNumberPicker"
+                                    android:theme="@style/TimePickerTheme"/>
+
+                                <NumberPicker
+                                    android:id="@+id/minute_picker_01_np"
+                                    style="@style/CustomNumberPicker"
+                                    android:theme="@style/TimePickerTheme"/>
+                            </LinearLayout>
+
+                        </FrameLayout>
 
                         <LinearLayout
                             android:id="@+id/todo_end_time"
@@ -614,7 +628,6 @@
                     </LinearLayout>
 
                 </LinearLayout>
-
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
