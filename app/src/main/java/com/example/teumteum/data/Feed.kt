@@ -8,5 +8,6 @@ data class Feed(
     val contents: String,
     val borderTitle: String,
     val borderLink: String,
+    val isBookMarked: Boolean,
     val isFromFollowedUser: Boolean
 )

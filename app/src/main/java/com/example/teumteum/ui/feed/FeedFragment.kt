@@ -20,6 +20,7 @@ class FeedFragment : Fragment() {
     private val tabTitles = listOf("최신", "팔로잉")
     private val tabTypes = listOf("latest", "following")
     private val fragmentList = mutableListOf<FeedContentFragment>()
+    private var selectedFilter: String = "all"
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,9 +41,11 @@ class FeedFragment : Fragment() {
         val adapter = object : FragmentStateAdapter(this) {
             override fun getItemCount() = tabTypes.size
             override fun createFragment(position: Int): Fragment {
-                val fragment = FeedContentFragment.newInstance(tabTypes[position])
+                val fragment = FeedContentFragment.newInstance(tabTypes[position], selectedFilter)
                 if (fragmentList.size <= position) {
                     fragmentList.add(fragment)
+                } else {
+                    fragmentList[position] = fragment
                 }
                 return fragment
             }
@@ -60,13 +63,21 @@ class FeedFragment : Fragment() {
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 updateTabStyle(tab, true)
+
+                sendFilter(selectedFilter)
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab) {
                 updateTabStyle(tab, false)
+
+                sendFilter(selectedFilter)
             }
 
-            override fun onTabReselected(tab: TabLayout.Tab) {}
+            override fun onTabReselected(tab: TabLayout.Tab) {
+
+
+                sendFilter(selectedFilter)
+            }
         })
 
         // 초기 스타일 적용
@@ -96,12 +107,14 @@ class FeedFragment : Fragment() {
 
         filterButtons.forEach { (button, filter) ->
             button.setOnClickListener {
+                selectedFilter = filter
                 updateFilterButtonStates(button)
                 sendFilter(filter)
             }
         }
 
         // 초기값 선택
+        selectedFilter = "all"
         updateFilterButtonStates(binding.btnAll)
         sendFilter("all")
 
@@ -129,9 +142,6 @@ class FeedFragment : Fragment() {
     }
 
     private fun sendFilter(filter: String) {
-        val current = binding.viewPager.currentItem
-        if (current < fragmentList.size) {
-            fragmentList[current].onFilterSelected(filter)
-        }
+        fragmentList.forEach { it.onFilterSelected(filter) }
     }
 }

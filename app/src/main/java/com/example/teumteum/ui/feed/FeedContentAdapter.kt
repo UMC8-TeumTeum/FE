@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.teumteum.R
 import com.example.teumteum.data.Contents
 import com.example.teumteum.data.Feed
 import com.example.teumteum.databinding.ItemContentsCardBinding
@@ -80,6 +81,13 @@ class FeedContentAdapter :
             filterTv.text     = "${item.time}m"
             feedBorderTitleTv.text = item.borderTitle
             feedBorderLinkTv.text  = item.borderLink
+            val bookmarkRes = if (item.isBookMarked) {
+                R.drawable.ic_bookmark_on
+            } else {
+                R.drawable.ic_bookmark_off
+            }
+            bookmarkIv.setImageResource(bookmarkRes)
+
         }
     }
 

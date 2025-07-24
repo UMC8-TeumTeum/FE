@@ -17,10 +17,12 @@ class FeedContentFragment : Fragment() {
     private lateinit var adapter: FeedContentAdapter
     private var fullList: List<Feed> = emptyList()
     private var currentFilter: String = "all"
+    private var pendingFilter: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         contentType = arguments?.getString(ARG_TYPE)
+        pendingFilter = arguments?.getString(ARG_FILTER) ?: "all"
     }
 
     override fun onCreateView(
@@ -39,14 +41,28 @@ class FeedContentFragment : Fragment() {
         adapter = FeedContentAdapter()
         binding.recyclerView.adapter = adapter
 
+        pendingFilter?.let {
+            currentFilter = it
+            pendingFilter = null
+        }
+
         applyFilter(currentFilter)
 
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        applyFilter(currentFilter)
+    }
+
     fun onFilterSelected(filter: String) {
-        currentFilter = filter
-        applyFilter(filter)
+        if (this::binding.isInitialized) {
+            currentFilter = filter
+            applyFilter(filter)
+        } else {
+            pendingFilter = filter
+        }
     }
 
     private fun applyFilter(filter: String) {
@@ -79,6 +95,7 @@ class FeedContentFragment : Fragment() {
                 borderTitle = "무인 세차장 속 ux 비밀",
                 borderLink = "https://www.youtube.com/watch",
                 time = 10,
+                isBookMarked = true,
                 isFromFollowedUser = true
             ),
             Feed(
@@ -90,6 +107,7 @@ class FeedContentFragment : Fragment() {
                 borderTitle = "애플 신기능 발표",
                 borderLink = "https://www.youtube.com/watch",
                 time = 20,
+                isBookMarked = false,
                 isFromFollowedUser = true
             ),
             Feed(
@@ -100,6 +118,7 @@ class FeedContentFragment : Fragment() {
                 borderTitle = "지구온난화 다큐멘터리",
                 borderLink = "https://www.youtube.com/watch",
                 time = 20,
+                isBookMarked = false,
                 isFromFollowedUser = true
             ),
             Feed(
@@ -110,6 +129,7 @@ class FeedContentFragment : Fragment() {
                 borderTitle = "지구온난화 다큐멘터리",
                 borderLink = "https://www.youtube.com/watch",
                 time = 10,
+                isBookMarked = true,
                 isFromFollowedUser = false
             )
         )
@@ -134,11 +154,13 @@ class FeedContentFragment : Fragment() {
 
     companion object {
         private const val ARG_TYPE = "type"
+        private const val ARG_FILTER = "filter"
 
-        fun newInstance(type: String): FeedContentFragment {
+        fun newInstance(type: String, filter: String): FeedContentFragment {
             return FeedContentFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_TYPE, type)
+                    putString(ARG_FILTER, filter)
                 }
             }
         }
