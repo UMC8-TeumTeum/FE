@@ -77,16 +77,16 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener {
                 applySelectedTime(isStart = true)
             }
             binding.timePickerStartContainer.isVisible = !isVisibleNow
-            binding.timePickerEndLl.isVisible = false
+            binding.timePickerEndContainer.isVisible = false
             currentTargetTextView = binding.startTimeTv.takeIf { !isVisibleNow }
         }
 
         binding.endTimeTv.setOnClickListener {
-            val isVisibleNow = binding.timePickerEndLl.isVisible
+            val isVisibleNow = binding.timePickerEndContainer.isVisible
             if (isVisibleNow) {
                 applySelectedTime(isStart = false)
             }
-            binding.timePickerEndLl.isVisible = !isVisibleNow
+            binding.timePickerEndContainer.isVisible = !isVisibleNow
             binding.timePickerStartContainer.isVisible = false
             currentTargetTextView = binding.endTimeTv.takeIf { !isVisibleNow }
         }
@@ -171,7 +171,8 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener {
                     child.setTextColor(ContextCompat.getColor(context, R.color.text_primary))
                     child.textSize = 15f
                     child.typeface = ResourcesCompat.getFont(context, R.font.noto_sans_kr_regular)
-                    child.setIncludeFontPadding(false)
+                    child.includeFontPadding = false
+
                 }
             }
         } catch (e: Exception) {
@@ -233,7 +234,7 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener {
             binding.timePickerStartContainer.isVisible = false
         } else {
             binding.endTimeTv.text = timeText
-            binding.timePickerEndLl.isVisible = false
+            binding.timePickerEndContainer.isVisible = false
         }
     }
 

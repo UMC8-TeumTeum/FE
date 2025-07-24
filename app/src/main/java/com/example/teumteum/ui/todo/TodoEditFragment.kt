@@ -1,19 +1,23 @@
 package com.example.teumteum.ui.todo
 
 import android.app.Dialog
+import android.content.Context
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.NumberPicker
 import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentTodoEditBinding
@@ -33,6 +37,8 @@ import java.util.Locale
 class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
 
     private lateinit var binding: FragmentTodoEditBinding
+
+    private var currentTargetTextView: TextView? = null
 
     private var todoId: Int = -1
 
@@ -104,17 +110,30 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
         setupPickers()
 
         binding.startTimeTv.setOnClickListener {
-            val isVisibleNow = binding.timePickerStartLl.isVisible
-            if (isVisibleNow) applySelectedTime(true)
-            binding.timePickerStartLl.isVisible = !isVisibleNow
-            binding.timePickerEndLl.isVisible = false
+            val isVisibleNow = binding.timePickerStartContainer.isVisible
+            if (isVisibleNow) {
+                applySelectedTime(isStart = true)
+            }
+            binding.timePickerStartContainer.isVisible = !isVisibleNow
+            binding.timePickerEndContainer.isVisible = false
+            currentTargetTextView = binding.startTimeTv.takeIf { !isVisibleNow }
         }
 
         binding.endTimeTv.setOnClickListener {
-            val isVisibleNow = binding.timePickerEndLl.isVisible
-            if (isVisibleNow) applySelectedTime(false)
-            binding.timePickerEndLl.isVisible = !isVisibleNow
-            binding.timePickerStartLl.isVisible = false
+            val isVisibleNow = binding.timePickerEndContainer.isVisible
+            if (isVisibleNow) {
+                applySelectedTime(isStart = false)
+            }
+            binding.timePickerEndContainer.isVisible = !isVisibleNow
+            binding.timePickerStartContainer.isVisible = false
+            currentTargetTextView = binding.endTimeTv.takeIf { !isVisibleNow }
+        }
+
+        listOf(binding.ampmPicker01Np, binding.hourPicker01Np, binding.minutePicker01Np).forEach {
+            it.setOnValueChangedListener { _, _, _ -> }
+        }
+        listOf(binding.ampmPicker02Np, binding.hourPicker02Np, binding.minutePicker02Np).forEach {
+            it.setOnValueChangedListener { _, _, _ -> }
         }
 
         binding.btnPlus.setOnClickListener {
@@ -353,37 +372,79 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
         }
     }
 
+    private fun applyTextStyleToNumberPicker(picker: NumberPicker, context: Context) {
+        try {
+            val count = picker.childCount
+            for (i in 0 until count) {
+                val child = picker.getChildAt(i)
+                if (child is EditText) {
+                    child.setTextColor(ContextCompat.getColor(context, R.color.text_primary))
+                    child.textSize = 15f
+                    child.typeface = ResourcesCompat.getFont(context, R.font.noto_sans_kr_regular)
+                    child.includeFontPadding = false
+
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
     private fun setupPickers() {
-        listOf(binding.ampmPicker01Np, binding.ampmPicker02Np).forEach {
-            it.minValue = 0
-            it.maxValue = 1
-            it.displayedValues = arrayOf("오전", "오후")
+        binding.ampmPicker01Np.apply {
+            minValue = 0
+            maxValue = 1
+            displayedValues = arrayOf("오전", "오후")
+            post { applyTextStyleToNumberPicker(this, context) }
         }
-        listOf(binding.hourPicker01Np, binding.hourPicker02Np).forEach {
-            it.minValue = 1
-            it.maxValue = 12
-            it.wrapSelectorWheel = true
+        binding.hourPicker01Np.apply {
+            minValue = 1
+            maxValue = 12
+            wrapSelectorWheel = true
+            post { applyTextStyleToNumberPicker(this, context) }
         }
-        listOf(binding.minutePicker01Np, binding.minutePicker02Np).forEach {
-            it.minValue = 0
-            it.maxValue = 5
-            it.displayedValues = arrayOf("00", "10", "20", "30", "40", "50")
-            it.wrapSelectorWheel = true
+        binding.minutePicker01Np.apply {
+            minValue = 0
+            maxValue = 5
+            displayedValues = arrayOf("00", "10", "20", "30", "40", "50")
+            wrapSelectorWheel = true
+            post { applyTextStyleToNumberPicker(this, context) }
+        }
+
+        binding.ampmPicker02Np.apply {
+            minValue = 0
+            maxValue = 1
+            displayedValues = arrayOf("오전", "오후")
+        }
+        binding.hourPicker02Np.apply {
+            minValue = 1
+            maxValue = 12
+            wrapSelectorWheel = true
+        }
+        binding.minutePicker02Np.apply {
+            minValue = 0
+            maxValue = 5
+            displayedValues = arrayOf("00", "10", "20", "30", "40", "50")
+            wrapSelectorWheel = true
         }
     }
 
     private fun applySelectedTime(isStart: Boolean) {
-        val ampm = if (isStart) binding.ampmPicker01Np else binding.ampmPicker02Np
-        val hour = if (isStart) binding.hourPicker01Np else binding.hourPicker02Np
-        val minute = if (isStart) binding.minutePicker01Np else binding.minutePicker02Np
+        val ampmPicker = if (isStart) binding.ampmPicker01Np else binding.ampmPicker02Np
+        val hourPicker = if (isStart) binding.hourPicker01Np else binding.hourPicker02Np
+        val minutePicker = if (isStart) binding.minutePicker01Np else binding.minutePicker02Np
 
-        val timeText = "${if (ampm.value == 0) "오전" else "오후"} ${hour.value}:${minute.displayedValues[minute.value]}"
+        val ampm = ampmPicker.value
+        val hour = hourPicker.value
+        val minute = arrayOf("00", "10", "20", "30", "40", "50")[minutePicker.value]
+        val timeText = "${if (ampm == 0) "오전" else "오후"} $hour:$minute"
+
         if (isStart) {
             binding.startTimeTv.text = timeText
-            binding.timePickerStartLl.isVisible = false
+            binding.timePickerStartContainer.isVisible = false
         } else {
             binding.endTimeTv.text = timeText
-            binding.timePickerEndLl.isVisible = false
+            binding.timePickerEndContainer.isVisible = false
         }
     }
 
