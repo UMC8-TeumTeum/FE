@@ -162,21 +162,6 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener {
 
     }
 
-    private fun removeSelectionDivider(picker: NumberPicker) {
-        try {
-            val fields = NumberPicker::class.java.declaredFields
-            for (field in fields) {
-                if (field.name == "mSelectionDivider") {
-                    field.isAccessible = true
-                    field.set(picker, null)
-                    break
-                }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
     private fun applyTextStyleToNumberPicker(picker: NumberPicker, context: Context) {
         try {
             val count = picker.childCount
