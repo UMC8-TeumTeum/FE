@@ -7,7 +7,10 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.teumteum.R
+import com.example.teumteum.data.TimeBlock
+import com.example.teumteum.data.TimeType
 import com.example.teumteum.databinding.FragmentWishSetting01Binding
+import com.example.teumteum.ui.clock.ChartUtils
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class WishSetting01Fragment : Fragment() {
@@ -19,6 +22,16 @@ class WishSetting01Fragment : Fragment() {
     private var selectedTimeText: String? = null
     private var selectedStartTime: String? = null
     private var selectedEndTime: String? = null
+
+    private val fullDaySchedule = listOf(
+        TimeBlock(0, 120, TimeType.TODO),
+        TimeBlock(120, 600,  TimeType.SLEEP),
+        TimeBlock(600, 660, TimeType.TODO),
+        TimeBlock(780, 1080, TimeType.TODO),
+        TimeBlock(1080, 1260, TimeType.TODO),
+    )
+
+    private var isAM: Boolean = true
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -162,6 +175,17 @@ class WishSetting01Fragment : Fragment() {
         binding.backArrowIv.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
+
+        ChartUtils.setupPieChart(binding.clockChart)
+
+        updateTimeChart(isAM)
+        updateIndicator(isAM)
+
+        binding.amPmTv.setOnClickListener {
+            isAM = !isAM
+            updateTimeChart(isAM)
+            updateIndicator(isAM)
+        }
     }
 
     private fun enableNextButton() {
@@ -177,4 +201,48 @@ class WishSetting01Fragment : Fragment() {
     private fun setTime(time: String){
         binding.wishTimeTv.text = time
     }
+
+    private fun updateTimeChart(isAM: Boolean) {
+        val halfDayBlocks = ChartUtils.splitAndFillTimeBlocks(fullDaySchedule, isAM)
+        ChartUtils.setTimePieChartData(requireContext(), binding.clockChart, halfDayBlocks)
+    }
+
+    private fun updateIndicator(isAM: Boolean) {
+        val leftView = binding.leftView
+        val rightView = binding.rightView
+
+        if (isAM) {
+            //왼쪽이 점, 오른쪽이 막대
+            leftView.layoutParams.width = dpToPx(4)
+            leftView.layoutParams.height = dpToPx(4)
+            leftView.background = ContextCompat.getDrawable(requireContext(), R.drawable.clock_indicator_dot)
+
+            rightView.layoutParams.width = dpToPx(28)
+            rightView.layoutParams.height = dpToPx(4)
+            rightView.background = ContextCompat.getDrawable(requireContext(), R.drawable.clock_indicator_bar_purple)
+
+            binding.amPmTv.text="AM"
+        } else {
+            //왼쪽이 막대, 오른쪽이 점
+            leftView.layoutParams.width = dpToPx(28)
+            leftView.layoutParams.height = dpToPx(4)
+            leftView.background = ContextCompat.getDrawable(requireContext(), R.drawable.clock_indicator_bar_purple)
+
+            rightView.layoutParams.width = dpToPx(4)
+            rightView.layoutParams.height = dpToPx(4)
+            rightView.background = ContextCompat.getDrawable(requireContext(), R.drawable.clock_indicator_dot)
+
+            binding.amPmTv.text="PM"
+        }
+
+        leftView.requestLayout()
+        rightView.requestLayout()
+
+
+    }
+
+    private fun dpToPx(dp: Int): Int {
+        return (dp * resources.displayMetrics.density).toInt()
+    }
+
 }

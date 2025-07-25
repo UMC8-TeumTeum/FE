@@ -34,6 +34,7 @@ import java.time.format.DateTimeFormatter
 
 import com.example.teumteum.data.TimeBlock
 import com.example.teumteum.data.TimeType
+import com.example.teumteum.ui.clock.ChartUtils
 import com.example.teumteum.util.applyBlurShadow
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
@@ -71,13 +72,14 @@ class HomeFragment : Fragment(), IDateClickListener {
     )
 
     private val fullDaySchedule = listOf(
-        TimeBlock(0, 360, TimeType.SLEEP),      // 00:00 ~ 06:00
-        TimeBlock(420, 480, TimeType.TODO),     // 07:00 ~ 08:00
-        TimeBlock(840, 900, TimeType.TODO),     // 14:00 ~ 15:00
-        TimeBlock(1020, 1320, TimeType.SLEEP)   // 17:00 ~ 22:00
+        TimeBlock(0, 120, TimeType.TODO),
+        TimeBlock(120, 600,  TimeType.SLEEP),
+        TimeBlock(600, 660, TimeType.TODO),
+        TimeBlock(780, 1080, TimeType.TODO),
+        TimeBlock(1080, 1260, TimeType.TODO),
     )
 
-    private val isAM: Boolean = false
+    private var isAM: Boolean = true
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -154,8 +156,16 @@ class HomeFragment : Fragment(), IDateClickListener {
             )
         }
 
-        setupPieChart()
-        updateTimeChartForHalfDay(fullDaySchedule, isAM)
+        ChartUtils.setupPieChart(binding.clockChart)
+
+        updateTimeChart(isAM)
+        updateIndicator(isAM)
+
+        binding.amPmTv.setOnClickListener {
+            isAM = !isAM
+            updateTimeChart(isAM)
+            updateIndicator(isAM)
+        }
     }
 
     override fun onResume() {
@@ -285,109 +295,48 @@ class HomeFragment : Fragment(), IDateClickListener {
         binding.homeSelectedDateTv.text = dateFormat(date)
     }
 
-    //차트 속성 설정
-    private fun setupPieChart() {
-        val pieChart = binding.clockChart
 
-        // 기본 스타일 설정
-        pieChart.setUsePercentValues(false)
-        pieChart.description.isEnabled = false
+    private fun updateTimeChart(isAM: Boolean) {
+        val halfDayBlocks = ChartUtils.splitAndFillTimeBlocks(fullDaySchedule, isAM)
+        ChartUtils.setTimePieChartData(requireContext(), binding.clockChart, halfDayBlocks)
+    }
 
-        // 가운데 구멍 (도넛 모양) 제거
-        pieChart.isDrawHoleEnabled = false
+    private fun updateIndicator(isAM: Boolean) {
+        val leftView = binding.leftView
+        val rightView = binding.rightView
 
-        // -90도 회전/터치/애니메이션 제거
-        pieChart.rotationAngle = -90f // 기본은 3시 방향부터 시작하기때문에 회전
-        pieChart.isRotationEnabled = false
-        pieChart.animateY(0)
+        if (isAM) {
+            //왼쪽이 점, 오른쪽이 막대
+            leftView.layoutParams.width = dpToPx(4)
+            leftView.layoutParams.height = dpToPx(4)
+            leftView.background = ContextCompat.getDrawable(requireContext(), R.drawable.clock_indicator_dot)
 
-        // 범례/라벨 제거
-        pieChart.legend.isEnabled = false
-        pieChart.setDrawEntryLabels(false)
+            rightView.layoutParams.width = dpToPx(28)
+            rightView.layoutParams.height = dpToPx(4)
+            rightView.background = ContextCompat.getDrawable(requireContext(), R.drawable.clock_indicator_bar)
 
-        // 배경 전체 투명
-        pieChart.setBackgroundColor(Color.TRANSPARENT)
+            binding.amPmTv.text="AM"
+        } else {
+            //왼쪽이 막대, 오른쪽이 점
+            leftView.layoutParams.width = dpToPx(28)
+            leftView.layoutParams.height = dpToPx(4)
+            leftView.background = ContextCompat.getDrawable(requireContext(), R.drawable.clock_indicator_bar)
 
-        //옵셋 제거
-        pieChart.minOffset = 0f
-        pieChart.setExtraOffsets(0f, 0f, 0f, 0f)
-        pieChart.setDrawEntryLabels(false)
-        pieChart.setTouchEnabled(false)
+            rightView.layoutParams.width = dpToPx(4)
+            rightView.layoutParams.height = dpToPx(4)
+            rightView.background = ContextCompat.getDrawable(requireContext(), R.drawable.clock_indicator_dot)
+
+            binding.amPmTv.text="PM"
+        }
+
+        leftView.requestLayout()
+        rightView.requestLayout()
+
 
     }
 
-    //원형 차트 스케줄 유형에 따른 색상 지정
-    private fun getColorsFor(timeBlocks: List<TimeBlock>): List<Int> {
-        return timeBlocks.map {
-            when (it.type) {
-                TimeType.SLEEP -> ContextCompat.getColor(requireContext(), R.color.clock_sleep)
-                TimeType.TODO -> ContextCompat.getColor(requireContext(), R.color.clock_todo)
-                TimeType.EMPTY -> ContextCompat.getColor(requireContext(), R.color.clock_teum)
-            }
-        }
-    }
-
-    //AM, PM 시간표 생성
-    private fun updateTimeChartForHalfDay(allBlocks: List<TimeBlock>, isAM: Boolean) {
-        val timeBlocksForChart = splitAndFillTimeBlocks(allBlocks, isAM)
-        setTimePieChartData(binding.clockChart, timeBlocksForChart)
-    }
-
-    //AM PM 분리, 빈 스케줄 추가
-    private fun splitAndFillTimeBlocks(
-        allBlocks: List<TimeBlock>,
-        isAM: Boolean
-    ): List<TimeBlock> {
-        val startMinute = if (isAM) 0 else 720
-        val endMinute = if (isAM) 720 else 1440
-
-        val filtered = allBlocks.mapNotNull { block ->
-            val s = block.startTime.coerceIn(startMinute, endMinute)
-            val e = block.endTime.coerceIn(startMinute, endMinute)
-            if (s < e) TimeBlock(s, e, block.type) else null
-        }.sortedBy { it.startTime }
-
-        val result = mutableListOf<TimeBlock>()
-        var cursor = startMinute
-
-        for (block in filtered) {
-            if (block.startTime > cursor) {
-                result.add(TimeBlock(cursor, block.startTime, TimeType.EMPTY))
-            }
-            result.add(block)
-            cursor = block.endTime
-        }
-
-        if (cursor < endMinute) {
-            result.add(TimeBlock(cursor, endMinute, TimeType.EMPTY))
-        }
-
-        return result
-    }
-
-    private fun setTimePieChartData(pieChart: PieChart, timeBlocks: List<TimeBlock>) {
-        val entries = timeBlocks.sortedBy { it.startTime }.map {
-            val duration = (it.endTime - it.startTime).toFloat() / 10f // 10분 단위
-            val label = when (it.type) {
-                TimeType.SLEEP -> "수면"
-                TimeType.TODO -> "일정"
-                TimeType.EMPTY -> "빈틈"
-            }
-            PieEntry(duration, label)
-        }
-
-        val colors = getColorsFor(timeBlocks)
-
-        val dataSet = PieDataSet(entries, "").apply {
-            this.colors = colors
-            sliceSpace = 0f
-            selectionShift = 0f
-        }
-
-        val data = PieData(dataSet).apply { setDrawValues(false) }
-
-        pieChart.data = data
-        pieChart.invalidate()
+    private fun dpToPx(dp: Int): Int {
+        return (dp * resources.displayMetrics.density).toInt()
     }
 
     companion object {

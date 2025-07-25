@@ -23,7 +23,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/panel_info"
                 android:layout_width="match_parent"
-                android:layout_height="500dp"
+                android:layout_height="550dp"
                 android:background="@drawable/bg_gradient">
 
                 <ImageView
@@ -70,6 +70,53 @@
                     app:layout_constraintBottom_toBottomOf="@+id/clock_background_iv"
                     android:src="@drawable/clock_basic_center_sv"
                     android:background="@android:color/transparent"
+                    />
+
+                <LinearLayout
+                    android:id="@+id/clock_indicator_ll"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="@android:color/transparent"
+                    app:layout_constraintTop_toBottomOf="@+id/clock_background_iv"
+                    app:layout_constraintStart_toStartOf="@+id/clock_background_iv"
+                    app:layout_constraintEnd_toEndOf="@+id/clock_background_iv"
+                    android:layout_marginTop="13dp"
+                    >
+
+                    <!-- 왼쪽 -->
+                    <View
+                        android:id="@+id/leftView"
+                        android:layout_width="28dp"
+                        android:layout_height="4dp"
+                        android:background="@drawable/clock_indicator_bar"/>
+
+                    <Space
+                        android:layout_width="4dp"
+                        android:layout_height="wrap_content"/>
+
+                    <!-- 오른쪽 -->
+                    <View
+                        android:id="@+id/rightView"
+                        android:layout_width="4dp"
+                        android:layout_height="4dp"
+                        android:background="@drawable/clock_indicator_dot"/>
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/am_pm_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="AM"
+                    android:fontFamily="@font/noto_sans_kr_medium"
+                    android:textSize="15sp"
+                    android:textColor="@color/main_2"
+                    android:includeFontPadding="false"
+                    app:layout_constraintStart_toEndOf="@id/clock_background_iv"
+                    app:layout_constraintBottom_toBottomOf="@id/clock_indicator_ll"
+                    android:layout_marginStart="16dp"
                     />
 
                 <ImageView
