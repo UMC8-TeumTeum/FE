@@ -50,7 +50,7 @@
                     android:id="@+id/home_notification_iv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="22dp"
+                    android:layout_marginEnd="19dp"
                     android:src="@drawable/ic_notification_default_sv"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/home_logo_iv" />
@@ -382,38 +382,25 @@
 
     <ImageView
         android:id="@+id/fab_shadow_iv"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
+        android:layout_width="74dp"
+        android:layout_height="74dp"
         android:layout_marginTop="-4dp"
         android:layout_marginBottom="120dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="20dp"
         android:scaleType="centerInside"
         android:layout_gravity="center"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/fab_add_iv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="120dp"
-        android:layout_marginEnd="16dp"
-        app:cardElevation="2dp"
-        app:cardCornerRadius="30dp"
-        app:cardUseCompatPadding="true"
-        app:cardPreventCornerOverlap="false"
-        app:strokeColor="@color/transparent"
-        app:cardBackgroundColor="@color/transparent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
         <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:id="@+id/fab_add_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="120dp"
+            android:layout_marginEnd="20dp"
             android:src="@drawable/ic_fab_add_sv"
-            android:backgroundTint="@null" />
-
-    </com.google.android.material.card.MaterialCardView>
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
