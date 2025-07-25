@@ -35,6 +35,7 @@ import java.time.format.DateTimeFormatter
 import com.example.teumteum.data.TimeBlock
 import com.example.teumteum.data.TimeType
 import com.example.teumteum.ui.clock.ChartUtils
+import com.example.teumteum.ui.clock.IconPieChartRenderer
 import com.example.teumteum.util.applyBlurShadow
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
@@ -72,11 +73,14 @@ class HomeFragment : Fragment(), IDateClickListener {
     )
 
     private val fullDaySchedule = listOf(
-        TimeBlock(0, 120, TimeType.TODO),
-        TimeBlock(120, 600,  TimeType.SLEEP),
-        TimeBlock(600, 660, TimeType.TODO),
-        TimeBlock(780, 1080, TimeType.TODO),
-        TimeBlock(1080, 1260, TimeType.TODO),
+        TimeBlock(0, 360, TimeType.SLEEP),   // 00:00 ~ 06:00
+        TimeBlock(360, 580, TimeType.TODO),  // 06:00 ~ 09:40
+        TimeBlock(720, 860, TimeType.TODO),  // 12:00 ~ 14:20
+        TimeBlock(870, 930, TimeType.EMPTY), // 14:30 ~ 15:30
+        TimeBlock(930, 1050, TimeType.TODO), // 15:30 ~ 17:30
+        TimeBlock(1110, 1200, TimeType.TODO),// 18:30 ~ 20:00
+        TimeBlock(1200, 1320, TimeType.EMPTY),// 20:00 ~ 22:00
+        TimeBlock(1320, 1440, TimeType.SLEEP)// 22:00 ~ 24:00
     )
 
     private var isAM: Boolean = true
@@ -157,6 +161,15 @@ class HomeFragment : Fragment(), IDateClickListener {
         }
 
         ChartUtils.setupPieChart(binding.clockChart)
+
+        val sleepBitmap = ChartUtils.getBitmapFromVector(requireContext(), R.drawable.ic_sleep_sv)
+
+        binding.clockChart.renderer = IconPieChartRenderer(
+            binding.clockChart,
+            binding.clockChart.animator,
+            binding.clockChart.viewPortHandler,
+            sleepBitmap
+        )
 
         updateTimeChart(isAM)
         updateIndicator(isAM)
