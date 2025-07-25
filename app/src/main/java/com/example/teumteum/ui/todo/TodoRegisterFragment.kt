@@ -1,17 +1,23 @@
 package com.example.teumteum.ui.todo
 
+import android.app.AlertDialog
 import android.app.Dialog
+import android.content.Context
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.NumberPicker
 import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import com.example.teumteum.databinding.FragmentTodoRegisterBinding
 import com.example.teumteum.R
@@ -67,22 +73,22 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener {
         }
 
         binding.startTimeTv.setOnClickListener {
-            val isVisibleNow = binding.timePickerStartLl.isVisible
+            val isVisibleNow = binding.timePickerStartContainer.isVisible
             if (isVisibleNow) {
                 applySelectedTime(isStart = true)
             }
-            binding.timePickerStartLl.isVisible = !isVisibleNow
-            binding.timePickerEndLl.isVisible = false
+            binding.timePickerStartContainer.isVisible = !isVisibleNow
+            binding.timePickerEndContainer.isVisible = false
             currentTargetTextView = binding.startTimeTv.takeIf { !isVisibleNow }
         }
 
         binding.endTimeTv.setOnClickListener {
-            val isVisibleNow = binding.timePickerEndLl.isVisible
+            val isVisibleNow = binding.timePickerEndContainer.isVisible
             if (isVisibleNow) {
                 applySelectedTime(isStart = false)
             }
-            binding.timePickerEndLl.isVisible = !isVisibleNow
-            binding.timePickerStartLl.isVisible = false
+            binding.timePickerEndContainer.isVisible = !isVisibleNow
+            binding.timePickerStartContainer.isVisible = false
             currentTargetTextView = binding.endTimeTv.takeIf { !isVisibleNow }
         }
 
@@ -157,39 +163,63 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener {
 
     }
 
+    private fun applyTextStyleToNumberPicker(picker: NumberPicker, context: Context) {
+        try {
+            val count = picker.childCount
+            for (i in 0 until count) {
+                val child = picker.getChildAt(i)
+                if (child is EditText) {
+                    child.setTextColor(ContextCompat.getColor(context, R.color.text_primary))
+                    child.textSize = 15f
+                    child.typeface = ResourcesCompat.getFont(context, R.font.noto_sans_kr_regular)
+                    child.includeFontPadding = false
+
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
     private fun setupPickers() {
         binding.ampmPicker01Np.apply {
             minValue = 0
             maxValue = 1
             displayedValues = arrayOf("오전", "오후")
+            post { applyTextStyleToNumberPicker(this, context) }
         }
         binding.hourPicker01Np.apply {
             minValue = 1
             maxValue = 12
             wrapSelectorWheel = true
+            post { applyTextStyleToNumberPicker(this, context) }
         }
         binding.minutePicker01Np.apply {
             minValue = 0
             maxValue = 5
             displayedValues = arrayOf("00", "10", "20", "30", "40", "50")
             wrapSelectorWheel = true
+            post { applyTextStyleToNumberPicker(this, context) }
         }
 
         binding.ampmPicker02Np.apply {
             minValue = 0
             maxValue = 1
             displayedValues = arrayOf("오전", "오후")
+            post { applyTextStyleToNumberPicker(this, context) }
         }
         binding.hourPicker02Np.apply {
             minValue = 1
             maxValue = 12
             wrapSelectorWheel = true
+            post { applyTextStyleToNumberPicker(this, context) }
         }
         binding.minutePicker02Np.apply {
             minValue = 0
             maxValue = 5
             displayedValues = arrayOf("00", "10", "20", "30", "40", "50")
             wrapSelectorWheel = true
+            post { applyTextStyleToNumberPicker(this, context) }
         }
     }
 
@@ -205,11 +235,40 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener {
 
         if (isStart) {
             binding.startTimeTv.text = timeText
-            binding.timePickerStartLl.isVisible = false
+            binding.timePickerStartContainer.isVisible = false
         } else {
+            if (!validateEndTime()) {
+                AlertDialog.Builder(requireContext())
+                    .setTitle("시간 오류")
+                    .setMessage("종료 시간을 시작 시간 이후로 설정해주세요.")
+                    .setPositiveButton("확인") { _, _ ->
+                        binding.timePickerEndContainer.isVisible = true // 다시 종료 시간 피커 열기
+                    }
+                    .setCancelable(false)
+                    .show()
+                return
+            }
             binding.endTimeTv.text = timeText
-            binding.timePickerEndLl.isVisible = false
+            binding.timePickerEndContainer.isVisible = false
         }
+    }
+
+    private fun validateEndTime(): Boolean {
+        // 시작 시간
+        val startAmpm = binding.ampmPicker01Np.value // 0: 오전, 1: 오후
+        val startHour = binding.hourPicker01Np.value
+        val startMinute = binding.minutePicker01Np.value * 10
+
+        // 종료 시간
+        val endAmpm = binding.ampmPicker02Np.value
+        val endHour = binding.hourPicker02Np.value
+        val endMinute = binding.minutePicker02Np.value * 10
+
+        // 24시간제로 변환
+        val startTotalMinutes = ((if (startAmpm == 1 && startHour != 12) startHour + 12 else if (startAmpm == 0 && startHour == 12) 0 else startHour) * 60) + startMinute
+        val endTotalMinutes = ((if (endAmpm == 1 && endHour != 12) endHour + 12 else if (endAmpm == 0 && endHour == 12) 0 else endHour) * 60) + endMinute
+
+        return endTotalMinutes > startTotalMinutes
     }
 
     private fun showAlarmPopupWindow(anchor: View) {
