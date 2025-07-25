@@ -6,6 +6,11 @@
 
     <style name="Theme.TeumTeum" parent="Base.Theme.TeumTeum" />
 
+    <style name="TimePickerTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:colorForeground">@color/transparent</item>
+    </style>
+
     <!-- BottomNavigationView 스타일 -->
     <style name="NoIndicatorBottomNav" parent="Widget.Material3.BottomNavigationView">
         <item name="itemActiveIndicatorStyle">@style/NoIndicator</item>
