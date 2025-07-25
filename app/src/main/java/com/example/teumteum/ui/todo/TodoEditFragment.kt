@@ -446,9 +446,38 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
             binding.startTimeTv.text = timeText
             binding.timePickerStartContainer.isVisible = false
         } else {
+            if (!validateEndTime()) {
+                android.app.AlertDialog.Builder(requireContext())
+                    .setTitle("시간 오류")
+                    .setMessage("종료 시간을 시작 시간 이후로 설정해주세요.")
+                    .setPositiveButton("확인") { _, _ ->
+                        binding.timePickerEndContainer.isVisible = true // 다시 종료 시간 피커 열기
+                    }
+                    .setCancelable(false)
+                    .show()
+                return
+            }
             binding.endTimeTv.text = timeText
             binding.timePickerEndContainer.isVisible = false
         }
+    }
+
+    private fun validateEndTime(): Boolean {
+        // 시작 시간
+        val startAmpm = binding.ampmPicker01Np.value // 0: 오전, 1: 오후
+        val startHour = binding.hourPicker01Np.value
+        val startMinute = binding.minutePicker01Np.value * 10
+
+        // 종료 시간
+        val endAmpm = binding.ampmPicker02Np.value
+        val endHour = binding.hourPicker02Np.value
+        val endMinute = binding.minutePicker02Np.value * 10
+
+        // 24시간제로 변환
+        val startTotalMinutes = ((if (startAmpm == 1 && startHour != 12) startHour + 12 else if (startAmpm == 0 && startHour == 12) 0 else startHour) * 60) + startMinute
+        val endTotalMinutes = ((if (endAmpm == 1 && endHour != 12) endHour + 12 else if (endAmpm == 0 && endHour == 12) 0 else endHour) * 60) + endMinute
+
+        return endTotalMinutes > startTotalMinutes
     }
 
     private fun showTodoDummyDeleteDialog() {
