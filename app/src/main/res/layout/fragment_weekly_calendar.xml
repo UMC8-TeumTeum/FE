@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="200dp"
     android:orientation="horizontal"
-    android:weightSum="7">
+    android:weightSum="7"
+    tools:context=".ui.calendar.WeeklyCalendarFragment">
 
     <LinearLayout style="@style/calendar_date_layout">
         <TextView
