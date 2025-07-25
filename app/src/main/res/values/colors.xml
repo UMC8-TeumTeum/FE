@@ -29,4 +29,9 @@
     <color name="teumteum_line">#EAEAEA</color>
     <color name="teumteum_deactive">#B1B2B3</color>
     <color name="teumteum_bg">#F6F6F6</color>
+
+    <color name="clock_sleep">#605ADB</color>
+    <color name="clock_teum">#847EFF</color>
+    <color name="clock_todo">#FFFFFF</color>
+
 </resources>

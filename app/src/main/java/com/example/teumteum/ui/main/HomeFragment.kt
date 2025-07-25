@@ -33,7 +33,17 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 import androidx.core.graphics.createBitmap
+import com.anychart.AnyChart
+import com.anychart.chart.common.dataentry.DataEntry
+import com.anychart.chart.common.dataentry.ValueDataEntry
+import com.example.teumteum.data.TimeBlock
+import com.example.teumteum.data.TimeType
 import com.example.teumteum.util.applyBlurShadow
+import com.github.mikephil.charting.charts.PieChart
+import com.github.mikephil.charting.data.PieData
+import com.github.mikephil.charting.data.PieDataSet
+import com.github.mikephil.charting.data.PieEntry
+import kotlin.collections.map
 
 class HomeFragment : Fragment(), IDateClickListener {
 
@@ -138,6 +148,19 @@ class HomeFragment : Fragment(), IDateClickListener {
                 targetImageView = binding.fabShadowIv
             )
         }
+
+        val testSchedule = listOf(
+            TimeBlock(0, 360, TimeType.SLEEP),
+            TimeBlock(240, 480, TimeType.TODO),
+            TimeBlock(480, 720, TimeType.EMPTY),
+            TimeBlock(720, 840, TimeType.TODO),
+            TimeBlock(840, 1020, TimeType.EMPTY),
+            TimeBlock(1020, 1380, TimeType.SLEEP),
+            TimeBlock(1380, 1440, TimeType.EMPTY)
+        )
+
+        setupPieChart()
+        setTimePieChartData(binding.clockChart, testSchedule)
     }
 
     override fun onResume() {
@@ -265,6 +288,80 @@ class HomeFragment : Fragment(), IDateClickListener {
         selectedDate = date
         saveSelectedDate(date)
         binding.homeSelectedDateTv.text = dateFormat(date)
+    }
+
+    //차트 속성 설정
+    private fun setupPieChart() {
+        val pieChart = binding.clockChart
+
+        // 기본 스타일 설정
+        pieChart.setUsePercentValues(false)
+        pieChart.description.isEnabled = false
+
+        // 가운데 구멍 (도넛 모양) 제거
+        pieChart.isDrawHoleEnabled = false
+
+        // 회전/터치/애니메이션 제거
+        pieChart.rotationAngle = 0f
+        pieChart.isRotationEnabled = false
+        pieChart.animateY(0)
+
+        // 범례/라벨 제거
+        pieChart.legend.isEnabled = false
+        pieChart.setDrawEntryLabels(false)
+
+        // 배경 전체 투명
+        pieChart.setBackgroundColor(Color.TRANSPARENT)
+
+        //옵셋 제거
+        pieChart.minOffset = 0f
+        pieChart.setExtraOffsets(0f, 0f, 0f, 0f)
+        pieChart.setDrawEntryLabels(false)
+        pieChart.setTouchEnabled(false)
+
+    }
+
+    //그래프에 넣을 데이터로 변형
+    private fun generatePieEntries(timeBlocks: List<TimeBlock>): List<PieEntry> {
+        return timeBlocks.map {
+            val duration = (it.endMinutes - it.startMinutes).toFloat() / 10f // 10분 단위
+            val label = when (it.type) {
+                TimeType.SLEEP -> "수면"
+                TimeType.TODO -> "일정"
+                TimeType.EMPTY -> "빈틈"
+            }
+            PieEntry(duration, label)
+        }
+    }
+
+    //원형 차트 스케줄 유형에 따른 색상 지정
+    private fun getColorsFor(timeBlocks: List<TimeBlock>): List<Int> {
+        return timeBlocks.map {
+            when (it.type) {
+                TimeType.SLEEP -> ContextCompat.getColor(requireContext(), R.color.clock_sleep)
+                TimeType.TODO -> ContextCompat.getColor(requireContext(), R.color.clock_todo)
+                TimeType.EMPTY -> ContextCompat.getColor(requireContext(), R.color.clock_teum)
+            }
+        }
+    }
+
+    //그래프에 데이터 넣기
+    private fun setTimePieChartData(pieChart: PieChart, timeBlocks: List<TimeBlock>) {
+        val entries = generatePieEntries(timeBlocks)
+        val colors = getColorsFor(timeBlocks)
+
+        val dataSet = PieDataSet(entries, "").apply {
+            this.colors = colors
+            sliceSpace = 0f
+            selectionShift = 0f
+        }
+
+        val data = PieData(dataSet).apply {
+            setDrawValues(false)
+        }
+
+        pieChart.data = data
+        pieChart.invalidate()
     }
 
     companion object {
