@@ -225,17 +225,6 @@ class WishSetting01Fragment : Fragment() {
         val rightView = binding.rightView
 
         if (isAM) {
-            //왼쪽이 점, 오른쪽이 막대
-            leftView.layoutParams.width = dpToPx(4)
-            leftView.layoutParams.height = dpToPx(4)
-            leftView.background = ContextCompat.getDrawable(requireContext(), R.drawable.clock_indicator_dot)
-
-            rightView.layoutParams.width = dpToPx(28)
-            rightView.layoutParams.height = dpToPx(4)
-            rightView.background = ContextCompat.getDrawable(requireContext(), R.drawable.clock_indicator_bar_purple)
-
-            binding.amPmTv.text="AM"
-        } else {
             //왼쪽이 막대, 오른쪽이 점
             leftView.layoutParams.width = dpToPx(28)
             leftView.layoutParams.height = dpToPx(4)
@@ -245,13 +234,22 @@ class WishSetting01Fragment : Fragment() {
             rightView.layoutParams.height = dpToPx(4)
             rightView.background = ContextCompat.getDrawable(requireContext(), R.drawable.clock_indicator_dot)
 
+            binding.amPmTv.text="AM"
+        } else {
+            //왼쪽이 점, 오른쪽이 막대
+            leftView.layoutParams.width = dpToPx(4)
+            leftView.layoutParams.height = dpToPx(4)
+            leftView.background = ContextCompat.getDrawable(requireContext(), R.drawable.clock_indicator_dot)
+
+            rightView.layoutParams.width = dpToPx(28)
+            rightView.layoutParams.height = dpToPx(4)
+            rightView.background = ContextCompat.getDrawable(requireContext(), R.drawable.clock_indicator_bar_purple)
+
             binding.amPmTv.text="PM"
         }
 
         leftView.requestLayout()
         rightView.requestLayout()
-
-
     }
 
     private fun dpToPx(dp: Int): Int {
