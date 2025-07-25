@@ -319,17 +319,6 @@ class HomeFragment : Fragment(), IDateClickListener {
         val rightView = binding.rightView
 
         if (isAM) {
-            //왼쪽이 점, 오른쪽이 막대
-            leftView.layoutParams.width = dpToPx(4)
-            leftView.layoutParams.height = dpToPx(4)
-            leftView.background = ContextCompat.getDrawable(requireContext(), R.drawable.clock_indicator_dot)
-
-            rightView.layoutParams.width = dpToPx(28)
-            rightView.layoutParams.height = dpToPx(4)
-            rightView.background = ContextCompat.getDrawable(requireContext(), R.drawable.clock_indicator_bar)
-
-            binding.amPmTv.text="AM"
-        } else {
             //왼쪽이 막대, 오른쪽이 점
             leftView.layoutParams.width = dpToPx(28)
             leftView.layoutParams.height = dpToPx(4)
@@ -338,6 +327,17 @@ class HomeFragment : Fragment(), IDateClickListener {
             rightView.layoutParams.width = dpToPx(4)
             rightView.layoutParams.height = dpToPx(4)
             rightView.background = ContextCompat.getDrawable(requireContext(), R.drawable.clock_indicator_dot)
+
+            binding.amPmTv.text="AM"
+        } else {
+            //왼쪽이 점, 오른쪽이 막대
+            leftView.layoutParams.width = dpToPx(4)
+            leftView.layoutParams.height = dpToPx(4)
+            leftView.background = ContextCompat.getDrawable(requireContext(), R.drawable.clock_indicator_dot)
+
+            rightView.layoutParams.width = dpToPx(28)
+            rightView.layoutParams.height = dpToPx(4)
+            rightView.background = ContextCompat.getDrawable(requireContext(), R.drawable.clock_indicator_bar)
 
             binding.amPmTv.text="PM"
         }
