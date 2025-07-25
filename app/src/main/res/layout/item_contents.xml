@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:backgroundTint="@color/white"
+    android:layout_marginStart="15dp"
+    >
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/profile_iv"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:background="@color/gray"
+        android:scaleType="centerCrop"
+        app:shapeAppearanceOverlay="@style/CircleImage"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/nickname_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="닉네임"
+        android:fontFamily="@font/noto_sans_kr_medium"
+        android:textSize="13sp"
+        android:includeFontPadding="false"
+        android:textColor="@color/text_primary"
+        app:layout_constraintTop_toTopOf="@+id/profile_iv"
+        app:layout_constraintStart_toEndOf="@+id/profile_iv"
+        app:layout_constraintBottom_toBottomOf="@+id/profile_iv"
+        android:layout_marginStart="14dp"
+        />
+
+    <TextView
+        android:id="@+id/field_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="  •  UX디자이너"
+        android:fontFamily="@font/noto_sans_kr_medium"
+        android:textColor="@color/teumteum_deactive"
+        android:includeFontPadding="false"
+        app:layout_constraintTop_toTopOf="@id/nickname_tv"
+        app:layout_constraintStart_toEndOf="@+id/nickname_tv"
+        app:layout_constraintBottom_toBottomOf="@id/nickname_tv"
+        />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="200dp"
+            android:layout_height="100dp"
+            android:clipToOutline="true"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/profile_iv"
+            android:layout_marginTop="7dp"
+            >
+
+            <ImageView
+                android:id="@+id/thumbnail_iv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:background="@drawable/rounded_contents_image"
+                />
+
+            <TextView
+                android:id="@+id/title_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="13dp"
+                android:layout_marginTop="13dp"
+                android:fontFamily="@font/noto_sans_kr_medium"
+                android:includeFontPadding="false"
+                android:text="개발 용어 모음집"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/filter_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rounded_filter_tv"
+                android:fontFamily="@font/noto_sans_kr_regular"
+                android:includeFontPadding="false"
+                android:paddingHorizontal="8dp"
+                android:paddingTop="2.5dp"
+                android:paddingBottom="3.5dp"
+                android:text="10m"
+                android:textColor="@color/white"
+                android:textSize="10sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
