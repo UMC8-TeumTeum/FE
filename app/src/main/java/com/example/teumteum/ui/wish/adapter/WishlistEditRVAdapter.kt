@@ -1,4 +1,4 @@
-package com.example.teumteum.ui.wish
+package com.example.teumteum.ui.wish.adapter
 
 import android.content.res.ColorStateList
 import android.view.LayoutInflater

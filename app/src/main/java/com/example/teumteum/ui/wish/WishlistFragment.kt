@@ -9,8 +9,10 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.teumteum.R
 import com.example.teumteum.data.entities.WishlistItem
-import com.example.teumteum.data.remote.WishService
+import com.example.teumteum.data.remote.wish.WishService
 import com.example.teumteum.databinding.FragmentWishlistBinding
+import com.example.teumteum.ui.wish.adapter.WishlistRVAdapter
+import com.example.teumteum.ui.wish.view.WishlistView
 import com.example.teumteum.utils.applyBlurShadow
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.button.MaterialButton

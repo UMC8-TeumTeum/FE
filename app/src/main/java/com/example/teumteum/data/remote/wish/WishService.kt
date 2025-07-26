@@ -1,9 +1,9 @@
-package com.example.teumteum.data.remote
+package com.example.teumteum.data.remote.wish
 
 import android.util.Log
-import com.example.teumteum.ui.wish.RegisterWishView
-import com.example.teumteum.ui.wish.WishView
-import com.example.teumteum.ui.wish.WishlistView
+import com.example.teumteum.ui.wish.view.RegisterWishView
+import com.example.teumteum.ui.wish.view.WishView
+import com.example.teumteum.ui.wish.view.WishlistView
 import com.example.teumteum.utils.getRetrofitWithToken
 import com.google.gson.Gson
 import retrofit2.Call

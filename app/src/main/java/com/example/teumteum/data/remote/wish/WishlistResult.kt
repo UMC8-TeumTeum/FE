@@ -1,4 +1,4 @@
-package com.example.teumteum.data.remote
+package com.example.teumteum.data.remote.wish
 
 import com.example.teumteum.data.entities.WishlistItem
 import com.google.gson.annotations.SerializedName

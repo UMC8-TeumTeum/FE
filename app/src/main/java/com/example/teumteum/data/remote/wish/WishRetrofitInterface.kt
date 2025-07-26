@@ -1,4 +1,4 @@
-package com.example.teumteum.data.remote
+package com.example.teumteum.data.remote.wish
 
 import retrofit2.Call
 import retrofit2.http.Body

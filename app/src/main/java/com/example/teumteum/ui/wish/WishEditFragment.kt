@@ -12,11 +12,11 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.example.teumteum.R
 import com.example.teumteum.data.entities.Wish
-import com.example.teumteum.data.entities.WishItem
-import com.example.teumteum.data.remote.WishService
+import com.example.teumteum.data.remote.wish.WishService
 import com.example.teumteum.databinding.DialogConfirmWishDeleteBinding
 import com.example.teumteum.databinding.DialogConfirmWishEditBinding
 import com.example.teumteum.databinding.FragmentWishEditBinding
+import com.example.teumteum.ui.wish.view.WishView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
