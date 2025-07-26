@@ -1,6 +1,6 @@
 package com.example.teumteum.ui.wish.view
 
-import com.example.teumteum.data.entities.WishlistItem
+import com.example.teumteum.data.remote.wish.dto.WishlistItem
 
 interface WishlistView {
     fun onGetWishListSuccess(wishlist:List<WishlistItem>)

@@ -1,5 +1,9 @@
 package com.example.teumteum.data.remote.wish
 
+import com.example.teumteum.data.remote.wish.dto.GetWishResponse
+import com.example.teumteum.data.remote.wish.dto.GetWishlistResponse
+import com.example.teumteum.data.remote.wish.dto.RegisterWishRequest
+import com.example.teumteum.data.remote.wish.dto.RegisterWishResponse
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET

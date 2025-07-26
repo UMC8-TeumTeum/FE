@@ -16,8 +16,6 @@ import com.example.teumteum.databinding.FragmentHomeBinding
 import com.example.teumteum.ui.calendar.CalendarMode
 
 import com.example.teumteum.data.entities.TodoHomeItem
-import com.example.teumteum.data.entities.WishItem
-import com.example.teumteum.data.entities.WishlistItem
 import com.example.teumteum.ui.alarm.AlarmFragment
 import com.example.teumteum.ui.calendar.CalendarVPAdapter
 import com.example.teumteum.ui.filling.FillingActivity01Fragment

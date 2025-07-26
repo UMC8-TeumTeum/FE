@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.teumteum.R
-import com.example.teumteum.data.entities.WishlistItem
+import com.example.teumteum.data.remote.wish.dto.WishlistItem
 import com.example.teumteum.databinding.ItemWishlistBinding
 import com.example.teumteum.ui.wish.WishEditFragment
 import com.example.teumteum.ui.wish.WishSetting01Fragment

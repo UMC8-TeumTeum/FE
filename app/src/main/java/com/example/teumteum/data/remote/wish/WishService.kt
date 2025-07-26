@@ -1,6 +1,10 @@
 package com.example.teumteum.data.remote.wish
 
 import android.util.Log
+import com.example.teumteum.data.remote.wish.dto.GetWishResponse
+import com.example.teumteum.data.remote.wish.dto.GetWishlistResponse
+import com.example.teumteum.data.remote.wish.dto.RegisterWishRequest
+import com.example.teumteum.data.remote.wish.dto.RegisterWishResponse
 import com.example.teumteum.ui.wish.view.RegisterWishView
 import com.example.teumteum.ui.wish.view.WishView
 import com.example.teumteum.ui.wish.view.WishlistView

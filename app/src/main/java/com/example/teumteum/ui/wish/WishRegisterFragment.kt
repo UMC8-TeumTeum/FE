@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.example.teumteum.R
-import com.example.teumteum.data.remote.wish.RegisterWishRequest
+import com.example.teumteum.data.remote.wish.dto.RegisterWishRequest
 import com.example.teumteum.data.remote.wish.WishService
 import com.example.teumteum.databinding.FragmentWishRegisterBinding
 import com.example.teumteum.ui.todo.TodoRegisterFragment

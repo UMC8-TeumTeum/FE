@@ -1,6 +1,6 @@
 package com.example.teumteum.data.entities
 
-import com.example.teumteum.data.remote.wish.WishCategory
+import com.example.teumteum.data.remote.wish.dto.WishCategory
 import com.google.gson.annotations.SerializedName
 
 data class WishItem(
