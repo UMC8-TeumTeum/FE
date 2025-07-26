@@ -78,6 +78,11 @@ class WishlistFragment() : Fragment(), WishlistView {
             refreshWishlist()
         }
 
+        // 위시 수정 성공 이벤트 수신
+        parentFragmentManager.setFragmentResultListener("wish_edit", viewLifecycleOwner) { _, _ ->
+            refreshWishlist()
+        }
+
         getList(duration = "all", page = 1)
 
     }
