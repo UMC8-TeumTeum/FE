@@ -1,4 +1,4 @@
-package com.example.teumteum.ui.wish
+package com.example.teumteum.ui.wish.adapter
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,8 +6,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.teumteum.R
-import com.example.teumteum.data.entities.WishlistItem
+import com.example.teumteum.data.remote.wish.dto.WishlistItem
 import com.example.teumteum.databinding.ItemWishlistBinding
+import com.example.teumteum.ui.wish.WishEditFragment
+import com.example.teumteum.ui.wish.WishSetting01Fragment
 
 class WishlistRVAdapter(private var wishlist: List<WishlistItem>, private val fragmentManager: FragmentManager) : RecyclerView.Adapter<WishlistRVAdapter.ViewHolder>() {
 
@@ -24,10 +26,10 @@ class WishlistRVAdapter(private var wishlist: List<WishlistItem>, private val fr
         binding.wishTitleTv.text = item.title
         binding.wishTimeTv.text = item.estimatedDuration
 
-//        binding.root.setOnClickListener {
-//            val bottomSheet = WishEditFragment.newInstanceWithWishDummy(item)
-//            bottomSheet.show(fragmentManager, bottomSheet.tag)
-//        }
+        binding.root.setOnClickListener {
+            val bottomSheet = WishEditFragment.newInstance(item.id)
+            bottomSheet.show(fragmentManager, bottomSheet.tag)
+        }
 
         binding.fillButton.setOnClickListener {
             val fragment = WishSetting01Fragment().apply {

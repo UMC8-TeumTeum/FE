@@ -1,8 +1,13 @@
-package com.example.teumteum.data.remote
+package com.example.teumteum.data.remote.wish
 
 import android.util.Log
-import com.example.teumteum.ui.wish.RegisterWishView
-import com.example.teumteum.ui.wish.WishlistView
+import com.example.teumteum.data.remote.wish.dto.GetWishResponse
+import com.example.teumteum.data.remote.wish.dto.GetWishlistResponse
+import com.example.teumteum.data.remote.wish.dto.RegisterWishRequest
+import com.example.teumteum.data.remote.wish.dto.RegisterWishResponse
+import com.example.teumteum.ui.wish.view.RegisterWishView
+import com.example.teumteum.ui.wish.view.WishView
+import com.example.teumteum.ui.wish.view.WishlistView
 import com.example.teumteum.utils.getRetrofitWithToken
 import com.google.gson.Gson
 import retrofit2.Call
@@ -12,19 +17,25 @@ import retrofit2.Response
 class WishService {
     private lateinit var wishRegisterView: RegisterWishView
     private lateinit var wishlistView: WishlistView
+    private lateinit var wishView: WishView
 
     fun setWishRegisterView(wishRegisterView: RegisterWishView) {
-        this.wishRegisterView = wishRegisterView;
+        this.wishRegisterView = wishRegisterView
     }
 
     fun setWishlistGetView(wishlistView: WishlistView) {
-        this.wishlistView = wishlistView;
+        this.wishlistView = wishlistView
+    }
+
+    fun setWishGetView(wishView: WishView) {
+        this.wishView = wishView
     }
 
     companion object {
         private val gson = Gson()
     }
 
+    // 위시 등록
     fun registerWish(request: RegisterWishRequest) {
 
         val wishService = getRetrofitWithToken().create(WishRetrofitInterface::class.java)
@@ -72,6 +83,7 @@ class WishService {
         })
     }
 
+    // 위시리스트 조회
     fun getWishlist(duration: String, page: Int) {
         val wishService = getRetrofitWithToken().create(WishRetrofitInterface::class.java)
 
@@ -117,6 +129,55 @@ class WishService {
             override fun onFailure(call: Call<GetWishlistResponse>, t: Throwable) {
                 Log.d("WISHLIST/FAILURE", t.message.toString())
                 wishlistView.onGetWishListFailure("NETWORK_ERROR")
+            }
+        })
+    }
+
+    // 특정 위시 조회
+    fun getWish(wishId: Long) {
+        val wishService = getRetrofitWithToken().create(WishRetrofitInterface::class.java)
+
+        wishService.getWish(wishId).enqueue(object : Callback<GetWishResponse> {
+            override fun onResponse(
+                call: Call<GetWishResponse>,
+                response: Response<GetWishResponse>
+            ) {
+                Log.d("WISH/SUCCESS", response.toString())
+
+                if (response.isSuccessful) {
+                    val getWishResponse = response.body()
+
+                    if (getWishResponse != null && getWishResponse.isSuccess) {
+                        val wish = getWishResponse.result
+                        wishView.onGetWishSuccess(wish)
+                    } else {
+                        wishView.onGetWishFailure(
+                            getWishResponse?.code ?: "UNKNOWN",
+                            getWishResponse?.message ?: "조회 실패"
+                        )
+                    }
+                } else {
+                    // 실패 응답 처리
+                    val errorMsg = response.errorBody()?.string()
+                    Log.d("WISH/ERROR_BODY", errorMsg ?: "에러 메시지 없음")
+
+                    try {
+                        if (!errorMsg.isNullOrEmpty()) {
+                            val errorResponse = gson.fromJson(errorMsg, GetWishResponse::class.java)
+                            wishView.onGetWishFailure(errorResponse.code, errorResponse.message)
+                        } else {
+                            wishView.onGetWishFailure("EMPTY_ERROR_BODY", "응답 본문이 없습니다.")
+                        }
+                    } catch (e: Exception) {
+                        Log.e("WISH/PARSE_ERROR", "JSON 파싱 실패: ${e.localizedMessage}")
+                        wishView.onGetWishFailure("PARSE_ERROR", "응답 파싱에 실패했습니다.")
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<GetWishResponse>, t: Throwable) {
+                Log.d("WISH/FAILURE", t.message.toString())
+                wishView.onGetWishFailure("NETWORK_ERROR")
             }
         })
     }
