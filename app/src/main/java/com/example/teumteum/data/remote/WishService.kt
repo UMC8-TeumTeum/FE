@@ -80,20 +80,42 @@ class WishService {
                 call: Call<GetWishlistResponse>,
                 response: Response<GetWishlistResponse>
             ) {
-                Log.d("GET/SUCCESS", response.toString())
+                Log.d("WISHLIST/SUCCESS", response.toString())
 
-                if (response.isSuccessful && response.body()?.isSuccess == true) {
-                    val wishlist = response.body()?.result?.wishlist ?: emptyList()
-                    wishlistView.onGetWishListSuccess(wishlist)
+                if (response.isSuccessful) {
+                    val getWishlistResponse = response.body()
+
+                    if (getWishlistResponse != null && getWishlistResponse.isSuccess) {
+                        val wishlist = response.body()?.result?.wishlist ?: emptyList()
+                        wishlistView.onGetWishListSuccess(wishlist)
+                    } else {
+                        wishlistView.onGetWishListFailure(
+                            getWishlistResponse?.code ?: "UNKNOWN",
+                            getWishlistResponse?.message ?: "조회 실패"
+                        )
+                    }
                 } else {
-                    val code = response.body()?.code ?: "UNKNOWN"
-                    val msg = response.body()?.message ?: "조회 실패"
-                    wishlistView.onGetWishListFailure(code, msg)
+                    // 실패 응답 처리
+                    val errorMsg = response.errorBody()?.string()
+                    Log.d("WISHLIST/ERROR_BODY", errorMsg ?: "에러 메시지 없음")
+
+                    try {
+                        if (!errorMsg.isNullOrEmpty()) {
+                            val errorResponse = gson.fromJson(errorMsg, GetWishlistResponse::class.java)
+                            val errorMessage = errorResponse.result?.toString()
+                            wishlistView.onGetWishListFailure(errorResponse.code, errorMessage)
+                        } else {
+                            wishlistView.onGetWishListFailure("EMPTY_ERROR_BODY", "응답 본문이 없습니다.")
+                        }
+                    } catch (e: Exception) {
+                        Log.e("WISHLIST/PARSE_ERROR", "JSON 파싱 실패: ${e.localizedMessage}")
+                        wishlistView.onGetWishListFailure("PARSE_ERROR", "응답 파싱에 실패했습니다.")
+                    }
                 }
             }
 
             override fun onFailure(call: Call<GetWishlistResponse>, t: Throwable) {
-                Log.d("GET/FAILURE", t.message.toString())
+                Log.d("WISHLIST/FAILURE", t.message.toString())
                 wishlistView.onGetWishListFailure("NETWORK_ERROR")
             }
         })

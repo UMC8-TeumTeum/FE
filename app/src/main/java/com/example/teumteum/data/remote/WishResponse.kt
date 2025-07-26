@@ -13,5 +13,5 @@ data class GetWishlistResponse(
     @SerializedName(value = "isSuccess") val isSuccess: Boolean,
     @SerializedName(value = "code") val code: String,
     @SerializedName(value = "message") val message: String,
-    @SerializedName("result") val result: WishlistResult
+    @SerializedName("result") val result: WishlistResult?
 )
