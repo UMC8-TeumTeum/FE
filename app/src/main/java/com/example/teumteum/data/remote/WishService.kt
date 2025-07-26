@@ -1,7 +1,7 @@
 package com.example.teumteum.data.remote
 
 import android.util.Log
-import com.example.teumteum.ui.wish.WishRegisterView
+import com.example.teumteum.ui.wish.RegisterWishView
 import com.example.teumteum.ui.wish.WishlistView
 import com.example.teumteum.utils.getRetrofitWithToken
 import com.google.gson.Gson
@@ -10,10 +10,10 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class WishService {
-    private lateinit var wishRegisterView: WishRegisterView
+    private lateinit var wishRegisterView: RegisterWishView
     private lateinit var wishlistView: WishlistView
 
-    fun setWishRegisterView(wishRegisterView: WishRegisterView) {
+    fun setWishRegisterView(wishRegisterView: RegisterWishView) {
         this.wishRegisterView = wishRegisterView;
     }
 
@@ -25,14 +25,14 @@ class WishService {
         private val gson = Gson()
     }
 
-    fun wishRegister(request: WishRegisterRequest) {
+    fun registerWish(request: RegisterWishRequest) {
 
         val wishService = getRetrofitWithToken().create(WishRetrofitInterface::class.java)
 
-        wishService.wishRegister(request).enqueue(object : Callback<WishRegisterResponse> {
+        wishService.wishRegister(request).enqueue(object : Callback<RegisterWishResponse> {
             override fun onResponse(
-                call: Call<WishRegisterResponse>,
-                response: Response<WishRegisterResponse>
+                call: Call<RegisterWishResponse>,
+                response: Response<RegisterWishResponse>
             ) {
                 Log.d("REGISTER/SUCCESS", response.toString())
 
@@ -53,7 +53,7 @@ class WishService {
                     try {
                         if (!errorMsg.isNullOrEmpty()) {
                             val errorResponse =
-                                gson.fromJson(errorMsg, WishRegisterResponse::class.java)
+                                gson.fromJson(errorMsg, RegisterWishResponse::class.java)
                             wishRegisterView.onRegisterFailure(errorResponse.code)
                         } else {
                             wishRegisterView.onRegisterFailure("EMPTY_ERROR_BODY")
@@ -65,7 +65,7 @@ class WishService {
                 }
             }
 
-            override fun onFailure(call: Call<WishRegisterResponse>, t: Throwable) {
+            override fun onFailure(call: Call<RegisterWishResponse>, t: Throwable) {
                 Log.d("REGISTER/FAILURE", t.message.toString())
                 wishRegisterView.onRegisterFailure("NETWORK_ERROR")
             }

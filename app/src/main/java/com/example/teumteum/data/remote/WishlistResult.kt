@@ -1,5 +1,6 @@
-package com.example.teumteum.data.entities
+package com.example.teumteum.data.remote
 
+import com.example.teumteum.data.entities.WishlistItem
 import com.google.gson.annotations.SerializedName
 
 data class WishlistResult (

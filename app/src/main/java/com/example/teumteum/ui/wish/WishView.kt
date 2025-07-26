@@ -2,7 +2,7 @@ package com.example.teumteum.ui.wish
 
 import com.example.teumteum.data.entities.WishlistItem
 
-interface WishRegisterView {
+interface RegisterWishView {
     fun onRegisterSuccess(code: String)
     fun onRegisterFailure(code: String)
 }
