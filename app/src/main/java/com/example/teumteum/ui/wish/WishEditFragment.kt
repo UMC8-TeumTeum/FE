@@ -295,6 +295,7 @@ class WishEditFragment : BottomSheetDialogFragment(), WishView {
     override fun onGetWishSuccess(wish: Wish) {
 
         binding.wishTitleEt.setText(wish.title)
+        binding.detailTextEt.setText(wish.content)
         setupTimeButtons(wish.estimatedDuration)
         setupCategoryButtons(wish)
     }

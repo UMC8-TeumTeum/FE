@@ -14,6 +14,7 @@ data class WishItem(
 data class Wish(
     @SerializedName(value = "id") val id: Long,
     @SerializedName(value = "title") val title: String,
+    @SerializedName(value = "content") val content: String,
     @SerializedName(value = "estimatedDuration") val estimatedDuration: String,
     @SerializedName(value = "categories") val categories: List<WishCategory>
 )
