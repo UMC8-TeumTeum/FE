@@ -10,7 +10,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.teumteum.R
-import com.example.teumteum.data.remote.WishRegisterRequest
+import com.example.teumteum.data.remote.RegisterWishRequest
 import com.example.teumteum.data.remote.WishService
 import com.example.teumteum.databinding.FragmentWishRegisterBinding
 import com.example.teumteum.ui.todo.TodoRegisterFragment
@@ -19,7 +19,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
 
-class WishRegisterFragment : BottomSheetDialogFragment(), WishView {
+class WishRegisterFragment : BottomSheetDialogFragment(), RegisterWishView {
 
     private lateinit var binding: FragmentWishRegisterBinding
     private var selectedTimeButton: View? = null
@@ -171,13 +171,13 @@ class WishRegisterFragment : BottomSheetDialogFragment(), WishView {
         return dialog
     }
 
-    private fun getWishRequest(): WishRegisterRequest {
+    private fun getWishRequest(): RegisterWishRequest {
         val title = binding.wishTitleEt.text.toString()
         val content = binding.detailTextEt.text.toString()
-        val estimatedDuration = (selectedTimeButton as MaterialButton).text.toString()
+        val estimatedDuration = (selectedTimeButton as MaterialButton).tag.toString()
         val categories = selectedCategoryButtons.mapNotNull { it.tag as? Long }
 
-        return WishRegisterRequest(
+        return RegisterWishRequest(
             title = title,
             content = content,
             estimatedDuration = estimatedDuration,
@@ -204,12 +204,15 @@ class WishRegisterFragment : BottomSheetDialogFragment(), WishView {
         val request = getWishRequest()
 
         val wishService = WishService()
-        wishService.setWishView(this)
-        wishService.wishRegister(request)
+        wishService.setWishRegisterView(this)
+        wishService.registerWish(request)
     }
 
     override fun onRegisterSuccess(code: String) {
         Toast.makeText(requireContext(), "위시가 성공적으로 등록되었습니다.", Toast.LENGTH_SHORT).show()
+
+        // 이벤트 전송
+        parentFragmentManager.setFragmentResult("wish_register", Bundle())
 
         // 모든 바텀시트 닫기
         (requireActivity().supportFragmentManager.fragments).forEach {
