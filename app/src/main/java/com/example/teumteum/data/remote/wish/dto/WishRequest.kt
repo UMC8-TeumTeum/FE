@@ -8,3 +8,10 @@ data class RegisterWishRequest(
     @SerializedName(value = "estimatedDuration") val estimatedDuration: String,
     @SerializedName(value = "categories") val categories: List<Long>
 )
+
+data class EditWishRequest(
+    @SerializedName(value = "title") val title: String,
+    @SerializedName(value = "content") val content: String,
+    @SerializedName(value = "estimatedDuration") val estimatedDuration: String,
+    @SerializedName(value = "categories") val categories: List<Long>
+)
