@@ -24,10 +24,10 @@ class WishlistRVAdapter(private var wishlist: List<WishlistItem>, private val fr
         binding.wishTitleTv.text = item.title
         binding.wishTimeTv.text = item.estimatedDuration
 
-//        binding.root.setOnClickListener {
-//            val bottomSheet = WishEditFragment.newInstanceWithWishDummy(item)
-//            bottomSheet.show(fragmentManager, bottomSheet.tag)
-//        }
+        binding.root.setOnClickListener {
+            val bottomSheet = WishEditFragment.newInstance(item.id)
+            bottomSheet.show(fragmentManager, bottomSheet.tag)
+        }
 
         binding.fillButton.setOnClickListener {
             val fragment = WishSetting01Fragment().apply {

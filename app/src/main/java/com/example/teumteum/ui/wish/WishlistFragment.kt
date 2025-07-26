@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.teumteum.R
-import com.example.teumteum.data.entities.WishItem
 import com.example.teumteum.data.entities.WishlistItem
 import com.example.teumteum.data.remote.WishService
 import com.example.teumteum.databinding.FragmentWishlistBinding
@@ -77,7 +76,7 @@ class WishlistFragment() : Fragment(), WishlistView {
             refreshWishlist()
         }
 
-        get(duration = "all", page = 1)
+        getList(duration = "all", page = 1)
 
     }
 
@@ -138,15 +137,14 @@ class WishlistFragment() : Fragment(), WishlistView {
         }
     }
 
-    private fun get(duration: String, page: Int) {
-
+    private fun getList(duration: String, page: Int) {
         val wishService = WishService()
         wishService.setWishlistGetView(this)
         wishService.getWishlist(duration, page)
     }
 
-    fun refreshWishlist() {
-        get(duration = "all", page = 1)
+    private fun refreshWishlist() {
+        getList(duration = "all", page = 1)
     }
 
     override fun onGetWishListSuccess(wishlist: List<WishlistItem>) {
@@ -166,6 +164,4 @@ class WishlistFragment() : Fragment(), WishlistView {
         }
         Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
     }
-
-
 }

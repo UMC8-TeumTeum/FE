@@ -4,6 +4,7 @@ import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface WishRetrofitInterface {
@@ -13,4 +14,7 @@ interface WishRetrofitInterface {
 
     @GET("/api/wishes/wishlist")
     fun getWishlist(@Query("duration") duration: String, @Query("page") page: Int): Call<GetWishlistResponse>
+
+    @GET("/api/wishes/{wishId}")
+    fun getWish(@Path("wishId") wishId: Long): Call<GetWishResponse>
 }

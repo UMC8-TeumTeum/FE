@@ -1,5 +1,6 @@
 package com.example.teumteum.ui.wish
 
+import com.example.teumteum.data.entities.Wish
 import com.example.teumteum.data.entities.WishlistItem
 
 interface RegisterWishView {
@@ -10,4 +11,9 @@ interface RegisterWishView {
 interface WishlistView {
     fun onGetWishListSuccess(wishlist: List<WishlistItem>)
     fun onGetWishListFailure(code: String, message: String? = null)
+}
+
+interface WishView {
+    fun onGetWishSuccess(wish: Wish)
+    fun onGetWishFailure(code: String, message: String? = null)
 }

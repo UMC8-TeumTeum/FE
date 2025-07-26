@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.RegisterWishRequest
 import com.example.teumteum.data.remote.WishService
@@ -118,22 +117,21 @@ class WishRegisterFragment : BottomSheetDialogFragment(), RegisterWishView {
             button.tag = categoryIds[index]
 
             button.setOnClickListener {
-                val materialButton = button
 
-                if (selectedCategoryButtons.contains(materialButton)) {
+                if (selectedCategoryButtons.contains(button)) {
                     // 이미 선택된 경우 → 선택 해제
-                    selectedCategoryButtons.remove(materialButton)
-                    materialButton.backgroundTintList = ColorStateList.valueOf(
+                    selectedCategoryButtons.remove(button)
+                    button.backgroundTintList = ColorStateList.valueOf(
                         resources.getColor(R.color.main_2, null)
                     )
-                    materialButton.setTextColor(resources.getColor(R.color.text_primary, null))
+                    button.setTextColor(resources.getColor(R.color.text_primary, null))
                 } else {
                     // 선택 안 된 경우 → 추가
-                    selectedCategoryButtons.add(materialButton)
-                    materialButton.backgroundTintList = ColorStateList.valueOf(
+                    selectedCategoryButtons.add(button)
+                    button.backgroundTintList = ColorStateList.valueOf(
                         resources.getColor(R.color.main_1, null)
                     )
-                    materialButton.setTextColor(resources.getColor(R.color.white, null))
+                    button.setTextColor(resources.getColor(R.color.white, null))
                 }
             }
         }
@@ -223,7 +221,7 @@ class WishRegisterFragment : BottomSheetDialogFragment(), RegisterWishView {
     }
 
     override fun onRegisterFailure(code: String) {
-        val message = when (code) {
+        val errorMessage = when (code) {
             "COMMON400" -> "제목 또는 카테고리가 비어있습니다."
             "HOME4042" -> "해당 카테고리를 찾을 수 없습니다."
             "HOME4091" -> "이미 동일한 위시가 존재합니다."
@@ -231,6 +229,6 @@ class WishRegisterFragment : BottomSheetDialogFragment(), RegisterWishView {
             "PARSE_ERROR" -> "서버 응답을 해석할 수 없습니다."
             else -> "등록에 실패했습니다. 다시 시도해주세요."
         }
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
     }
 }

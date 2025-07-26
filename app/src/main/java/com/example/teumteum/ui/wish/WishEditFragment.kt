@@ -11,7 +11,9 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.example.teumteum.R
+import com.example.teumteum.data.entities.Wish
 import com.example.teumteum.data.entities.WishItem
+import com.example.teumteum.data.remote.WishService
 import com.example.teumteum.databinding.DialogConfirmWishDeleteBinding
 import com.example.teumteum.databinding.DialogConfirmWishEditBinding
 import com.example.teumteum.databinding.FragmentWishEditBinding
@@ -20,18 +22,18 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
 
-class WishEditFragment : BottomSheetDialogFragment() {
+class WishEditFragment : BottomSheetDialogFragment(), WishView {
 
     private lateinit var binding: FragmentWishEditBinding
-    private var wishId: Int = -1
+    private var wishId: Long = -1L
 
     private var selectedTimeButton: View? = null
     private var selectedCategoryButton: View? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        wishId = arguments?.getInt("wish_id") ?: -1
-    }
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//        wishId = arguments?.getInt("wish_id") ?: -1
+//    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,16 +47,18 @@ class WishEditFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val isDummy = arguments?.getBoolean("is_dummy") ?: false
-        if (isDummy) {
-            val title = arguments?.getString("title") ?: ""
-            val time = arguments?.getString("time") ?: ""
-            val category = arguments?.getString("category") ?: ""
+        wishId = arguments?.getLong("wish_id") ?: -1L
 
-            binding.wishTitleEt.setText(title)
-            setupTimeButtons(time)
-            setupCategoryButtons(category)
-        }
+//        val isDummy = arguments?.getBoolean("is_dummy") ?: false
+//        if (isDummy) {
+//            val title = arguments?.getString("title") ?: ""
+//            val time = arguments?.getString("time") ?: ""
+//            val category = arguments?.getString("category") ?: ""
+//
+//            binding.wishTitleEt.setText(title)
+//            setupTimeButtons(time)
+//            setupCategoryButtons(category)
+//        }
 
         binding.btnWishSave.setOnClickListener {
             val titleText = binding.wishTitleEt.text.toString().trim()
@@ -71,6 +75,10 @@ class WishEditFragment : BottomSheetDialogFragment() {
 
         binding.btnWishDelete.setOnClickListener {
             showWishDummyDeleteDialog()
+        }
+
+        if (wishId != -1L) {
+            get(wishId)
         }
 
     }
@@ -114,20 +122,6 @@ class WishEditFragment : BottomSheetDialogFragment() {
         }
 
         return dialog
-    }
-
-    companion object {
-        fun newInstanceWithWishDummy(item: WishItem): WishEditFragment {
-            return WishEditFragment().apply {
-                arguments = Bundle().apply {
-                    putBoolean("is_dummy", true)
-                    putInt("wish_id", item.id)
-                    putString("title", item.title)
-                    putString("time", item.time)
-                    putString("category", item.category)
-                }
-            }
-        }
     }
 
     private fun showWishDummyDeleteDialog() {
@@ -211,21 +205,24 @@ class WishEditFragment : BottomSheetDialogFragment() {
             binding.btnWishTime04
         )
 
-        for (button in timeButtons) {
-            if (button.text == currentTime) {
+        val timeTags = listOf("10m", "20m", "30m", "1h")
+        timeButtons.forEachIndexed { index, button ->
+            button.tag = timeTags[index] // tag 지정
+
+            if (button.tag == currentTime) {
                 // 선택 상태로 초기 세팅
                 button.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.main_1, null))
                 button.setTextColor(resources.getColor(R.color.white, null))
                 selectedTimeButton = button
             } else {
                 button.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.main_2, null))
-                button.setTextColor(resources.getColor(R.color.black, null))
+                button.setTextColor(resources.getColor(R.color.text_primary, null))
             }
 
             button.setOnClickListener {
                 (selectedTimeButton as? MaterialButton)?.apply {
                     backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.main_2, null))
-                    setTextColor(resources.getColor(R.color.black, null))
+                    setTextColor(resources.getColor(R.color.text_primary, null))
                 }
 
                 button.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.main_1, null))
@@ -236,7 +233,7 @@ class WishEditFragment : BottomSheetDialogFragment() {
         }
     }
 
-    private fun setupCategoryButtons(currentCategory: String) {
+    private fun setupCategoryButtons(wish: Wish) {
         val categoryButtons = listOf(
             binding.btnWishCategory01,
             binding.btnWishCategory02,
@@ -246,20 +243,29 @@ class WishEditFragment : BottomSheetDialogFragment() {
             binding.btnWishCategory06
         )
 
+        val categoryIds = listOf(1L, 2L, 3L, 4L, 5L, 6L)
+        categoryButtons.forEachIndexed { index, button ->
+            button.tag = categoryIds[index]
+        }
+
+        val selectedCategoryIds = wish.categories.map { it.id }
+
         for (button in categoryButtons) {
-            if (button.text == currentCategory) {
+            val isSelected = selectedCategoryIds.contains(button.tag as Long)
+
+            if (isSelected) {
                 button.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.main_1, null))
                 button.setTextColor(resources.getColor(R.color.white, null))
                 selectedCategoryButton = button
             } else {
                 button.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.main_2, null))
-                button.setTextColor(resources.getColor(R.color.black, null))
+                button.setTextColor(resources.getColor(R.color.text_primary, null))
             }
 
             button.setOnClickListener {
                 (selectedCategoryButton as? MaterialButton)?.apply {
                     backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.main_2, null))
-                    setTextColor(resources.getColor(R.color.black, null))
+                    setTextColor(resources.getColor(R.color.text_primary, null))
                 }
 
                 button.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.main_1, null))
@@ -268,5 +274,39 @@ class WishEditFragment : BottomSheetDialogFragment() {
                 selectedCategoryButton = button
             }
         }
+    }
+
+    companion object {
+        fun newInstance(wishId: Long): WishEditFragment {
+            return WishEditFragment().apply {
+                arguments = Bundle().apply {
+                    putLong("wish_id", wishId)
+                }
+            }
+        }
+    }
+
+    private fun get(wishId: Long) {
+        val wishService = WishService()
+        wishService.setWishGetView(this)
+        wishService.getWish(wishId)
+    }
+
+    override fun onGetWishSuccess(wish: Wish) {
+
+        binding.wishTitleEt.setText(wish.title)
+        setupTimeButtons(wish.estimatedDuration)
+        setupCategoryButtons(wish)
+    }
+
+    override fun onGetWishFailure(code: String, message: String?) {
+        val errorMessage = when (code) {
+            "HOME4043" -> "해당 위시 정보를 찾을 수 없습니다."
+            "COMMON500" -> "서버 오류입니다. 관리자에게 문의해주세요."
+            "NETWORK_ERROR" -> "네트워크 오류가 발생했습니다."
+            "PARSE_ERROR" -> "서버 응답을 해석할 수 없습니다."
+            else -> "위시 조회에 실패했습니다. 다시 시도해주세요."
+        }
+        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
     }
 }
