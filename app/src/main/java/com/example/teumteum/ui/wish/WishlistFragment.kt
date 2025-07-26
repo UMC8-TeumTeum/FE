@@ -5,19 +5,23 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.teumteum.R
 import com.example.teumteum.data.entities.WishItem
+import com.example.teumteum.data.entities.WishlistItem
+import com.example.teumteum.data.remote.WishService
 import com.example.teumteum.databinding.FragmentWishlistBinding
 import com.example.teumteum.utils.applyBlurShadow
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.button.MaterialButton
 
-class WishlistFragment(private val wishlist: MutableList<WishItem>) : Fragment() {
+class WishlistFragment() : Fragment(), WishlistView {
 
     private lateinit var binding: FragmentWishlistBinding
-
     private lateinit var adapter: WishlistRVAdapter
+
+    private var wishlist: List<WishlistItem> = emptyList()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -26,12 +30,12 @@ class WishlistFragment(private val wishlist: MutableList<WishItem>) : Fragment()
     ): View {
         binding = FragmentWishlistBinding.inflate(inflater, container, false)
 
-        binding.editTv.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, WishlistEditFragment(wishlist))
-                .addToBackStack(null)
-                .commit()
-        }
+//        binding.editTv.setOnClickListener {
+//            parentFragmentManager.beginTransaction()
+//                .replace(R.id.main_frm, WishlistEditFragment(wishlist))
+//                .addToBackStack(null)
+//                .commit()
+//        }
 
         binding.fabAddIv.setOnClickListener {
             val bottomSheet = WishRegisterFragment().apply {
@@ -67,6 +71,7 @@ class WishlistFragment(private val wishlist: MutableList<WishItem>) : Fragment()
         }
 
         setupTimeFilterButtons()
+        get(duration = "all", page = 1)
     }
 
     private fun setupTimeFilterButtons() {
@@ -82,25 +87,25 @@ class WishlistFragment(private val wishlist: MutableList<WishItem>) : Fragment()
         }
 
         button10m.setOnClickListener {
-            val filtered = wishlist.filter { it.time == "10m" }
+            val filtered = wishlist.filter { it.estimatedDuration == "10m" }
             adapter.updateList(filtered)
             updateTimeButtonUI(button10m)
         }
 
         button20m.setOnClickListener {
-            val filtered = wishlist.filter { it.time == "20m" }
+            val filtered = wishlist.filter { it.estimatedDuration == "20m" }
             adapter.updateList(filtered)
             updateTimeButtonUI(button20m)
         }
 
         button30m.setOnClickListener {
-            val filtered = wishlist.filter { it.time == "30m" }
+            val filtered = wishlist.filter { it.estimatedDuration == "30m" }
             adapter.updateList(filtered)
             updateTimeButtonUI(button30m)
         }
 
         button1h.setOnClickListener {
-            val filtered = wishlist.filter { it.time == "1h~" }
+            val filtered = wishlist.filter { it.estimatedDuration == "1h" }
             adapter.updateList(filtered)
             updateTimeButtonUI(button1h)
         }
@@ -124,6 +129,29 @@ class WishlistFragment(private val wishlist: MutableList<WishItem>) : Fragment()
                 button.setTextColor(resources.getColor(R.color.text_primary, null))
             }
         }
+    }
+
+    private fun get(duration: String, page: Int) {
+
+        val wishService = WishService()
+        wishService.setWishlistGetView(this)
+        wishService.getWishlist(duration, page)
+    }
+
+    override fun onGetWishListSuccess(wishlist: List<WishlistItem>) {
+        this.wishlist = wishlist
+        adapter.updateList(wishlist)
+    }
+
+    override fun onGetWishListFailure(code: String, message: String?) {
+        val errorMessage = message ?: when (code) {
+            "HOME4002" -> "잘못된 조회 기간입니다. (all, 10m, 20m, 30m, 1h만 입력 가능)"
+            "COMMON500" -> "서버 오류입니다. 관리자에게 문의해주세요."
+            "NETWORK_ERROR" -> "네트워크 오류가 발생했습니다."
+            "PARSE_ERROR" -> "서버 응답을 해석할 수 없습니다."
+            else -> "위시리스트 조회에 실패했습니다. 다시 시도해주세요."
+        }
+        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
     }
 
 

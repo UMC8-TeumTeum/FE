@@ -29,7 +29,7 @@ class WishlistEditFragment(private val wishlist: MutableList<WishItem>) : Fragme
         // 변경 내용 적용 후 이동
         binding.completeTv.setOnClickListener {
             parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, WishlistFragment(editedWishlist))
+                .replace(R.id.main_frm, WishlistFragment())
                 .commit()
         }
 

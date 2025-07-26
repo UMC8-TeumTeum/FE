@@ -19,7 +19,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
 
-class WishRegisterFragment : BottomSheetDialogFragment(), WishView {
+class WishRegisterFragment : BottomSheetDialogFragment(), WishRegisterView {
 
     private lateinit var binding: FragmentWishRegisterBinding
     private var selectedTimeButton: View? = null
@@ -204,7 +204,7 @@ class WishRegisterFragment : BottomSheetDialogFragment(), WishView {
         val request = getWishRequest()
 
         val wishService = WishService()
-        wishService.setWishView(this)
+        wishService.setWishRegisterView(this)
         wishService.wishRegister(request)
     }
 

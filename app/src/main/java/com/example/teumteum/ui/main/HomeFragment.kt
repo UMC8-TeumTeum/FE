@@ -17,6 +17,7 @@ import com.example.teumteum.ui.calendar.CalendarMode
 
 import com.example.teumteum.data.entities.TodoHomeItem
 import com.example.teumteum.data.entities.WishItem
+import com.example.teumteum.data.entities.WishlistItem
 import com.example.teumteum.ui.alarm.AlarmFragment
 import com.example.teumteum.ui.calendar.CalendarVPAdapter
 import com.example.teumteum.ui.filling.FillingActivity01Fragment
@@ -44,19 +45,19 @@ class HomeFragment : Fragment(), IDateClickListener {
         TodoHomeItem(3, "중랑천 산책", "오후 6:30", "오후 8:00", isPublic = false, isAlarmOn = false)
     )
 
-    private var wishDummyList = mutableListOf(
-        WishItem(1, "화분 물 주기", "10m", "일상"),
-        WishItem(2, "무신사 아이 쇼핑", "10m", "일상"),
-        WishItem(3, "뜨개질하기", "30m", "취미"),
-        WishItem(4, "피그마 파일 정리", "20m", "일상"),
-        WishItem(5, "인센스 & 명상", "10m", "휴식"),
-        WishItem(6, "방 구조 바꾸기", "30m", "일상"),
-        WishItem(7, "매거진 3장 읽기", "10m", "일상"),
-        WishItem(8, "사진첩 정리", "30m", "일상"),
-        WishItem(9, "중랑천 산책", "1h~", "운동"),
-        WishItem(10, "테스트용1", "10m", "문화생활"),
-        WishItem(11, "테스트용2", "20m", "자기계발")
-    )
+//    private var wishDummyList = mutableListOf(
+//        WishItem(1, "화분 물 주기", "10m", "일상"),
+//        WishItem(2, "무신사 아이 쇼핑", "10m", "일상"),
+//        WishItem(3, "뜨개질하기", "30m", "취미"),
+//        WishItem(4, "피그마 파일 정리", "20m", "일상"),
+//        WishItem(5, "인센스 & 명상", "10m", "휴식"),
+//        WishItem(6, "방 구조 바꾸기", "30m", "일상"),
+//        WishItem(7, "매거진 3장 읽기", "10m", "일상"),
+//        WishItem(8, "사진첩 정리", "30m", "일상"),
+//        WishItem(9, "중랑천 산책", "1h~", "운동"),
+//        WishItem(10, "테스트용1", "10m", "문화생활"),
+//        WishItem(11, "테스트용2", "20m", "자기계발")
+//    )
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -94,7 +95,7 @@ class HomeFragment : Fragment(), IDateClickListener {
 
         binding.btnLoadWishlistTv.setOnClickListener {
             parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, WishlistFragment(wishDummyList))
+                .replace(R.id.main_frm, WishlistFragment())
                 .addToBackStack(null)
                 .commit()
         }

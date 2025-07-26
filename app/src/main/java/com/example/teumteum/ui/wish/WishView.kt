@@ -1,6 +1,13 @@
 package com.example.teumteum.ui.wish
 
-interface WishView {
-    fun onRegisterSuccess(code : String)
-    fun onRegisterFailure(code : String)
+import com.example.teumteum.data.entities.WishlistItem
+
+interface WishRegisterView {
+    fun onRegisterSuccess(code: String)
+    fun onRegisterFailure(code: String)
+}
+
+interface WishlistView {
+    fun onGetWishListSuccess(wishlist: List<WishlistItem>)
+    fun onGetWishListFailure(code: String, message: String? = null)
 }
