@@ -211,6 +211,9 @@ class WishRegisterFragment : BottomSheetDialogFragment(), WishRegisterView {
     override fun onRegisterSuccess(code: String) {
         Toast.makeText(requireContext(), "위시가 성공적으로 등록되었습니다.", Toast.LENGTH_SHORT).show()
 
+        // 이벤트 전송
+        parentFragmentManager.setFragmentResult("wish_register", Bundle())
+
         // 모든 바텀시트 닫기
         (requireActivity().supportFragmentManager.fragments).forEach {
             if (it is BottomSheetDialogFragment) {

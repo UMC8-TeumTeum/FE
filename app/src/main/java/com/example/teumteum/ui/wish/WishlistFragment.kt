@@ -71,7 +71,14 @@ class WishlistFragment() : Fragment(), WishlistView {
         }
 
         setupTimeFilterButtons()
+
+        // 위시 등록 성공 이벤트 수신
+        parentFragmentManager.setFragmentResultListener("wish_register", viewLifecycleOwner) { _, _ ->
+            refreshWishlist()
+        }
+
         get(duration = "all", page = 1)
+
     }
 
     private fun setupTimeFilterButtons() {
@@ -136,6 +143,10 @@ class WishlistFragment() : Fragment(), WishlistView {
         val wishService = WishService()
         wishService.setWishlistGetView(this)
         wishService.getWishlist(duration, page)
+    }
+
+    fun refreshWishlist() {
+        get(duration = "all", page = 1)
     }
 
     override fun onGetWishListSuccess(wishlist: List<WishlistItem>) {
