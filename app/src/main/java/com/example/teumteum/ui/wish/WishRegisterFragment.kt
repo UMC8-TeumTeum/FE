@@ -174,7 +174,7 @@ class WishRegisterFragment : BottomSheetDialogFragment(), WishRegisterView {
     private fun getWishRequest(): WishRegisterRequest {
         val title = binding.wishTitleEt.text.toString()
         val content = binding.detailTextEt.text.toString()
-        val estimatedDuration = (selectedTimeButton as MaterialButton).text.toString()
+        val estimatedDuration = (selectedTimeButton as MaterialButton).tag.toString()
         val categories = selectedCategoryButtons.mapNotNull { it.tag as? Long }
 
         return WishRegisterRequest(
