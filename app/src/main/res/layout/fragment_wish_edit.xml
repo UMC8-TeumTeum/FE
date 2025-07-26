@@ -121,7 +121,7 @@
                             android:src="@drawable/ic_detail_text_sv" />
 
                         <EditText
-                            android:id="@+id/detail_text_et_02"
+                            android:id="@+id/detail_text_et"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@color/transparent"

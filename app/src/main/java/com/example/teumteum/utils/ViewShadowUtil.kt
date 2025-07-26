@@ -1,4 +1,4 @@
-package com.example.teumteum.util
+package com.example.teumteum.utils
 
 import android.graphics.*
 import android.graphics.Bitmap.createBitmap

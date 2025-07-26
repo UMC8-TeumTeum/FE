@@ -6,9 +6,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.teumteum.R
+import com.example.teumteum.data.remote.WishRegisterRequest
+import com.example.teumteum.data.remote.WishService
 import com.example.teumteum.databinding.FragmentWishRegisterBinding
 import com.example.teumteum.ui.todo.TodoRegisterFragment
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -16,11 +19,11 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
 
-class WishRegisterFragment : BottomSheetDialogFragment() {
+class WishRegisterFragment : BottomSheetDialogFragment(), WishView {
 
     private lateinit var binding: FragmentWishRegisterBinding
     private var selectedTimeButton: View? = null
-    private var selectedCategoryButton: View? = null
+    private val selectedCategoryButtons = mutableListOf<MaterialButton>()
 
     private var isWishSelected = true
     private var isFromWish: Boolean = false
@@ -60,6 +63,10 @@ class WishRegisterFragment : BottomSheetDialogFragment() {
             }
         }
 
+        binding.btnWishRegister.setOnClickListener {
+            register()
+        }
+
         setupTimeButtons()
         setupCategoryButtons()
     }
@@ -72,7 +79,10 @@ class WishRegisterFragment : BottomSheetDialogFragment() {
             binding.btnWishTime04
         )
 
-        for (button in timeButtons) {
+        val timeTags = listOf("10m", "20m", "30m", "1h")
+        timeButtons.forEachIndexed { index, button ->
+            button.tag = timeTags[index]  // tag 지정
+
             button.setOnClickListener {
                 (selectedTimeButton as? MaterialButton)?.apply {
                     backgroundTintList = ColorStateList.valueOf(
@@ -103,23 +113,28 @@ class WishRegisterFragment : BottomSheetDialogFragment() {
             binding.btnWishCategory06
         )
 
-        for (button in categoryButtons) {
+        val categoryIds = listOf(1L, 2L, 3L, 4L, 5L, 6L)
+        categoryButtons.forEachIndexed { index, button ->
+            button.tag = categoryIds[index]
+
             button.setOnClickListener {
-                (selectedCategoryButton as? MaterialButton)?.apply {
-                    backgroundTintList = ColorStateList.valueOf(
+                val materialButton = button
+
+                if (selectedCategoryButtons.contains(materialButton)) {
+                    // 이미 선택된 경우 → 선택 해제
+                    selectedCategoryButtons.remove(materialButton)
+                    materialButton.backgroundTintList = ColorStateList.valueOf(
                         resources.getColor(R.color.main_2, null)
                     )
-                    setTextColor(resources.getColor(R.color.text_primary, null))
-                }
-
-                (button as? MaterialButton)?.apply {
-                    backgroundTintList = ColorStateList.valueOf(
+                    materialButton.setTextColor(resources.getColor(R.color.text_primary, null))
+                } else {
+                    // 선택 안 된 경우 → 추가
+                    selectedCategoryButtons.add(materialButton)
+                    materialButton.backgroundTintList = ColorStateList.valueOf(
                         resources.getColor(R.color.main_1, null)
                     )
-                    setTextColor(resources.getColor(R.color.white, null))
+                    materialButton.setTextColor(resources.getColor(R.color.white, null))
                 }
-
-                selectedCategoryButton = button
             }
         }
     }
@@ -154,5 +169,59 @@ class WishRegisterFragment : BottomSheetDialogFragment() {
         }
 
         return dialog
+    }
+
+    private fun getWishRequest(): WishRegisterRequest {
+        val title = binding.wishTitleEt.text.toString()
+        val content = binding.detailTextEt.text.toString()
+        val estimatedDuration = (selectedTimeButton as MaterialButton).text.toString()
+        val categories = selectedCategoryButtons.mapNotNull { it.tag as? Long }
+
+        return WishRegisterRequest(
+            title = title,
+            content = content,
+            estimatedDuration = estimatedDuration,
+            categories = categories
+        )
+    }
+
+    private fun register() {
+        if (binding.wishTitleEt.text.toString().isEmpty()) {
+            Toast.makeText(requireContext(), "제목을 입력해주세요.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (selectedTimeButton == null) {
+            Toast.makeText(requireContext(), "시간을 선택해주세요.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (selectedCategoryButtons.isEmpty()) {
+            Toast.makeText(requireContext(), "카테고리를 1개 이상 선택해주세요.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val request = getWishRequest()
+
+        val wishService = WishService()
+        wishService.setWishView(this)
+        wishService.wishRegister(request)
+    }
+
+    override fun onRegisterSuccess(code: String) {
+        Toast.makeText(requireContext(), "위시가 성공적으로 등록되었습니다.", Toast.LENGTH_SHORT).show()
+        dismiss()
+    }
+
+    override fun onRegisterFailure(code: String) {
+        val message = when (code) {
+            "COMMON400" -> "제목 또는 카테고리가 비어있습니다."
+            "HOME4042" -> "해당 카테고리를 찾을 수 없습니다."
+            "HOME4091" -> "이미 동일한 위시가 존재합니다."
+            "NETWORK_ERROR" -> "네트워크 오류가 발생했습니다."
+            "PARSE_ERROR" -> "서버 응답을 해석할 수 없습니다."
+            else -> "등록에 실패했습니다. 다시 시도해주세요."
+        }
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 }
