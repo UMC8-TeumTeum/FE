@@ -61,6 +61,7 @@
                     android:inputType="textMultiLine"
                     android:maxLines="5"
                     android:minHeight="28dp"
+                    android:textColorHint="@color/text_primary"
                     android:textColor="@color/text_primary"
                     android:textSize="20sp" />
 
