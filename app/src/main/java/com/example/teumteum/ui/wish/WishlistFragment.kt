@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import com.example.teumteum.R
 import com.example.teumteum.data.entities.WishItem
 import com.example.teumteum.databinding.FragmentWishlistBinding
-import com.example.teumteum.util.applyBlurShadow
+import com.example.teumteum.utils.applyBlurShadow
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.button.MaterialButton
 

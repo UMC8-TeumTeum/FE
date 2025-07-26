@@ -10,7 +10,7 @@ import com.example.teumteum.data.entities.AiRecommend
 import com.example.teumteum.data.entities.WishRecommend
 import com.example.teumteum.databinding.FragmentFillingActivity02Binding
 import com.example.teumteum.ui.friend.FriendFragment
-import com.example.teumteum.util.applyBlurShadow
+import com.example.teumteum.utils.applyBlurShadow
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class FillingActivity02Fragment : Fragment() {

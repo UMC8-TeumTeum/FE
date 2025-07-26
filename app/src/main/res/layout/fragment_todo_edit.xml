@@ -69,6 +69,8 @@
                         android:fontFamily="@font/noto_sans_kr_medium"
                         android:gravity="top|start"
                         android:hint="새로운 투두를 작성해주세요"
+                        android:textColorHint="@color/text_primary"
+                        android:textColor="@color/text_primary"
                         android:inputType="textMultiLine"
                         android:maxLines="5"
                         android:minHeight="28dp"

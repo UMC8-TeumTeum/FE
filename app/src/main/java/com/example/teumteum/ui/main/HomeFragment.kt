@@ -1,11 +1,6 @@
 package com.example.teumteum.ui.main
 
 import android.content.res.ColorStateList
-import android.graphics.Bitmap
-import android.graphics.BlurMaskFilter
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -32,8 +27,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-import androidx.core.graphics.createBitmap
-import com.example.teumteum.util.applyBlurShadow
+import com.example.teumteum.utils.applyBlurShadow
 
 class HomeFragment : Fragment(), IDateClickListener {
 

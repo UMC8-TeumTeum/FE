@@ -13,6 +13,7 @@
 .externalNativeBuild
 .cxx
 local.properties
+**/AuthToken.kt
 
 # Created by https://www.toptal.com/developers/gitignore/api/androidstudio,android
 # Edit at https://www.toptal.com/developers/gitignore?templates=androidstudio,android
