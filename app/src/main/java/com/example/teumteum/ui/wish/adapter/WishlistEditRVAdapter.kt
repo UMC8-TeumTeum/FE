@@ -13,8 +13,6 @@ import com.example.teumteum.databinding.ItemWishlistEditBinding
 
 class WishlistEditRVAdapter(private val wishlist: MutableList<WishlistItem>) : RecyclerView.Adapter<WishlistEditRVAdapter.ViewHolder>() {
 
-    private val isCheckedList = MutableList(wishlist.size) { false }
-
     inner class ViewHolder(val binding: ItemWishlistEditBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
@@ -47,9 +45,7 @@ class WishlistEditRVAdapter(private val wishlist: MutableList<WishlistItem>) : R
     override fun getItemCount(): Int = wishlist.size
 
     fun cancelAllCheckedItems() {
-        for (i in isCheckedList.indices) {
-            isCheckedList[i] = false
-        }
+        wishlist.forEach { it.isChecked = false }
         notifyDataSetChanged()
     }
 
