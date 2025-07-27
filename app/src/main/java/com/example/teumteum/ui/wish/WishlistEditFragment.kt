@@ -25,8 +25,6 @@ class WishlistEditFragment() : Fragment(), DeleteWishesView {
     private lateinit var editedWishlist: MutableList<WishlistItem>
     private val wishlistViewModel: WishlistViewModel by activityViewModels()
 
-//    private val editedWishlist: MutableList<WishItem> = wishlist.map { it.copy() }.toMutableList() // 삭제 시 사용할 편집용 리스트
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -36,18 +34,6 @@ class WishlistEditFragment() : Fragment(), DeleteWishesView {
 
         // ViewModel에서 데이터 복사
         editedWishlist = wishlistViewModel.wishlistItems.map { it.copy() }.toMutableList()
-
-        // 변경 내용 적용 후 이동
-        binding.completeTv.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, WishlistFragment())
-                .commit()
-        }
-
-        // 변경 반영 없이 뒤로감
-        binding.backArrowIv.setOnClickListener {
-            parentFragmentManager.popBackStack()
-        }
 
         return binding.root
     }
@@ -66,13 +52,9 @@ class WishlistEditFragment() : Fragment(), DeleteWishesView {
 
     private fun setupButtons() {
         binding.btnWishDelete.setOnClickListener {
-            val selectedIds = adapter.getCheckedWishIdsAndRemove()
-
-            if (selectedIds.isNotEmpty()) {
-                val request = DeleteWishesRequest(selectedIds)
-                val service = WishService()
-                service.setWishDeleteView(this)
-                service.deleteWishes(request)
+            val deletedCount = adapter.markCheckedItemsAsDeleted()
+            if (deletedCount > 0) {
+                Toast.makeText(requireContext(), "${deletedCount}개 위시가 삭제되었어요.", Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(requireContext(), "삭제할 위시를 선택해주세요.", Toast.LENGTH_SHORT).show()
             }
@@ -82,14 +64,44 @@ class WishlistEditFragment() : Fragment(), DeleteWishesView {
             adapter.cancelAllCheckedItems()
             Toast.makeText(requireContext(), "선택이 모두 해제되었어요.", Toast.LENGTH_SHORT).show()
         }
+
+        binding.completeTv.setOnClickListener {
+            val deletedIds = editedWishlist.filter { it.isDeleted }.map { it.id }
+
+            if (deletedIds.isNotEmpty()) {
+                val request = DeleteWishesRequest(deletedIds)
+                val service = WishService()
+                service.setWishDeleteView(this)
+                service.deleteWishes(request)
+
+                // ViewModel에도 반영
+                wishlistViewModel.wishlistItems.removeAll { it.id in deletedIds }
+            }
+
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, WishlistFragment())
+                .commit()
+        }
+
+        binding.backArrowIv.setOnClickListener {
+            parentFragmentManager.popBackStack()
+        }
     }
 
     override fun onDeleteWishesSuccess(code: String, message: String?) {
-        Toast.makeText(requireContext(), "삭제가 완료되었어요!", Toast.LENGTH_SHORT).show()
+        val successMessage = message ?: "위시 정보가 성공적으로 삭제되었습니다."
+        Toast.makeText(requireContext(), successMessage, Toast.LENGTH_SHORT).show()
     }
 
     override fun onDeleteWishesFailure(code: String, message: String?) {
-        Toast.makeText(requireContext(), "삭제에 실패했어요. 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
+        val errorMessage = when (code) {
+            "HOME4043" -> "해당 위시 정보를 찾을 수 없습니다."
+            "HOME4042" -> "해당 카테고리를 찾을 수 없습니다."
+            "NETWORK_ERROR" -> "네트워크 오류가 발생했습니다."
+            "PARSE_ERROR" -> "서버 응답을 해석할 수 없습니다."
+            else -> message ?: "등록에 실패했습니다. 다시 시도해주세요."
+        }
+        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
     }
 
 }

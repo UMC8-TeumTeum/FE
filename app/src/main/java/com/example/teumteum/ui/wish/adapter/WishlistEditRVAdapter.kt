@@ -2,6 +2,7 @@ package com.example.teumteum.ui.wish.adapter
 
 import android.content.res.ColorStateList
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
 import androidx.core.content.ContextCompat
@@ -24,35 +25,26 @@ class WishlistEditRVAdapter(private val wishlist: MutableList<WishlistItem>) : R
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = wishlist[position]
         val binding = holder.binding
+
+        if (item.isDeleted) {
+            holder.itemView.visibility = View.GONE
+            holder.itemView.layoutParams = RecyclerView.LayoutParams(0, 0)
+            return
+        }
+
         binding.tvWishTitle.text = item.title
         binding.wishTimeTv.text = item.estimatedDuration
 
-        binding.wishCheckbox.setOnCheckedChangeListener(null)
-        binding.wishCheckbox.isChecked = isCheckedList[position]
-        setCheckBoxTint(binding.wishCheckbox, isCheckedList[position])
+        binding.wishCheckbox.isChecked = item.isChecked
+        setCheckBoxTint(binding.wishCheckbox, item.isChecked)
 
-        // 리스너 설정
         binding.wishCheckbox.setOnCheckedChangeListener { button, isChecked ->
-            isCheckedList[position] = isChecked
+            item.isChecked = isChecked
             setCheckBoxTint(button, isChecked)
         }
     }
 
     override fun getItemCount(): Int = wishlist.size
-
-    fun getCheckedWishIdsAndRemove(): List<Long> {
-        val checkedIds = mutableListOf<Long>()
-        val indicesToRemove = wishlist.indices.filter { isCheckedList[it] }.reversed()
-
-        indicesToRemove.forEach {
-            checkedIds.add(wishlist[it].id)  // 서버에 보낼 id 저장
-            wishlist.removeAt(it)
-            isCheckedList.removeAt(it)
-        }
-
-        notifyDataSetChanged()
-        return checkedIds
-    }
 
     fun cancelAllCheckedItems() {
         for (i in isCheckedList.indices) {
@@ -66,4 +58,15 @@ class WishlistEditRVAdapter(private val wishlist: MutableList<WishlistItem>) : R
         val colorRes = if (isChecked) R.color.main_1 else R.color.teumteum_deactive
         checkBox.buttonTintList = ColorStateList.valueOf(ContextCompat.getColor(context, colorRes))
     }
+
+    fun markCheckedItemsAsDeleted(): Int {
+        val deletedItems = wishlist.filter { it.isChecked && !it.isDeleted }
+        deletedItems.forEach {
+            it.isDeleted = true
+            it.isChecked = false
+        }
+        notifyDataSetChanged()
+        return deletedItems.size
+    }
+
 }
