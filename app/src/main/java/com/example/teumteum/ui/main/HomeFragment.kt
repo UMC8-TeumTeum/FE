@@ -1,11 +1,6 @@
 package com.example.teumteum.ui.main
 
 import android.content.res.ColorStateList
-import android.graphics.Bitmap
-import android.graphics.BlurMaskFilter
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -21,7 +16,6 @@ import com.example.teumteum.databinding.FragmentHomeBinding
 import com.example.teumteum.ui.calendar.CalendarMode
 
 import com.example.teumteum.data.entities.TodoHomeItem
-import com.example.teumteum.data.entities.WishItem
 import com.example.teumteum.ui.alarm.AlarmFragment
 import com.example.teumteum.ui.calendar.CalendarVPAdapter
 import com.example.teumteum.ui.filling.FillingActivity01Fragment
@@ -36,12 +30,12 @@ import com.example.teumteum.data.TimeBlock
 import com.example.teumteum.data.TimeType
 import com.example.teumteum.ui.clock.ChartUtils
 import com.example.teumteum.ui.clock.IconPieChartRenderer
-import com.example.teumteum.util.applyBlurShadow
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import kotlin.collections.map
+import com.example.teumteum.utils.applyBlurShadow
 
 class HomeFragment : Fragment(), IDateClickListener {
 
@@ -58,19 +52,19 @@ class HomeFragment : Fragment(), IDateClickListener {
         TodoHomeItem(3, "중랑천 산책", "오후 6:30", "오후 8:00", isPublic = false, isAlarmOn = false)
     )
 
-    private var wishDummyList = mutableListOf(
-        WishItem(1, "화분 물 주기", "10m", "일상"),
-        WishItem(2, "무신사 아이 쇼핑", "10m", "일상"),
-        WishItem(3, "뜨개질하기", "30m", "취미"),
-        WishItem(4, "피그마 파일 정리", "20m", "일상"),
-        WishItem(5, "인센스 & 명상", "10m", "휴식"),
-        WishItem(6, "방 구조 바꾸기", "30m", "일상"),
-        WishItem(7, "매거진 3장 읽기", "10m", "일상"),
-        WishItem(8, "사진첩 정리", "30m", "일상"),
-        WishItem(9, "중랑천 산책", "1h~", "운동"),
-        WishItem(10, "테스트용1", "10m", "문화생활"),
-        WishItem(11, "테스트용2", "20m", "자기계발")
-    )
+//    private var wishDummyList = mutableListOf(
+//        WishItem(1, "화분 물 주기", "10m", "일상"),
+//        WishItem(2, "무신사 아이 쇼핑", "10m", "일상"),
+//        WishItem(3, "뜨개질하기", "30m", "취미"),
+//        WishItem(4, "피그마 파일 정리", "20m", "일상"),
+//        WishItem(5, "인센스 & 명상", "10m", "휴식"),
+//        WishItem(6, "방 구조 바꾸기", "30m", "일상"),
+//        WishItem(7, "매거진 3장 읽기", "10m", "일상"),
+//        WishItem(8, "사진첩 정리", "30m", "일상"),
+//        WishItem(9, "중랑천 산책", "1h~", "운동"),
+//        WishItem(10, "테스트용1", "10m", "문화생활"),
+//        WishItem(11, "테스트용2", "20m", "자기계발")
+//    )
 
     private val fullDaySchedule = listOf(
         TimeBlock(0, 360, TimeType.SLEEP),   // 00:00 ~ 06:00
@@ -122,7 +116,7 @@ class HomeFragment : Fragment(), IDateClickListener {
 
         binding.btnLoadWishlistTv.setOnClickListener {
             parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, WishlistFragment(wishDummyList))
+                .replace(R.id.main_frm, WishlistFragment())
                 .addToBackStack(null)
                 .commit()
         }

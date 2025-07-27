@@ -9,7 +9,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentMonthlyCalendarBinding
-import com.example.teumteum.util.*
+import com.example.teumteum.utils.*
 import java.time.LocalDate
 import java.time.YearMonth
 

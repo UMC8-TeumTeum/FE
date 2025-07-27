@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import com.example.teumteum.R
 import com.example.teumteum.data.entities.WishItem
 import com.example.teumteum.databinding.FragmentWishlistEditBinding
+import com.example.teumteum.ui.wish.adapter.WishlistEditRVAdapter
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class WishlistEditFragment(private val wishlist: MutableList<WishItem>) : Fragment() {
@@ -29,7 +30,7 @@ class WishlistEditFragment(private val wishlist: MutableList<WishItem>) : Fragme
         // 변경 내용 적용 후 이동
         binding.completeTv.setOnClickListener {
             parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, WishlistFragment(editedWishlist))
+                .replace(R.id.main_frm, WishlistFragment())
                 .commit()
         }
 
