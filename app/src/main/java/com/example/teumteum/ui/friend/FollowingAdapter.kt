@@ -10,7 +10,8 @@ import com.example.teumteum.R
 
 class FollowingAdapter(
     private val data: List<FollowUser>,
-    private val onProfileClick: (FollowUser) -> Unit
+    private val onProfileClick: (FollowUser) -> Unit,
+    private val onSendClick: (FollowUser) -> Unit  //  추가: sendBtn 클릭용 콜백
 ) : RecyclerView.Adapter<FollowingAdapter.ViewHolder>() {
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -18,6 +19,7 @@ class FollowingAdapter(
         private val jobTv: TextView = itemView.findViewById(R.id.jobTv)
         private val starIv: ImageButton = itemView.findViewById(R.id.starIv)
         private val profileBtn: ImageButton = itemView.findViewById(R.id.profileLayout)
+        private val sendBtn: ImageButton = itemView.findViewById(R.id.sendBtn) //  추가
 
         fun bind(user: FollowUser) {
             // 이름/직업 세팅
@@ -37,6 +39,11 @@ class FollowingAdapter(
             // 프로필 사진 클릭 시 콜백
             profileBtn.setOnClickListener {
                 onProfileClick(user)
+            }
+
+            //  sendBtn 클릭 시 콜백 전달
+            sendBtn.setOnClickListener {
+                onSendClick(user)
             }
         }
     }
