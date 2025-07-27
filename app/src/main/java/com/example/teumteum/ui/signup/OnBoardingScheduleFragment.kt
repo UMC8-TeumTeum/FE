@@ -40,12 +40,12 @@ class OnBoardingScheduleFragment : Fragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (activity as? SignUpActivity)?.setProgressBar(50)
+        (activity as? SignUpActivity)?.setProgressBar(75)
 
         binding.nextBtn.setOnClickListener {
 //            startActivity(Intent(requireContext(), MainActivity::class.java))
             parentFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, OnBoardingSleepPatternFragment())
+                .replace(R.id.fragment_container, OnBoardingRemindFragment())
                 .addToBackStack(null)
                 .commit()
         }
