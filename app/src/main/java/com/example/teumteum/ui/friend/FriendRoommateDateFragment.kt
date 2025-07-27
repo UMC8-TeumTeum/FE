@@ -11,7 +11,7 @@ import com.example.teumteum.databinding.FragmentFriendRoommateDateBinding
 import com.example.teumteum.ui.calendar.IDateClickListener
 import com.example.teumteum.ui.calendar.MonthlyCalendarFragment
 import com.example.teumteum.ui.main.MainActivity
-import com.example.teumteum.util.getSavedDateOrToday
+import com.example.teumteum.utils.getSavedDateOrToday
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale

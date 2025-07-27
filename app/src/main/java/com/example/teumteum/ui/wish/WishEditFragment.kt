@@ -13,10 +13,13 @@ import androidx.appcompat.app.AlertDialog
 import com.example.teumteum.R
 import com.example.teumteum.data.entities.Wish
 import com.example.teumteum.data.remote.wish.WishService
+import com.example.teumteum.data.remote.wish.dto.DeleteWishesRequest
 import com.example.teumteum.data.remote.wish.dto.EditWishRequest
+import com.example.teumteum.data.remote.wish.dto.WishlistItem
 import com.example.teumteum.databinding.DialogConfirmWishDeleteBinding
 import com.example.teumteum.databinding.DialogConfirmWishEditBinding
 import com.example.teumteum.databinding.FragmentWishEditBinding
+import com.example.teumteum.ui.wish.view.DeleteWishesView
 import com.example.teumteum.ui.wish.view.EditWishView
 import com.example.teumteum.ui.wish.view.WishView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -86,7 +89,7 @@ class WishEditFragment : BottomSheetDialogFragment(), WishView, EditWishView {
         }
 
         binding.btnWishDelete.setOnClickListener {
-            showWishDummyDeleteDialog()
+            showWishDeleteDialog(wishId)
         }
 
         if (wishId != -1L) {
@@ -140,7 +143,7 @@ class WishEditFragment : BottomSheetDialogFragment(), WishView, EditWishView {
         return dialog
     }
 
-    private fun showWishDummyDeleteDialog() {
+    private fun showWishDeleteDialog(wishId: Long) {
         val dialogBinding = DialogConfirmWishDeleteBinding.inflate(layoutInflater)
 
         val dialog = AlertDialog.Builder(requireContext(), R.style.RoundedAlertDialog)
@@ -148,9 +151,26 @@ class WishEditFragment : BottomSheetDialogFragment(), WishView, EditWishView {
             .create()
 
         dialogBinding.wishConfirmTv.setOnClickListener {
-            Toast.makeText(requireContext(), "삭제되었습니다. (더미)", Toast.LENGTH_SHORT).show()
-            dialog.dismiss()
-            dismiss()
+            val service = WishService()
+            service.setWishDeleteView(object : DeleteWishesView {
+                override fun onDeleteWishesSuccess(code: String, message: String?) {
+                    Toast.makeText(requireContext(), "위시가 성공적으로 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+
+                    // 이벤트 전송
+                    parentFragmentManager.setFragmentResult("wish_delete", Bundle())
+
+                    dialog.dismiss()
+                    dismiss() // 바텀시트 닫기
+                }
+
+                override fun onDeleteWishesFailure(code: String, message: String?) {
+                    Toast.makeText(requireContext(), "삭제에 실패했어요. 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
+                    dialog.dismiss()
+                }
+            })
+
+            val deleteRequest = DeleteWishesRequest(listOf(wishId)) // 바텀시트에 넘겨받은 Wish
+            service.deleteWishes(deleteRequest)
         }
 
         dialogBinding.wishCancelTv.setOnClickListener {

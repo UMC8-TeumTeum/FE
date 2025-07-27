@@ -15,3 +15,7 @@ data class EditWishRequest(
     @SerializedName(value = "estimatedDuration") val estimatedDuration: String,
     @SerializedName(value = "categories") val categories: List<Long>
 )
+
+data class DeleteWishesRequest(
+    @SerializedName(value = "wishIds") val wishIds: List<Long>
+)
