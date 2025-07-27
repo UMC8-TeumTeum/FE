@@ -87,6 +87,11 @@ class WishlistFragment() : Fragment(), WishlistView {
             refreshWishlist()
         }
 
+        // 위시 삭제 성공 이벤트 수신
+        parentFragmentManager.setFragmentResultListener("wish_delete", viewLifecycleOwner) { _, _ ->
+            refreshWishlist()
+        }
+
         getList(duration = "all", page = 1)
 
     }
