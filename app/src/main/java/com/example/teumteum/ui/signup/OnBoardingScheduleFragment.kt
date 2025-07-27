@@ -40,7 +40,7 @@ class OnBoardingScheduleFragment : Fragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (activity as? SignUpActivity)?.setProgressBar(75)
+        (activity as? SignUpActivity)?.setProgressBar(80)
 
         binding.nextBtn.setOnClickListener {
 //            startActivity(Intent(requireContext(), MainActivity::class.java))
