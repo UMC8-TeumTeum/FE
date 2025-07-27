@@ -75,8 +75,9 @@ class HomeFragment : Fragment(), IDateClickListener {
     private val fullDaySchedule = listOf(
         TimeBlock(0, 360, TimeType.SLEEP),   // 00:00 ~ 06:00
         TimeBlock(360, 580, TimeType.TODO),  // 06:00 ~ 09:40
-        TimeBlock(720, 860, TimeType.TODO),  // 12:00 ~ 14:20
-        TimeBlock(870, 930, TimeType.EMPTY), // 14:30 ~ 15:30
+        TimeBlock(720, 860, TimeType.TODO),  // 12:00 ~ 14:20 (기존)
+        TimeBlock(810, 900, TimeType.TODO),  // 13:30 ~ 15:00 (중복 테스트용)
+        TimeBlock(900, 930, TimeType.EMPTY), // 15:00 ~ 15:30
         TimeBlock(930, 1050, TimeType.TODO), // 15:30 ~ 17:30
         TimeBlock(1110, 1200, TimeType.TODO),// 18:30 ~ 20:00
         TimeBlock(1200, 1320, TimeType.EMPTY),// 20:00 ~ 22:00

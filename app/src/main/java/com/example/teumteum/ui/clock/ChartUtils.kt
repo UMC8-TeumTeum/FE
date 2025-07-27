@@ -37,6 +37,7 @@ object ChartUtils {
         val startMinute = if (isAM) 0 else 720
         val endMinute = if (isAM) 720 else 1440
 
+        //AM,PM 필터
         val filtered = allBlocks.mapNotNull { block ->
             val s = block.startTime.coerceIn(startMinute, endMinute)
             val e = block.endTime.coerceIn(startMinute, endMinute)
@@ -46,15 +47,32 @@ object ChartUtils {
         val result = mutableListOf<TimeBlock>()
         var cursor = startMinute
         for (block in filtered) {
+            if (result.isNotEmpty()) {
+                val last = result.last()
+
+                // 중복된 일정 병합
+                if (last.type == block.type && block.startTime <= last.endTime) {
+                    val merged = TimeBlock(last.startTime, maxOf(last.endTime, block.endTime), last.type)
+                    result[result.lastIndex] = merged
+                    cursor = merged.endTime
+                    continue
+                }
+            }
+
+            //비어 있는 일정 EMPTY로 채우기
             if (block.startTime > cursor) result.add(TimeBlock(cursor, block.startTime, TimeType.EMPTY))
+
             result.add(block)
             cursor = block.endTime
         }
+
+        //마지막 빈틈 EMPTY로 채우기
         if (cursor < endMinute) result.add(TimeBlock(cursor, endMinute, TimeType.EMPTY))
 
         return result
     }
 
+    //실제 그래프에 넣을 데이터로 변환
     fun setTimePieChartData(context: Context, pieChart: PieChart, timeBlocks: List<TimeBlock>) {
         val entries = timeBlocks.map {
             val duration = (it.endTime - it.startTime).toFloat() / 10f
@@ -85,7 +103,7 @@ object ChartUtils {
         pieChart.invalidate()
     }
 
-    //아이콘
+    //아이콘 가져오기
     fun getBitmapFromVector(context: Context, vectorResId: Int): Bitmap {
         val drawable = ContextCompat.getDrawable(context, vectorResId)!!
         val bitmap = Bitmap.createBitmap(
