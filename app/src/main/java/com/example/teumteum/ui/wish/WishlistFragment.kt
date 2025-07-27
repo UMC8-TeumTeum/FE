@@ -7,12 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.wish.dto.WishlistItem
 import com.example.teumteum.data.remote.wish.WishService
 import com.example.teumteum.databinding.FragmentWishlistBinding
 import com.example.teumteum.ui.wish.adapter.WishlistRVAdapter
 import com.example.teumteum.ui.wish.view.WishlistView
+import com.example.teumteum.ui.wish.view.WishlistViewModel
 import com.example.teumteum.utils.applyBlurShadow
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.button.MaterialButton
@@ -22,7 +24,8 @@ class WishlistFragment() : Fragment(), WishlistView {
     private lateinit var binding: FragmentWishlistBinding
     private lateinit var adapter: WishlistRVAdapter
 
-    private var wishlist: List<WishlistItem> = emptyList()
+    private var wishlistItems: List<WishlistItem> = emptyList()
+    private val wishlistViewModel: WishlistViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,12 +34,13 @@ class WishlistFragment() : Fragment(), WishlistView {
     ): View {
         binding = FragmentWishlistBinding.inflate(inflater, container, false)
 
-//        binding.editTv.setOnClickListener {
-//            parentFragmentManager.beginTransaction()
-//                .replace(R.id.main_frm, WishlistEditFragment(wishlist))
-//                .addToBackStack(null)
-//                .commit()
-//        }
+        binding.editTv.setOnClickListener {
+            wishlistViewModel.wishlistItems = wishlistItems.toMutableList()  // 기존 리스트 전달
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, WishlistEditFragment())
+                .addToBackStack(null)
+                .commit()
+        }
 
         binding.fabAddIv.setOnClickListener {
             val bottomSheet = WishRegisterFragment().apply {
@@ -53,7 +57,7 @@ class WishlistFragment() : Fragment(), WishlistView {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        adapter = WishlistRVAdapter(wishlist, parentFragmentManager)
+        adapter = WishlistRVAdapter(wishlistItems, parentFragmentManager)
         binding.wishlistRv.adapter = adapter
 
         // 바텀 내비게이션 숨기기
@@ -95,30 +99,30 @@ class WishlistFragment() : Fragment(), WishlistView {
         val button1h = binding.btnWishlistTime05
 
         allButton.setOnClickListener {
-            adapter.updateList(wishlist) // 전체 표시
+            adapter.updateList(wishlistItems) // 전체 표시
             updateTimeButtonUI(allButton)
         }
 
         button10m.setOnClickListener {
-            val filtered = wishlist.filter { it.estimatedDuration == "10m" }
+            val filtered = wishlistItems.filter { it.estimatedDuration == "10m" }
             adapter.updateList(filtered)
             updateTimeButtonUI(button10m)
         }
 
         button20m.setOnClickListener {
-            val filtered = wishlist.filter { it.estimatedDuration == "20m" }
+            val filtered = wishlistItems.filter { it.estimatedDuration == "20m" }
             adapter.updateList(filtered)
             updateTimeButtonUI(button20m)
         }
 
         button30m.setOnClickListener {
-            val filtered = wishlist.filter { it.estimatedDuration == "30m" }
+            val filtered = wishlistItems.filter { it.estimatedDuration == "30m" }
             adapter.updateList(filtered)
             updateTimeButtonUI(button30m)
         }
 
         button1h.setOnClickListener {
-            val filtered = wishlist.filter { it.estimatedDuration == "1h" }
+            val filtered = wishlistItems.filter { it.estimatedDuration == "1h" }
             adapter.updateList(filtered)
             updateTimeButtonUI(button1h)
         }
@@ -154,9 +158,9 @@ class WishlistFragment() : Fragment(), WishlistView {
         getList(duration = "all", page = 1)
     }
 
-    override fun onGetWishListSuccess(wishlist: List<WishlistItem>) {
-        this.wishlist = wishlist
-        adapter.updateList(wishlist)
+    override fun onGetWishListSuccess(wishlistItems: List<WishlistItem>) {
+        this.wishlistItems = wishlistItems
+        adapter.updateList(wishlistItems)
     }
 
     override fun onGetWishListFailure(code: String, message: String?) {

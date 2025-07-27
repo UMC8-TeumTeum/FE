@@ -7,10 +7,12 @@ import android.widget.CompoundButton
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.teumteum.R
-import com.example.teumteum.data.entities.WishItem
+import com.example.teumteum.data.remote.wish.dto.WishlistItem
 import com.example.teumteum.databinding.ItemWishlistEditBinding
 
-class WishlistEditRVAdapter(private val wishlist: MutableList<WishItem>) : RecyclerView.Adapter<WishlistEditRVAdapter.ViewHolder>() {
+class WishlistEditRVAdapter(private val wishlist: MutableList<WishlistItem>) : RecyclerView.Adapter<WishlistEditRVAdapter.ViewHolder>() {
+
+    private val isCheckedList = MutableList(wishlist.size) { false }
 
     inner class ViewHolder(val binding: ItemWishlistEditBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -23,39 +25,45 @@ class WishlistEditRVAdapter(private val wishlist: MutableList<WishItem>) : Recyc
         val item = wishlist[position]
         val binding = holder.binding
         binding.tvWishTitle.text = item.title
+        binding.wishTimeTv.text = item.estimatedDuration
 
-        binding.wishCheckbox.isChecked = item.isChecked
+        binding.wishCheckbox.setOnCheckedChangeListener(null)
+        binding.wishCheckbox.isChecked = isCheckedList[position]
+        setCheckBoxTint(binding.wishCheckbox, isCheckedList[position])
 
-        setCheckBoxTint(binding.wishCheckbox, item.isChecked)
-
+        // 리스너 설정
         binding.wishCheckbox.setOnCheckedChangeListener { button, isChecked ->
-            item.isChecked = isChecked
+            isCheckedList[position] = isChecked
             setCheckBoxTint(button, isChecked)
         }
     }
 
     override fun getItemCount(): Int = wishlist.size
 
-    fun deleteCheckedItems(): Int {
-        val removedCount = wishlist.count { it.isChecked }
-        wishlist.removeAll { it.isChecked }
+    fun getCheckedWishIdsAndRemove(): List<Long> {
+        val checkedIds = mutableListOf<Long>()
+        val indicesToRemove = wishlist.indices.filter { isCheckedList[it] }.reversed()
+
+        indicesToRemove.forEach {
+            checkedIds.add(wishlist[it].id)  // 서버에 보낼 id 저장
+            wishlist.removeAt(it)
+            isCheckedList.removeAt(it)
+        }
+
         notifyDataSetChanged()
-        return removedCount
+        return checkedIds
     }
 
     fun cancelAllCheckedItems() {
-        wishlist.forEach { it.isChecked = false }
+        for (i in isCheckedList.indices) {
+            isCheckedList[i] = false
+        }
         notifyDataSetChanged()
     }
 
     private fun setCheckBoxTint(checkBox: CompoundButton, isChecked: Boolean) {
         val context = checkBox.context
-        if (isChecked) {
-            // 체크됨 → 배경색처럼 보이도록 tint를 main_1, 체크 ✔는 흰색이 되게
-            checkBox.buttonTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.main_1))
-        } else {
-            // 미체크 → 회색 테두리처럼 보이게
-            checkBox.buttonTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.teumteum_deactive))
-        }
+        val colorRes = if (isChecked) R.color.main_1 else R.color.teumteum_deactive
+        checkBox.buttonTintList = ColorStateList.valueOf(ContextCompat.getColor(context, colorRes))
     }
 }
