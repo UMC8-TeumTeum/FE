@@ -207,8 +207,9 @@ class WishRegisterFragment : BottomSheetDialogFragment(), RegisterWishView {
         wishService.registerWish(request)
     }
 
-    override fun onRegisterSuccess(code: String) {
-        Toast.makeText(requireContext(), "위시가 성공적으로 등록되었습니다.", Toast.LENGTH_SHORT).show()
+    override fun onRegisterWishSuccess(code: String, message: String?) {
+        val successMessage = message ?: "위시가 성공적으로 생성되었습니다."
+        Toast.makeText(requireContext(), successMessage, Toast.LENGTH_SHORT).show()
 
         // 이벤트 전송
         parentFragmentManager.setFragmentResult("wish_register", Bundle())
@@ -221,14 +222,13 @@ class WishRegisterFragment : BottomSheetDialogFragment(), RegisterWishView {
         }
     }
 
-    override fun onRegisterFailure(code: String) {
+    override fun onRegisterWishFailure(code: String, message: String?) {
         val errorMessage = when (code) {
             "COMMON400" -> "제목 또는 카테고리가 비어있습니다."
             "HOME4042" -> "해당 카테고리를 찾을 수 없습니다."
-            "HOME4091" -> "이미 동일한 위시가 존재합니다."
             "NETWORK_ERROR" -> "네트워크 오류가 발생했습니다."
             "PARSE_ERROR" -> "서버 응답을 해석할 수 없습니다."
-            else -> "등록에 실패했습니다. 다시 시도해주세요."
+            else -> message ?: "등록에 실패했습니다. 다시 시도해주세요."
         }
         Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
     }
