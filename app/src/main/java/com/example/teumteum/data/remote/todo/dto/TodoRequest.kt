@@ -1,9 +1,8 @@
-package com.example.teumteum.data.entities
+package com.example.teumteum.data.remote.todo.dto
 
 import com.google.gson.annotations.SerializedName
 
-data class Todo(
-    @SerializedName("id") val id: Long,
+data class RegisterTodoRequest(
     @SerializedName("title") val title: String,
     @SerializedName("startTime") val startTime: String,
     @SerializedName("endTime") val endTime: String,

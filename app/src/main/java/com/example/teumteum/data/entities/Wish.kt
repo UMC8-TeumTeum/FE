@@ -4,9 +4,9 @@ import com.example.teumteum.data.remote.wish.dto.WishCategory
 import com.google.gson.annotations.SerializedName
 
 data class Wish(
-    @SerializedName(value = "id") val id: Long,
-    @SerializedName(value = "title") val title: String,
-    @SerializedName(value = "content") val content: String,
-    @SerializedName(value = "estimatedDuration") val estimatedDuration: String,
-    @SerializedName(value = "categories") val categories: List<WishCategory>
+    @SerializedName("id") val id: Long,
+    @SerializedName("title") val title: String,
+    @SerializedName("content") val content: String,
+    @SerializedName("estimatedDuration") val estimatedDuration: String,
+    @SerializedName("categories") val categories: List<WishCategory>
 )
