@@ -97,7 +97,7 @@ class FriendFragment : Fragment() {
             },
             onSendClick = { user ->
                 parentFragmentManager.beginTransaction()
-                    .replace(R.id.main_frm, FriendRoommateDateFragment())
+                    .replace(R.id.main_frm, FriendFragment())
                     .addToBackStack(null)
                     .commit()
             }
