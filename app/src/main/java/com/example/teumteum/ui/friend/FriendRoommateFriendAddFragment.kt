@@ -16,14 +16,14 @@ class FriendRoommateFriendAddFragment : Fragment() {
 
     private lateinit var adapter: FriendAddAdapter
     private val friendList = listOf(
-        Friend("이슬민", R.drawable.next),
-        Friend("장채미", R.drawable.next),
-        Friend("하수연", R.drawable.next),
-        Friend("최영원", R.drawable.next),
-        Friend("안지현", R.drawable.next),
-        Friend("장유", R.drawable.next),
-        Friend("박성우", R.drawable.next),
-        Friend("채남준", R.drawable.next)
+        Friend("이슬민", R.drawable.gray_teum),
+        Friend("장채미", R.drawable.gray_teum),
+        Friend("하수연", R.drawable.gray_teum),
+        Friend("최영원", R.drawable.gray_teum),
+        Friend("안지현", R.drawable.gray_teum),
+        Friend("장유", R.drawable.gray_teum),
+        Friend("박성우", R.drawable.gray_teum),
+        Friend("채남준", R.drawable.gray_teum)
     )
 
     override fun onCreateView(
