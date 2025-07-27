@@ -54,6 +54,10 @@ dependencies {
     // 친구 인디케이터
     implementation ("com.tbuonomo:dotsindicator:4.3")
 
+//    // 달력
+//    implementation ("com.jakewharton.threetenabp:threetenabp:1.4.5")
+
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -84,6 +88,9 @@ dependencies {
 
     //coroutine
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+
+    //Chart
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 
     //Retrofit
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
