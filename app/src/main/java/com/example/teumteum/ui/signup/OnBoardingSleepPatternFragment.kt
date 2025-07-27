@@ -159,40 +159,21 @@ class OnBoardingSleepPatternFragment : Fragment() {
     private fun updateNextButtonState() {
         val bothSelected = selectedStartTime != null && selectedEndTime != null
 
-        if (!bothSelected) {
-            binding.nextBtn.isEnabled = false
-            binding.nextBtn.setBackgroundColor(Color.parseColor("#F6F6F6"))
-            binding.nextBtn.setTextColor(requireContext().getColor(R.color.black))
-            return
-        }
-
-        val isValid = if (bothSelected) validateSleepTime() else true
-
-        binding.nextBtn.isEnabled = isValid
+        binding.nextBtn.isEnabled = bothSelected
 
         binding.nextBtn.setBackgroundColor(
-            if (isValid)
+            if (bothSelected)
                 requireContext().getColor(R.color.black)
             else
                 Color.parseColor("#F6F6F6")
         )
 
         binding.nextBtn.setTextColor(
-            if (isValid)
+            if (bothSelected)
                 requireContext().getColor(R.color.white)
             else
                 requireContext().getColor(R.color.black)
         )
-    }
-
-    //수면 시간 검증
-    private fun validateSleepTime(): Boolean {
-        val start = selectedStartTime!!
-        val end = selectedEndTime!!
-
-        if (start == end) return false
-
-        return true
     }
 
 }
