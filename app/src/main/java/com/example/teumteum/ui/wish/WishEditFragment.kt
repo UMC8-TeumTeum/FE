@@ -32,6 +32,11 @@ class WishEditFragment : BottomSheetDialogFragment(), WishView, EditWishView {
     private var selectedTimeButton: View? = null
     private var selectedCategoryButtons = mutableListOf<MaterialButton>()
 
+    private var originalTitle: String = ""
+    private var originalContent: String = ""
+    private var originalTime: String = ""
+    private var originalCategoryIds: List<Long> = emptyList()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -121,7 +126,11 @@ class WishEditFragment : BottomSheetDialogFragment(), WishView, EditWishView {
 
         dialog.setOnKeyListener { _, keyCode, event ->
             if (keyCode == android.view.KeyEvent.KEYCODE_BACK && event.action == android.view.KeyEvent.ACTION_UP) {
-                showWishCancelEditDialog()
+                if (isModified()) {
+                    showWishCancelEditDialog()
+                } else {
+                    dismiss() // 수정 없으면 바로 닫기
+                }
                 true
             } else {
                 false
@@ -301,12 +310,28 @@ class WishEditFragment : BottomSheetDialogFragment(), WishView, EditWishView {
         wishService.getWish(wishId)
     }
 
-    override fun onGetWishSuccess(wish: Wish) {
+    private fun isModified(): Boolean {
+        val currentTitle = binding.wishTitleEt.text.toString().trim()
+        val currentContent = binding.detailTextEt.text.toString().trim()
+        val currentTime = selectedTimeButton?.tag as? String ?: ""
+        val currentCategoryIds = selectedCategoryButtons.mapNotNull { it.tag as? Long }.sorted()
 
+        return currentTitle != originalTitle ||
+                currentContent != originalContent ||
+                currentTime != originalTime ||
+                currentCategoryIds != originalCategoryIds
+    }
+
+    override fun onGetWishSuccess(wish: Wish) {
         binding.wishTitleEt.setText(wish.title)
         binding.detailTextEt.setText(wish.content)
         setupTimeButtons(wish.estimatedDuration)
         setupCategoryButtons(wish)
+
+        originalTitle = wish.title
+        originalContent = wish.content
+        originalTime = wish.estimatedDuration
+        originalCategoryIds = wish.categories.map { it.id }.sorted()
     }
 
     override fun onGetWishFailure(code: String, message: String?) {
