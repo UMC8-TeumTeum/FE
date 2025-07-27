@@ -1,26 +1,13 @@
 package com.example.teumteum.data.entities
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import com.google.gson.annotations.SerializedName
 
-@Entity(tableName = "TodoTable")
 data class Todo(
-    val title: String,
-    val startTime: String,
-    val alarms: String,
-    val endTime: String,
-    val isPublic: Boolean,
-    var isAlarmOn: Boolean? = null,
-    val isIncluded: Boolean
-){
-    @PrimaryKey(autoGenerate = true) var id: Int = 0
-}
-
-data class TodoHomeItem(
-    val id: Int,
-    val title: String,
-    val startTime: String,
-    val endTime: String,
-    val isPublic: Boolean,
-    var isAlarmOn: Boolean? = null
+    @SerializedName(value = "title") val title: String,
+    @SerializedName(value = "startTime") val startTime: String,
+    @SerializedName(value = "endTime") val endTime: String,
+    @SerializedName(value = "description") val description: String,
+    @SerializedName(value = "isPublic") val isPublic: Boolean,
+    @SerializedName(value = "includeTeum") val includeTeum: Boolean,
+    @SerializedName(value = "remindAlarm") val remindAlarm: List<Int>? = null
 )

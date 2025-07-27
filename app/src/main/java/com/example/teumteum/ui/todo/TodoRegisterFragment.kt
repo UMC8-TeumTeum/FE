@@ -22,7 +22,6 @@ import androidx.core.view.isVisible
 import com.example.teumteum.databinding.FragmentTodoRegisterBinding
 import com.example.teumteum.R
 import com.example.teumteum.data.entities.Todo
-import com.example.teumteum.data.local.AppDatabase
 
 import androidx.lifecycle.lifecycleScope
 import com.example.teumteum.ui.wish.WishRegisterFragment
@@ -103,38 +102,38 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener {
             showAlarmPopupWindow(it)
         }
 
-        binding.btnTodoRegister.setOnClickListener {
-
-            val titleText = binding.todoTitleEt.text.toString().trim()
-
-            if (titleText.isEmpty()) {
-                Toast.makeText(requireContext(), "제목을 입력해주세요.", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            val todo = Todo(
-                title = titleText,
-                startTime = binding.startTimeTv.text.toString(),
-                endTime = binding.endTimeTv.text.toString(),
-                alarms = selectedItems.joinToString(","),
-                isPublic = binding.categoryToggle03Iv.isChecked,
-                isIncluded = binding.categoryToggle04Iv.isChecked
-            )
-
-            val db = AppDatabase.getInstance(requireContext())
-
-            db?.let {
-                lifecycleScope.launch {
-                    withContext(Dispatchers.IO) {
-                        it.todoDao().insert(todo)
-                    }
-
-                    Toast.makeText(requireContext(), "등록되었습니다.", Toast.LENGTH_SHORT).show()
-                    parentFragmentManager.popBackStack()
-                }
-            }
-
-        }
+//        binding.btnTodoRegister.setOnClickListener {
+//
+//            val titleText = binding.todoTitleEt.text.toString().trim()
+//
+//            if (titleText.isEmpty()) {
+//                Toast.makeText(requireContext(), "제목을 입력해주세요.", Toast.LENGTH_SHORT).show()
+//                return@setOnClickListener
+//            }
+//
+//            val todo = Todo(
+//                title = titleText,
+//                startTime = binding.startTimeTv.text.toString(),
+//                endTime = binding.endTimeTv.text.toString(),
+//                alarms = selectedItems.joinToString(","),
+//                isPublic = binding.categoryToggle03Iv.isChecked,
+//                isIncluded = binding.categoryToggle04Iv.isChecked
+//            )
+//
+//            val db = AppDatabase.getInstance(requireContext())
+//
+//            db?.let {
+//                lifecycleScope.launch {
+//                    withContext(Dispatchers.IO) {
+//                        it.todoDao().insert(todo)
+//                    }
+//
+//                    Toast.makeText(requireContext(), "등록되었습니다.", Toast.LENGTH_SHORT).show()
+//                    parentFragmentManager.popBackStack()
+//                }
+//            }
+//
+//        }
 
         binding.btnWish.setOnClickListener {
             if (isTodoSelected) {
