@@ -1,10 +1,16 @@
 package com.example.teumteum.data.remote.wish
 
 import android.util.Log
+import com.example.teumteum.data.remote.wish.dto.DeleteWishesRequest
+import com.example.teumteum.data.remote.wish.dto.DeleteWishesResponse
+import com.example.teumteum.data.remote.wish.dto.EditWishRequest
+import com.example.teumteum.data.remote.wish.dto.EditWishResponse
 import com.example.teumteum.data.remote.wish.dto.GetWishResponse
 import com.example.teumteum.data.remote.wish.dto.GetWishlistResponse
 import com.example.teumteum.data.remote.wish.dto.RegisterWishRequest
 import com.example.teumteum.data.remote.wish.dto.RegisterWishResponse
+import com.example.teumteum.ui.wish.view.DeleteWishesView
+import com.example.teumteum.ui.wish.view.EditWishView
 import com.example.teumteum.ui.wish.view.RegisterWishView
 import com.example.teumteum.ui.wish.view.WishView
 import com.example.teumteum.ui.wish.view.WishlistView
@@ -18,6 +24,8 @@ class WishService {
     private lateinit var wishRegisterView: RegisterWishView
     private lateinit var wishlistView: WishlistView
     private lateinit var wishView: WishView
+    private lateinit var wishEditView: EditWishView
+    private lateinit var wishDeleteView: DeleteWishesView
 
     fun setWishRegisterView(wishRegisterView: RegisterWishView) {
         this.wishRegisterView = wishRegisterView
@@ -31,6 +39,14 @@ class WishService {
         this.wishView = wishView
     }
 
+    fun setWishEditView(wishEditView: EditWishView) {
+        this.wishEditView = wishEditView
+    }
+
+    fun setWishDeleteView(wishDeleteView: DeleteWishesView) {
+        this.wishDeleteView = wishDeleteView;
+    }
+
     companion object {
         private val gson = Gson()
     }
@@ -40,7 +56,7 @@ class WishService {
 
         val wishService = getRetrofitWithToken().create(WishRetrofitInterface::class.java)
 
-        wishService.wishRegister(request).enqueue(object : Callback<RegisterWishResponse> {
+        wishService.registerWish(request).enqueue(object : Callback<RegisterWishResponse> {
             override fun onResponse(
                 call: Call<RegisterWishResponse>,
                 response: Response<RegisterWishResponse>
@@ -51,9 +67,9 @@ class WishService {
                     val registerResponse = response.body()
 
                     if (registerResponse != null && registerResponse.code == "HOME2005") {
-                        wishRegisterView.onRegisterSuccess(registerResponse.code)
+                        wishRegisterView.onRegisterWishSuccess(registerResponse.code)
                     } else {
-                        wishRegisterView.onRegisterFailure(registerResponse?.code ?: "UNKNOWN")
+                        wishRegisterView.onRegisterWishFailure(registerResponse?.code ?: "UNKNOWN")
                     }
                 } else {
                     // 실패 응답 처리
@@ -65,20 +81,20 @@ class WishService {
                         if (!errorMsg.isNullOrEmpty()) {
                             val errorResponse =
                                 gson.fromJson(errorMsg, RegisterWishResponse::class.java)
-                            wishRegisterView.onRegisterFailure(errorResponse.code)
+                            wishRegisterView.onRegisterWishFailure(errorResponse.code)
                         } else {
-                            wishRegisterView.onRegisterFailure("EMPTY_ERROR_BODY")
+                            wishRegisterView.onRegisterWishFailure("EMPTY_ERROR_BODY")
                         }
                     } catch (e: Exception) { // JSON 파싱 실패 시
                         Log.e("REGISTER/PARSE_ERROR", "JSON 파싱 실패: ${e.localizedMessage}")
-                        wishRegisterView.onRegisterFailure("PARSE_ERROR")
+                        wishRegisterView.onRegisterWishFailure("PARSE_ERROR")
                     }
                 }
             }
 
             override fun onFailure(call: Call<RegisterWishResponse>, t: Throwable) {
                 Log.d("REGISTER/FAILURE", t.message.toString())
-                wishRegisterView.onRegisterFailure("NETWORK_ERROR")
+                wishRegisterView.onRegisterWishFailure("NETWORK_ERROR")
             }
         })
     }
@@ -180,6 +196,103 @@ class WishService {
                 wishView.onGetWishFailure("NETWORK_ERROR")
             }
         })
+    }
+
+    // 위시 수정
+    fun editWish(wishId: Long, request: EditWishRequest) {
+
+        val wishService = getRetrofitWithToken().create(WishRetrofitInterface::class.java)
+
+        wishService.editWish(wishId, request).enqueue(object : Callback<EditWishResponse> {
+            override fun onResponse(
+                call: Call<EditWishResponse>,
+                response: Response<EditWishResponse>
+            ) {
+                Log.d("EDIT/SUCCESS", response.toString())
+
+                if (response.isSuccessful) {
+                    val editResponse = response.body()
+
+                    if (editResponse != null && editResponse.code == "HOME2008") {
+                        wishEditView.onEditWishSuccess(editResponse.code)
+                    } else {
+                        wishEditView.onEditWishFailure(editResponse?.code ?: "UNKNOWN")
+                    }
+                } else {
+                    // 실패 응답 처리
+                    val errorMsg = response.errorBody()?.string()
+                    Log.d("EDIT/ERROR_BODY", errorMsg ?: "에러 메시지 없음")
+
+                    // gson으로 실패 응답 파싱
+                    try {
+                        if (!errorMsg.isNullOrEmpty()) {
+                            val errorResponse =
+                                gson.fromJson(errorMsg, EditWishResponse::class.java)
+                            wishEditView.onEditWishFailure(errorResponse.code)
+                        } else {
+                            wishEditView.onEditWishFailure("EMPTY_ERROR_BODY")
+                        }
+                    } catch (e: Exception) { // JSON 파싱 실패 시
+                        Log.e("EDIT/PARSE_ERROR", "JSON 파싱 실패: ${e.localizedMessage}")
+                        wishEditView.onEditWishFailure("PARSE_ERROR")
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<EditWishResponse>, t: Throwable) {
+                Log.d("EDIT/FAILURE", t.message.toString())
+                wishEditView.onEditWishFailure("NETWORK_ERROR")
+            }
+        })
+    }
+
+    // 위시 삭제(리스트 형태)
+    fun deleteWishes(request: DeleteWishesRequest) {
+
+        val wishService = getRetrofitWithToken().create(WishRetrofitInterface::class.java)
+
+        wishService.deleteWishes(request).enqueue(object : Callback<DeleteWishesResponse> {
+            override fun onResponse(
+                call: Call<DeleteWishesResponse>,
+                response: Response<DeleteWishesResponse>
+            ) {
+                Log.d("DELETE/SUCCESS", response.toString())
+
+                if (response.isSuccessful) {
+                    val deleteResponse = response.body()
+
+                    if (deleteResponse != null && deleteResponse.code == "HOME2007") {
+                        wishDeleteView.onDeleteWishesSuccess(deleteResponse.code)
+                    } else {
+                        wishDeleteView.onDeleteWishesFailure(deleteResponse?.code ?: "UNKNOWN")
+                    }
+                } else {
+                    // 실패 응답 처리
+                    val errorMsg = response.errorBody()?.string()
+                    Log.d("DELETE/ERROR_BODY", errorMsg ?: "에러 메시지 없음")
+
+                    // gson으로 실패 응답 파싱
+                    try {
+                        if (!errorMsg.isNullOrEmpty()) {
+                            val errorResponse =
+                                gson.fromJson(errorMsg, DeleteWishesResponse::class.java)
+                            wishDeleteView.onDeleteWishesFailure(errorResponse.code)
+                        } else {
+                            wishDeleteView.onDeleteWishesFailure("EMPTY_ERROR_BODY")
+                        }
+                    } catch (e: Exception) { // JSON 파싱 실패 시
+                        Log.e("DELETE/PARSE_ERROR", "JSON 파싱 실패: ${e.localizedMessage}")
+                        wishDeleteView.onDeleteWishesFailure("PARSE_ERROR")
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<DeleteWishesResponse>, t: Throwable) {
+                Log.d("DELETE/FAILURE", t.message.toString())
+                wishDeleteView.onDeleteWishesFailure("NETWORK_ERROR")
+            }
+        })
+
     }
 
 }
