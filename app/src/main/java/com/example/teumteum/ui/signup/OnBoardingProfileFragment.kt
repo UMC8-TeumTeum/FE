@@ -62,7 +62,7 @@ class OnBoardingProfileFragment : Fragment() {
         binding.nextBtn.setOnClickListener {
 //            startActivity(Intent(requireContext(), MainActivity::class.java))
             parentFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, OnBoardingScheduleFragment())
+                .replace(R.id.fragment_container, OnBoardingSleepPatternFragment())
                 .addToBackStack(null)
                 .commit()
         }
