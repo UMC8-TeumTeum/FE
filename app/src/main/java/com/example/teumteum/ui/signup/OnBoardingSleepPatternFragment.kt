@@ -41,9 +41,15 @@ class OnBoardingSleepPatternFragment : Fragment() {
         (activity as? SignUpActivity)?.setProgressBar(60)
 
         binding.nextBtn.setOnClickListener {
-//            startActivity(Intent(requireContext(), MainActivity::class.java))
+            val fragment = OnBoardingScheduleFragment().apply {
+                arguments = Bundle().apply {
+                    putString("sleepStart", selectedStartTime.toString())
+                    putString("sleepEnd", selectedEndTime.toString())
+                }
+            }
+        
             parentFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, OnBoardingScheduleFragment())
+                .replace(R.id.fragment_container, fragment)
                 .addToBackStack(null)
                 .commit()
         }

@@ -13,6 +13,7 @@ import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentOnBoardingScheduleBinding
 import kotlin.collections.toList
 import com.example.teumteum.data.Schedule
+import java.time.LocalTime
 import java.util.Calendar
 import kotlin.collections.forEachIndexed
 
@@ -27,8 +28,16 @@ class OnBoardingScheduleFragment : Fragment(){
 
     private val scheduleMap = mutableMapOf<Int, MutableList<Schedule>>()
 
+    private var sleepStart: LocalTime? = null
+    private var sleepEnd: LocalTime? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        arguments?.let {
+            sleepStart = it.getString("sleepStart")?.let { time -> LocalTime.parse(time) }
+            sleepEnd = it.getString("sleepEnd")?.let { time -> LocalTime.parse(time) }
+        }
 
         if (savedInstanceState == null) {
             val calendar = Calendar.getInstance()
@@ -83,11 +92,14 @@ class OnBoardingScheduleFragment : Fragment(){
 
             val bottomSheet = BottomSheetScheduleFragment(
                 selectedDayIndex,
-                list.toList()
-            ) { schedule ->
-                list.add(schedule)
-                scheduleAdapter.submitList(list.toList())
-            }
+                list.toList(),
+                onScheduleAdded = { schedule ->
+                    list.add(schedule)
+                    scheduleAdapter.submitList(list.toList())
+                },
+                sleepStart = sleepStart,
+                sleepEnd = sleepEnd
+            )
 
             bottomSheet.show(parentFragmentManager, "BottomSheetScheduleFragment")
         }
