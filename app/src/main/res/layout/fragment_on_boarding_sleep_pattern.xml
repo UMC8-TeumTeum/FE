@@ -165,16 +165,15 @@
         android:layout_height="wrap_content"
         android:text="다음으로"
         style="@style/Md16"
-        android:textColor="#0F0F0F"
+        android:textColor="@color/white"
         app:cornerRadius="12dp"
-        android:backgroundTint="#F6F6F6"
+        android:backgroundTint="@color/text_primary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginStart="19dp"
         android:layout_marginEnd="19dp"
         android:layout_marginBottom="19dp"
-        android:enabled="false"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

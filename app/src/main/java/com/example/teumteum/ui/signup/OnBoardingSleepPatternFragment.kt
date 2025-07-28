@@ -12,13 +12,16 @@ import android.widget.TextView
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentOnBoardingSleepPatternBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import java.time.Duration
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 class OnBoardingSleepPatternFragment : Fragment() {
 
     private lateinit var binding: FragmentOnBoardingSleepPatternBinding
 
-    private var selectedStartTime: String? = null
-    private var selectedEndTime: String? = null
+    private var selectedStartTime: LocalTime? = null
+    private var selectedEndTime: LocalTime? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,42 +38,56 @@ class OnBoardingSleepPatternFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (activity as? SignUpActivity)?.setProgressBar(75)
+        (activity as? SignUpActivity)?.setProgressBar(60)
 
         binding.nextBtn.setOnClickListener {
-//            startActivity(Intent(requireContext(), MainActivity::class.java))
+            val fragment = OnBoardingScheduleFragment().apply {
+                arguments = Bundle().apply {
+                    selectedStartTime?.let { putString("sleepStart", it.toString()) }
+                    selectedEndTime?.let { putString("sleepEnd", it.toString()) }
+                }
+            }
+
             parentFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, OnBoardingRemindFragment())
+                .replace(R.id.fragment_container, fragment)
                 .addToBackStack(null)
                 .commit()
         }
 
         binding.sleepStartContainer.setOnClickListener {
-            showCustomTimePicker(binding.startChoiceTv)
+            showCustomTimePicker { time ->
+                selectedStartTime = time
+                binding.startChoiceTv.text = time.format(DateTimeFormatter.ofPattern("HH:mm"))
+                updateNextButtonState()
+            }
         }
 
         binding.sleepEndContainer.setOnClickListener {
-            showCustomTimePicker(binding.endChoiceTv)
+            showCustomTimePicker { time ->
+                selectedEndTime = time
+                binding.endChoiceTv.text = time.format(DateTimeFormatter.ofPattern("HH:mm"))
+                updateNextButtonState()
+            }
         }
 
         binding.startUpArrow.setOnClickListener{
-            increaseHour(binding.startChoiceTv)
+            changeHour(binding.startChoiceTv, true)
         }
 
         binding.startDownArrow.setOnClickListener {
-            decreaseHour(binding.startChoiceTv)
+            changeHour(binding.startChoiceTv, false)
         }
 
         binding.endUpArrow.setOnClickListener {
-            increaseHour(binding.endChoiceTv)
+            changeHour(binding.endChoiceTv, true)
         }
 
         binding.endDownArrow.setOnClickListener {
-            decreaseHour(binding.endChoiceTv)
+            changeHour(binding.endChoiceTv, false)
         }
     }
 
-    private fun showCustomTimePicker(targetTextView: TextView) {
+    private fun showCustomTimePicker(onTimeSelected: (LocalTime) -> Unit) {
         val dialogView = layoutInflater.inflate(R.layout.dialog_time_picker, null, false)
 
         val ampmPicker = dialogView.findViewById<NumberPicker>(R.id.ampmPicker01Np)
@@ -96,7 +113,7 @@ class OnBoardingSleepPatternFragment : Fragment() {
         val dialog = BottomSheetDialog(requireContext())
         dialog.setContentView(dialogView)
 
-        // ✅ 배경 적용
+        // 배경 적용
         dialog.setOnShowListener { dialogInterface ->
             val bottomSheet = (dialogInterface as BottomSheetDialog)
                 .findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
@@ -111,72 +128,54 @@ class OnBoardingSleepPatternFragment : Fragment() {
         // 확인 버튼
         dialogView.findViewById<Button>(R.id.btnOk).setOnClickListener {
             val isAm = ampmPicker.value == 0
+
             var hour = hourPicker.value % 12
             if (!isAm) hour += 12
-            if (hour == 0) hour = 0 // 12AM → 0시로
+            if (hour == 0) hour = 0
 
-            val minute = minuteValues[minutePicker.value]
-            val timeText = String.format("%02d:%s", hour, minute)
+            val minute = minuteValues[minutePicker.value].toInt()
 
-            targetTextView.text = timeText
+            val selectedTime = LocalTime.of(hour, minute)
+            onTimeSelected(selectedTime)
 
-            if (targetTextView == binding.startChoiceTv) {
-                selectedStartTime = timeText
-            } else if (targetTextView == binding.endChoiceTv) {
-                selectedEndTime = timeText
-            }
-
-            updateNextButtonState()
             dialog.dismiss()
         }
 
         dialog.show()
     }
 
-    private fun increaseHour(targetTextView: TextView) {
+    //화살표로 시간 증가/감소
+    private fun changeHour(targetTextView: TextView, increase: Boolean) {
         val currentText = targetTextView.text.toString()
         if (currentText.isNotBlank()) {
-            val parts = currentText.split(":")
-            if (parts.size == 2) {
-                var hour = parts[0].toIntOrNull() ?: return
-                val minute = parts[1]
+            val currentTime = LocalTime.parse(currentText)
+            val newTime = if (increase) currentTime.plusHours(1) else currentTime.minusHours(1)
+            targetTextView.text = newTime.format(DateTimeFormatter.ofPattern("HH:mm"))
 
-                hour = (hour + 1) % 24
-                val newTime = String.format("%02d:%s", hour, minute)
-                targetTextView.text = newTime
+            if (targetTextView == binding.startChoiceTv) {
+                selectedStartTime = newTime
+            } else if (targetTextView == binding.endChoiceTv) {
+                selectedEndTime = newTime
             }
-        }
-    }
-
-    private fun decreaseHour(targetTextView: TextView) {
-        val currentText = targetTextView.text.toString()
-        if (currentText.isNotBlank()) {
-            val parts = currentText.split(":")
-            if (parts.size == 2) {
-                var hour = parts[0].toIntOrNull() ?: return
-                val minute = parts[1]
-
-                hour = if (hour == 0) 23 else hour - 1
-                val newTime = String.format("%02d:%s", hour, minute)
-                targetTextView.text = newTime
-            }
+            updateNextButtonState()
         }
     }
 
     //다음으로 버튼 업데이트
     private fun updateNextButtonState() {
-        val allSet = selectedStartTime != null && selectedEndTime != null
-        binding.nextBtn.isEnabled = allSet
+        val bothSelected = selectedStartTime != null && selectedEndTime != null
+
+        binding.nextBtn.isEnabled = bothSelected
 
         binding.nextBtn.setBackgroundColor(
-            if (allSet)
+            if (bothSelected)
                 requireContext().getColor(R.color.black)
             else
                 Color.parseColor("#F6F6F6")
         )
 
         binding.nextBtn.setTextColor(
-            if (allSet)
+            if (bothSelected)
                 requireContext().getColor(R.color.white)
             else
                 requireContext().getColor(R.color.black)
