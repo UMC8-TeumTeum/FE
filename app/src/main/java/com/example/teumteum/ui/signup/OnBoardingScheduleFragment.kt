@@ -6,21 +6,22 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentOnBoardingScheduleBinding
 import kotlin.collections.toList
 import com.example.teumteum.data.Schedule
+import java.util.Calendar
+import kotlin.collections.forEachIndexed
 
 class OnBoardingScheduleFragment : Fragment(){
 
     private lateinit var binding: FragmentOnBoardingScheduleBinding
     private val scheduleAdapter by lazy { ScheduleAdapter() }
 
-    private val dayTextViews by lazy {
-        listOf(binding.sunTv, binding.monTv, binding.tueTv, binding.wedTv, binding.thuTv, binding.friTv, binding.satTv)
-    }
+    private lateinit var dayTextViews: List<TextView>
 
     private var selectedDayIndex = 0
 
@@ -28,6 +29,29 @@ class OnBoardingScheduleFragment : Fragment(){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        if (savedInstanceState == null) {
+            val calendar = Calendar.getInstance()
+            val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
+
+            selectedDayIndex = when (dayOfWeek) {
+                Calendar.SUNDAY -> 0
+                Calendar.MONDAY -> 1
+                Calendar.TUESDAY -> 2
+                Calendar.WEDNESDAY -> 3
+                Calendar.THURSDAY -> 4
+                Calendar.FRIDAY -> 5
+                Calendar.SATURDAY -> 6
+                else -> 0
+            }
+        } else {
+            selectedDayIndex = savedInstanceState.getInt("selectedDayIndex", 0)
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt("selectedDayIndex", selectedDayIndex)
     }
 
     override fun onCreateView(
@@ -68,7 +92,13 @@ class OnBoardingScheduleFragment : Fragment(){
             bottomSheet.show(parentFragmentManager, "BottomSheetScheduleFragment")
         }
 
+        dayTextViews = listOf(
+            binding.sunTv, binding.monTv, binding.tueTv,
+            binding.wedTv, binding.thuTv, binding.friTv, binding.satTv
+        )
+
         setupDaySelection()
+        updateDayHighlight(selectedDayIndex)
 
     }
 
@@ -94,5 +124,7 @@ class OnBoardingScheduleFragment : Fragment(){
         // 해당 요일의 일정 보여주기
         scheduleAdapter.submitList(scheduleMap[selectedDayIndex] ?: emptyList())
     }
+
+
 
 }
