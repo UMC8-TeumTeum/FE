@@ -43,11 +43,11 @@ class OnBoardingSleepPatternFragment : Fragment() {
         binding.nextBtn.setOnClickListener {
             val fragment = OnBoardingScheduleFragment().apply {
                 arguments = Bundle().apply {
-                    putString("sleepStart", selectedStartTime.toString())
-                    putString("sleepEnd", selectedEndTime.toString())
+                    selectedStartTime?.let { putString("sleepStart", it.toString()) }
+                    selectedEndTime?.let { putString("sleepEnd", it.toString()) }
                 }
             }
-        
+
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, fragment)
                 .addToBackStack(null)

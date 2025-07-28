@@ -35,8 +35,11 @@ class OnBoardingScheduleFragment : Fragment(){
         super.onCreate(savedInstanceState)
 
         arguments?.let {
-            sleepStart = it.getString("sleepStart")?.let { time -> LocalTime.parse(time) }
-            sleepEnd = it.getString("sleepEnd")?.let { time -> LocalTime.parse(time) }
+            val start = it.getString("sleepStart")
+            val end = it.getString("sleepEnd")
+
+            sleepStart = start?.let { LocalTime.parse(it) }
+            sleepEnd = end?.let { LocalTime.parse(it) }
         }
 
         if (savedInstanceState == null) {
