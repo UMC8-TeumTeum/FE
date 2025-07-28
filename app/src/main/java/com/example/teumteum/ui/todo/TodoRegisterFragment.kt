@@ -16,6 +16,7 @@ import android.widget.NumberPicker
 import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
@@ -434,8 +435,30 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener, Re
     }
 
     private fun getSelectedRemindAlarms(): List<Int> {
-        return selectedItems.mapNotNull { alarmLabelToMinutes[it] }
+        val alarms = mutableListOf<Int>()
+
+        // 고정된 두 개 알림 항목
+        if (binding.alarmToggle01Iv.isChecked) {
+            alarms.add(30)
+        }
+        if (binding.alarmToggle02Iv.isChecked) {
+            alarms.add(10)
+        }
+
+        // 추가된 알림 항목들 (item_alarm.xml로부터 동적으로 추가된 항목)
+        for (i in 0 until binding.alarmLayoutContainer.childCount) {
+            val child = binding.alarmLayoutContainer.getChildAt(i)
+            val toggle = child.findViewById<SwitchCompat>(R.id.alarm_toggle_tv)
+            val labelText = child.findViewById<TextView>(R.id.alarm_set_tv).text.toString()
+
+            if (toggle.isChecked == true) { // 커스텀 토글이 실제로 체크 가능한 경우
+                alarmLabelToMinutes[labelText]?.let { alarms.add(it) }
+            }
+        }
+
+        return alarms
     }
+
 
     private fun getTodoRequest(): RegisterTodoRequest {
         val title = binding.todoTitleEt.text.toString()
