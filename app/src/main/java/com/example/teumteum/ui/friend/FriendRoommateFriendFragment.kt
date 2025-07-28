@@ -40,9 +40,21 @@ class FriendRoommateFriendFragment : Fragment() {
                 .commit()
         }
 
+        //나중에 수정 필요
+        binding.matchBtn.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, FriendRoommateMatchingDetailFragment())
+                .addToBackStack(null)  // 뒤로가기 버튼으로 돌아올 수 있게
+                .commit()
+        }
+
+
         // 뒤로가기 버튼 처리
         binding.btnBack.setOnClickListener {
-            requireActivity().onBackPressedDispatcher.onBackPressed()
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, FriendRoommateDateFragment())
+                .addToBackStack(null)
+                .commit()
         }
 
         // TODO: 이곳에 추가 로직 구현

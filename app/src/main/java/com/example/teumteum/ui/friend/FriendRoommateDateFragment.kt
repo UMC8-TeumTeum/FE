@@ -66,8 +66,12 @@ class FriendRoommateDateFragment : Fragment() {
         binding.nextBtn.setBackgroundColor(Color.parseColor("#F6F6F6"))
         binding.nextBtn.setTextColor(Color.parseColor("#0F0F0F"))
 
+        // 뒤로가기 버튼ㅇ
         binding.btnBack.setOnClickListener {
-            requireActivity().onBackPressedDispatcher.onBackPressed()
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, FriendFragment())
+                .addToBackStack(null)
+                .commit()
         }
 
         binding.nextBtn.setOnClickListener {
