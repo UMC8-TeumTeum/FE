@@ -11,8 +11,8 @@ import java.time.temporal.ChronoField
 fun combineDateTime(dateTextView: TextView, timeTextView: TextView): String {
         val dateStr = dateTextView.text.toString()
         val timeStr = timeTextView.text.toString()
-        val combinedStr = "$dateStr $timeStr"
 
+        val combinedStr = "$dateStr $timeStr"
         val formatter = DateTimeFormatter.ofPattern("M월 d일 '('E')' a h:mm", Locale.KOREAN)
         val parsed = formatter.parse(combinedStr)
 

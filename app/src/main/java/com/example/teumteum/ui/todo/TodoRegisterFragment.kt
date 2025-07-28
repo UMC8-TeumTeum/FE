@@ -482,17 +482,24 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener, Re
     }
 
     private fun register() {
+        val title = binding.todoTitleEt.text.toString()
+        val startDateText = binding.startDateTv.text.toString()
+        val endDateText = binding.endDateTv.text.toString()
+        val startTimeText = binding.startTimeTv.text.toString()
+        val endTimeText = binding.endTimeTv.text.toString()
 
-        val startTime = combineDateTime(binding.startDateTv, binding.startTimeTv)
-        val endTime = combineDateTime(binding.endDateTv, binding.endTimeTv)
-
-        if (binding.todoTitleEt.text.toString().isEmpty()) {
+        if (title.isEmpty()) {
             Toast.makeText(requireContext(), "제목을 입력해주세요.", Toast.LENGTH_SHORT).show()
             return
         }
 
-        if (startTime.isEmpty() || endTime.isEmpty()) {
-            Toast.makeText(requireContext(), "시작/종료 시간을 입력해주세요.", Toast.LENGTH_SHORT).show()
+        if (startDateText == "시작 날짜" || endDateText == "종료 날짜") {
+            Toast.makeText(requireContext(), "시작/종료 날짜를 설정해주세요.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (startTimeText == "시작 시간" || endTimeText == "종료 시간") {
+            Toast.makeText(requireContext(), "시작/종료 시간을 설정해주세요.", Toast.LENGTH_SHORT).show()
             return
         }
 
