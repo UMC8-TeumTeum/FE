@@ -55,11 +55,16 @@ class OnBoardingScheduleFragment : Fragment(){
         binding.scheduleRv.layoutManager = LinearLayoutManager(requireContext())
 
         binding.fabAddIv.setOnClickListener {
-            val bottomSheet = BottomSheetScheduleFragment(selectedDayIndex) { schedule ->
-                val list = scheduleMap.getOrPut(selectedDayIndex) { mutableListOf() }
+            val list = scheduleMap.getOrPut(selectedDayIndex) { mutableListOf() }
+
+            val bottomSheet = BottomSheetScheduleFragment(
+                selectedDayIndex,
+                list.toList()
+            ) { schedule ->
                 list.add(schedule)
                 scheduleAdapter.submitList(list.toList())
             }
+
             bottomSheet.show(parentFragmentManager, "BottomSheetScheduleFragment")
         }
 
