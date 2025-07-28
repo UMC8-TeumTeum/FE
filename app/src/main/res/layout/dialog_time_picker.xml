@@ -81,14 +81,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- 확인 버튼 -->
+    <!-- 완료 버튼 -->
     <Button
         android:id="@+id/btnOk"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="-30dp"
         android:layout_marginStart="0dp"
-        android:text="확인"
+        android:text="완료"
         android:textSize="16dp"
         android:textColor="#0F0F0F"
         android:fontFamily="@font/noto_sans_kr_medium"
