@@ -12,3 +12,12 @@ data class Todo(
     @SerializedName("includeTeum") val includeTeum: Boolean,
     @SerializedName("remindAlarm") val remindAlarm: List<Int>? = null
 )
+
+data class TodoHomeItem(
+    val id: Int,
+    val title: String,
+    val startTime: String,
+    val endTime: String,
+    val isPublic: Boolean,
+    var isAlarmOn: Boolean? = null
+)

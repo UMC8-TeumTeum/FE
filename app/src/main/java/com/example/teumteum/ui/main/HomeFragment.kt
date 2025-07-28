@@ -154,6 +154,11 @@ class HomeFragment : Fragment(), IDateClickListener {
             updateTimeChart(isAM)
             updateIndicator(isAM)
         }
+
+        // 투두 등록 성공 이벤트 수신
+        parentFragmentManager.setFragmentResultListener("todo_register", viewLifecycleOwner) { _, _ ->
+//            refreshTodolist()
+        }
     }
 
     override fun onResume() {
@@ -330,4 +335,5 @@ class HomeFragment : Fragment(), IDateClickListener {
     companion object {
         private const val DATE_PATTERN = "yyyy년 M월"
     }
+
 }

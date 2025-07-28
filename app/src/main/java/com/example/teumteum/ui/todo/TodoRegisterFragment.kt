@@ -24,6 +24,10 @@ import com.example.teumteum.R
 import com.example.teumteum.data.entities.Todo
 
 import androidx.lifecycle.lifecycleScope
+import com.example.teumteum.data.remote.todo.TodoService
+import com.example.teumteum.data.remote.todo.dto.RegisterTodoRequest
+import com.example.teumteum.data.remote.wish.WishService
+import com.example.teumteum.data.remote.wish.dto.RegisterWishRequest
 import com.example.teumteum.ui.wish.WishRegisterFragment
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -33,18 +37,30 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import com.example.teumteum.ui.calendar.IDateClickListener
 import com.example.teumteum.ui.calendar.MonthlyCalendarFragment
+import com.example.teumteum.ui.todo.view.RegisterTodoView
+import com.example.teumteum.utils.combineDateTime
+import com.google.android.material.button.MaterialButton
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener {
+class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener, RegisterTodoView {
 
     private lateinit var binding: FragmentTodoRegisterBinding
 
     private var currentTargetTextView: TextView? = null
     private var popupWindow: PopupWindow? = null
+
+    private val alarmLabelToMinutes = mapOf(
+        "30분 전" to 30,
+        "10분 전" to 10,
+        "5분 전" to 5,
+        "3분 전" to 3,
+        "1분 전" to 1
+    )
+
     private val selectedItems = mutableSetOf("30분 전", "10분 전")
-    private val alarmOptions = listOf("30분 전", "10분 전", "5분 전", "3분 전", "1분 전")
+    private val alarmOptions = alarmLabelToMinutes.keys.toList()
 
     private var isTodoSelected = true
 
@@ -64,6 +80,8 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        selectedItems.forEach { label -> addAlarmItem(label) }
 
         setupPickers()
 
@@ -102,38 +120,9 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener {
             showAlarmPopupWindow(it)
         }
 
-//        binding.btnTodoRegister.setOnClickListener {
-//
-//            val titleText = binding.todoTitleEt.text.toString().trim()
-//
-//            if (titleText.isEmpty()) {
-//                Toast.makeText(requireContext(), "제목을 입력해주세요.", Toast.LENGTH_SHORT).show()
-//                return@setOnClickListener
-//            }
-//
-//            val todo = Todo(
-//                title = titleText,
-//                startTime = binding.startTimeTv.text.toString(),
-//                endTime = binding.endTimeTv.text.toString(),
-//                alarms = selectedItems.joinToString(","),
-//                isPublic = binding.categoryToggle03Iv.isChecked,
-//                isIncluded = binding.categoryToggle04Iv.isChecked
-//            )
-//
-//            val db = AppDatabase.getInstance(requireContext())
-//
-//            db?.let {
-//                lifecycleScope.launch {
-//                    withContext(Dispatchers.IO) {
-//                        it.todoDao().insert(todo)
-//                    }
-//
-//                    Toast.makeText(requireContext(), "등록되었습니다.", Toast.LENGTH_SHORT).show()
-//                    parentFragmentManager.popBackStack()
-//                }
-//            }
-//
-//        }
+        binding.btnTodoRegister.setOnClickListener {
+            register()
+        }
 
         binding.btnWish.setOnClickListener {
             if (isTodoSelected) {
@@ -337,12 +326,8 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener {
 
     private fun addAlarmItem(label: String) {
         when (label) {
-            "30분 전" -> {
-                binding.alarmItem01Ll.visibility = View.VISIBLE
-            }
-            "10분 전" -> {
-                binding.alarmItem02Ll.visibility = View.VISIBLE
-            }
+            "30분 전" -> binding.alarmItem01Ll.visibility = View.VISIBLE
+            "10분 전" -> binding.alarmItem02Ll.visibility = View.VISIBLE
             else -> {
                 val layout = layoutInflater.inflate(R.layout.item_alarm, binding.alarmLayoutContainer, false)
                 val labelText = layout.findViewById<TextView>(R.id.alarm_set_tv)
@@ -355,12 +340,8 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener {
 
     private fun removeAlarmItem(label: String) {
         when (label) {
-            "30분 전" -> {
-                binding.alarmItem01Ll.visibility = View.GONE
-            }
-            "10분 전" -> {
-                binding.alarmItem02Ll.visibility = View.GONE
-            }
+            "30분 전" -> binding.alarmItem01Ll.visibility = View.GONE
+            "10분 전" -> binding.alarmItem02Ll.visibility = View.GONE
             else -> {
                 for (i in 0 until binding.alarmLayoutContainer.childCount) {
                     val child = binding.alarmLayoutContainer.getChildAt(i)
@@ -450,6 +431,79 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener {
         }
 
         isCalendarVisible = false
+    }
+
+    private fun getSelectedRemindAlarms(): List<Int> {
+        return selectedItems.mapNotNull { alarmLabelToMinutes[it] }
+    }
+
+    private fun getTodoRequest(): RegisterTodoRequest {
+        val title = binding.todoTitleEt.text.toString()
+        val startTime = combineDateTime(binding.startDateTv, binding.startTimeTv)
+        val endTime = combineDateTime(binding.endDateTv, binding.endTimeTv)
+
+        val description = binding.detailTextEt.text.toString()
+        val isPublic = binding.publicToggle01Iv.isChecked
+        val includeTeum = binding.includeToggle01Iv.isChecked
+        val remindAlarm = getSelectedRemindAlarms()
+
+        return RegisterTodoRequest(
+            title = title,
+            startTime = startTime,
+            endTime = endTime,
+            description = description,
+            isPublic = isPublic,
+            includeTeum = includeTeum,
+            remindAlarm = remindAlarm
+        )
+    }
+
+    private fun register() {
+
+        val startTime = combineDateTime(binding.startDateTv, binding.startTimeTv)
+        val endTime = combineDateTime(binding.endDateTv, binding.endTimeTv)
+
+        if (binding.todoTitleEt.text.toString().isEmpty()) {
+            Toast.makeText(requireContext(), "제목을 입력해주세요.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (startTime.isEmpty() || endTime.isEmpty()) {
+            Toast.makeText(requireContext(), "시작/종료 시간을 입력해주세요.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val request = getTodoRequest()
+
+        val todoService = TodoService()
+        todoService.setTodoRegisterView(this)
+        todoService.registerTodo(request)
+    }
+
+    override fun onRegisterTodoSuccess(code: String, message: String?) {
+        val successMessage = message ?: "투두가 성공적으로 생성되었습니다."
+        Toast.makeText(requireContext(), successMessage, Toast.LENGTH_SHORT).show()
+
+        // 이벤트 전송
+        parentFragmentManager.setFragmentResult("todo_register", Bundle())
+
+        // 모든 바텀시트 닫기
+        (requireActivity().supportFragmentManager.fragments).forEach {
+            if (it is BottomSheetDialogFragment) {
+                it.dismissAllowingStateLoss()
+            }
+        }
+    }
+
+    override fun onRegisterTodoFailure(code: String, message: String?) {
+        val errorMessage = when (code) {
+            "COMMON400" -> "제목 또는 시작시간/종료시간이 비어있습니다."
+            "HOME4001" -> "endTime은 startTime을 앞설 수 없습니다."
+            "NETWORK_ERROR" -> "네트워크 오류가 발생했습니다."
+            "PARSE_ERROR" -> "서버 응답을 해석할 수 없습니다."
+            else -> message ?: "등록에 실패했습니다. 다시 시도해주세요."
+        }
+        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
     }
 
 }
