@@ -341,12 +341,20 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener, Re
 
     private fun removeAlarmItem(label: String) {
         when (label) {
-            "30분 전" -> binding.alarmItem01Ll.visibility = View.GONE
-            "10분 전" -> binding.alarmItem02Ll.visibility = View.GONE
+            "30분 전" -> {
+                binding.alarmItem01Ll.visibility = View.GONE
+                binding.alarmToggle01Iv.isChecked = false
+            }
+            "10분 전" -> {
+                binding.alarmItem02Ll.visibility = View.GONE
+                binding.alarmToggle02Iv.isChecked = false
+            }
             else -> {
                 for (i in 0 until binding.alarmLayoutContainer.childCount) {
                     val child = binding.alarmLayoutContainer.getChildAt(i)
                     if (child.tag == label) {
+                        val toggle = child.findViewById<SwitchCompat>(R.id.alarm_toggle_tv)
+                        toggle.isChecked = false
                         binding.alarmLayoutContainer.removeView(child)
                         break
                     }
@@ -437,7 +445,6 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener, Re
     private fun getSelectedRemindAlarms(): List<Int> {
         val alarms = mutableListOf<Int>()
 
-        // 고정된 두 개 알림 항목
         if (binding.alarmToggle01Iv.isChecked) {
             alarms.add(30)
         }
@@ -445,13 +452,13 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener, Re
             alarms.add(10)
         }
 
-        // 추가된 알림 항목들 (item_alarm.xml로부터 동적으로 추가된 항목)
+        // 추가된 알림 항목들
         for (i in 0 until binding.alarmLayoutContainer.childCount) {
             val child = binding.alarmLayoutContainer.getChildAt(i)
             val toggle = child.findViewById<SwitchCompat>(R.id.alarm_toggle_tv)
             val labelText = child.findViewById<TextView>(R.id.alarm_set_tv).text.toString()
 
-            if (toggle.isChecked == true) { // 커스텀 토글이 실제로 체크 가능한 경우
+            if (toggle.isChecked) { // 커스텀 토글이 실제로 체크 가능한 경우
                 alarmLabelToMinutes[labelText]?.let { alarms.add(it) }
             }
         }
