@@ -284,7 +284,7 @@ class WishEditFragment : BottomSheetDialogFragment(), WishView, EditWishView {
             button.tag = categoryIds[index]
         }
 
-        val selectedCategoryIds = wish.categories.map { it.id }
+        val selectedCategoryIds = wish.categories.map { it.categoryId }
 
         categoryButtons.forEach { button ->
             val isSelected = selectedCategoryIds.contains(button.tag as Long)
@@ -351,7 +351,7 @@ class WishEditFragment : BottomSheetDialogFragment(), WishView, EditWishView {
         originalTitle = wish.title
         originalContent = wish.content
         originalTime = wish.estimatedDuration
-        originalCategoryIds = wish.categories.map { it.id }.sorted()
+        originalCategoryIds = wish.categories.map { it.categoryId }.sorted()
     }
 
     override fun onGetWishFailure(code: String, message: String?) {

@@ -15,11 +15,10 @@ import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentHomeBinding
 import com.example.teumteum.ui.calendar.CalendarMode
 
-import com.example.teumteum.data.entities.TodoHomeItem
 import com.example.teumteum.ui.alarm.AlarmFragment
 import com.example.teumteum.ui.calendar.CalendarVPAdapter
 import com.example.teumteum.ui.filling.FillingActivity01Fragment
-import com.example.teumteum.ui.todo.TodoRVAdapter
+import com.example.teumteum.ui.todo.adapter.TodoRVAdapter
 import com.example.teumteum.ui.todo.TodoRegisterFragment
 import com.example.teumteum.ui.wish.WishlistFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -30,11 +29,6 @@ import com.example.teumteum.data.TimeBlock
 import com.example.teumteum.data.TimeType
 import com.example.teumteum.ui.clock.ChartUtils
 import com.example.teumteum.ui.clock.IconPieChartRenderer
-import com.github.mikephil.charting.charts.PieChart
-import com.github.mikephil.charting.data.PieData
-import com.github.mikephil.charting.data.PieDataSet
-import com.github.mikephil.charting.data.PieEntry
-import kotlin.collections.map
 import com.example.teumteum.utils.applyBlurShadow
 
 class HomeFragment : Fragment(), IDateClickListener {
@@ -46,24 +40,10 @@ class HomeFragment : Fragment(), IDateClickListener {
 
     private lateinit var adapter: TodoRVAdapter
 
-    private var todoDummyList = mutableListOf(
-        TodoHomeItem(1, "UX디자인 수업", "오후 12:00", "오후 2:30", isPublic = true, isAlarmOn = true),
-        TodoHomeItem(2, "교내 근로", "오후 3:30", "오후 5:30", isPublic = false, isAlarmOn = null),
-        TodoHomeItem(3, "중랑천 산책", "오후 6:30", "오후 8:00", isPublic = false, isAlarmOn = false)
-    )
-
-//    private var wishDummyList = mutableListOf(
-//        WishItem(1, "화분 물 주기", "10m", "일상"),
-//        WishItem(2, "무신사 아이 쇼핑", "10m", "일상"),
-//        WishItem(3, "뜨개질하기", "30m", "취미"),
-//        WishItem(4, "피그마 파일 정리", "20m", "일상"),
-//        WishItem(5, "인센스 & 명상", "10m", "휴식"),
-//        WishItem(6, "방 구조 바꾸기", "30m", "일상"),
-//        WishItem(7, "매거진 3장 읽기", "10m", "일상"),
-//        WishItem(8, "사진첩 정리", "30m", "일상"),
-//        WishItem(9, "중랑천 산책", "1h~", "운동"),
-//        WishItem(10, "테스트용1", "10m", "문화생활"),
-//        WishItem(11, "테스트용2", "20m", "자기계발")
+//    private var todoDummyList = mutableListOf(
+//        TodoHomeItem(1, "UX디자인 수업", "오후 12:00", "오후 2:30", isPublic = true, isAlarmOn = true),
+//        TodoHomeItem(2, "교내 근로", "오후 3:30", "오후 5:30", isPublic = false, isAlarmOn = null),
+//        TodoHomeItem(3, "중랑천 산책", "오후 6:30", "오후 8:00", isPublic = false, isAlarmOn = false)
 //    )
 
     private val fullDaySchedule = listOf(
@@ -145,8 +125,8 @@ class HomeFragment : Fragment(), IDateClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        adapter = TodoRVAdapter(parentFragmentManager, todoDummyList)
-        binding.todolistRv.adapter = adapter
+//        adapter = TodoRVAdapter(parentFragmentManager, todoDummyList)
+//        binding.todolistRv.adapter = adapter
 
         binding.fabAddIv.post {
             applyBlurShadow(
@@ -173,6 +153,11 @@ class HomeFragment : Fragment(), IDateClickListener {
             isAM = !isAM
             updateTimeChart(isAM)
             updateIndicator(isAM)
+        }
+
+        // 투두 등록 성공 이벤트 수신
+        parentFragmentManager.setFragmentResultListener("todo_register", viewLifecycleOwner) { _, _ ->
+//            refreshTodolist()
         }
     }
 
@@ -350,4 +335,5 @@ class HomeFragment : Fragment(), IDateClickListener {
     companion object {
         private const val DATE_PATTERN = "yyyy년 M월"
     }
+
 }
