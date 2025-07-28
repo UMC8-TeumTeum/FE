@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -517,9 +518,8 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener, Re
         todoService.registerTodo(request)
     }
 
-    override fun onRegisterTodoSuccess(code: String, message: String?) {
-        val successMessage = message ?: "투두가 성공적으로 생성되었습니다."
-        Toast.makeText(requireContext(), successMessage, Toast.LENGTH_SHORT).show()
+    override fun onRegisterTodoSuccess(code: String, todoId: Long?) {
+        Toast.makeText(requireContext(), "투두가 성공적으로 생성되었습니다.", Toast.LENGTH_SHORT).show()
 
         // 이벤트 전송
         parentFragmentManager.setFragmentResult("todo_register", Bundle())

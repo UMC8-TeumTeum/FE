@@ -37,7 +37,9 @@ class TodoService {
                     val registerResponse = response.body()
 
                     if (registerResponse != null && registerResponse.code == "HOME2001") {
-                        todoRegisterView.onRegisterTodoSuccess(registerResponse.code)
+                        val todoId = registerResponse.result?.todoId
+                        Log.d("REGISTER/TODO_ID", "등록된 투두 ID: $todoId")
+                        todoRegisterView.onRegisterTodoSuccess(registerResponse.code, todoId)
                     } else {
                         todoRegisterView.onRegisterTodoFailure(registerResponse?.code ?: "UNKNOWN")
                     }
