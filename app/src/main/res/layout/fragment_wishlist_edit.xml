@@ -1,124 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
     tools:context=".ui.wish.WishlistEditFragment">
 
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/scroll_container"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true"
-        android:layout_marginBottom="100dp">
+        android:layout_marginTop="70dp">
 
-        <LinearLayout
+
+        <ImageView
+            android:id="@+id/back_arrow_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:src="@drawable/ic_arrow_back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/edit_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="-18dp"
+            android:fontFamily="@font/noto_sans_kr_medium"
+            android:text="편집"
+            android:textColor="@color/text_primary"
+            android:textSize="20sp"
+            app:layout_constraintStart_toEndOf="@id/back_arrow_iv"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/complete_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:fontFamily="@font/pretendard_medium"
+            android:text="완료"
+            android:textColor="@color/text_primary"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/select_wish_to_delete_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25.5dp"
+            android:fontFamily="@font/pretendard_medium"
+            android:text="삭제할 위시를 선택해주세요"
+            android:textColor="@color/text_primary"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toTopOf="@id/wishlist_rv"
+            app:layout_constraintStart_toStartOf="@id/back_arrow_iv"
+            app:layout_constraintTop_toBottomOf="@id/edit_tv" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/wishlist_rv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="54dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
-
-                <ImageView
-                    android:id="@+id/back_arrow_iv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:src="@drawable/ic_arrow_back" />
-
-                <TextView
-                    android:id="@+id/edit_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="-1dp"
-                    android:layout_marginStart="12dp"
-                    android:text="편집"
-                    android:textSize="20sp"
-                    android:textColor="@color/text_primary"
-                    android:fontFamily="@font/noto_sans_kr_medium" />
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="0dp" />
-
-                <TextView
-                    android:id="@+id/complete_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="-1dp"
-                    android:text="완료"
-                    android:textSize="16sp"
-                    android:textColor="@color/text_primary"
-                    android:layout_marginEnd="16dp"
-                    android:fontFamily="@font/pretendard_medium" />
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/select_wish_to_delete_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="26dp"
-                android:layout_marginStart="16dp"
-                android:text="삭제할 위시를 선택해주세요"
-                android:textSize="18sp"
-                android:textColor="@color/text_primary"
-                android:fontFamily="@font/pretendard_medium" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/wishlist_rv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="23.45dp"
-                android:nestedScrollingEnabled="false"
-                android:overScrollMode="never"
-                android:clipToPadding="false"
-                tools:listitem="@layout/item_wishlist_edit"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
-        </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+            android:layout_marginTop="24.5dp"
+            android:paddingBottom="120dp"
+            android:clipToPadding="false"
+            android:nestedScrollingEnabled="true"
+            android:overScrollMode="never"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/select_wish_to_delete_tv"
+            tools:listitem="@layout/item_wishlist_edit" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
         android:id="@+id/wishlist_bottom_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
+        android:layout_height="94dp"
         android:layout_alignParentBottom="true"
         android:layout_gravity="bottom"
+        android:background="@color/white"
         android:orientation="horizontal"
         android:padding="10dp"
-        android:background="@color/white"
         android:weightSum="2">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_wish_cancel"
             android:layout_width="0dp"
             android:layout_height="65dp"
+            android:layout_marginEnd="8dp"
             android:layout_weight="1"
             android:text="선택 취소"
             android:textColor="@color/text_primary"
-            app:cornerRadius="12dp"
             app:backgroundTint="@color/teumteum_bg"
-            android:layout_marginEnd="8dp" />
+            app:cornerRadius="12dp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_wish_delete"
             android:layout_width="0dp"
             android:layout_height="65dp"
+            android:layout_marginStart="8dp"
             android:layout_weight="1"
             android:text="삭제"
             android:textColor="@color/white"
-            app:cornerRadius="12dp"
             app:backgroundTint="@color/text_primary"
-            android:layout_marginStart="8dp" />
+            app:cornerRadius="12dp" />
     </LinearLayout>
 
 </RelativeLayout>
