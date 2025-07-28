@@ -38,7 +38,8 @@ class AgreementFragment : Fragment(), AgreementView {
         Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
         Log.e("AGREEMENT_FRAGMENT", msg)
 
-        if(code.equals("ONBOARDING4001")) {
+        //서버 로직 예외
+        if (message?.contains("ONBOARDING4001") == true) {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, CompleteFragment())
                 .addToBackStack(null)
