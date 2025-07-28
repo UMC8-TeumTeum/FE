@@ -69,6 +69,13 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
             updateNextButtonState()
         }
 
+        // 전송할게요 버튼 클릭 시 dialogFragment 띄우기
+        binding.sendBtn.setOnClickListener {
+            val dialog = FriendMatchingPreviewDialog()
+            dialog.show(parentFragmentManager, "PreviewDialog")
+        }
+
+
         binding.btnBack.setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.main_frm, FriendRoommateFriendFragment())
