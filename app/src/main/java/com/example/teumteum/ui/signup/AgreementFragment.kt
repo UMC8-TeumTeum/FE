@@ -38,10 +38,12 @@ class AgreementFragment : Fragment(), AgreementView {
         Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
         Log.e("AGREEMENT_FRAGMENT", msg)
 
-        parentFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, CompleteFragment())
-            .addToBackStack(null)
-            .commit()
+        if(code.equals("ONBOARDING4001")) {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, CompleteFragment())
+                .addToBackStack(null)
+                .commit()
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
