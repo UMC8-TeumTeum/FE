@@ -104,33 +104,42 @@ class WishlistFragment() : Fragment(), WishlistView {
         val button1h = binding.btnWishlistTime05
 
         allButton.setOnClickListener {
-            adapter.updateList(wishlistItems) // 전체 표시
-            updateTimeButtonUI(allButton)
+            filterAndUpdate(duration = "all", button = allButton)
         }
 
         button10m.setOnClickListener {
-            val filtered = wishlistItems.filter { it.estimatedDuration == "10m" }
-            adapter.updateList(filtered)
-            updateTimeButtonUI(button10m)
+            filterAndUpdate(duration = "10m", button = button10m)
         }
 
         button20m.setOnClickListener {
-            val filtered = wishlistItems.filter { it.estimatedDuration == "20m" }
-            adapter.updateList(filtered)
-            updateTimeButtonUI(button20m)
+            filterAndUpdate(duration = "20m", button = button20m)
         }
 
         button30m.setOnClickListener {
-            val filtered = wishlistItems.filter { it.estimatedDuration == "30m" }
-            adapter.updateList(filtered)
-            updateTimeButtonUI(button30m)
+            filterAndUpdate(duration = "30m", button = button30m)
         }
 
         button1h.setOnClickListener {
-            val filtered = wishlistItems.filter { it.estimatedDuration == "1h" }
-            adapter.updateList(filtered)
-            updateTimeButtonUI(button1h)
+            filterAndUpdate(duration = "1h", button = button1h)
         }
+    }
+
+    private fun filterAndUpdate(duration: String, button: MaterialButton) {
+        val filteredList = when (duration) {
+            "all" -> wishlistItems
+            else -> wishlistItems.filter { it.estimatedDuration == duration }
+        }
+
+        if (filteredList.isEmpty()) {
+            binding.wishlistRv.visibility = View.GONE
+            binding.wishNotExistsCv.visibility = View.VISIBLE
+        } else {
+            binding.wishlistRv.visibility = View.VISIBLE
+            binding.wishNotExistsCv.visibility = View.GONE
+            adapter.updateList(filteredList)
+        }
+
+        updateTimeButtonUI(button)
     }
 
     private fun updateTimeButtonUI(selectedButton: MaterialButton) {
