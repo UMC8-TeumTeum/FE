@@ -163,10 +163,21 @@ class WishlistFragment() : Fragment(), WishlistView {
         getList(duration = "all", page = 1)
     }
 
-    override fun onGetWishListSuccess(wishlistItems: List<WishlistItem>) {
-        this.wishlistItems = wishlistItems
-        adapter.updateList(wishlistItems)
+    override fun onGetWishListSuccess(wishlist: List<WishlistItem>) {
+        this.wishlistItems = wishlist
+
+        if (wishlist.isEmpty()) {
+            // 위시가 없을 때
+            binding.wishlistRv.visibility = View.GONE
+            binding.wishNotExistsCv.visibility = View.VISIBLE
+        } else {
+            // 위시가 있을 때
+            binding.wishlistRv.visibility = View.VISIBLE
+            binding.wishNotExistsCv.visibility = View.GONE
+            adapter.updateList(wishlist)
+        }
     }
+
 
     override fun onGetWishListFailure(code: String, message: String?) {
         val errorMessage = when {
