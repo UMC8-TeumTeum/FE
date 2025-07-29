@@ -7,7 +7,7 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface AgreementRetrofitInterface {
-    @POST("/api/users/onboarding/agreement")
+    @POST("/api/users/onboarding/agreements")
     fun postAgreements(@Body request: AgreementRequest): Call<AgreementResponse>
 
 }
