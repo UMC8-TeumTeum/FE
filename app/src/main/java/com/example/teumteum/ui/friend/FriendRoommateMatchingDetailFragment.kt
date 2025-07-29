@@ -69,7 +69,7 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
             updateNextButtonState()
         }
 
-        // 전송할게요 버튼 클릭 시 dialogFragment 띄우기
+        // 전송할게요 버튼 클릭 시 dialogFragment 화면 띄우기
         binding.sendBtn.setOnClickListener {
             val dialog = FriendMatchingPreviewDialog()
             dialog.show(parentFragmentManager, "PreviewDialog")
@@ -82,7 +82,6 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
                 .addToBackStack(null)
                 .commit()
         }
-
         setupTimePickers()
 
         // 초기 버튼 상태 설정

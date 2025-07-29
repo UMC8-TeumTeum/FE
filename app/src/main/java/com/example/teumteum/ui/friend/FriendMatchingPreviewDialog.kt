@@ -56,7 +56,7 @@ class FriendMatchingPreviewDialog : DialogFragment() {
             updateSuggestion()
         }
 
-        // 이전 버튼 (선택)
+        // 이전 버튼
         binding.btnPrev.setOnClickListener {
             currentIndex = if (currentIndex == 0) suggestions.size - 1 else currentIndex - 1
             updateSuggestion()
