@@ -83,6 +83,12 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener, Re
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val today = getTodayFormatted()
+
+        // 시작/종료 날짜를 오늘 날짜로 초기화
+        binding.startDateTv.text = today
+        binding.endDateTv.text = today
+
         selectedItems.forEach { label -> addAlarmItem(label) }
 
         setupPickers()
@@ -467,6 +473,11 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener, Re
         return alarms
     }
 
+    private fun getTodayFormatted(): String {
+        val today = LocalDate.now()
+        val formatter = DateTimeFormatter.ofPattern("M월 d일 (E)", Locale.KOREAN)
+        return today.format(formatter)
+    }
 
     private fun getTodoRequest(): RegisterTodoRequest {
         val title = binding.todoTitleEt.text.toString()
@@ -491,18 +502,11 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener, Re
 
     private fun register() {
         val title = binding.todoTitleEt.text.toString()
-        val startDateText = binding.startDateTv.text.toString()
-        val endDateText = binding.endDateTv.text.toString()
         val startTimeText = binding.startTimeTv.text.toString()
         val endTimeText = binding.endTimeTv.text.toString()
 
         if (title.isEmpty()) {
             Toast.makeText(requireContext(), "제목을 입력해주세요.", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        if (startDateText == "시작 날짜" || endDateText == "종료 날짜") {
-            Toast.makeText(requireContext(), "시작/종료 날짜를 설정해주세요.", Toast.LENGTH_SHORT).show()
             return
         }
 
