@@ -116,7 +116,7 @@ class MonthlyCalendarFragment : Fragment() {
                 columnSpec = GridLayout.spec(index % 7)
                 width = GridLayout.LayoutParams.WRAP_CONTENT
                 height = GridLayout.LayoutParams.WRAP_CONTENT
-                setMargins(20, 8, 24, 8)
+                setMargins(0, 6, 1, 6)
             }
             cellView.layoutParams = params
 

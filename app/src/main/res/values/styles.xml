@@ -20,26 +20,14 @@
     </style>
 
     <style name="calendar_date_tv">
-        <item name="android:layout_width">35dp</item>
-        <item name="android:layout_height">35dp</item>
+        <item name="android:layout_width">30dp</item>
+        <item name="android:layout_height">30dp</item>
         <item name="android:gravity">center</item>
         <item name="android:layout_gravity">center</item>
         <item name="android:textAlignment">center</item>
         <item name="android:textSize">12sp</item>
         <item name="android:textColor">@color/text_primary</item>
         <item name="android:fontFamily">@font/noto_sans_kr_regular</item>
-    </style>
-
-    <style name="CalendarToggleTextStyle">
-        <item name="android:layout_width">60dp</item>
-        <item name="android:layout_height">30dp</item>
-        <item name="android:gravity">center</item>
-        <item name="android:paddingStart">16dp</item>
-        <item name="android:paddingEnd">16dp</item>
-        <item name="android:textSize">12sp</item>
-        <item name="android:minWidth">64dp</item>
-        <item name="android:background">?attr/selectableItemBackground</item>
-        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="TopRoundedCard" parent="">
