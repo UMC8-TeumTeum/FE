@@ -143,10 +143,11 @@
         app:layout_constraintTop_toBottomOf="@id/wish_cv"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/register_btn"
         android:layout_marginTop="30dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="439dp"
+        android:layout_marginBottom="442dp"
         android:paddingTop="14dp"
         android:paddingStart="14dp"
         android:paddingBottom="9dp"
@@ -275,7 +276,6 @@
         android:layout_marginStart="19dp"
         android:layout_marginEnd="19dp"
         android:layout_marginBottom="19dp"
-        android:enabled="false"
-        app:layout_constraintTop_toBottomOf="@id/wish_time_pick_layout" />
+        android:enabled="false"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
