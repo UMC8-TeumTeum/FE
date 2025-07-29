@@ -1,6 +1,6 @@
 package com.example.teumteum.utils
 
-import com.example.teumteum.TEMP_ACCESS_TOKEN
+import com.example.teumteum.utils.TEMP_ACCESS_TOKEN
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -8,10 +8,10 @@ import retrofit2.converter.gson.GsonConverterFactory
 const val BASE_URL = "https://api.teumteum.shop/"
 
 fun getRetrofit(): Retrofit {
-    val retrofit = Retrofit.Builder().baseUrl(BASE_URL)
-        .addConverterFactory(GsonConverterFactory.create()).build()
-
-    return retrofit
+    return Retrofit.Builder()
+        .baseUrl(BASE_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
 }
 
 fun getRetrofitWithToken(): Retrofit {
@@ -25,7 +25,7 @@ fun getRetrofitWithToken(): Retrofit {
         .build()
 
     return Retrofit.Builder()
-        .baseUrl("https://api.teumteum.shop/")
+        .baseUrl(BASE_URL)
         .client(client)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
