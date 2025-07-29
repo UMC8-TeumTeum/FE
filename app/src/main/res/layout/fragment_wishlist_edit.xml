@@ -131,7 +131,7 @@
         android:layout_gravity="bottom"
         android:background="@color/white"
         android:orientation="horizontal"
-        android:padding="10dp"
+        android:padding="14dp"
         android:weightSum="2">
 
         <com.google.android.material.button.MaterialButton
