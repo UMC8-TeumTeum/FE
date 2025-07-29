@@ -56,6 +56,10 @@ dependencies {
     // 달력
     implementation ("com.jakewharton.threetenabp:threetenabp:1.4.5")
 
+    // 프로필
+    implementation ("com.google.android.flexbox:flexbox:3.0.0")
+
+
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

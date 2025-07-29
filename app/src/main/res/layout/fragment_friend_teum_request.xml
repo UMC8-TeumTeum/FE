@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- 뒤로가기 버튼 -->
+    <ImageButton
+        android:id="@+id/btnBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="70dp"
+        android:layout_marginStart="16dp"
+        android:src="@drawable/ic_arrow_back"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="뒤로가기"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="68dp"
+        android:fontFamily="@font/noto_sans_kr_medium"
+        android:includeFontPadding="false"
+        android:text="틈 요청 기록"
+        android:textColor="#0F0F0F"
+        android:textSize="20dp"
+        app:layout_constraintStart_toEndOf="@+id/btnBack"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- 달력 상단 헤더 -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/home_selected_date_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="60dp"
+            android:fontFamily="@font/pretendard_medium"
+            android:text="2025년 6월"
+            android:textColor="@color/text_primary"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/home_calendar_previous_date_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="163dp"
+            android:layout_marginEnd="18dp"
+            android:src="@drawable/previous"
+            app:layout_constraintEnd_toStartOf="@+id/home_calendar_next_date_iv"
+            app:layout_constraintStart_toEndOf="@+id/home_selected_date_tv"
+            app:layout_constraintTop_toTopOf="@+id/home_selected_date_tv" />
+
+        <ImageView
+            android:id="@+id/home_calendar_next_date_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="32dp"
+            android:src="@drawable/next"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/home_selected_date_tv" />
+
+        <LinearLayout
+            android:id="@+id/home_weekly_calendar_day_of_month_ll"
+            android:layout_width="375dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="28dp"
+            android:layout_marginEnd="32dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/home_selected_date_tv">
+
+            <TextView
+                android:id="@+id/home_day_of_week_sun_tv"
+                style="@style/day_of_week_tv"
+                android:text="일" />
+
+            <TextView
+                android:id="@+id/home_day_of_week_mon_tv"
+                style="@style/day_of_week_tv"
+                android:text="월" />
+
+            <TextView
+                android:id="@+id/home_day_of_week_tue_tv"
+                style="@style/day_of_week_tv"
+                android:text="화" />
+
+            <TextView
+                android:id="@+id/home_day_of_week_wed_tv"
+                style="@style/day_of_week_tv"
+                android:text="수" />
+
+            <TextView
+                android:id="@+id/home_day_of_week_thu_tv"
+                style="@style/day_of_week_tv"
+                android:text="목" />
+
+            <TextView
+                android:id="@+id/home_day_of_week_fri_tv"
+                style="@style/day_of_week_tv"
+                android:text="금" />
+
+            <TextView
+                android:id="@+id/home_day_of_week_sat_tv"
+                style="@style/day_of_week_tv"
+                android:text="토" />
+        </LinearLayout>
+
+        <!-- 캘린더 영역 -->
+        <FrameLayout
+            android:id="@+id/home_calendar_container_fl"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/home_weekly_calendar_day_of_month_ll">
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/home_weekly_calendar_week_vp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/home_monthly_calendar_month_vp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone" />
+        </FrameLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- 달력 -->
+    <FrameLayout
+        android:id="@+id/calendar_container"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="60dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
+    </FrameLayout>
+
+    <!-- 회색 선 -->
+    <View
+        android:id="@+id/calendar_divider"
+        android:layout_width="350dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="-8dp"
+        android:background="#B1B2B3"
+        app:layout_constraintTop_toBottomOf="@id/calendar_container"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- RecyclerView: 틈 요청 기록 리스트 -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/requestHistoryRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="330dp"
+        android:layout_marginTop="38dp"
+        android:clipToPadding="false"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:paddingBottom="24dp"
+        android:visibility="visible"
+        app:layout_constraintTop_toBottomOf="@id/calendar_divider"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:listitem="@layout/item_request_history"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
