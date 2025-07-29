@@ -98,7 +98,7 @@
         app:layout_constraintStart_toStartOf="@id/nickname_form"
         android:layout_marginTop="8dp"
         android:layout_marginStart="15dp"
-        android:visibility="visible"
+        android:visibility="invisible"
         />
 
     <TextView
