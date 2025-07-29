@@ -1,6 +1,6 @@
 package com.example.teumteum.utils
 
-import com.example.teumteum.utils.TEMP_ACCESS_TOKEN
+import com.example.teumteum.TEMP_ACCESS_TOKEN
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
