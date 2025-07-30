@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="0dp"
+    app:cardBackgroundColor="@android:color/white">
+
+    <!-- 약속 상태 표시용 TextView (예: 약속이 취소되었어요) -->
+    <TextView
+        android:id="@+id/tvStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="38dp"
+        android:layout_marginStart="19dp"
+        android:text="약속이 취소되었어요"
+        android:textSize="20sp"
+        android:textColor="#0F0F0F"
+        android:fontFamily="@font/noto_sans_kr_medium"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- 상단: 보낸 사람, 날짜, 시간 -->
+        <LinearLayout
+            android:id="@+id/topContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:background="#7770FE"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/imgProfile"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="14dp"
+                android:layout_marginBottom="15dp"
+                android:background="@drawable/freind01_circle_profile"
+                android:scaleType="centerCrop" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvName"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginEnd="18dp"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/noto_sans_kr_medium"
+                    android:text="이름"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/tvDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8.52dp"
+                    android:fontFamily="@font/noto_sans_kr_regular"
+                    android:text="25.05.02     |"
+                    android:textColor="#FFFFFF"
+                    android:textSize="11sp" />
+
+                <ImageView
+                    android:layout_width="13dp"
+                    android:layout_height="13dp"
+                    android:layout_marginEnd="4dp"
+                    android:contentDescription="시간 아이콘"
+                    android:src="@drawable/friend_timer_outline" />
+
+                <TextView
+                    android:id="@+id/tvTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="21dp"
+                    android:fontFamily="@font/noto_sans_kr_regular"
+                    android:text="15:20 ~ 16:10"
+                    android:textColor="#FFFFFF"
+                    android:textSize="11sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/contentContainer"
+            android:layout_width="match_parent"
+            android:layout_height="95dp"
+            android:orientation="vertical"
+            android:background="@drawable/bg_bottom_rounded">
+
+            <!-- 제목 -->
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="14dp"
+                android:text="종강 기념 한강 피크닉"
+                android:includeFontPadding="false"
+                android:textColor="#0F0F0F"
+                android:textSize="15sp"
+                android:fontFamily="@font/noto_sans_kr_medium" />
+
+            <!-- 설명 -->
+            <TextView
+                android:id="@+id/description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="93.69dp"
+                android:layout_marginBottom="16dp"
+                android:includeFontPadding="false"
+                android:text="종강 기념 한강 피크닉 가자! 돗자리는 내가 챙길\n게~ 다들 몸만 오세요"
+                android:textColor="#788084"
+                android:textSize="12sp"
+                android:fontFamily="@font/noto_sans_kr_regular" />
+        </LinearLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/labelAccept"
+                android:layout_width="56dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="29dp"
+                android:background="@drawable/bg_label_accept"
+                android:gravity="center"
+                android:text="수락"
+                android:textColor="#5C6569"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/labelCancel"
+                android:layout_width="56dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/bg_label_accept"
+                android:gravity="center"
+                android:text="취소"
+                android:textColor="#5C6569"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/labelAccept" />
+
+            <TextView
+                android:id="@+id/labelNoAnswer"
+                android:layout_width="56dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/bg_label_accept"
+                android:gravity="center"
+                android:text="미응답"
+                android:textColor="#5C6569"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/labelCancel" />
+
+            <View
+                android:id="@+id/verticalDivider"
+                android:layout_width="1dp"
+                android:layout_height="152dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginBottom="36dp"
+                android:layout_marginTop="25dp"
+                android:background="#CBCCD0"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/labelAccept"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <!-- ConstraintLayout 안에 FlexboxLayout으로 사용자 프로필 정렬 -->
+            <com.google.android.flexbox.FlexboxLayout
+                android:id="@+id/profileImageContainer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="26dp"
+                android:layout_marginEnd="12dp"
+                app:flexWrap="wrap"
+                app:justifyContent="flex_start"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/verticalDivider"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <!-- 더미 사용자 프로필 이미지들 -->
+                <ImageView
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="@drawable/freind01_circle_profile"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/gray_teum" />
+
+                <ImageView
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="@drawable/freind01_circle_profile"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/gray_teum" />
+
+                <ImageView
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="@drawable/freind01_circle_profile"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/gray_teum" />
+
+                <ImageView
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="@drawable/freind01_circle_profile"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/gray_teum" />
+
+                <!-- 필요한 만큼 반복 추가 가능 -->
+            </com.google.android.flexbox.FlexboxLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
+
