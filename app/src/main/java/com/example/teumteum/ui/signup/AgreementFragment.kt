@@ -3,18 +3,49 @@ package com.example.teumteum.ui.signup
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.example.teumteum.R
+import com.example.teumteum.data.remote.agreement.AgreementService
+import com.example.teumteum.data.remote.agreement.dto.AgreementRequest
+import com.example.teumteum.data.remote.todo.TodoService
 import com.example.teumteum.databinding.FragmentAgreementBinding
+import com.example.teumteum.ui.signup.view.AgreementView
 
-class AgreementFragment : Fragment() {
+class AgreementFragment : Fragment(), AgreementView {
 
     private lateinit var binding: FragmentAgreementBinding
+
+    override fun onAgreementSuccess(code: String) {
+        val msg = "약관 동의 성공 (code: $code)"
+        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+        Log.d("AGREEMENT_FRAGMENT", msg)
+
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, CompleteFragment())
+            .addToBackStack(null)
+            .commit()
+    }
+
+    override fun onAgreementFailure(code: String, message: String?) {
+        val msg = "약관 동의 실패 (code: $code, message: ${message ?: "없음"})"
+        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+        Log.e("AGREEMENT_FRAGMENT", msg)
+
+        //서버 로직 예외
+        if (message?.contains("ONBOARDING4001") == true) {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, CompleteFragment())
+                .addToBackStack(null)
+                .commit()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,10 +70,10 @@ class AgreementFragment : Fragment() {
         setupSelectAllCheckbox()
 
         binding.nextBtn.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, CompleteFragment())
-                .addToBackStack(null)
-                .commit()
+            val request = getAgreementRequest()
+            val agreementService = AgreementService()
+            agreementService.setAgreementView(this)
+            agreementService.postAgreements(request)
         }
 
         //체크박스 초기 색상
@@ -151,5 +182,14 @@ class AgreementFragment : Fragment() {
             .replace(R.id.fragment_container, fragment)
             .addToBackStack(null)
             .commit()
+    }
+
+    private fun getAgreementRequest(): AgreementRequest{
+        return AgreementRequest(
+            tosConsent = binding.term1Checkbox.isChecked,
+            privacyConsent = binding.term2Checkbox.isChecked,
+            thirdPartyConsent = binding.term3Checkbox.isChecked,
+            marketingConsent = binding.term4Checkbox.isChecked
+        )
     }
 }
