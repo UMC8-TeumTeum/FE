@@ -50,9 +50,20 @@ class OnBoardingNicknameFragment : Fragment(), NicknameJobFieldView {
             binding.nicknameErrorTv.visibility = View.VISIBLE
         }
 
-        //온보딩 단계가 아닐 경우
+        //온보딩 단계가 아닐 경우 - 이후 테스트를 위해 화면 이동하도록 구현
         if (message?.contains("ONBOARDING4001") == true) {
             Toast.makeText(requireContext(), "온보딩 단계가 아닙니다.", Toast.LENGTH_SHORT).show()
+
+            val fragment = OnBoardingProfileFragment().apply {
+                arguments = Bundle().apply {
+                    putString("nickname", binding.nicknameEt.text.toString())
+                }
+            }
+
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .addToBackStack(null)
+                .commit()
         }
     }
 
