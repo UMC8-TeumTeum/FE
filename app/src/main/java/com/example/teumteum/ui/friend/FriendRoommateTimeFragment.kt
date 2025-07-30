@@ -8,12 +8,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.teumteum.R
 import com.example.teumteum.data.TimeBlock
 import com.example.teumteum.data.TimeType
 import com.example.teumteum.databinding.FragmentFriendRoommateTimeBinding
 import com.example.teumteum.ui.clock.ChartUtils
 import com.example.teumteum.ui.clock.IconPieChartRenderer
+import com.example.teumteum.ui.friend.adapter.FriendProfileAdapter
+import com.example.teumteum.ui.friend.data.FriendProfileData
 import com.example.teumteum.ui.main.MainActivity
 
 class FriendRoommateTimeFragment : Fragment() {
@@ -54,6 +57,21 @@ class FriendRoommateTimeFragment : Fragment() {
         if (!receivedDate.isNullOrEmpty()) {
             binding.date.text = receivedDate
         }
+
+        val profiles = listOf(
+            FriendProfileData("나", R.drawable.gray_teum),
+            FriendProfileData("문혜원",R.drawable.gray_teum ),
+            FriendProfileData("이솔민", R.drawable.gray_teum),
+            FriendProfileData("장채미", R.drawable.gray_teum),
+            FriendProfileData("이솔민", R.drawable.gray_teum)
+        )
+
+        var adapter = FriendProfileAdapter(profiles) { profile ->
+            // sendButton 클릭 시 동작
+        }
+
+        binding.friendProfileRv.adapter = adapter
+        binding.friendProfileRv.layoutManager = LinearLayoutManager(requireContext())
 
 
         // PieChart 기본 설정
@@ -101,8 +119,10 @@ class FriendRoommateTimeFragment : Fragment() {
 
     private fun updateTimeChart() {
         val halfBlocks = ChartUtils.splitAndFillTimeBlocks(fullSchedule, isAM)
-        ChartUtils.setTimePieChartData(requireContext(), binding.clockChart, halfBlocks)
 
+        // 이 화면에서만 색상 통일 적용!
+        val unifiedPurple = Color.parseColor("#847EFF")
+        ChartUtils.setTimePieChartData(requireContext(), binding.clockChart, halfBlocks, unifiedPurple)
         //  EMPTY 블럭 있는지 확인
         val hasEmptyTime = halfBlocks.any { it.type == TimeType.EMPTY }
 
