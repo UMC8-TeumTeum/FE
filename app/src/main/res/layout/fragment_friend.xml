@@ -119,6 +119,7 @@
     </RelativeLayout>
 
     <LinearLayout
+        android:id="@+id/tabLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -126,6 +127,7 @@
         android:paddingTop="12dp">
 
         <TextView
+            android:id="@+id/tabFollowing"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="팔로잉"
@@ -135,6 +137,7 @@
             android:layout_marginEnd="16dp" />
 
         <TextView
+            android:id="@+id/tabFollower"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="팔로워"
@@ -152,5 +155,17 @@
         android:nestedScrollingEnabled="true"
         android:padding="12dp"
         tools:listitem="@layout/friend01_item_following" />
+
+    <!-- 팔로워 리스트 (처음에는 안 보이게) -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/followerRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="292dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:nestedScrollingEnabled="true"
+        android:padding="12dp"
+        android:visibility="gone"
+        tools:listitem="@layout/friend01_item_follower" />
 
 </LinearLayout>

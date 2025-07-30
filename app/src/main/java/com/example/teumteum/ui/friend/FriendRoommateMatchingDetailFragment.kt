@@ -78,7 +78,7 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
 
         binding.btnBack.setOnClickListener {
             parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, FriendRoommateFriendFragment())
+                .replace(R.id.main_frm, FriendRoommateTimeFragment())
                 .addToBackStack(null)
                 .commit()
         }
