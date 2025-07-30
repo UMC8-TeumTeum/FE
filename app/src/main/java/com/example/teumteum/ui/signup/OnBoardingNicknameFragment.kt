@@ -50,8 +50,9 @@ class OnBoardingNicknameFragment : Fragment(), NicknameJobFieldView {
             binding.nicknameErrorTv.visibility = View.VISIBLE
         }
 
+        //온보딩 단계가 아닐 경우
         if (message?.contains("ONBOARDING4001") == true) {
-            binding.nicknameErrorTv.visibility = View.VISIBLE
+            Toast.makeText(requireContext(), "온보딩 단계가 아닙니다.", Toast.LENGTH_SHORT).show()
         }
     }
 
