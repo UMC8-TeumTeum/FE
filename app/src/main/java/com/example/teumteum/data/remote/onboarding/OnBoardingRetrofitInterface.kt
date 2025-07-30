@@ -10,4 +10,5 @@ interface OnBoardingRetrofitInterface {
     @POST("/api/users/onboarding/nickname-job")
     fun postNicknameAndJobField(@Body request: NicknameJobRequest): Call<NicknameJobResponse>
 
+
 }
