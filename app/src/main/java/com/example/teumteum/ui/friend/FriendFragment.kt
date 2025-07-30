@@ -65,6 +65,14 @@ class FriendFragment : Fragment() {
                 .commit()
         }
 
+        // 틈 요청 기록 화면으로 이동
+        binding.btnAlarm.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, FriendTeumRequestFragment())
+                .addToBackStack(null)
+                .commit()
+        }
+
         binding.recommendRecyclerView.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         binding.recommendRecyclerView.adapter = recommendAdapter
