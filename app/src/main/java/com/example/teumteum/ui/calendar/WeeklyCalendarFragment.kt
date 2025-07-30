@@ -36,7 +36,8 @@ class WeeklyCalendarFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val newDate = calculateNewDate()
         calculateDatesOfWeek(newDate)
-        setOneWeekDateIntoTextView()
+        val baseMonth = newDate.monthValue
+        setOneWeekDateIntoTextView(baseMonth)
         selectTodayIfInWeek()
     }
 
@@ -47,7 +48,7 @@ class WeeklyCalendarFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        resetUi()
+        resetUi(calculateNewDate().monthValue)
     }
 
     private fun initViews() {
@@ -72,9 +73,8 @@ class WeeklyCalendarFragment : Fragment() {
         dates = (0..6).map { startOfWeek.plusDays(it.toLong()) }
     }
 
-    private fun setOneWeekDateIntoTextView() {
+    private fun setOneWeekDateIntoTextView(baseMonth: Int) {
         val today = LocalDate.now()
-        val baseMonth = dates[6].monthValue // 토요일 기준
 
         for (i in textViewList.indices) {
             val date = dates[i]
@@ -84,14 +84,15 @@ class WeeklyCalendarFragment : Fragment() {
             textView.text = date.dayOfMonth.toString()
             dotView.visibility = if (date == today) View.VISIBLE else View.GONE
 
-            if (date.monthValue != baseMonth) {
-                textView.setTextColor(requireContext().getColor(R.color.teumteum_deactive))
-            } else {
-                textView.setTextColor(requireContext().getColor(R.color.text_primary))
-            }
+            textView.setTextColor(
+                if (date.monthValue == baseMonth)
+                    requireContext().getColor(R.color.text_primary)
+                else
+                    requireContext().getColor(R.color.teumteum_deactive)
+            )
 
             textView.setOnClickListener {
-                resetUi()
+                resetUi(baseMonth)
                 setSelectedDate(requireContext(), textView)
                 saveSelectedDate(requireContext(), date)
                 onClickListener.onClickDate(date)
@@ -119,9 +120,8 @@ class WeeklyCalendarFragment : Fragment() {
         }
     }
 
-    private fun resetUi() {
+    private fun resetUi(baseMonth: Int) {
         val today = LocalDate.now()
-        val baseMonth = dates[6].monthValue
 
         for (i in textViewList.indices) {
             val date = dates[i]
@@ -137,10 +137,10 @@ class WeeklyCalendarFragment : Fragment() {
             }
 
             textView.setTextColor(
-                if (date.monthValue != baseMonth)
-                    requireContext().getColor(R.color.teumteum_deactive)
-                else
+                if (date.monthValue == baseMonth)
                     requireContext().getColor(R.color.text_primary)
+                else
+                    requireContext().getColor(R.color.teumteum_deactive)
             )
         }
     }
