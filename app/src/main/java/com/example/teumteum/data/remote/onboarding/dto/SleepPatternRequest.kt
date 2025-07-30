@@ -4,6 +4,6 @@ import com.google.gson.annotations.SerializedName
 import java.time.LocalTime
 
 data class SleepPatternRequest(
-    @SerializedName("sleepTime") val sleepTime: LocalTime,
-    @SerializedName("wakeTime") val wakeTime: LocalTime
+    @SerializedName("sleepTime") val sleepTime: String,
+    @SerializedName("wakeTime") val wakeTime: String
 )
