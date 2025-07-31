@@ -1,10 +1,18 @@
 package com.example.teumteum.data.remote.todo
 
 import android.util.Log
+import com.example.teumteum.data.remote.todo.dto.EditTodoRequest
+import com.example.teumteum.data.remote.todo.dto.EditTodoResponse
 import com.example.teumteum.data.remote.todo.dto.GetTodoListResponse
 import com.example.teumteum.data.remote.todo.dto.GetTodoResponse
 import com.example.teumteum.data.remote.todo.dto.RegisterTodoRequest
 import com.example.teumteum.data.remote.todo.dto.RegisterTodoResponse
+import com.example.teumteum.data.remote.wish.WishRetrofitInterface
+import com.example.teumteum.data.remote.wish.WishService
+import com.example.teumteum.data.remote.wish.WishService.Companion
+import com.example.teumteum.data.remote.wish.dto.EditWishRequest
+import com.example.teumteum.data.remote.wish.dto.EditWishResponse
+import com.example.teumteum.ui.todo.view.EditTodoView
 import com.example.teumteum.ui.todo.view.TodoListView
 import com.example.teumteum.ui.todo.view.RegisterTodoView
 import com.example.teumteum.ui.todo.view.TodoView
@@ -18,17 +26,22 @@ class TodoService {
     private lateinit var todoRegisterView: RegisterTodoView
     private lateinit var todoListView: TodoListView
     private lateinit var todoView: TodoView
+    private lateinit var todoEditView: EditTodoView
 
     fun setTodoRegisterView(todoRegisterView: RegisterTodoView) {
         this.todoRegisterView = todoRegisterView
     }
 
-    fun setTodoListGetView(todoListGetView: TodoListView) {
-        this.todoListView = todoListGetView
+    fun setTodoListGetView(todoListView: TodoListView) {
+        this.todoListView = todoListView
     }
 
-    fun setTodoGetView(todoGetView: TodoView) {
-        this.todoView = todoGetView
+    fun setTodoGetView(todoView: TodoView) {
+        this.todoView = todoView
+    }
+
+    fun setTodoEditView(todoEditView: EditTodoView) {
+        this.todoEditView = todoEditView
     }
 
     companion object {
@@ -180,6 +193,53 @@ class TodoService {
             override fun onFailure(call: Call<GetTodoResponse>, t: Throwable) {
                 Log.d("TODO/FAILURE", t.message.toString())
                 todoView.onGetTodoFailure("NETWORK_ERROR")
+            }
+        })
+    }
+
+    // 투두 수정
+    fun editTodo(todoId: Long, request: EditTodoRequest) {
+
+        val todoService = getRetrofitWithToken().create(TodoRetrofitInterface::class.java)
+
+        todoService.editTodo(todoId, request).enqueue(object : Callback<EditTodoResponse> {
+            override fun onResponse(
+                call: Call<EditTodoResponse>,
+                response: Response<EditTodoResponse>
+            ) {
+                Log.d("EDIT/SUCCESS", response.toString())
+
+                if (response.isSuccessful) {
+                    val editResponse = response.body()
+
+                    if (editResponse != null && editResponse.code == "HOME2002") {
+                        todoEditView.onEditTodoSuccess(editResponse.code)
+                    } else {
+                        todoEditView.onEditTodoFailure(editResponse?.code ?: "UNKNOWN")
+                    }
+                } else {
+                    // 실패 응답 처리
+                    val errorMsg = response.errorBody()?.string()
+                    Log.d("EDIT/ERROR_BODY", errorMsg ?: "에러 메시지 없음")
+
+                    // gson으로 실패 응답 파싱
+                    try {
+                        if (!errorMsg.isNullOrEmpty()) {
+                            val errorResponse = gson.fromJson(errorMsg, EditTodoResponse::class.java)
+                            todoEditView.onEditTodoFailure(errorResponse.code)
+                        } else {
+                            todoEditView.onEditTodoFailure("EMPTY_ERROR_BODY")
+                        }
+                    } catch (e: Exception) { // JSON 파싱 실패 시
+                        Log.e("EDIT/PARSE_ERROR", "JSON 파싱 실패: ${e.localizedMessage}")
+                        todoEditView.onEditTodoFailure("PARSE_ERROR")
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<EditTodoResponse>, t: Throwable) {
+                Log.d("EDIT/FAILURE", t.message.toString())
+                todoEditView.onEditTodoFailure("NETWORK_ERROR")
             }
         })
     }
