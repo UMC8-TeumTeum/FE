@@ -2,14 +2,12 @@ package com.example.teumteum.data.remote.todo
 
 import android.util.Log
 import com.example.teumteum.data.remote.todo.dto.GetTodoListResponse
+import com.example.teumteum.data.remote.todo.dto.GetTodoResponse
 import com.example.teumteum.data.remote.todo.dto.RegisterTodoRequest
 import com.example.teumteum.data.remote.todo.dto.RegisterTodoResponse
-import com.example.teumteum.data.remote.wish.WishRetrofitInterface
-import com.example.teumteum.data.remote.wish.WishService
-import com.example.teumteum.data.remote.wish.WishService.Companion
-import com.example.teumteum.data.remote.wish.dto.GetWishlistResponse
-import com.example.teumteum.ui.todo.view.GetTodoListView
+import com.example.teumteum.ui.todo.view.TodoListView
 import com.example.teumteum.ui.todo.view.RegisterTodoView
+import com.example.teumteum.ui.todo.view.TodoView
 import com.example.teumteum.utils.getRetrofitWithToken
 import com.google.gson.Gson
 import retrofit2.Call
@@ -18,14 +16,19 @@ import retrofit2.Response
 
 class TodoService {
     private lateinit var todoRegisterView: RegisterTodoView
-    private lateinit var todoListGetView: GetTodoListView
+    private lateinit var todoListView: TodoListView
+    private lateinit var todoView: TodoView
 
     fun setTodoRegisterView(todoRegisterView: RegisterTodoView) {
         this.todoRegisterView = todoRegisterView
     }
 
-    fun setTodoListGetView(todoListGetView: GetTodoListView) {
-        this.todoListGetView = todoListGetView
+    fun setTodoListGetView(todoListGetView: TodoListView) {
+        this.todoListView = todoListGetView
+    }
+
+    fun setTodoGetView(todoGetView: TodoView) {
+        this.todoView = todoGetView
     }
 
     companion object {
@@ -62,8 +65,7 @@ class TodoService {
                     // gson으로 실패 응답 파싱
                     try {
                         if (!errorMsg.isNullOrEmpty()) {
-                            val errorResponse =
-                                TodoService.gson.fromJson(errorMsg, RegisterTodoResponse::class.java)
+                            val errorResponse = gson.fromJson(errorMsg, RegisterTodoResponse::class.java)
                             todoRegisterView.onRegisterTodoFailure(errorResponse.code)
                         } else {
                             todoRegisterView.onRegisterTodoFailure("EMPTY_ERROR_BODY")
@@ -98,9 +100,9 @@ class TodoService {
 
                     if (getTodoListResponse != null && getTodoListResponse.isSuccess) {
                         val todoList = response.body()?.result?.todoList ?: emptyList()
-                        todoListGetView.onGetTodoListSuccess(getTodoListResponse.code, todoList)
+                        todoListView.onGetTodoListSuccess(getTodoListResponse.code, todoList)
                     } else {
-                        todoListGetView.onGetTodoListFailure(
+                        todoListView.onGetTodoListFailure(
                             getTodoListResponse?.code ?: "UNKNOWN",
                             getTodoListResponse?.message ?: "조회 실패"
                         )
@@ -113,20 +115,71 @@ class TodoService {
                     try {
                         if (!errorMsg.isNullOrEmpty()) {
                             val errorResponse = gson.fromJson(errorMsg, GetTodoListResponse::class.java)
-                            todoListGetView.onGetTodoListFailure(errorResponse.code, errorResponse.message)
+                            todoListView.onGetTodoListFailure(errorResponse.code, errorResponse.message)
                         } else {
-                            todoListGetView.onGetTodoListFailure("EMPTY_ERROR_BODY", "응답 본문이 없습니다.")
+                            todoListView.onGetTodoListFailure("EMPTY_ERROR_BODY", "응답 본문이 없습니다.")
                         }
                     } catch (e: Exception) {
                         Log.e("TODOLIST/PARSE_ERROR", "JSON 파싱 실패: ${e.localizedMessage}")
-                        todoListGetView.onGetTodoListFailure("PARSE_ERROR", "응답 파싱에 실패했습니다.")
+                        todoListView.onGetTodoListFailure("PARSE_ERROR", "응답 파싱에 실패했습니다.")
                     }
                 }
             }
 
             override fun onFailure(call: Call<GetTodoListResponse>, t: Throwable) {
                 Log.d("TODOLIST/FAILURE", t.message.toString())
-                todoListGetView.onGetTodoListFailure("NETWORK_ERROR")
+                todoListView.onGetTodoListFailure("NETWORK_ERROR")
+            }
+        })
+    }
+
+    // 특정 투두 조회
+    fun getTodo(todoId: Long) {
+        val todoService = getRetrofitWithToken().create(TodoRetrofitInterface::class.java)
+
+        todoService.getTodo(todoId).enqueue(object : Callback<GetTodoResponse> {
+            override fun onResponse(
+                call: Call<GetTodoResponse>,
+                response: Response<GetTodoResponse>
+            ) {
+                Log.d("TODO/SUCCESS", response.toString())
+
+                if (response.isSuccessful) {
+                    val getTodoResponse = response.body()
+
+                    if (getTodoResponse != null && getTodoResponse.code == "HOOM2003") {
+                        val todo = getTodoResponse.result
+                        if (todo != null) {
+                            todoView.onGetTodoSuccess(todo)
+                        }
+                    } else {
+                        todoView.onGetTodoFailure(
+                            getTodoResponse?.code ?: "UNKNOWN",
+                            getTodoResponse?.message ?: "조회 실패"
+                        )
+                    }
+                } else {
+                    // 실패 응답 처리
+                    val errorMsg = response.errorBody()?.string()
+                    Log.d("TODO/ERROR_BODY", errorMsg ?: "에러 메시지 없음")
+
+                    try {
+                        if (!errorMsg.isNullOrEmpty()) {
+                            val errorResponse = gson.fromJson(errorMsg, GetTodoResponse::class.java)
+                            todoView.onGetTodoFailure(errorResponse.code, errorResponse.message)
+                        } else {
+                            todoView.onGetTodoFailure("EMPTY_ERROR_BODY", "응답 본문이 없습니다.")
+                        }
+                    } catch (e: Exception) {
+                        Log.e("TODO/PARSE_ERROR", "JSON 파싱 실패: ${e.localizedMessage}")
+                        todoView.onGetTodoFailure("PARSE_ERROR", "응답 파싱에 실패했습니다.")
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<GetTodoResponse>, t: Throwable) {
+                Log.d("TODO/FAILURE", t.message.toString())
+                todoView.onGetTodoFailure("NETWORK_ERROR")
             }
         })
     }

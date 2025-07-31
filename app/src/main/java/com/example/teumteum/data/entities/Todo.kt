@@ -31,7 +31,3 @@ data class TodoList(
     @SerializedName("hasAlarm") val hasAlarm: Boolean? = null,
     @SerializedName("type") val type: Type
 )
-
-enum class Type{
-    TODO, AI, TEUM, ROUTINE
-}

@@ -31,10 +31,10 @@ import com.example.teumteum.data.TimeType
 import com.example.teumteum.data.entities.TodoList
 import com.example.teumteum.ui.clock.ChartUtils
 import com.example.teumteum.ui.clock.IconPieChartRenderer
-import com.example.teumteum.ui.todo.view.GetTodoListView
+import com.example.teumteum.ui.todo.view.TodoListView
 import com.example.teumteum.utils.applyBlurShadow
 
-class HomeFragment : Fragment(), IDateClickListener, GetTodoListView {
+class HomeFragment : Fragment(), IDateClickListener, TodoListView {
 
     lateinit var binding: FragmentHomeBinding
 
