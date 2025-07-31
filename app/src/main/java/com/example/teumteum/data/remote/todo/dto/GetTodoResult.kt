@@ -1,10 +1,10 @@
 package com.example.teumteum.data.remote.todo.dto
 
-import com.example.teumteum.data.entities.Type
+import com.example.teumteum.data.entities.TodoType
 import com.google.gson.annotations.SerializedName
 
 data class GetTodoResult(
-    @SerializedName("type") val type: Type,
+    @SerializedName("type") val type: TodoType,
     @SerializedName("title") val title: String,
     @SerializedName("startTime") val startTime: String,
     @SerializedName("endTime") val endTime: String,

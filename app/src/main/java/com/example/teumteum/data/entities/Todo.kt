@@ -29,5 +29,5 @@ data class TodoList(
     @SerializedName("endTime") val endTime: String,
     @SerializedName("isPublic") val isPublic: Boolean,
     @SerializedName("hasAlarm") val hasAlarm: Boolean? = null,
-    @SerializedName("type") val type: Type
+    @SerializedName("type") val type: TodoType
 )
