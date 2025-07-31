@@ -72,7 +72,7 @@ class OnBoardingService {
             ) {
                 if(response.isSuccessful) {
                     val body = response.body()
-                    if(body != null && body.code == "ONBOARDING2003") {
+                    if(body != null && body.code == "ONBOARDING2005") {
                         sleepPatternView.onSleepPatternSuccess(body.code)
                     } else {
                         sleepPatternView.onSleepPatternFailure(body?.code ?: "UNKNOWN", body?.message)
