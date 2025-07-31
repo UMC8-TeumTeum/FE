@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -27,11 +28,13 @@ import java.time.format.DateTimeFormatter
 
 import com.example.teumteum.data.TimeBlock
 import com.example.teumteum.data.TimeType
+import com.example.teumteum.data.entities.TodoList
 import com.example.teumteum.ui.clock.ChartUtils
 import com.example.teumteum.ui.clock.IconPieChartRenderer
+import com.example.teumteum.ui.todo.view.GetTodoListView
 import com.example.teumteum.utils.applyBlurShadow
 
-class HomeFragment : Fragment(), IDateClickListener {
+class HomeFragment : Fragment(), IDateClickListener, GetTodoListView {
 
     lateinit var binding: FragmentHomeBinding
 
@@ -39,12 +42,6 @@ class HomeFragment : Fragment(), IDateClickListener {
     private lateinit var selectedDate: LocalDate
 
     private lateinit var adapter: TodoRVAdapter
-
-//    private var todoDummyList = mutableListOf(
-//        TodoHomeItem(1, "UX디자인 수업", "오후 12:00", "오후 2:30", isPublic = true, isAlarmOn = true),
-//        TodoHomeItem(2, "교내 근로", "오후 3:30", "오후 5:30", isPublic = false, isAlarmOn = null),
-//        TodoHomeItem(3, "중랑천 산책", "오후 6:30", "오후 8:00", isPublic = false, isAlarmOn = false)
-//    )
 
     private val fullDaySchedule = listOf(
         TimeBlock(0, 360, TimeType.SLEEP),   // 00:00 ~ 06:00
@@ -334,6 +331,20 @@ class HomeFragment : Fragment(), IDateClickListener {
 
     companion object {
         private const val DATE_PATTERN = "yyyy년 M월"
+    }
+
+    override fun onGetTodoListSuccess(code: String, todoList: List<TodoList>) {
+        Toast.makeText(requireContext(), "투두리스트가 성공적으로 조회되었습니다.", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onGetTodoListFailure(code: String, message: String?) {
+        val errorMessage = when {
+            code == "COMMON500" -> "서버 오류입니다. 관리자에게 문의해주세요."
+            code == "NETWORK_ERROR" -> "네트워크 오류가 발생했습니다."
+            code == "PARSE_ERROR" -> "서버 응답을 해석할 수 없습니다."
+            else -> "투두리스트 조회에 실패했습니다. 다시 시도해주세요."
+        }
+        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
     }
 
 }

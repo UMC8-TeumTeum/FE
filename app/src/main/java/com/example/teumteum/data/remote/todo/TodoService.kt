@@ -1,8 +1,14 @@
 package com.example.teumteum.data.remote.todo
 
 import android.util.Log
+import com.example.teumteum.data.remote.todo.dto.GetTodoListResponse
 import com.example.teumteum.data.remote.todo.dto.RegisterTodoRequest
 import com.example.teumteum.data.remote.todo.dto.RegisterTodoResponse
+import com.example.teumteum.data.remote.wish.WishRetrofitInterface
+import com.example.teumteum.data.remote.wish.WishService
+import com.example.teumteum.data.remote.wish.WishService.Companion
+import com.example.teumteum.data.remote.wish.dto.GetWishlistResponse
+import com.example.teumteum.ui.todo.view.GetTodoListView
 import com.example.teumteum.ui.todo.view.RegisterTodoView
 import com.example.teumteum.utils.getRetrofitWithToken
 import com.google.gson.Gson
@@ -12,9 +18,14 @@ import retrofit2.Response
 
 class TodoService {
     private lateinit var todoRegisterView: RegisterTodoView
+    private lateinit var todoListGetView: GetTodoListView
 
     fun setTodoRegisterView(todoRegisterView: RegisterTodoView) {
         this.todoRegisterView = todoRegisterView
+    }
+
+    fun setTodoListGetView(todoListGetView: GetTodoListView) {
+        this.todoListGetView = todoListGetView
     }
 
     companion object {
@@ -67,6 +78,55 @@ class TodoService {
             override fun onFailure(call: Call<RegisterTodoResponse>, t: Throwable) {
                 Log.d("REGISTER/FAILURE", t.message.toString())
                 todoRegisterView.onRegisterTodoFailure("NETWORK_ERROR")
+            }
+        })
+    }
+
+    // 투두리스트 조회
+    fun getTodoList(date: String) {
+        val todoService = getRetrofitWithToken().create(TodoRetrofitInterface::class.java)
+
+        todoService.getTodoList(date).enqueue(object : Callback<GetTodoListResponse> {
+            override fun onResponse(
+                call: Call<GetTodoListResponse>,
+                response: Response<GetTodoListResponse>
+            ) {
+                Log.d("TODOLIST/SUCCESS", response.toString())
+
+                if (response.isSuccessful) {
+                    val getTodoListResponse = response.body()
+
+                    if (getTodoListResponse != null && getTodoListResponse.isSuccess) {
+                        val todoList = response.body()?.result?.todoList ?: emptyList()
+                        todoListGetView.onGetTodoListSuccess(getTodoListResponse.code, todoList)
+                    } else {
+                        todoListGetView.onGetTodoListFailure(
+                            getTodoListResponse?.code ?: "UNKNOWN",
+                            getTodoListResponse?.message ?: "조회 실패"
+                        )
+                    }
+                } else {
+                    // 실패 응답 처리
+                    val errorMsg = response.errorBody()?.string()
+                    Log.d("TODOLIST/ERROR_BODY", errorMsg ?: "에러 메시지 없음")
+
+                    try {
+                        if (!errorMsg.isNullOrEmpty()) {
+                            val errorResponse = gson.fromJson(errorMsg, GetTodoListResponse::class.java)
+                            todoListGetView.onGetTodoListFailure(errorResponse.code, errorResponse.message)
+                        } else {
+                            todoListGetView.onGetTodoListFailure("EMPTY_ERROR_BODY", "응답 본문이 없습니다.")
+                        }
+                    } catch (e: Exception) {
+                        Log.e("TODOLIST/PARSE_ERROR", "JSON 파싱 실패: ${e.localizedMessage}")
+                        todoListGetView.onGetTodoListFailure("PARSE_ERROR", "응답 파싱에 실패했습니다.")
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<GetTodoListResponse>, t: Throwable) {
+                Log.d("TODOLIST/FAILURE", t.message.toString())
+                todoListGetView.onGetTodoListFailure("NETWORK_ERROR")
             }
         })
     }
