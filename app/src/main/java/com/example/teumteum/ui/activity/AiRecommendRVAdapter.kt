@@ -1,4 +1,4 @@
-package com.example.teumteum.ui.filling
+package com.example.teumteum.ui.activity
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.teumteum.R
 import com.example.teumteum.data.entities.AiRecommend
 import com.example.teumteum.databinding.ItemWishlistBinding
-import com.example.teumteum.ui.wish.WishSetting01Fragment
 
 class AiRecommendRVAdapter( private var aiList: List<AiRecommend>, private val fragmentManager: FragmentManager) : RecyclerView.Adapter<AiRecommendRVAdapter.ViewHolder>() {
 

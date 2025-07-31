@@ -18,7 +18,7 @@ import com.example.teumteum.ui.calendar.CalendarMode
 
 import com.example.teumteum.ui.alarm.AlarmFragment
 import com.example.teumteum.ui.calendar.CalendarVPAdapter
-import com.example.teumteum.ui.filling.FillingActivity01Fragment
+import com.example.teumteum.ui.activity.FillingActivity01Fragment
 import com.example.teumteum.ui.todo.adapter.TodoRVAdapter
 import com.example.teumteum.ui.todo.TodoRegisterFragment
 import com.example.teumteum.ui.wish.WishlistFragment

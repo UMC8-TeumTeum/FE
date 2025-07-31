@@ -1,4 +1,4 @@
-package com.example.teumteum.ui.filling
+package com.example.teumteum.ui.activity
 
 import android.os.Bundle
 import android.view.Gravity
