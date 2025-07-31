@@ -3,12 +3,15 @@ package com.example.teumteum.data.remote.onboarding
 import android.util.Log
 import com.example.teumteum.data.remote.onboarding.dto.NicknameJobRequest
 import com.example.teumteum.data.remote.onboarding.dto.NicknameJobResponse
+import com.example.teumteum.data.remote.onboarding.dto.SleepPatternRequest
+import com.example.teumteum.data.remote.onboarding.dto.SleepPatternResponse
 import com.example.teumteum.data.remote.onboarding.dto.ScheduleRequest
 import com.example.teumteum.data.remote.onboarding.dto.ScheduleResponse
 import com.example.teumteum.data.remote.wish.WishRetrofitInterface
 import com.example.teumteum.data.remote.wish.dto.RegisterWishRequest
 import com.example.teumteum.data.remote.wish.dto.RegisterWishResponse
 import com.example.teumteum.ui.signup.view.NicknameJobFieldView
+import com.example.teumteum.ui.signup.view.SleepPatternView
 import com.example.teumteum.ui.signup.view.ScheduleView
 import com.example.teumteum.utils.getRetrofitWithToken
 import retrofit2.Call
@@ -19,11 +22,15 @@ import kotlin.jvm.java
 class OnBoardingService {
 
     private lateinit var nicknameJobFieldView: NicknameJobFieldView
-
+    private lateinit var sleepPatternView: SleepPatternView
     private lateinit var scheduleView: ScheduleView
 
     fun setNicknameJobFieldView(nicknameJobFieldView: NicknameJobFieldView) {
         this.nicknameJobFieldView = nicknameJobFieldView
+    }
+
+    fun setSleepPatternView(sleepPatternView: SleepPatternView){
+        this.sleepPatternView = sleepPatternView
     }
 
     fun setScheduleView(scheduleView: ScheduleView){
@@ -57,7 +64,37 @@ class OnBoardingService {
             }
 
         })
+    }
 
+    //수면패턴 등록
+    fun postSleepPattern(request: SleepPatternRequest) {
+        val sleepPatternApi = getRetrofitWithToken().create(OnBoardingRetrofitInterface::class.java)
+        val call = sleepPatternApi.postSleepPattern(request)
+        Log.d("SLEEP_PATTERN_REQUEST", request.toString())
+
+
+        call.enqueue(object : Callback<SleepPatternResponse> {
+            override fun onResponse(
+                call: Call<SleepPatternResponse>,
+                response: Response<SleepPatternResponse>
+            ) {
+                if(response.isSuccessful) {
+                    val body = response.body()
+                    if(body != null && body.code == "ONBOARDING2003") {
+                        sleepPatternView.onSleepPatternSuccess(body.code)
+                    } else {
+                        sleepPatternView.onSleepPatternFailure(body?.code ?: "UNKNOWN", body?.message)
+                    }
+                } else {
+                    sleepPatternView.onSleepPatternFailure("HTTP_${response.code()}", response.errorBody()?.string())
+                }
+            }
+
+            override fun onFailure(call: Call<SleepPatternResponse>, t: Throwable) {
+                sleepPatternView.onSleepPatternFailure("NETWORK_ERROR", t.localizedMessage)
+            }
+
+        })
     }
 
     //반복일정 등록

@@ -199,14 +199,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="35dp"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginEnd="20dp">
+                    android:layout_marginStart="25dp"
+                    android:layout_marginEnd="25dp">
 
                     <TextView
                         android:id="@+id/home_selected_date_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="15dp"
+                        android:layout_marginStart="14dp"
                         android:fontFamily="@font/pretendard_medium"
                         android:gravity="center"
                         android:text="2025년 6월"
@@ -277,7 +277,7 @@
 
                     <LinearLayout
                         android:id="@+id/home_weekly_calendar_day_of_month_ll"
-                        android:layout_width="375dp"
+                        android:layout_width="match_parent"
                         android:layout_height="40dp"
                         android:layout_marginTop="28dp"
                         android:orientation="horizontal"

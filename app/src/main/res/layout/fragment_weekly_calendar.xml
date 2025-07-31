@@ -16,7 +16,7 @@
             android:id="@+id/dot1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="6dp"
             android:src="@drawable/dot_schedule_exists"
             android:visibility="gone" />
     </LinearLayout>
@@ -30,7 +30,7 @@
             android:id="@+id/dot2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="6dp"
             android:src="@drawable/dot_schedule_exists"
             android:visibility="gone" />
     </LinearLayout>
@@ -44,7 +44,7 @@
             android:id="@+id/dot3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="6dp"
             android:src="@drawable/dot_schedule_exists"
             android:visibility="gone" />
     </LinearLayout>
@@ -58,7 +58,7 @@
             android:id="@+id/dot4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="6dp"
             android:src="@drawable/dot_schedule_exists"
             android:visibility="gone" />
     </LinearLayout>
@@ -72,7 +72,7 @@
             android:id="@+id/dot5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="6dp"
             android:src="@drawable/dot_schedule_exists"
             android:visibility="gone" />
     </LinearLayout>
@@ -86,7 +86,7 @@
             android:id="@+id/dot6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="6dp"
             android:src="@drawable/dot_schedule_exists"
             android:visibility="gone" />
     </LinearLayout>
@@ -100,7 +100,7 @@
             android:id="@+id/dot7"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="6dp"
             android:src="@drawable/dot_schedule_exists"
             android:visibility="gone" />
     </LinearLayout>

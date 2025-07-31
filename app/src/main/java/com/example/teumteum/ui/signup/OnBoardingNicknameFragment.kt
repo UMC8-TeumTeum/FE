@@ -91,9 +91,9 @@ class OnBoardingNicknameFragment : Fragment(), NicknameJobFieldView {
 //            }
 
             val request = getNicknameJobRequest()
-            val agreementService = OnBoardingService()
-            agreementService.setNicknameJobFieldView(this)
-            agreementService.postNicknameAndJobField(request)
+            val onBoardingService = OnBoardingService()
+            onBoardingService.setNicknameJobFieldView(this)
+            onBoardingService.postNicknameAndJobField(request)
 
 //            parentFragmentManager.beginTransaction()
 //                .replace(R.id.fragment_container, fragment)
