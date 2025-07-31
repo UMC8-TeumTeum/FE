@@ -1,5 +1,7 @@
 package com.example.teumteum.ui.main
 
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.view.View
 import androidx.activity.enableEdgeToEdge
@@ -10,11 +12,13 @@ import com.example.teumteum.ui.feed.FeedFragment
 import com.example.teumteum.ui.friend.FriendFragment
 import com.example.teumteum.ui.myhome.MyHomeFragment
 import com.example.teumteum.R
+import com.example.teumteum.ScreenOnReceiver
 import com.example.teumteum.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityMainBinding
+    private lateinit var screenOnReceiver: ScreenOnReceiver
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,6 +27,11 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         initBottomNavigation()
+
+        // 화면 켜짐 감지 리시버 등록
+        screenOnReceiver = ScreenOnReceiver()
+        val filter = IntentFilter(Intent.ACTION_SCREEN_ON)
+        registerReceiver(screenOnReceiver, filter)
 
         enableEdgeToEdge()
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
