@@ -14,6 +14,14 @@ class FriendRoommateFriendFragment : Fragment() {
     private var _binding: FragmentFriendRoommateFriendBinding? = null
     private val binding get() = _binding!!
 
+    private var selectedDate: String? = null
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        selectedDate = arguments?.getString("selected_date")
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -40,11 +48,21 @@ class FriendRoommateFriendFragment : Fragment() {
                 .commit()
         }
 
-        //나중에 수정 필요
+        //FriendRoommateTimeFragment 로 이동
         binding.matchBtn.setOnClickListener {
+            val selectedDate = arguments?.getString("selected_date") ?: ""
+
+            val bundle = Bundle().apply {
+                putString("selected_date", selectedDate)
+            }
+
+            val fragment = FriendRoommateTimeFragment().apply {
+                arguments = bundle
+            }
+
             parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, FriendRoommateMatchingDetailFragment())
-                .addToBackStack(null)  // 뒤로가기 버튼으로 돌아올 수 있게
+                .replace(R.id.main_frm, fragment)
+                .addToBackStack(null)
                 .commit()
         }
 

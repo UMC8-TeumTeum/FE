@@ -1,5 +1,6 @@
 package com.example.teumteum.ui.friend
 
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -11,6 +12,8 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentFriendBinding
+import com.example.teumteum.ui.friend.adapter.FollowerAdapter
+import com.example.teumteum.ui.friend.data.FollowerData
 import com.example.teumteum.ui.main.MainActivity
 
 class FriendFragment : Fragment() {
@@ -111,10 +114,44 @@ class FriendFragment : Fragment() {
             }
         )
 
+        // 팔로우 예시
+        val followerList = listOf(
+            FollowerData("홍길동", "UX 디자이너", R.drawable.gray_teum),
+            FollowerData("김영희", "기획자", R.drawable.gray_teum),
+            FollowerData("이준호", "iOS 개발자", R.drawable.gray_teum)
+        )
+
+        // 팔로우
+        val followerAdapter = FollowerAdapter(followerList)
+        binding.followerRecyclerView.adapter = followerAdapter
+        // ✅ 이 줄이 있어야 리스트가 정상적으로 출력됩니다!
+        binding.followerRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+
+
+
         binding.followingRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = followingAdapter
         }
+
+        binding.tabFollowing.setOnClickListener {
+            // 탭 색상 변경
+            binding.tabFollowing.setTextColor(Color.parseColor("#0F0F0F"))  // 진하게
+            binding.tabFollower.setTextColor(Color.parseColor("#B1B2B3"))  // 연하게
+
+            // 리스트 전환
+            binding.followingRecyclerView.visibility = View.VISIBLE
+            binding.followerRecyclerView.visibility = View.GONE
+        }
+
+        binding.tabFollower.setOnClickListener {
+            binding.tabFollowing.setTextColor(Color.parseColor("#B1B2B3"))
+            binding.tabFollower.setTextColor(Color.parseColor("#0F0F0F"))
+
+            binding.followingRecyclerView.visibility = View.GONE
+            binding.followerRecyclerView.visibility = View.VISIBLE
+        }
+
     }
 
     override fun onResume() {

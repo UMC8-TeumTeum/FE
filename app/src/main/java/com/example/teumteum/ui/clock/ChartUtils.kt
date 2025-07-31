@@ -72,8 +72,8 @@ object ChartUtils {
         return result
     }
 
-    //실제 그래프에 넣을 데이터로 변환
-    fun setTimePieChartData(context: Context, pieChart: PieChart, timeBlocks: List<TimeBlock>) {
+    //실제 그래프에 넣을 데이터로 변환/ overrideColor는 FriendRoommateTimeFragment 색 통일
+    fun setTimePieChartData(context: Context, pieChart: PieChart, timeBlocks: List<TimeBlock>, overrideColor: Int? = null) {
         val entries = timeBlocks.map {
             val duration = (it.endTime - it.startTime).toFloat() / 10f
             val label = when (it.type) {
@@ -86,9 +86,9 @@ object ChartUtils {
 
         val colors = timeBlocks.map {
             when (it.type) {
-                TimeType.SLEEP -> ContextCompat.getColor(context, R.color.clock_sleep)
-                TimeType.TODO -> ContextCompat.getColor(context, R.color.clock_todo)
-                TimeType.EMPTY -> ContextCompat.getColor(context, R.color.clock_teum)
+                TimeType.EMPTY -> ContextCompat.getColor(context, R.color.clock_teum)  // EMPTY는 무조건 고정
+                TimeType.SLEEP -> overrideColor ?: ContextCompat.getColor(context, R.color.clock_sleep)
+                TimeType.TODO -> overrideColor ?: ContextCompat.getColor(context, R.color.clock_todo)
             }
         }
 
