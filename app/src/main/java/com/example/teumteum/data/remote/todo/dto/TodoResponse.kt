@@ -29,3 +29,9 @@ data class EditTodoResponse(
     @SerializedName("message") val message: String,
     @SerializedName("result") val result: TodoResult?
 )
+
+data class DeleteTodoResponse(
+    @SerializedName("isSuccess") val isSuccess: Boolean,
+    @SerializedName("code") val code: String,
+    @SerializedName("message") val message: String
+)

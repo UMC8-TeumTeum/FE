@@ -1,6 +1,7 @@
 package com.example.teumteum.data.remote.todo
 
 import android.util.Log
+import com.example.teumteum.data.remote.todo.dto.DeleteTodoResponse
 import com.example.teumteum.data.remote.todo.dto.EditTodoRequest
 import com.example.teumteum.data.remote.todo.dto.EditTodoResponse
 import com.example.teumteum.data.remote.todo.dto.GetTodoListResponse
@@ -10,8 +11,11 @@ import com.example.teumteum.data.remote.todo.dto.RegisterTodoResponse
 import com.example.teumteum.data.remote.wish.WishRetrofitInterface
 import com.example.teumteum.data.remote.wish.WishService
 import com.example.teumteum.data.remote.wish.WishService.Companion
+import com.example.teumteum.data.remote.wish.dto.DeleteWishesRequest
+import com.example.teumteum.data.remote.wish.dto.DeleteWishesResponse
 import com.example.teumteum.data.remote.wish.dto.EditWishRequest
 import com.example.teumteum.data.remote.wish.dto.EditWishResponse
+import com.example.teumteum.ui.todo.view.DeleteTodoView
 import com.example.teumteum.ui.todo.view.EditTodoView
 import com.example.teumteum.ui.todo.view.TodoListView
 import com.example.teumteum.ui.todo.view.RegisterTodoView
@@ -27,6 +31,7 @@ class TodoService {
     private lateinit var todoListView: TodoListView
     private lateinit var todoView: TodoView
     private lateinit var todoEditView: EditTodoView
+    private lateinit var todoDeleteView: DeleteTodoView
 
     fun setTodoRegisterView(todoRegisterView: RegisterTodoView) {
         this.todoRegisterView = todoRegisterView
@@ -42,6 +47,10 @@ class TodoService {
 
     fun setTodoEditView(todoEditView: EditTodoView) {
         this.todoEditView = todoEditView
+    }
+
+    fun setTodoDeleteView(todoDeleteView: DeleteTodoView) {
+        this.todoDeleteView = todoDeleteView
     }
 
     companion object {
@@ -242,6 +251,54 @@ class TodoService {
                 todoEditView.onEditTodoFailure("NETWORK_ERROR")
             }
         })
+    }
+
+    // 투두 삭제
+    fun deleteTodo(todoId: Long) {
+
+        val todoService = getRetrofitWithToken().create(TodoRetrofitInterface::class.java)
+
+        todoService.deleteTodo(todoId).enqueue(object : Callback<DeleteTodoResponse> {
+            override fun onResponse(
+                call: Call<DeleteTodoResponse>,
+                response: Response<DeleteTodoResponse>
+            ) {
+                Log.d("DELETE/SUCCESS", response.toString())
+
+                if (response.isSuccessful) {
+                    val deleteResponse = response.body()
+
+                    if (deleteResponse != null && deleteResponse.code == "HOME2004") {
+                        todoDeleteView.onDeleteTodoSuccess(deleteResponse.code)
+                    } else {
+                        todoDeleteView.onDeleteTodoFailure(deleteResponse?.code ?: "UNKNOWN")
+                    }
+                } else {
+                    // 실패 응답 처리
+                    val errorMsg = response.errorBody()?.string()
+                    Log.d("DELETE/ERROR_BODY", errorMsg ?: "에러 메시지 없음")
+
+                    // gson으로 실패 응답 파싱
+                    try {
+                        if (!errorMsg.isNullOrEmpty()) {
+                            val errorResponse = gson.fromJson(errorMsg, DeleteTodoResponse::class.java)
+                            todoDeleteView.onDeleteTodoFailure(errorResponse.code)
+                        } else {
+                            todoDeleteView.onDeleteTodoFailure("EMPTY_ERROR_BODY")
+                        }
+                    } catch (e: Exception) { // JSON 파싱 실패 시
+                        Log.e("DELETE/PARSE_ERROR", "JSON 파싱 실패: ${e.localizedMessage}")
+                        todoDeleteView.onDeleteTodoFailure("PARSE_ERROR")
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<DeleteTodoResponse>, t: Throwable) {
+                Log.d("DELETE/FAILURE", t.message.toString())
+                todoDeleteView.onDeleteTodoFailure("NETWORK_ERROR")
+            }
+        })
+
     }
 
 }

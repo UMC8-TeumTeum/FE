@@ -29,6 +29,7 @@ import com.example.teumteum.databinding.DialogConfirmTodoDeleteBinding
 import com.example.teumteum.databinding.DialogConfirmTodoEditBinding
 import com.example.teumteum.ui.calendar.IDateClickListener
 import com.example.teumteum.ui.calendar.MonthlyCalendarFragment
+import com.example.teumteum.ui.todo.view.DeleteTodoView
 import com.example.teumteum.ui.todo.view.EditTodoView
 import com.example.teumteum.ui.todo.view.TodoView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -37,7 +38,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener, TodoView, EditTodoView {
+class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener, TodoView, EditTodoView, DeleteTodoView {
 
     private lateinit var binding: FragmentTodoEditBinding
 
@@ -628,6 +629,19 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener, TodoVi
             "NETWORK_ERROR" -> "네트워크 오류가 발생했습니다."
             "PARSE_ERROR" -> "서버 응답을 해석할 수 없습니다."
             else -> message ?: "등록에 실패했습니다. 다시 시도해주세요."
+        }
+        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onDeleteTodoSuccess(code: String, message: String?) {
+        Toast.makeText(requireContext(), "투두가 성공적으로 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onDeleteTodoFailure(code: String, message: String?) {
+        val errorMessage = when (code) {
+            "NETWORK_ERROR" -> "네트워크 오류가 발생했습니다."
+            "PARSE_ERROR" -> "서버 응답을 해석할 수 없습니다."
+            else -> message ?: "삭제에 실패했습니다. 다시 시도해주세요."
         }
         Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
     }

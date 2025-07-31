@@ -1,5 +1,6 @@
 package com.example.teumteum.data.remote.todo
 
+import com.example.teumteum.data.remote.todo.dto.DeleteTodoResponse
 import com.example.teumteum.data.remote.todo.dto.EditTodoRequest
 import com.example.teumteum.data.remote.todo.dto.EditTodoResponse
 import com.example.teumteum.data.remote.todo.dto.GetTodoListResponse
@@ -10,6 +11,7 @@ import com.example.teumteum.data.remote.wish.dto.EditWishRequest
 import com.example.teumteum.data.remote.wish.dto.EditWishResponse
 import retrofit2.Call
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -29,4 +31,7 @@ interface TodoRetrofitInterface {
 
     @PUT("/api/home/todo/{todoId}")
     fun editTodo(@Path("todoId") todoId: Long, @Body request: EditTodoRequest): Call<EditTodoResponse>
+
+    @DELETE("/api/home/todo/{todoId}")
+    fun deleteTodo(@Path("todoId") todoId: Long): Call<DeleteTodoResponse>
 }
