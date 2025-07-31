@@ -71,8 +71,7 @@
                     android:background="@drawable/calendar_background"
                     android:orientation="vertical"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintBottom_toTopOf="@id/btn_todo_register">
+                    app:layout_constraintStart_toStartOf="parent">
 
                     <EditText
                         android:id="@+id/todo_title_et"
