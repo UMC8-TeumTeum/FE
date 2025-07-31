@@ -111,7 +111,7 @@ class OnBoardingService {
             ) {
                 if(response.isSuccessful) {
                     val body = response.body()
-                    if(body != null && body.code == "ONBOARDING2004") {
+                    if(body != null && body.code == "ONBOARDING2006") {
                         scheduleView.onScheduleSuccess(body.code)
                     } else {
                         scheduleView.onScheduleFailure(body?.code ?: "UNKNOWN", body?.message)
