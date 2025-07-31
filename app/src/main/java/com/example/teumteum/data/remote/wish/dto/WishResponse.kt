@@ -36,3 +36,9 @@ data class DeleteWishesResponse(
     @SerializedName("code") val code: String,
     @SerializedName("message") val message: String
 )
+
+data class FillWishResponse(
+    @SerializedName("isSuccess") val isSuccess: Boolean,
+    @SerializedName("code") val code: String,
+    @SerializedName("message") val message: String
+)

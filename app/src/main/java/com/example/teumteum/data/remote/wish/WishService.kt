@@ -5,12 +5,15 @@ import com.example.teumteum.data.remote.wish.dto.DeleteWishesRequest
 import com.example.teumteum.data.remote.wish.dto.DeleteWishesResponse
 import com.example.teumteum.data.remote.wish.dto.EditWishRequest
 import com.example.teumteum.data.remote.wish.dto.EditWishResponse
+import com.example.teumteum.data.remote.wish.dto.FillWishRequest
+import com.example.teumteum.data.remote.wish.dto.FillWishResponse
 import com.example.teumteum.data.remote.wish.dto.GetWishResponse
 import com.example.teumteum.data.remote.wish.dto.GetWishlistResponse
 import com.example.teumteum.data.remote.wish.dto.RegisterWishRequest
 import com.example.teumteum.data.remote.wish.dto.RegisterWishResponse
 import com.example.teumteum.ui.wish.view.DeleteWishesView
 import com.example.teumteum.ui.wish.view.EditWishView
+import com.example.teumteum.ui.wish.view.FillWishView
 import com.example.teumteum.ui.wish.view.RegisterWishView
 import com.example.teumteum.ui.wish.view.WishView
 import com.example.teumteum.ui.wish.view.WishlistView
@@ -26,6 +29,7 @@ class WishService {
     private lateinit var wishView: WishView
     private lateinit var wishEditView: EditWishView
     private lateinit var wishDeleteView: DeleteWishesView
+    private lateinit var wishFillView: FillWishView
 
     fun setWishRegisterView(wishRegisterView: RegisterWishView) {
         this.wishRegisterView = wishRegisterView
@@ -45,6 +49,10 @@ class WishService {
 
     fun setWishDeleteView(wishDeleteView: DeleteWishesView) {
         this.wishDeleteView = wishDeleteView;
+    }
+
+    fun setWishFillView(wishFillView: FillWishView) {
+        this.wishFillView = wishFillView
     }
 
     companion object {
@@ -293,6 +301,53 @@ class WishService {
             }
         })
 
+    }
+
+    // 위시 빈틈채우기(투두 등록)
+    fun fillWish(wishId: Long, request: FillWishRequest) {
+
+        val wishService = getRetrofitWithToken().create(WishRetrofitInterface::class.java)
+
+        wishService.fillWish(wishId, request).enqueue(object : Callback<FillWishResponse> {
+            override fun onResponse(
+                call: Call<FillWishResponse>,
+                response: Response<FillWishResponse>
+            ) {
+                Log.d("FILL/SUCCESS", response.toString())
+
+                if (response.isSuccessful) {
+                    val fillResponse = response.body()
+
+                    if (fillResponse != null && fillResponse.code == "HOME20011") {
+                        wishFillView.onFillWishSuccess(fillResponse.code)
+                    } else {
+                        wishFillView.onFillWishFailure(fillResponse?.code ?: "UNKNOWN")
+                    }
+                } else {
+                    // 실패 응답 처리
+                    val errorMsg = response.errorBody()?.string()
+                    Log.d("FILL/ERROR_BODY", errorMsg ?: "에러 메시지 없음")
+
+                    // gson으로 실패 응답 파싱
+                    try {
+                        if (!errorMsg.isNullOrEmpty()) {
+                            val errorResponse = gson.fromJson(errorMsg, FillWishResponse::class.java)
+                            wishFillView.onFillWishFailure(errorResponse.code)
+                        } else {
+                            wishFillView.onFillWishFailure("EMPTY_ERROR_BODY")
+                        }
+                    } catch (e: Exception) { // JSON 파싱 실패 시
+                        Log.e("FILL/PARSE_ERROR", "JSON 파싱 실패: ${e.localizedMessage}")
+                        wishFillView.onFillWishFailure("PARSE_ERROR")
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<FillWishResponse>, t: Throwable) {
+                Log.d("FILL/FAILURE", t.message.toString())
+                wishFillView.onFillWishFailure("NETWORK_ERROR")
+            }
+        })
     }
 
 }
