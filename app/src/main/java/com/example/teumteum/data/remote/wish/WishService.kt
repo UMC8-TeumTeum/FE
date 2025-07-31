@@ -121,7 +121,7 @@ class WishService {
                 if (response.isSuccessful) {
                     val getWishlistResponse = response.body()
 
-                    if (getWishlistResponse != null && getWishlistResponse.isSuccess) {
+                    if (getWishlistResponse != null && getWishlistResponse.code == "HOME2009") {
                         val wishlist = response.body()?.result?.wishlist ?: emptyList()
                         wishlistView.onGetWishListSuccess(wishlist)
                     } else {
@@ -171,7 +171,7 @@ class WishService {
                 if (response.isSuccessful) {
                     val getWishResponse = response.body()
 
-                    if (getWishResponse != null && getWishResponse.isSuccess) {
+                    if (getWishResponse != null && getWishResponse.code == "HOME2006") {
                         val wish = getWishResponse.result
                         wishView.onGetWishSuccess(wish)
                     } else {

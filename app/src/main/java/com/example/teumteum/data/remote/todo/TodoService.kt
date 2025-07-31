@@ -120,7 +120,7 @@ class TodoService {
                 if (response.isSuccessful) {
                     val getTodoListResponse = response.body()
 
-                    if (getTodoListResponse != null && getTodoListResponse.isSuccess) {
+                    if (getTodoListResponse != null && getTodoListResponse.code == "HOME20015") {
                         val todoList = response.body()?.result?.todoList ?: emptyList()
                         todoListView.onGetTodoListSuccess(getTodoListResponse.code, todoList)
                     } else {
