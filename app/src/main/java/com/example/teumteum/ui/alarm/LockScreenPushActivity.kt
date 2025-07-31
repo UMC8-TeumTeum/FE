@@ -35,8 +35,7 @@ class LockScreenPushActivity : AppCompatActivity() {
         val dummyList = mutableListOf(
             PushAlarmItem(1, "30분 뒤 투두가 시작돼요", null, "3분"),
             PushAlarmItem(2, "오늘의 투두를 알려드려요", "09:00 틈틈 회의\n13:00 치과 예약", "3시간"),
-            PushAlarmItem(3, "친구와의 요청에 새로운 소식이 있어요", null, "3분"),
-            PushAlarmItem(4, "새로운 팔로워가 있어요", null, "3분")
+            PushAlarmItem(3, "친구와의 요청에 새로운 소식이 있어요", null, "3분")
         )
 
         binding.pushalarmRv.adapter = PushAlarmRVAdapter(dummyList)
