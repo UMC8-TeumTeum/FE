@@ -1,7 +1,13 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("org.jetbrains.kotlin.kapt")
+}
+
+val properties = Properties().apply {
+    load(project.rootProject.file("local.properties").inputStream())
 }
 
 android {
@@ -10,6 +16,7 @@ android {
 
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 
     defaultConfig {
@@ -20,6 +27,12 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "TEMP_ACCESS_TOKEN", "\"${properties["TEMP_ACCESS_TOKEN"]}\"")
+        manifestPlaceholders["TEMP_ACCESS_TOKEN"] = properties["TEMP_ACCESS_TOKEN"] ?: ""
+
+        buildConfigField("String", "BASE_URL", "\"${properties["BASE_URL"]}\"")
+        manifestPlaceholders["BASE_URL"] = properties["BASE_URL"] ?: ""
     }
 
     buildTypes {

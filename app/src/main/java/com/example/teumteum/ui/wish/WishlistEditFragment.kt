@@ -39,15 +39,31 @@ class WishlistEditFragment() : Fragment(), DeleteWishesView {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
-        adapter = WishlistEditRVAdapter(editedWishlist)
-        binding.wishlistRv.adapter = adapter
-
         // 바텀 내비게이션 숨기기
         val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
         bottomNav?.visibility = View.GONE
 
-        setupButtons()
+        // ViewModel에서 데이터 복사
+        editedWishlist = wishlistViewModel.wishlistItems.map { it.copy() }.toMutableList()
+
+        if (editedWishlist.isEmpty()) {
+            // 위시가 없을 경우
+            binding.wishlistRv.visibility = View.GONE
+            binding.wishNotExistsCv.visibility = View.VISIBLE
+        } else {
+            // 위시가 있을 경우
+            binding.wishlistRv.visibility = View.VISIBLE
+            binding.wishNotExistsCv.visibility = View.GONE
+
+            adapter = WishlistEditRVAdapter(editedWishlist)
+            binding.wishlistRv.adapter = adapter
+
+            setupButtons()
+        }
+
+        binding.backArrowIv.setOnClickListener {
+            parentFragmentManager.popBackStack()
+        }
     }
 
     private fun setupButtons() {

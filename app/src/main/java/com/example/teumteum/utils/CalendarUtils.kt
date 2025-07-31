@@ -20,13 +20,13 @@ fun getSavedDateOrToday(context: Context): LocalDate {
 }
 
 fun setSelectedDate(context: Context, textView: TextView) {
-    textView.background = ContextCompat.getDrawable(context, R.drawable.bg_date_selected)
+    textView.background = ContextCompat.getDrawable(context, R.drawable.bg_day_selected)
     textView.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.main_1))
     textView.setTextColor(ContextCompat.getColor(context, R.color.white))
 }
 
 fun setTodayStyle(context: Context, textView: TextView) {
-    textView.background = ContextCompat.getDrawable(context, R.drawable.bg_date_selected)
+    textView.background = ContextCompat.getDrawable(context, R.drawable.bg_day_selected)
     textView.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.teumteum_gray))
     textView.setTextColor(ContextCompat.getColor(context, R.color.white))
 }
