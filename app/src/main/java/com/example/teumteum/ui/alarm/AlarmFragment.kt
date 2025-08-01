@@ -4,13 +4,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.teumteum.R
+import com.example.teumteum.data.entities.Alarm
 import com.example.teumteum.data.entities.AlarmItem
 import com.example.teumteum.databinding.FragmentHomeAlarmBinding
+import com.example.teumteum.ui.alarm.view.AlarmListView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-class AlarmFragment : Fragment() {
+class AlarmFragment : Fragment(), AlarmListView {
 
     private lateinit var binding: FragmentHomeAlarmBinding
 
@@ -50,5 +53,18 @@ class AlarmFragment : Fragment() {
         binding.backArrowIv.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
+    }
+
+    override fun onGetAlarmListSuccess(alarmList: List<Alarm>) {
+        Toast.makeText(requireContext(), "알림이 성공적으로 조회되었습니다.", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onGetAlarmListFailure(code: String, message: String?) {
+        val errorMessage = when (code) {
+            "NETWORK_ERROR" -> "네트워크 오류가 발생했습니다."
+            "PARSE_ERROR" -> "서버 응답을 해석할 수 없습니다."
+            else -> message ?: "조회에 실패했습니다. 다시 시도해주세요."
+        }
+        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
     }
 }

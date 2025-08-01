@@ -42,7 +42,7 @@
             android:name=".ui.main.MainActivity"
             android:exported="false" />
 
-        <receiver android:name=".ScreenOnReceiver"
+        <receiver android:name=".receiver.ScreenOnReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.SCREEN_ON" />

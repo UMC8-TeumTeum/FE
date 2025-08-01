@@ -1,9 +1,11 @@
 package com.example.teumteum.data.remote.wish
 
+import com.example.teumteum.data.remote.wish.dto.FillWishResponse
 import com.example.teumteum.data.remote.wish.dto.DeleteWishesRequest
 import com.example.teumteum.data.remote.wish.dto.DeleteWishesResponse
 import com.example.teumteum.data.remote.wish.dto.EditWishRequest
 import com.example.teumteum.data.remote.wish.dto.EditWishResponse
+import com.example.teumteum.data.remote.wish.dto.FillWishRequest
 import com.example.teumteum.data.remote.wish.dto.GetWishResponse
 import com.example.teumteum.data.remote.wish.dto.GetWishlistResponse
 import com.example.teumteum.data.remote.wish.dto.RegisterWishRequest
@@ -33,4 +35,7 @@ interface WishRetrofitInterface {
 
     @HTTP(method = "DELETE", path = "/api/wishes", hasBody = true)
     fun deleteWishes(@Body request: DeleteWishesRequest): Call<DeleteWishesResponse>
+
+    @POST("/api/wishes/{wishId}/assign")
+    fun fillWish(@Path("wishId") wishId: Long, @Body request: FillWishRequest): Call<FillWishResponse>
 }
