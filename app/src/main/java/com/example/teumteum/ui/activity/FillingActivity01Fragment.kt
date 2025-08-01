@@ -8,12 +8,14 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.teumteum.R
+import com.example.teumteum.data.remote.activity.dto.ActivityAiResult
 import com.example.teumteum.data.remote.activity.dto.ActivityWishResult
 import com.example.teumteum.databinding.FragmentFillingActivity01Binding
+import com.example.teumteum.ui.activity.view.ActivityAiView
 import com.example.teumteum.ui.activity.view.ActivityWishView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-class FillingActivity01Fragment : Fragment(), ActivityWishView {
+class FillingActivity01Fragment : Fragment(), ActivityWishView, ActivityAiView {
 
     private lateinit var binding: FragmentFillingActivity01Binding
 
@@ -167,7 +169,21 @@ class FillingActivity01Fragment : Fragment(), ActivityWishView {
             code == "COMMON500" -> "서버 오류입니다. 관리자에게 문의해주세요."
             code == "NETWORK_ERROR" -> "네트워크 오류가 발생했습니다."
             code == "PARSE_ERROR" -> "서버 응답을 해석할 수 없습니다."
-            else -> "위시리스트 조회에 실패했습니다. 다시 시도해주세요."
+            else -> "위시 조회에 실패했습니다. 다시 시도해주세요."
+        }
+        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onGetActivityAiSuccess(code: String, wishes: List<ActivityAiResult>) {
+        Toast.makeText(requireContext(), "채움활동 ai컨텐츠 탐색 성공", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onGetActivityAiFailure(code: String, message: String?) {
+        val errorMessage = when {
+            code == "COMMON500" -> "서버 오류입니다. 관리자에게 문의해주세요."
+            code == "NETWORK_ERROR" -> "네트워크 오류가 발생했습니다."
+            code == "PARSE_ERROR" -> "서버 응답을 해석할 수 없습니다."
+            else -> "ai컨텐츠 조회에 실패했습니다. 다시 시도해주세요."
         }
         Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
     }

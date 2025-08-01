@@ -3,8 +3,8 @@ package com.example.teumteum.data.remote.activity.dto
 import com.example.teumteum.data.entities.EstimatedDurationType
 import com.google.gson.annotations.SerializedName
 
-data class ActivityWishResult(
-    @SerializedName("id") val id: Long,
-    @SerializedName("content") val content: String,
+data class ActivityAiResult(
+    @SerializedName("aiContentsId") val aiContentsId: Long,
+    @SerializedName("title") val title: String,
     @SerializedName("estimatedDuration") val estimatedDuration: EstimatedDurationType
 )

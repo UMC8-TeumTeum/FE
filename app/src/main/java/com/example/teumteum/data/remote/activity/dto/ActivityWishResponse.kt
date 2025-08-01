@@ -8,3 +8,10 @@ data class ActivityWishResponse(
     @SerializedName("message") val message: String,
     @SerializedName("wishes") val wishes: List<ActivityWishResult>?
 )
+
+data class ActivityAiResponse(
+    @SerializedName("isSuccess") val isSuccess: Boolean,
+    @SerializedName("code") val code: String,
+    @SerializedName("message") val message: String,
+    @SerializedName("aiContents") val aiContents: List<ActivityAiResult>?
+)
