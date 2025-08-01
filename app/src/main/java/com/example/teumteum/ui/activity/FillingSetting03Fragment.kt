@@ -15,11 +15,12 @@ import androidx.fragment.app.Fragment
 import com.example.teumteum.R
 import com.example.teumteum.databinding.DialogConfirmRegisterBinding
 import com.example.teumteum.databinding.FragmentFillingSetting03Binding
+import com.example.teumteum.ui.activity.view.FillAiView
 import com.example.teumteum.ui.main.HomeFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
-class FillingSetting03Fragment : Fragment() {
+class FillingSetting03Fragment : Fragment(), FillAiView {
 
     private lateinit var binding: FragmentFillingSetting03Binding
 
@@ -242,5 +243,22 @@ class FillingSetting03Fragment : Fragment() {
             else
                 requireContext().getColor(R.color.text_primary)
         )
+    }
+
+    override fun onFillAiSuccess(code: String, message: String?) {
+        Toast.makeText(requireContext(), "선택된 ai 컨텐츠가 투두로 등록되었습니다.", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onFillAiFailure(code: String, message: String?) {
+        val errorMessage = when (code) {
+            "HOME4092" -> "해당 시간에 스케줄이 존재합니다."
+            "HOME4043" -> "해당 위시 정보를 찾을 수 없습니다."
+            "CONFLICT4094" -> "해당 시간에는 수면 패턴이 존재합니다."
+            "CONFLICT4092" -> "해당 시간에는 틈 요청이 존재합니다."
+            "NETWORK_ERROR" -> "네트워크 오류가 발생했습니다."
+            "PARSE_ERROR" -> "서버 응답을 해석할 수 없습니다."
+            else -> message ?: "등록에 실패했습니다. 다시 시도해주세요."
+        }
+        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
     }
 }

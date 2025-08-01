@@ -14,3 +14,11 @@ data class ActivityAiRequest(
     @SerializedName("location") val location: String? = null,
     @SerializedName("categoryId") val categoryId: Long? = null
 )
+
+data class FillAiRequest(
+    @SerializedName("aiContentId") val aiContentId: Long,
+    @SerializedName("date") val date: String,
+    @SerializedName("startTime") val startTime: String,
+    @SerializedName("endTime") val endTime: String,
+    @SerializedName("isForce") val isForce: Boolean? = null
+)
