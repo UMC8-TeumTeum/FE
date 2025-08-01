@@ -4,13 +4,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.teumteum.R
+import com.example.teumteum.data.remote.activity.dto.ActivityWishResult
 import com.example.teumteum.databinding.FragmentFillingActivity01Binding
+import com.example.teumteum.ui.activity.view.ActivityWishView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-class FillingActivity01Fragment : Fragment() {
+class FillingActivity01Fragment : Fragment(), ActivityWishView {
 
     private lateinit var binding: FragmentFillingActivity01Binding
 
@@ -149,5 +152,23 @@ class FillingActivity01Fragment : Fragment() {
             else
                 ContextCompat.getColor(requireContext(), R.color.text_primary)
         )
+    }
+
+    override fun onGetActivityWishSuccess(code: String, wishes: List<ActivityWishResult>) {
+        Toast.makeText(requireContext(), "채움활동 위시 탐색 성공", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onGetActivityWishFailure(code: String, message: String?) {
+        val errorMessage = when {
+            code == "HOME4042" -> "해당 카테고리를 찾을 수 없습니다."
+            code == "HOME4003" -> "카테고리는 필수 항목입니다."
+            code == "HOME4004" -> "카테고리와 직접 입력은 둘 중 하나만 선택해야 합니다."
+            code == "COMMON400" -> "널이어서는 안됩니다."
+            code == "COMMON500" -> "서버 오류입니다. 관리자에게 문의해주세요."
+            code == "NETWORK_ERROR" -> "네트워크 오류가 발생했습니다."
+            code == "PARSE_ERROR" -> "서버 응답을 해석할 수 없습니다."
+            else -> "위시리스트 조회에 실패했습니다. 다시 시도해주세요."
+        }
+        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
     }
 }

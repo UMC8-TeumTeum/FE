@@ -1,0 +1,10 @@
+package com.example.teumteum.data.remote.activity.dto
+
+import com.google.gson.annotations.SerializedName
+
+data class ActivityWishResponse(
+    @SerializedName("isSuccess") val isSuccess: Boolean,
+    @SerializedName("code") val code: String,
+    @SerializedName("message") val message: String,
+    @SerializedName("wishes") val wishes: List<ActivityWishResult>?
+)
