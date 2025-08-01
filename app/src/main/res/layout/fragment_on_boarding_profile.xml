@@ -65,11 +65,13 @@
         android:layout_gravity="center"
         >
 
-        <View
-            android:id="@+id/circle_bg"
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/profile_iv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/circle_bg" />
+            android:background="@color/teumteum_gray"
+            android:scaleType="centerCrop"
+            app:shapeAppearanceOverlay="@style/CircleImage" />
 
         <ImageButton
             android:id="@+id/camera_btn"

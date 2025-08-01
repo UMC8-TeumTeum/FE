@@ -72,6 +72,10 @@ dependencies {
     // 프로필
     implementation ("com.google.android.flexbox:flexbox:3.0.0")
 
+    // profileImageUrl
+    implementation ("com.github.bumptech.glide:glide:4.15.1")
+    kapt ("com.github.bumptech.glide:compiler:4.15.1")
+
 
 
     implementation(libs.androidx.core.ktx)

@@ -63,9 +63,22 @@ class Friend01SearchFragment : Fragment() {
             if (isSearchAction || isEnterKey) {
                 val keyword = binding.searchEditText.text.toString().trim()
                 if (keyword.isNotEmpty()) {
+                    // 1. 최근 검색어 추가
                     recentKeywords.add(keyword)
                     binding.searchEditText.text.clear()
                     updateSearchList()
+
+                    // 2. 검색 결과 프래그먼트로 이동
+                    val bundle = Bundle().apply {
+                        putString("searchKeyword", keyword)
+                    }
+                    val fragment = Friend01SearchResultFragment()
+                    fragment.arguments = bundle
+
+                    parentFragmentManager.beginTransaction()
+                        .replace(R.id.main_frm, fragment)
+                        .addToBackStack(null)
+                        .commit()
                 }
                 true
             } else {
@@ -92,7 +105,7 @@ class Friend01SearchFragment : Fragment() {
 
             binding.recentSearchList.addView(textView)
 
-            // ✅ 항상 선 추가 (마지막 항목도 포함)
+            //  항상 선 추가 (마지막 항목도 포함)
             val dividerHeightPx = (1.2 * resources.displayMetrics.density).toInt().coerceAtLeast(1)
             val divider = View(requireContext()).apply {
                 layoutParams = LinearLayout.LayoutParams(
