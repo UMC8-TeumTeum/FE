@@ -50,23 +50,41 @@ object ChartUtils {
             if (result.isNotEmpty()) {
                 val last = result.last()
 
-                // 중복된 일정 병합
-                if (last.type == block.type && block.startTime <= last.endTime) {
-                    val merged = TimeBlock(last.startTime, maxOf(last.endTime, block.endTime), last.type)
-                    result[result.lastIndex] = merged
-                    cursor = merged.endTime
+                // 겹치는 구간 처리
+                if (block.startTime < last.endTime) {
+                    val overlapStart = block.startTime
+                    val overlapEnd = minOf(last.endTime, block.endTime)
+
+                    // 우선순위: TODO > SLEEP > EMPTY
+                    val priorityType = when {
+                        block.type == TimeType.TODO || last.type == TimeType.TODO -> TimeType.TODO
+                        block.type == TimeType.SLEEP || last.type == TimeType.SLEEP -> TimeType.SLEEP
+                        else -> TimeType.EMPTY
+                    }
+
+                    result[result.lastIndex] = TimeBlock(last.startTime, overlapStart, last.type)
+                    result.add(TimeBlock(overlapStart, overlapEnd, priorityType))
+
+                    if (last.endTime > overlapEnd) {
+                        result.add(TimeBlock(overlapEnd, last.endTime, last.type))
+                    }
+                    if (block.endTime > overlapEnd) {
+                        result.add(TimeBlock(overlapEnd, block.endTime, block.type))
+                    }
+                    cursor = maxOf(last.endTime, block.endTime)
                     continue
                 }
             }
 
-            //비어 있는 일정 EMPTY로 채우기
-            if (block.startTime > cursor) result.add(TimeBlock(cursor, block.startTime, TimeType.EMPTY))
+            //빈틈은 EMPTY로 채우기
+            if (block.startTime > cursor) {
+                result.add(TimeBlock(cursor, block.startTime, TimeType.EMPTY))
+            }
 
             result.add(block)
             cursor = block.endTime
         }
 
-        //마지막 빈틈 EMPTY로 채우기
         if (cursor < endMinute) result.add(TimeBlock(cursor, endMinute, TimeType.EMPTY))
 
         return result

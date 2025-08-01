@@ -2,6 +2,7 @@ package com.example.teumteum.ui.main
 
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,12 +30,17 @@ import java.time.format.DateTimeFormatter
 import com.example.teumteum.data.TimeBlock
 import com.example.teumteum.data.TimeType
 import com.example.teumteum.data.entities.TodoList
+import com.example.teumteum.data.remote.agreement.AgreementService
+import com.example.teumteum.data.remote.home.HomeService
+import com.example.teumteum.data.remote.home.dto.ScheduleResult
 import com.example.teumteum.ui.clock.ChartUtils
 import com.example.teumteum.ui.clock.IconPieChartRenderer
+import com.example.teumteum.ui.main.view.HomeView
+import com.example.teumteum.ui.signup.CompleteFragment
 import com.example.teumteum.ui.todo.view.TodoListView
 import com.example.teumteum.utils.applyBlurShadow
 
-class HomeFragment : Fragment(), IDateClickListener, TodoListView {
+class HomeFragment : Fragment(), IDateClickListener, TodoListView, HomeView {
 
     lateinit var binding: FragmentHomeBinding
 
@@ -43,17 +49,13 @@ class HomeFragment : Fragment(), IDateClickListener, TodoListView {
 
     private lateinit var adapter: TodoRVAdapter
 
-    private val fullDaySchedule = listOf(
-        TimeBlock(0, 360, TimeType.SLEEP),   // 00:00 ~ 06:00
-        TimeBlock(360, 580, TimeType.TODO),  // 06:00 ~ 09:40
-        TimeBlock(720, 860, TimeType.TODO),  // 12:00 ~ 14:20 (기존)
-        TimeBlock(810, 900, TimeType.TODO),  // 13:30 ~ 15:00 (중복 테스트용)
-        TimeBlock(900, 930, TimeType.EMPTY), // 15:00 ~ 15:30
-        TimeBlock(930, 1050, TimeType.TODO), // 15:30 ~ 17:30
-        TimeBlock(1110, 1200, TimeType.TODO),// 18:30 ~ 20:00
-        TimeBlock(1200, 1320, TimeType.EMPTY),// 20:00 ~ 22:00
-        TimeBlock(1320, 1440, TimeType.SLEEP)// 22:00 ~ 24:00
-    )
+    private val fullDaySchedule = mutableListOf<TimeBlock>()
+//    private val fullDaySchedule = listOf(
+//    TimeBlock(startTime = 0, endTime = 60, type = TimeType.EMPTY),    // 00:00 ~ 01:00
+//    TimeBlock(startTime = 60, endTime = 540, type = TimeType.SLEEP),  // 01:00 ~ 09:00
+//    TimeBlock(startTime = 180, endTime = 600, type = TimeType.TODO),  // 03:00 ~ 10:00
+//    TimeBlock(startTime = 600, endTime = 1440, type = TimeType.EMPTY) // 10:00 ~ 24:00
+//)
 
     private var isAM: Boolean = true
 
@@ -124,6 +126,10 @@ class HomeFragment : Fragment(), IDateClickListener, TodoListView {
 
 //        adapter = TodoRVAdapter(parentFragmentManager, todoDummyList)
 //        binding.todolistRv.adapter = adapter
+        val date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        val homeService = HomeService()
+        homeService.setHomeView(this)
+        homeService.getTodaySchedule(date)
 
         binding.fabAddIv.post {
             applyBlurShadow(
@@ -345,6 +351,31 @@ class HomeFragment : Fragment(), IDateClickListener, TodoListView {
             else -> "투두리스트 조회에 실패했습니다. 다시 시도해주세요."
         }
         Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onScheduleSuccess(code: String, result: List<ScheduleResult>) {
+        fullDaySchedule.clear()
+        fullDaySchedule.addAll(result.map {
+            val start = timeToMinutes(it.startTime)
+            val end = timeToMinutes(it.endTime)
+            TimeBlock(start, end, it.type)
+        })
+
+        updateTimeChart(isAM)
+        Log.d("HOME_FRAGMENT", "오늘 스케줄: $fullDaySchedule")
+    }
+
+    private fun timeToMinutes(time: String): Int {
+        val parts = time.split(":")
+        val hour = parts[0].toInt()
+        val minute = parts[1].toInt()
+        return hour * 60 + minute
+    }
+
+    override fun onScheduleFailure(code: String, message: String?) {
+        val msg = "약관 동의 실패 (code: $code, message: ${message ?: "없음"})"
+        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+        Log.e("HOME_FRAGMENT", msg)
     }
 
 }
