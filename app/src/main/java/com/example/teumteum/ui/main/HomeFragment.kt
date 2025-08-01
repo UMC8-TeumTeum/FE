@@ -294,6 +294,7 @@ class HomeFragment : Fragment(), IDateClickListener, TodoListView, HomeView {
 
     private fun updateTimeChart(isAM: Boolean) {
         val halfDayBlocks = ChartUtils.splitAndFillTimeBlocks(fullDaySchedule, isAM)
+        Log.d("HOME_FRAGMENT", "AM=${isAM} -> 차트에 들어가는 블록: $halfDayBlocks")
         ChartUtils.setTimePieChartData(requireContext(), binding.clockChart, halfDayBlocks)
     }
 

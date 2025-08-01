@@ -37,7 +37,6 @@ object ChartUtils {
         val startMinute = if (isAM) 0 else 720
         val endMinute = if (isAM) 720 else 1440
 
-        //AM,PM 필터
         val filtered = allBlocks.mapNotNull { block ->
             val s = block.startTime.coerceIn(startMinute, endMinute)
             val e = block.endTime.coerceIn(startMinute, endMinute)
@@ -46,14 +45,19 @@ object ChartUtils {
 
         val result = mutableListOf<TimeBlock>()
         var cursor = startMinute
+
+        fun addSafeBlock(start: Int, end: Int, type: TimeType) {
+            if (start < end) result.add(TimeBlock(start, end, type))
+        }
+
         for (block in filtered) {
             if (result.isNotEmpty()) {
                 val last = result.last()
 
-                // 겹치는 구간 처리
+                // 겹치는 경우
                 if (block.startTime < last.endTime) {
                     val overlapStart = block.startTime
-                    val overlapEnd = minOf(last.endTime, block.endTime)
+                    val overlapEnd = maxOf(last.endTime, block.endTime) //endTime 병합
 
                     // 우선순위: TODO > SLEEP > EMPTY
                     val priorityType = when {
@@ -62,33 +66,27 @@ object ChartUtils {
                         else -> TimeType.EMPTY
                     }
 
-                    result[result.lastIndex] = TimeBlock(last.startTime, overlapStart, last.type)
-                    result.add(TimeBlock(overlapStart, overlapEnd, priorityType))
-
-                    if (last.endTime > overlapEnd) {
-                        result.add(TimeBlock(overlapEnd, last.endTime, last.type))
-                    }
-                    if (block.endTime > overlapEnd) {
-                        result.add(TimeBlock(overlapEnd, block.endTime, block.type))
-                    }
-                    cursor = maxOf(last.endTime, block.endTime)
+                    // 마지막 블록을 우선순위 블록으로 교체 (하나로 병합)
+                    result[result.lastIndex] = TimeBlock(last.startTime, overlapEnd, priorityType)
+                    cursor = overlapEnd
                     continue
                 }
             }
 
-            //빈틈은 EMPTY로 채우기
+            // 빈틈 EMPTY
             if (block.startTime > cursor) {
-                result.add(TimeBlock(cursor, block.startTime, TimeType.EMPTY))
+                addSafeBlock(cursor, block.startTime, TimeType.EMPTY)
             }
 
             result.add(block)
             cursor = block.endTime
         }
 
-        if (cursor < endMinute) result.add(TimeBlock(cursor, endMinute, TimeType.EMPTY))
+        if (cursor < endMinute) addSafeBlock(cursor, endMinute, TimeType.EMPTY)
 
-        return result
+        return result.filter { it.startTime < it.endTime }
     }
+
 
     //실제 그래프에 넣을 데이터로 변환/ overrideColor는 FriendRoommateTimeFragment 색 통일
     fun setTimePieChartData(context: Context, pieChart: PieChart, timeBlocks: List<TimeBlock>, overrideColor: Int? = null) {
