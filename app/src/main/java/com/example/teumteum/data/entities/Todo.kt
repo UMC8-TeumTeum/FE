@@ -1,5 +1,6 @@
 package com.example.teumteum.data.entities
 
+import com.example.teumteum.data.entities.enums.TodoType
 import com.google.gson.annotations.SerializedName
 
 data class Todo(
