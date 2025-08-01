@@ -24,7 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginTop="55dp"
+        android:layout_marginTop="20.5dp"
         android:gravity="center_horizontal"
         app:layout_constraintTop_toBottomOf="@+id/btnBack"
         app:layout_constraintStart_toStartOf="parent"
@@ -263,7 +263,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="0dp"
         android:layout_marginEnd="20dp"
-        android:layout_marginBottom="60dp"
+        android:layout_marginBottom="100dp"
         app:layout_constraintBottom_toTopOf="@+id/next_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -273,19 +273,19 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/next_btn"
+        style="@style/Md16"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="다음"
-        android:textColor="#0F0F0F"
-        style="@style/Md16"
-        android:backgroundTint="#F6F6F6"
-        app:cornerRadius="12dp"
         android:layout_marginStart="19dp"
         android:layout_marginEnd="19dp"
         android:layout_marginBottom="19dp"
-        app:layout_constraintStart_toStartOf="parent"
+        android:backgroundTint="#F6F6F6"
+        android:text="다음"
+        android:textColor="#0F0F0F"
+        app:cornerRadius="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

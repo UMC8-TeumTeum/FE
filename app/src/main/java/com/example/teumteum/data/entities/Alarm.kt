@@ -8,11 +8,3 @@ data class AlarmItem(
     val elapsedTime: String,
     var isRead: Boolean = false
 )
-
-data class PushAlarmItem(
-    val id: Int,
-    val type: String,
-    val body: String,
-    val elapsedTime: String,
-    val isRead: Boolean = false
-)

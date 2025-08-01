@@ -66,7 +66,7 @@ class FriendRoommateDateFragment : Fragment() {
         binding.nextBtn.setBackgroundColor(Color.parseColor("#F6F6F6"))
         binding.nextBtn.setTextColor(Color.parseColor("#0F0F0F"))
 
-        // 뒤로가기 버튼ㅇ
+        // 뒤로가기 버튼
         binding.btnBack.setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.main_frm, FriendFragment())
@@ -84,14 +84,16 @@ class FriendRoommateDateFragment : Fragment() {
                 putString("selected_date", formattedDate)
             }
 
-            val fragment = FriendRoommateFriendFragment()
-            fragment.arguments = bundle
+            val fragment = FriendRoommateFriendFragment().apply {
+                arguments = bundle
+            }
 
             parentFragmentManager.beginTransaction()
                 .replace(R.id.main_frm, fragment)
                 .addToBackStack(null)
                 .commit()
         }
+
 
 
     }
