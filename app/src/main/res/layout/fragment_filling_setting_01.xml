@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     android:paddingTop="70dp"
-    tools:context=".ui.filling.FillingSetting01Fragment">
+    tools:context=".ui.activity.FillingSetting01Fragment">
 
     <ImageView
         android:id="@+id/back_arrow_iv"

@@ -1,4 +1,4 @@
-package com.example.teumteum
+package com.example.teumteum.receiver
 
 import android.content.BroadcastReceiver
 import android.content.Context

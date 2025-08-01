@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <!-- 상단 뒤로가기 + 검색창 -->
+    <LinearLayout
+        android:id="@+id/searchBarLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="58dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageButton
+            android:id="@+id/backButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_arrow_back"
+            android:scaleType="centerInside" />
+
+        <EditText
+            android:id="@+id/searchEditText"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="20dp"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="0dp"
+            android:background="@drawable/friend_search_edittext_bg"
+            android:hint="닉네임을 입력하세요."
+            android:drawableStart="@drawable/friend01_search"
+            android:drawablePadding="8dp"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:textSize="14sp"
+            android:singleLine="true"
+            android:imeOptions="actionSearch" />
+    </LinearLayout>
+
+    <!-- 최근 검색어 -->
+    <LinearLayout
+        android:id="@+id/recentSearchLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/searchBarLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="24dp"
+            android:text="검색 결과"
+            android:textSize="14sp"
+            android:textColor="#788084"
+            android:fontFamily="@font/noto_sans_kr_regular"/>
+
+        <Button
+            android:id="@+id/btnDeleteRecent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="48dp"
+            android:layout_marginEnd="14dp"
+            android:text="삭제"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:textColor="#788084"
+            android:textSize="14sp"
+            android:fontFamily="@font/noto_sans_kr_regular"
+            android:background="@android:color/transparent"
+            android:gravity="center_vertical"/>
+    </LinearLayout>
+
+    <!-- 최근 검색어 아래 구분선 -->
+    <View
+        android:id="@+id/dividerView"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="-9dp"
+        android:background="#EAEAEA"
+        app:layout_constraintTop_toBottomOf="@id/recentSearchLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+
+    <!-- 검색 결과 RecyclerView -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/searchResultRecyclerView"
+        android:layout_width="0dp"
+        android:layout_height="700dp"
+        android:layout_marginStart="17dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/dividerView" />
+</androidx.constraintlayout.widget.ConstraintLayout>

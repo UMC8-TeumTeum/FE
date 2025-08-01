@@ -11,3 +11,17 @@ data class RegisterTodoRequest(
     @SerializedName("includeTeum") val includeTeum: Boolean,
     @SerializedName("remindAlarm") val remindAlarm: List<Int>? = null
 )
+
+data class EditTodoRequest(
+    @SerializedName("title") val title: String,
+    @SerializedName("startTime") val startTime: String,
+    @SerializedName("endTime") val endTime: String,
+    @SerializedName("description") val description: String,
+    @SerializedName("isPublic") val isPublic: Boolean,
+    @SerializedName("includeTeum") val includeTeum: Boolean,
+    @SerializedName("remindAlarm") val remindAlarm: List<Int>? = null
+)
+
+data class DeleteTodoRequest(
+    @SerializedName("todoId") val todoId: Long
+)
