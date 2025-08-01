@@ -66,7 +66,7 @@ class Friend01SearchResultFragment : Fragment(), FriendSearchView {
             return
         }
 
-        val msg = "사용자 검색 성공 (code: USER2000)"
+        val msg = "사용자 조회 성공 (code: USER2001)"
         Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
         Log.d("SEARCH_RESULT_FRAGMENT", msg)
 
