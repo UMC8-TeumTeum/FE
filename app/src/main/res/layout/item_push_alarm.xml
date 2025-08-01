@@ -58,7 +58,7 @@
         android:textSize="16sp"
         android:includeFontPadding="false"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/alarm_ll" />
+        app:layout_constraintTop_toTopOf="@id/teumteum_logo_iv" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

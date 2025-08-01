@@ -1,4 +1,4 @@
-package com.example.teumteum.ui.filling
+package com.example.teumteum.ui.activity
 
 import android.os.Bundle
 import android.view.Gravity
@@ -14,14 +14,15 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import com.example.teumteum.R
 import com.example.teumteum.databinding.DialogConfirmRegisterBinding
-import com.example.teumteum.databinding.FragmentFillingSetting02Binding
+import com.example.teumteum.databinding.FragmentFillingSetting03Binding
+import com.example.teumteum.ui.activity.view.FillAiView
 import com.example.teumteum.ui.main.HomeFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
-class FillingSetting02Fragment : Fragment() {
+class FillingSetting03Fragment : Fragment(), FillAiView {
 
-    private lateinit var binding: FragmentFillingSetting02Binding
+    private lateinit var binding: FragmentFillingSetting03Binding
 
     private var selectedStartTime: String? = null
     private var selectedEndTime: String? = null
@@ -31,15 +32,11 @@ class FillingSetting02Fragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentFillingSetting02Binding.inflate(inflater, container, false)
+        binding = FragmentFillingSetting03Binding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
-        // 바텀 내비게이션 숨기기
-        val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
-        bottomNav?.visibility = View.GONE
 
         val title = arguments?.getString("title")
         setTitle(title.toString())
@@ -48,23 +45,17 @@ class FillingSetting02Fragment : Fragment() {
         setTime(time.toString())
 
         val selectedTime = arguments?.getString("selected_time")
-        val startTime = arguments?.getString("startTime")
-        val endTime = arguments?.getString("endTime")
+        binding.fillingActivityTimeSettingTv.text = selectedTime
 
-        binding.fillActivityTimeSettingTv.text = selectedTime
+        // 바텀 내비게이션 숨기기
+        val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
+        bottomNav?.visibility = View.GONE
 
-        if (!startTime.isNullOrEmpty() && !endTime.isNullOrEmpty()) {
-            binding.startChoiceTv.text = startTime
-            binding.endChoiceTv.text = endTime
-            selectedStartTime = startTime
-            selectedEndTime = endTime
-        }
-
-        binding.fillActivityStartContainer.setOnClickListener {
+        binding.fillingActivityStartContainer.setOnClickListener {
             showCustomTimePicker(binding.startChoiceTv)
         }
 
-        binding.fillActivityEndContainer.setOnClickListener {
+        binding.fillingActivityEndContainer.setOnClickListener {
             showCustomTimePicker(binding.endChoiceTv)
         }
 
@@ -149,11 +140,7 @@ class FillingSetting02Fragment : Fragment() {
                 selectedEndTime = timeText
             }
 
-            // 선택한 시간대 반영
-            if (!selectedStartTime.isNullOrEmpty() && !selectedEndTime.isNullOrEmpty()) {
-                val timeRangeText = getString(R.string.time_range_format, selectedStartTime, selectedEndTime)
-                binding.fillActivityTimeSettingTv.text = timeRangeText
-            }
+            enableNextButton()
 
             dialog.dismiss()
         }
@@ -192,11 +179,11 @@ class FillingSetting02Fragment : Fragment() {
     }
 
     private fun setTitle(title: String){
-        binding.fillActivityTitleTv.text = title
+        binding.fillingActivityTitleTv.text = title
     }
 
     private fun setTime(time: String){
-        binding.fillActivityTimeTv.text = time
+        binding.fillingActivityTimeTv.text = time
     }
 
     private fun showWishRegisterDialog() {
@@ -237,5 +224,41 @@ class FillingSetting02Fragment : Fragment() {
         }
 
         dialog.show()
+    }
+
+    private fun enableNextButton() {
+        val allSet = selectedStartTime != null && selectedEndTime != null
+        binding.registerBtn.isEnabled = allSet
+
+        binding.registerBtn.setBackgroundColor(
+            if (allSet)
+                requireContext().getColor(R.color.text_primary)
+            else
+                requireContext().getColor(R.color.teumteum_bg)
+        )
+
+        binding.registerBtn.setTextColor(
+            if (allSet)
+                requireContext().getColor(R.color.white)
+            else
+                requireContext().getColor(R.color.text_primary)
+        )
+    }
+
+    override fun onFillAiSuccess(code: String, message: String?) {
+        Toast.makeText(requireContext(), "선택된 ai 컨텐츠가 투두로 등록되었습니다.", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onFillAiFailure(code: String, message: String?) {
+        val errorMessage = when (code) {
+            "HOME4092" -> "해당 시간에 스케줄이 존재합니다."
+            "HOME4043" -> "해당 위시 정보를 찾을 수 없습니다."
+            "CONFLICT4094" -> "해당 시간에는 수면 패턴이 존재합니다."
+            "CONFLICT4092" -> "해당 시간에는 틈 요청이 존재합니다."
+            "NETWORK_ERROR" -> "네트워크 오류가 발생했습니다."
+            "PARSE_ERROR" -> "서버 응답을 해석할 수 없습니다."
+            else -> message ?: "등록에 실패했습니다. 다시 시도해주세요."
+        }
+        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
     }
 }

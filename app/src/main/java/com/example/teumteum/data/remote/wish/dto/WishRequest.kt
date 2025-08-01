@@ -19,3 +19,9 @@ data class EditWishRequest(
 data class DeleteWishesRequest(
     @SerializedName("wishIds") val wishIds: List<Long>
 )
+
+data class FillWishRequest(
+    @SerializedName("startTime") val startTime: String,
+    @SerializedName("endTime") val endTime: String,
+    @SerializedName("isForce") val isForce: Boolean? = null
+)

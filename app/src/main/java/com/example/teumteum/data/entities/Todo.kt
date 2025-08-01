@@ -1,5 +1,6 @@
 package com.example.teumteum.data.entities
 
+import com.example.teumteum.data.entities.enums.TodoType
 import com.google.gson.annotations.SerializedName
 
 data class Todo(
@@ -20,4 +21,14 @@ data class TodoHomeItem(
     val endTime: String,
     val isPublic: Boolean,
     var isAlarmOn: Boolean? = null
+)
+
+data class TodoList(
+    @SerializedName("id") val id: Long,
+    @SerializedName("title") val title: String,
+    @SerializedName("startTime") val startTime: String,
+    @SerializedName("endTime") val endTime: String,
+    @SerializedName("isPublic") val isPublic: Boolean,
+    @SerializedName("hasAlarm") val hasAlarm: Boolean? = null,
+    @SerializedName("type") val type: TodoType
 )

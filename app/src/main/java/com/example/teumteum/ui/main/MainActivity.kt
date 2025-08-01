@@ -12,7 +12,7 @@ import com.example.teumteum.ui.feed.FeedFragment
 import com.example.teumteum.ui.friend.FriendFragment
 import com.example.teumteum.ui.myhome.MyHomeFragment
 import com.example.teumteum.R
-import com.example.teumteum.ScreenOnReceiver
+import com.example.teumteum.receiver.ScreenOnReceiver
 import com.example.teumteum.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {

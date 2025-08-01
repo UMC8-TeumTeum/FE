@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.filling.FillingActivity01Fragment">
+    tools:context=".ui.activity.FillingActivity01Fragment">
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scroll_container"
