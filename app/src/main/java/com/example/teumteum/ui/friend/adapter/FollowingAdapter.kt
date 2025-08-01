@@ -1,4 +1,4 @@
-package com.example.teumteum.ui.friend
+package com.example.teumteum.ui.friend.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,11 +7,12 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.teumteum.R
+import com.example.teumteum.ui.friend.data.FollowData
 
 class FollowingAdapter(
-    private val data: List<FollowUser>,
-    private val onProfileClick: (FollowUser) -> Unit,
-    private val onSendClick: (FollowUser) -> Unit  //  추가: sendBtn 클릭용 콜백
+    private val data: List<FollowData>,
+    private val onProfileClick: (FollowData) -> Unit,
+    private val onSendClick: (FollowData) -> Unit  //  추가: sendBtn 클릭용 콜백
 ) : RecyclerView.Adapter<FollowingAdapter.ViewHolder>() {
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -21,18 +22,20 @@ class FollowingAdapter(
         private val profileBtn: ImageButton = itemView.findViewById(R.id.profileLayout)
         private val sendBtn: ImageButton = itemView.findViewById(R.id.sendBtn) //  추가
 
-        fun bind(user: FollowUser) {
+        fun bind(user: FollowData) {
             // 이름/직업 세팅
             nameTv.text = user.name
-            jobTv.text = " · ${user.job}"
+            jobTv.text = " · ${user.field}"
 
             // 별 아이콘 토글
             starIv.setImageResource(
-                if (user.isFavorite) R.drawable.friend01_fill_star
+                if (user.favorite) R.drawable.friend01_fill_star
                 else R.drawable.friend01_star
             )
+
+            // 즐겨찾기 토글
             starIv.setOnClickListener {
-                user.isFavorite = !user.isFavorite
+                user.favorite = !user.favorite
                 notifyItemChanged(adapterPosition)
             }
 

@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentFriendBinding
 import com.example.teumteum.ui.friend.adapter.FollowerAdapter
+import com.example.teumteum.ui.friend.RecommendAdapter
+import com.example.teumteum.ui.friend.adapter.FollowingAdapter
 import com.example.teumteum.ui.friend.data.FollowerData
 import com.example.teumteum.ui.main.MainActivity
 
@@ -68,7 +70,6 @@ class FriendFragment : Fragment() {
                 .commit()
         }
 
-        // 틈 요청 기록 화면으로 이동
         binding.btnAlarm.setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.main_frm, FriendTeumRequestFragment())
@@ -87,22 +88,17 @@ class FriendFragment : Fragment() {
                 .commit()
         }
 
-        val dummyFollowingList = listOf(
-            FollowUser("문혜원", "UX 디자이너"),
-            FollowUser("하수연", "UX 디자이너"),
-            FollowUser("장채미", "UX 디자이너"),
-            FollowUser("이솔민", "UX 디자이너"),
-            FollowUser("이솔", "UX 디자이너"),
-            FollowUser("이솔", "UX 디자이너"),
-            FollowUser("이솔", "UX 디자이너")
-        )
-
-        // Adapter에 프로필 클릭/비행기 클릭 콜백 전달
+        // API 연결 후 서버에서 받아온 데이터로 이 부분 수정 필요
         val followingAdapter = FollowingAdapter(
-            data = dummyFollowingList,
+            data = emptyList(),
             onProfileClick = { user ->
+                val fragment = FriendProfileFollowFragment().apply {
+                    arguments = Bundle().apply {
+                        putInt("userId", user.userId)
+                    }
+                }
                 parentFragmentManager.beginTransaction()
-                    .replace(R.id.main_frm, FriendProfileFollowFragment())
+                    .replace(R.id.main_frm, fragment)
                     .addToBackStack(null)
                     .commit()
             },
@@ -114,20 +110,10 @@ class FriendFragment : Fragment() {
             }
         )
 
-        // 팔로우 예시
-        val followerList = listOf(
-            FollowerData("홍길동", "UX 디자이너", R.drawable.gray_teum),
-            FollowerData("김영희", "기획자", R.drawable.gray_teum),
-            FollowerData("이준호", "iOS 개발자", R.drawable.gray_teum)
-        )
+        val followerAdapter = FollowerAdapter(emptyList())
 
-        // 팔로우
-        val followerAdapter = FollowerAdapter(followerList)
         binding.followerRecyclerView.adapter = followerAdapter
-        // ✅ 이 줄이 있어야 리스트가 정상적으로 출력됩니다!
         binding.followerRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-
-
 
         binding.followingRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
@@ -135,11 +121,8 @@ class FriendFragment : Fragment() {
         }
 
         binding.tabFollowing.setOnClickListener {
-            // 탭 색상 변경
-            binding.tabFollowing.setTextColor(Color.parseColor("#0F0F0F"))  // 진하게
-            binding.tabFollower.setTextColor(Color.parseColor("#B1B2B3"))  // 연하게
-
-            // 리스트 전환
+            binding.tabFollowing.setTextColor(Color.parseColor("#0F0F0F"))
+            binding.tabFollower.setTextColor(Color.parseColor("#B1B2B3"))
             binding.followingRecyclerView.visibility = View.VISIBLE
             binding.followerRecyclerView.visibility = View.GONE
         }
@@ -147,11 +130,9 @@ class FriendFragment : Fragment() {
         binding.tabFollower.setOnClickListener {
             binding.tabFollowing.setTextColor(Color.parseColor("#B1B2B3"))
             binding.tabFollower.setTextColor(Color.parseColor("#0F0F0F"))
-
             binding.followingRecyclerView.visibility = View.GONE
             binding.followerRecyclerView.visibility = View.VISIBLE
         }
-
     }
 
     override fun onResume() {
