@@ -2,12 +2,14 @@ package com.example.teumteum.data.remote.friend.dto
 
 import com.example.teumteum.data.remote.friend.search.FriendSearchRetrofitInterface
 import com.example.teumteum.ui.friend.view.FriendSearchView
-import com.example.teumteum.utils.getRetrofitWithToken
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import javax.inject.Inject
 
-class FriendSearchService {
+class FriendSearchService @Inject constructor(
+    private val friendSearchApi: FriendSearchRetrofitInterface
+){
 
     private lateinit var friendSearchView: FriendSearchView
 
@@ -16,10 +18,8 @@ class FriendSearchService {
     }
 
     fun searchUser(nickname: String) {
-        val friendSearchApi = getRetrofitWithToken().create(FriendSearchRetrofitInterface::class.java)
-        val call = friendSearchApi.searchUserByNickname(nickname)
 
-        call.enqueue(object : Callback<FriendSearchResponse> {
+        friendSearchApi.searchUserByNickname(nickname).enqueue(object : Callback<FriendSearchResponse> {
             override fun onResponse(
                 call: Call<FriendSearchResponse>,
                 response: Response<FriendSearchResponse>

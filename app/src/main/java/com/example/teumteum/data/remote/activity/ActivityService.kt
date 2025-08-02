@@ -7,21 +7,18 @@ import com.example.teumteum.data.remote.activity.dto.ActivityWishRequest
 import com.example.teumteum.data.remote.activity.dto.ActivityWishResponse
 import com.example.teumteum.data.remote.activity.dto.FillAiRequest
 import com.example.teumteum.data.remote.activity.dto.FillAiResponse
-import com.example.teumteum.data.remote.wish.WishRetrofitInterface
-import com.example.teumteum.data.remote.wish.WishService
-import com.example.teumteum.data.remote.wish.WishService.Companion
-import com.example.teumteum.data.remote.wish.dto.FillWishRequest
-import com.example.teumteum.data.remote.wish.dto.FillWishResponse
 import com.example.teumteum.ui.activity.view.ActivityAiView
 import com.example.teumteum.ui.activity.view.ActivityWishView
 import com.example.teumteum.ui.activity.view.FillAiView
-import com.example.teumteum.utils.getRetrofitWithToken
 import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import javax.inject.Inject
 
-class ActivityService {
+class ActivityService @Inject constructor(
+    private val activityApi: ActivityRetrofitInterface
+){
     private lateinit var activityWishView: ActivityWishView
     private lateinit var activityAiView: ActivityAiView
     private lateinit var aiFillView: FillAiView
@@ -45,9 +42,7 @@ class ActivityService {
     // 채움활동 입력하여 위시리스트 불러오기
     fun activityWish(request: ActivityWishRequest) {
 
-        val activityService = getRetrofitWithToken().create(ActivityRetrofitInterface::class.java)
-
-        activityService.activityWish(request).enqueue(object : Callback<ActivityWishResponse> {
+        activityApi.activityWish(request).enqueue(object : Callback<ActivityWishResponse> {
             override fun onResponse(
                 call: Call<ActivityWishResponse>,
                 response: Response<ActivityWishResponse>
@@ -93,9 +88,7 @@ class ActivityService {
     // 채움활동 입력하여 ai 추천 컨텐츠 불러오기
     fun activityAi(request: ActivityAiRequest) {
 
-        val activityService = getRetrofitWithToken().create(ActivityRetrofitInterface::class.java)
-
-        activityService.activityAi(request).enqueue(object : Callback<ActivityAiResponse> {
+        activityApi.activityAi(request).enqueue(object : Callback<ActivityAiResponse> {
             override fun onResponse(
                 call: Call<ActivityAiResponse>,
                 response: Response<ActivityAiResponse>
@@ -141,9 +134,7 @@ class ActivityService {
     // ai 컨텐츠 빈틈 채우기(투두 등록)
     fun fillAi(aiContentId: Long, request: FillAiRequest) {
 
-        val activityService = getRetrofitWithToken().create(ActivityRetrofitInterface::class.java)
-
-        activityService.fillAi(aiContentId, request).enqueue(object : Callback<FillAiResponse> {
+        activityApi.fillAi(aiContentId, request).enqueue(object : Callback<FillAiResponse> {
             override fun onResponse(
                 call: Call<FillAiResponse>,
                 response: Response<FillAiResponse>

@@ -1,16 +1,16 @@
 package com.example.teumteum.data.remote.agreement
 
-import android.util.Log
 import com.example.teumteum.data.remote.agreement.dto.AgreementRequest
 import com.example.teumteum.data.remote.agreement.dto.AgreementResponse
 import com.example.teumteum.ui.signup.view.AgreementView
-import com.example.teumteum.utils.getRetrofitWithToken
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import javax.inject.Inject
 
-class AgreementService {
-
+class AgreementService @Inject constructor(
+    private val agreementApi: AgreementRetrofitInterface
+){
     private lateinit var agreementView: AgreementView
 
     fun setAgreementView(agreementView: AgreementView) {
@@ -18,10 +18,8 @@ class AgreementService {
     }
 
     fun postAgreements(request: AgreementRequest) {
-        val agreementApi = getRetrofitWithToken().create(AgreementRetrofitInterface::class.java)
-        val call = agreementApi.postAgreements(request)
 
-        call.enqueue(object : Callback<AgreementResponse> {
+        agreementApi.postAgreements(request).enqueue(object : Callback<AgreementResponse> {
             override fun onResponse(
                 call: Call<AgreementResponse>,
                 response: Response<AgreementResponse>

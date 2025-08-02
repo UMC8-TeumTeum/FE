@@ -17,13 +17,16 @@ import com.example.teumteum.ui.wish.view.FillWishView
 import com.example.teumteum.ui.wish.view.RegisterWishView
 import com.example.teumteum.ui.wish.view.WishView
 import com.example.teumteum.ui.wish.view.WishlistView
-import com.example.teumteum.utils.getRetrofitWithToken
 import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import javax.inject.Inject
 
-class WishService {
+class WishService @Inject constructor(
+    private val wishApi: WishRetrofitInterface
+){
+
     private lateinit var wishRegisterView: RegisterWishView
     private lateinit var wishlistView: WishlistView
     private lateinit var wishView: WishView
@@ -62,9 +65,7 @@ class WishService {
     // 위시 등록
     fun registerWish(request: RegisterWishRequest) {
 
-        val wishService = getRetrofitWithToken().create(WishRetrofitInterface::class.java)
-
-        wishService.registerWish(request).enqueue(object : Callback<RegisterWishResponse> {
+        wishApi.registerWish(request).enqueue(object : Callback<RegisterWishResponse> {
             override fun onResponse(
                 call: Call<RegisterWishResponse>,
                 response: Response<RegisterWishResponse>
@@ -109,9 +110,8 @@ class WishService {
 
     // 위시리스트 조회
     fun getWishlist(duration: String, page: Int) {
-        val wishService = getRetrofitWithToken().create(WishRetrofitInterface::class.java)
 
-        wishService.getWishlist(duration, page).enqueue(object : Callback<GetWishlistResponse> {
+        wishApi.getWishlist(duration, page).enqueue(object : Callback<GetWishlistResponse> {
             override fun onResponse(
                 call: Call<GetWishlistResponse>,
                 response: Response<GetWishlistResponse>
@@ -159,9 +159,8 @@ class WishService {
 
     // 특정 위시 조회
     fun getWish(wishId: Long) {
-        val wishService = getRetrofitWithToken().create(WishRetrofitInterface::class.java)
 
-        wishService.getWish(wishId).enqueue(object : Callback<GetWishResponse> {
+        wishApi.getWish(wishId).enqueue(object : Callback<GetWishResponse> {
             override fun onResponse(
                 call: Call<GetWishResponse>,
                 response: Response<GetWishResponse>
@@ -209,9 +208,7 @@ class WishService {
     // 위시 수정
     fun editWish(wishId: Long, request: EditWishRequest) {
 
-        val wishService = getRetrofitWithToken().create(WishRetrofitInterface::class.java)
-
-        wishService.editWish(wishId, request).enqueue(object : Callback<EditWishResponse> {
+        wishApi.editWish(wishId, request).enqueue(object : Callback<EditWishResponse> {
             override fun onResponse(
                 call: Call<EditWishResponse>,
                 response: Response<EditWishResponse>
@@ -257,9 +254,7 @@ class WishService {
     // 위시 삭제(리스트 형태)
     fun deleteWishes(request: DeleteWishesRequest) {
 
-        val wishService = getRetrofitWithToken().create(WishRetrofitInterface::class.java)
-
-        wishService.deleteWishes(request).enqueue(object : Callback<DeleteWishesResponse> {
+        wishApi.deleteWishes(request).enqueue(object : Callback<DeleteWishesResponse> {
             override fun onResponse(
                 call: Call<DeleteWishesResponse>,
                 response: Response<DeleteWishesResponse>
@@ -306,9 +301,7 @@ class WishService {
     // 위시 빈틈채우기(투두 등록)
     fun fillWish(wishId: Long, request: FillWishRequest) {
 
-        val wishService = getRetrofitWithToken().create(WishRetrofitInterface::class.java)
-
-        wishService.fillWish(wishId, request).enqueue(object : Callback<FillWishResponse> {
+        wishApi.fillWish(wishId, request).enqueue(object : Callback<FillWishResponse> {
             override fun onResponse(
                 call: Call<FillWishResponse>,
                 response: Response<FillWishResponse>

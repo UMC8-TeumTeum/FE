@@ -1,18 +1,15 @@
 package com.example.teumteum.data.remote.home
 
 import com.example.teumteum.data.remote.home.dto.ScheduleResponse
-import com.example.teumteum.data.remote.onboarding.OnBoardingRetrofitInterface
-import com.example.teumteum.data.remote.onboarding.dto.NicknameJobRequest
-import com.example.teumteum.data.remote.onboarding.dto.NicknameJobResponse
 import com.example.teumteum.ui.main.view.HomeView
-import com.example.teumteum.ui.signup.view.NicknameJobFieldView
-import com.example.teumteum.utils.getRetrofitWithToken
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import kotlin.jvm.java
+import javax.inject.Inject
 
-class HomeService {
+class HomeService @Inject constructor(
+    private val homeApi: HomeRetrofitInterface
+){
     private lateinit var homeView: HomeView
 
     fun setHomeView(homeView: HomeView){
@@ -20,10 +17,8 @@ class HomeService {
     }
 
     fun getTodaySchedule(date: String) {
-        val scheduleApi = getRetrofitWithToken().create(HomeRetrofitInterface::class.java)
-        val call = scheduleApi.getTodaySchedule(date)
 
-        call.enqueue(object : Callback<ScheduleResponse> {
+        homeApi.getTodaySchedule(date).enqueue(object : Callback<ScheduleResponse> {
             override fun onResponse(
                 call: Call<ScheduleResponse>,
                 response: Response<ScheduleResponse>
