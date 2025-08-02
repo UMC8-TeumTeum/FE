@@ -7,8 +7,6 @@ import com.example.teumteum.data.remote.todo.dto.GetTodoListResponse
 import com.example.teumteum.data.remote.todo.dto.GetTodoResponse
 import com.example.teumteum.data.remote.todo.dto.RegisterTodoRequest
 import com.example.teumteum.data.remote.todo.dto.RegisterTodoResponse
-import com.example.teumteum.data.remote.wish.dto.EditWishRequest
-import com.example.teumteum.data.remote.wish.dto.EditWishResponse
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE

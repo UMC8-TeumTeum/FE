@@ -1,4 +1,4 @@
-package com.example.teumteum.data.remote.wish.dto
+package com.example.teumteum.data.remote.wish.model
 
 import com.example.teumteum.data.entities.Wish
 import com.example.teumteum.data.remote.todo.dto.TodoResult
@@ -8,7 +8,7 @@ data class RegisterWishResponse(
     @SerializedName("isSuccess") val isSuccess: Boolean,
     @SerializedName("code") val code: String,
     @SerializedName("message") val message: String,
-    @SerializedName("result") val result: Map<String, String>?
+    @SerializedName("result") val result: Map<String, String>? = null
 )
 
 data class GetWishlistResponse(

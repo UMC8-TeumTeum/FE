@@ -8,28 +8,25 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
-import com.example.teumteum.data.remote.wish.WishService
-import com.example.teumteum.data.remote.wish.dto.DeleteWishesRequest
-import com.example.teumteum.data.remote.wish.dto.WishlistItem
+import com.example.teumteum.data.remote.wish.model.DeleteWishesRequest
+import com.example.teumteum.data.remote.wish.model.WishlistItem
 import com.example.teumteum.databinding.FragmentWishlistEditBinding
 import com.example.teumteum.ui.wish.adapter.WishlistEditRVAdapter
-import com.example.teumteum.ui.wish.view.DeleteWishesView
-import com.example.teumteum.ui.wish.view.WishlistViewModel
+import com.example.teumteum.ui.wish.viewModel.WishDeleteViewModel
+import com.example.teumteum.ui.wish.viewModel.WishlistGetViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
-class WishlistEditFragment() : Fragment(), DeleteWishesView {
+class WishlistEditFragment() : Fragment() {
 
     private lateinit var binding: FragmentWishlistEditBinding
 
     private lateinit var adapter: WishlistEditRVAdapter
     private lateinit var editedWishlist: MutableList<WishlistItem>
-    private val wishlistViewModel: WishlistViewModel by activityViewModels()
 
-    @Inject
-    lateinit var wishService: WishService
+    private val wishlistDeleteViewModel: WishDeleteViewModel by activityViewModels()
+    private val wishlistGetViewModel: WishlistGetViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,7 +36,7 @@ class WishlistEditFragment() : Fragment(), DeleteWishesView {
         binding = FragmentWishlistEditBinding.inflate(inflater, container, false)
 
         // ViewModel에서 데이터 복사
-        editedWishlist = wishlistViewModel.wishlistItems.map { it.copy() }.toMutableList()
+        editedWishlist = wishlistGetViewModel.wishlistItems.value?.map { it.copy() }?.toMutableList() ?: mutableListOf()
 
         return binding.root
     }
@@ -48,9 +45,6 @@ class WishlistEditFragment() : Fragment(), DeleteWishesView {
         // 바텀 내비게이션 숨기기
         val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
         bottomNav?.visibility = View.GONE
-
-        // ViewModel에서 데이터 복사
-        editedWishlist = wishlistViewModel.wishlistItems.map { it.copy() }.toMutableList()
 
         if (editedWishlist.isEmpty()) {
             // 위시가 없을 경우
@@ -70,6 +64,8 @@ class WishlistEditFragment() : Fragment(), DeleteWishesView {
         binding.backArrowIv.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
+
+        setupObservers()
     }
 
     private fun setupButtons() {
@@ -92,11 +88,7 @@ class WishlistEditFragment() : Fragment(), DeleteWishesView {
 
             if (deletedIds.isNotEmpty()) {
                 val request = DeleteWishesRequest(deletedIds)
-                wishService.setWishDeleteView(this)
-                wishService.deleteWishes(request)
-
-                // ViewModel에도 반영
-                wishlistViewModel.wishlistItems.removeAll { it.id in deletedIds }
+                wishlistDeleteViewModel.deleteWishes(request)
             }
 
             parentFragmentManager.beginTransaction()
@@ -109,20 +101,27 @@ class WishlistEditFragment() : Fragment(), DeleteWishesView {
         }
     }
 
-    override fun onDeleteWishesSuccess(code: String, message: String?) {
-        val successMessage = message ?: "위시 정보가 성공적으로 삭제되었습니다."
-        Toast.makeText(requireContext(), successMessage, Toast.LENGTH_SHORT).show()
-    }
+    private fun setupObservers() {
+        wishlistDeleteViewModel.deleteSuccess.observe(viewLifecycleOwner) { _ ->
+            Toast.makeText(requireContext(), "삭제가 완료되었어요.", Toast.LENGTH_SHORT).show()
 
-    override fun onDeleteWishesFailure(code: String, message: String?) {
-        val errorMessage = when (code) {
-            "HOME4043" -> "해당 위시 정보를 찾을 수 없습니다."
-            "HOME4042" -> "해당 카테고리를 찾을 수 없습니다."
-            "NETWORK_ERROR" -> "네트워크 오류가 발생했습니다."
-            "PARSE_ERROR" -> "서버 응답을 해석할 수 없습니다."
-            else -> message ?: "등록에 실패했습니다. 다시 시도해주세요."
+            // ViewModel에서 삭제 반영
+            val deletedIds = editedWishlist.filter { it.isDeleted }.map { it.id }
+            val updatedList = wishlistGetViewModel.wishlistItems.value?.filterNot { it.id in deletedIds } ?: emptyList()
+            wishlistGetViewModel.wishlistItems.value = updatedList
+
+            // 결과 전달
+            parentFragmentManager.setFragmentResult("wish_delete", Bundle())
+
+            // 뒤로 이동
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, WishlistFragment())
+                .commit()
         }
-        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
+
+        wishlistDeleteViewModel.deleteError.observe(viewLifecycleOwner) { error ->
+            Toast.makeText(requireContext(), "삭제 실패: $error", Toast.LENGTH_SHORT).show()
+        }
     }
 
 }
