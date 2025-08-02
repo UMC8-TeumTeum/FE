@@ -15,11 +15,23 @@ class FriendRequestCardAdapter(private val teumList: List<TeumReceivedItem>) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: TeumReceivedItem) {
-            binding.tvName.text = item.senderUser.nickname
+            val nickname = item.senderUser.nickname
+            val receiverCount = item.receiverCount
+
+            // 표시 이름 로직
+            val displayName = if (receiverCount <= 1) {
+                nickname
+            } else {
+                "$nickname 외 ${receiverCount - 1}명"
+            }
+            binding.tvName.text = displayName
+
+//            binding.tvName.text = item.senderUser.nickname
             binding.tvDate.text = item.date
             binding.tvTime.text = "${item.timeSlot.start} ~ ${item.timeSlot.end}"
             binding.tvTitle.text = item.title
             binding.tvDesc.text = item.description
+
             //  Glide로 프로필 이미지 불러오기
             Glide.with(binding.root)
                 .load(item.senderUser.profileImageUrl)

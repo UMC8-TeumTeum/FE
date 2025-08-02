@@ -15,11 +15,11 @@ import com.example.teumteum.data.remote.friend.dto.TeumRequest
 import com.example.teumteum.databinding.FragmentFriendBinding
 import com.example.teumteum.ui.friend.adapter.FollowerAdapter
 import com.example.teumteum.ui.friend.adapter.FollowingAdapter
-import com.example.teumteum.ui.friend.RecommendAdapter
 import com.example.teumteum.ui.friend.view.TeumRequestView
 import com.example.teumteum.ui.friend.view.TeumReceivedView
 import com.example.teumteum.data.remote.friend.dto.TeumRequestService
 import com.example.teumteum.data.remote.friend.dto.TeumReceivedService
+import com.example.teumteum.ui.friend.adapter.RecommendAdapter
 import com.example.teumteum.ui.main.MainActivity
 
 class FriendFragment : Fragment(), TeumRequestView, TeumReceivedView {
@@ -45,22 +45,15 @@ class FriendFragment : Fragment(), TeumRequestView, TeumReceivedView {
         super.onViewCreated(view, savedInstanceState)
 
         recommendAdapter = RecommendAdapter(
-            onCardClick = { item ->
+            onCardClick = { item, position ->
 
-                val request = TeumRequest(
-                    title = item.title,
-                    description = item.description,
-                    date = item.date,
-                    startTime = item.timeSlot.start,
-                    endTime = item.timeSlot.end,
-                    graphicId = item.graphicId,
-                    receiverUserIds = listOf(item.senderUser.userId) //  수신자 ID가 아니라면 수정 필요
-                )
-                teumRequestService.sendTeumRequest(request)
+                teumRequestService.setTeumRequestView(this)
 
+                // 카드 상세 프래그먼트로 이동만 수행
                 val fragment = Friend02RequestFragment().apply {
                     arguments = Bundle().apply {
                         putParcelableArrayList("teumList", ArrayList(latestTeumList))  // teumList는 TeumReceivedItem 리스트
+                        putInt("selectedPosition", position)
                     }
                 }
 
@@ -150,6 +143,8 @@ class FriendFragment : Fragment(), TeumRequestView, TeumReceivedView {
         }
     }
 
+    // 여기서부터
+     // 추후 틈 요청하기 api 연동 시 필요
     override fun onTeumRequestSuccess(teumId: Int) {
         val message = "틈 요청이 성공적으로 생성되었습니다. (id: $teumId)"
         Log.d("REQUEST_FRAGMENT", message)
@@ -166,9 +161,10 @@ class FriendFragment : Fragment(), TeumRequestView, TeumReceivedView {
         Log.e("REQUEST_FRAGMENT", "틈 요청 실패 - [$code] $message")
         Toast.makeText(requireContext(), userMessage, Toast.LENGTH_LONG).show()
     }
+    // 여기까지
 
     override fun onTeumReceivedSuccess(teumList: List<TeumReceivedItem>) {
-        val message = "성공입니다. 요청 수: ${teumList.size}"
+        val message = "틈 요청 조회 성공입니다. 요청 수: ${teumList.size}"
         Log.d("RECEIVED_FRAGMENT", message)
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
 
@@ -178,19 +174,6 @@ class FriendFragment : Fragment(), TeumRequestView, TeumReceivedView {
 
         latestTeumList = teumList // 저장
 
-
-//        // 👉 수신된 요청이 있으면 바로 틈 요청 카드 화면으로 이동
-//        if (teumList.isNotEmpty()) {
-//            val fragment = Friend02RequestFragment().apply {
-//                arguments = Bundle().apply {
-//                    putParcelableArrayList("teumList", ArrayList(teumList))
-//                }
-//            }
-//            parentFragmentManager.beginTransaction()
-//                .replace(R.id.main_frm, fragment)
-//                .addToBackStack(null)
-//                .commit()
-//        }
     }
 
     override fun onTeumReceivedFailure(code: String, message: String) {

@@ -11,6 +11,8 @@ import com.example.teumteum.data.remote.friend.dto.TeumReceivedItem
 import com.example.teumteum.databinding.FragmentFriend02RequestBinding
 import com.example.teumteum.ui.main.MainActivity
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class Friend02RequestFragment : Fragment() {
 
@@ -34,18 +36,34 @@ class Friend02RequestFragment : Fragment() {
 
         (activity as? MainActivity)?.hideBottomBar()
 
-        // 1. 전달받은 TeumReceivedItem 리스트
-        teumList = arguments?.getParcelableArrayList("teumList") ?: emptyList()
+        val receivedList = arguments?.getParcelableArrayList<TeumReceivedItem>("teumList") ?: emptyList()
+        val selectedPosition = arguments?.getInt("selectedPosition") ?: 0
+        val selectedItem = receivedList.getOrNull(selectedPosition)
 
-        // 2. 어댑터 연결
+        // 1. 유효한 요청만 필터링
+        val validList = filterValidTeumRequests(receivedList)
+
+        // 2. 정렬
+        val sortedList = sortTeumList(validList)
+
+        // 3. 선택된 요청을 맨 앞으로
+        teumList = if (selectedItem != null && sortedList.contains(selectedItem)) {
+            reorderWithSelectedFirst(sortedList, selectedItem)
+        } else {
+            sortedList
+        }
+
+        // 4. 어댑터 연결
         adapter = FriendRequestCardAdapter(teumList)
         binding.requestViewPager.adapter = adapter
 
-        // 3. 페이지 인디케이터 연결
-        val dotsIndicator: DotsIndicator = binding.dotsIndicator
-        dotsIndicator.setViewPager2(binding.requestViewPager)
+        // 5. 선택한 카드부터 시작
+        binding.requestViewPager.setCurrentItem(0, false)
 
-        // 4. 버튼 이벤트
+        // 6. 인디케이터
+        binding.dotsIndicator.setViewPager2(binding.requestViewPager)
+
+        // 7. 버튼 이벤트
         binding.btnReject.setOnClickListener {
             val bottomSheet = Friend02RejectBottomSheetFragment()
             bottomSheet.show(parentFragmentManager, bottomSheet.tag)
@@ -58,12 +76,48 @@ class Friend02RequestFragment : Fragment() {
             Toast.makeText(requireContext(), "함께할래요 버튼이 눌렸습니다.", Toast.LENGTH_SHORT).show()
         }
 
-        // 5. 뒤로가기
+        // 8. 뒤로가기
         binding.backButton.setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.main_frm, FriendFragment())
                 .addToBackStack(null)
                 .commit()
+        }
+    }
+
+    //  미확인 → 최신순 정렬
+    private fun sortTeumList(teumList: List<TeumReceivedItem>): List<TeumReceivedItem> {
+        return teumList.sortedWith(
+            compareBy<TeumReceivedItem> { it.read } // false = 미확인 먼저
+                .thenByDescending { it.requestId } // 최신순
+        )
+    }
+
+    //  선택된 요청을 가장 앞으로
+    private fun reorderWithSelectedFirst(
+        sortedList: List<TeumReceivedItem>,
+        selectedItem: TeumReceivedItem
+    ): List<TeumReceivedItem> {
+        return listOf(selectedItem) + sortedList.filter { it != selectedItem }
+    }
+
+    //  시간이 지나지 않고, 아직 안 읽은 요청만 필터링
+    private fun filterValidTeumRequests(teumList: List<TeumReceivedItem>): List<TeumReceivedItem> {
+        val now = LocalDateTime.now()
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+
+        return teumList.filter { item ->
+            try {
+                val dateTimeStr = "${item.date} ${item.timeSlot.end}"
+                val endDateTime = LocalDateTime.parse(dateTimeStr, formatter)
+
+                val isFuture = endDateTime.isAfter(now)
+                val isUnread = !item.read
+
+                isFuture && isUnread
+            } catch (e: Exception) {
+                false // 날짜 파싱 실패한 항목 제외
+            }
         }
     }
 

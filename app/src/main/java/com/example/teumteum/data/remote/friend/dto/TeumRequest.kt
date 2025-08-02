@@ -2,6 +2,7 @@ package com.example.teumteum.data.remote.friend.dto
 
 import com.google.gson.annotations.SerializedName
 
+// 추후에 필요 틈 요청하기 api 연결 시
 data class TeumRequest(
     @SerializedName("title") val title: String,
     @SerializedName("description") val description: String,

@@ -7,6 +7,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+//추후에 필요 틈 요청하기 api 연결 시
 class TeumRequestService {
 
     private lateinit var teumRequestView: TeumRequestView
