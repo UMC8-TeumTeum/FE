@@ -19,23 +19,23 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-interface WishRetrofitInterface {
+interface WishService {
 
     @POST("/api/wishes")
-    fun registerWish(@Body request: RegisterWishRequest): Call<RegisterWishResponse>
+    suspend fun registerWish(@Body request: RegisterWishRequest): Call<RegisterWishResponse>
 
     @GET("/api/wishes/wishlist")
-    fun getWishlist(@Query("duration") duration: String, @Query("page") page: Int): Call<GetWishlistResponse>
+    suspend fun getWishlist(@Query("duration") duration: String, @Query("page") page: Int): Call<GetWishlistResponse>
 
     @GET("/api/wishes/{wishId}")
-    fun getWish(@Path("wishId") wishId: Long): Call<GetWishResponse>
+    suspend fun getWish(@Path("wishId") wishId: Long): Call<GetWishResponse>
 
     @PATCH("/api/wishes/{wishId}")
-    fun editWish(@Path("wishId") wishId: Long, @Body request: EditWishRequest): Call<EditWishResponse>
+    suspend fun editWish(@Path("wishId") wishId: Long, @Body request: EditWishRequest): Call<EditWishResponse>
 
     @HTTP(method = "DELETE", path = "/api/wishes", hasBody = true)
-    fun deleteWishes(@Body request: DeleteWishesRequest): Call<DeleteWishesResponse>
+    suspend fun deleteWishes(@Body request: DeleteWishesRequest): Call<DeleteWishesResponse>
 
     @POST("/api/wishes/{wishId}/assign")
-    fun fillWish(@Path("wishId") wishId: Long, @Body request: FillWishRequest): Call<FillWishResponse>
+    suspend fun fillWish(@Path("wishId") wishId: Long, @Body request: FillWishRequest): Call<FillWishResponse>
 }
