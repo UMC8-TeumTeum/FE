@@ -19,9 +19,13 @@ class FillingActivity01Fragment : Fragment(), ActivityWishView, ActivityAiView {
 
     private lateinit var binding: FragmentFillingActivity01Binding
 
-    private var selectedTime: String? = null
+    private var selectedTimeTag: String? = null
+    private var selectedTimeButton: View? = null
+
     private var selectedLocation: String? = null
-    private var selectedCategory: String? = null
+
+    private var selectedCategoryText: String? = null
+    private var selectedCategoryButton: View? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,18 +37,6 @@ class FillingActivity01Fragment : Fragment(), ActivityWishView, ActivityAiView {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
-        // 바텀 내비게이션 숨기기
-        val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
-        bottomNav?.visibility = View.GONE
-
-        binding.fillingActivityLocationClearBtn.setOnClickListener {
-            binding.fillingActivityLocationEt.setText("")
-        }
-        binding.fillingActivityCategoryClearBtn.setOnClickListener {
-            binding.fillingActivityCategoryEt.setText("")
-        }
-
         val selectedStroke = ContextCompat.getColor(requireContext(), R.color.main_1)
         val defaultStroke = ContextCompat.getColor(requireContext(), R.color.teumteum_bg)
 
@@ -53,13 +45,24 @@ class FillingActivity01Fragment : Fragment(), ActivityWishView, ActivityAiView {
         val defaultBg = ContextCompat.getColor(requireContext(), R.color.main_2)
         val defaultText = ContextCompat.getColor(requireContext(), R.color.text_primary)
 
+        activity?.findViewById<BottomNavigationView>(R.id.main_bnv)?.visibility = View.GONE
+
+        binding.fillingActivityLocationClearBtn.setOnClickListener {
+            binding.fillingActivityLocationEt.setText("")
+        }
+
+        binding.fillingActivityCategoryClearBtn.setOnClickListener {
+            binding.fillingActivityCategoryEt.setText("")
+        }
+
         // 시간 선택
         val timeCards = listOf(
-            binding.fillingActivityTime01Cv,
-            binding.fillingActivityTime02Cv,
-            binding.fillingActivityTime03Cv,
-            binding.fillingActivityTime04Cv
+            binding.fillingActivityTime01Cv.apply { tag = "10m" },
+            binding.fillingActivityTime02Cv.apply { tag = "20m" },
+            binding.fillingActivityTime03Cv.apply { tag = "30m" },
+            binding.fillingActivityTime04Cv.apply { tag = "1h" }
         )
+
         timeCards.forEach { timeBtn ->
             timeBtn.setOnClickListener {
                 timeCards.forEach {
@@ -69,7 +72,8 @@ class FillingActivity01Fragment : Fragment(), ActivityWishView, ActivityAiView {
 
                 timeBtn.strokeColor = selectedStroke
                 timeBtn.strokeWidth = 4
-                selectedTime = timeBtn.toString()
+                selectedTimeTag = timeBtn.tag as String
+                selectedTimeButton = timeBtn
                 updateNextButtonState()
             }
         }
@@ -94,7 +98,6 @@ class FillingActivity01Fragment : Fragment(), ActivityWishView, ActivityAiView {
                 locationBtn.setBackgroundColor(selectedBg)
                 locationBtn.setTextColor(selectedText)
                 selectedLocation = locationBtn.text.toString()
-
                 updateNextButtonState()
             }
         }
@@ -109,7 +112,9 @@ class FillingActivity01Fragment : Fragment(), ActivityWishView, ActivityAiView {
             binding.btnFillingActivityCategory06
         )
 
-        categoryButtons.forEach { categoryBtn ->
+        val categoryIds = listOf(1L, 2L, 3L, 4L, 5L, 6L)
+        categoryButtons.forEachIndexed { index, categoryBtn ->
+            categoryBtn.tag = categoryIds[index]
             categoryBtn.setOnClickListener {
                 categoryButtons.forEach {
                     it.setBackgroundColor(defaultBg)
@@ -118,8 +123,8 @@ class FillingActivity01Fragment : Fragment(), ActivityWishView, ActivityAiView {
 
                 categoryBtn.setBackgroundColor(selectedBg)
                 categoryBtn.setTextColor(selectedText)
-                selectedCategory = categoryBtn.text.toString()
-
+                selectedCategoryButton = categoryBtn
+                selectedCategoryText = categoryBtn.text.toString()
                 updateNextButtonState()
             }
         }
@@ -129,30 +134,39 @@ class FillingActivity01Fragment : Fragment(), ActivityWishView, ActivityAiView {
         }
 
         binding.searchBtn.setOnClickListener {
+
+            val bundle = Bundle().apply {
+                putString("selectedTime", selectedTimeTag)
+                putString("selectedCategory", selectedCategoryText)
+                putString("customCategory", binding.fillingActivityCategoryEt.text.toString())
+            }
+
+            val fragment = FillingActivity02Fragment().apply {
+                arguments = bundle
+            }
+
             parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, FillingActivity02Fragment())
+                .replace(R.id.main_frm, fragment)
                 .addToBackStack(null)
                 .commit()
         }
     }
 
     private fun updateNextButtonState() {
-        val isAllSelected = selectedTime != null && selectedLocation != null && selectedCategory != null
+        val isAllSelected = selectedTimeTag != null && selectedLocation != null && selectedCategoryText != null
 
         binding.searchBtn.isEnabled = isAllSelected
-
         binding.searchBtn.setBackgroundColor(
-            if (isAllSelected)
-                ContextCompat.getColor(requireContext(), R.color.text_primary)
-            else
-                ContextCompat.getColor(requireContext(), R.color.teumteum_bg)
+            ContextCompat.getColor(
+                requireContext(),
+                if (isAllSelected) R.color.text_primary else R.color.teumteum_bg
+            )
         )
-
         binding.searchBtn.setTextColor(
-            if (isAllSelected)
-                ContextCompat.getColor(requireContext(), R.color.white)
-            else
-                ContextCompat.getColor(requireContext(), R.color.text_primary)
+            ContextCompat.getColor(
+                requireContext(),
+                if (isAllSelected) R.color.white else R.color.text_primary
+            )
         )
     }
 
@@ -161,14 +175,14 @@ class FillingActivity01Fragment : Fragment(), ActivityWishView, ActivityAiView {
     }
 
     override fun onGetActivityWishFailure(code: String, message: String?) {
-        val errorMessage = when {
-            code == "HOME4042" -> "해당 카테고리를 찾을 수 없습니다."
-            code == "HOME4003" -> "카테고리는 필수 항목입니다."
-            code == "HOME4004" -> "카테고리와 직접 입력은 둘 중 하나만 선택해야 합니다."
-            code == "COMMON400" -> "널이어서는 안됩니다."
-            code == "COMMON500" -> "서버 오류입니다. 관리자에게 문의해주세요."
-            code == "NETWORK_ERROR" -> "네트워크 오류가 발생했습니다."
-            code == "PARSE_ERROR" -> "서버 응답을 해석할 수 없습니다."
+        val errorMessage = when (code) {
+            "HOME4042" -> "해당 카테고리를 찾을 수 없습니다."
+            "HOME4003" -> "카테고리는 필수 항목입니다."
+            "HOME4004" -> "카테고리와 직접 입력은 둘 중 하나만 선택해야 합니다."
+            "COMMON400" -> "널이어서는 안됩니다."
+            "COMMON500" -> "서버 오류입니다. 관리자에게 문의해주세요."
+            "NETWORK_ERROR" -> "네트워크 오류가 발생했습니다."
+            "PARSE_ERROR" -> "서버 응답을 해석할 수 없습니다."
             else -> "위시 조회에 실패했습니다. 다시 시도해주세요."
         }
         Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
@@ -179,10 +193,10 @@ class FillingActivity01Fragment : Fragment(), ActivityWishView, ActivityAiView {
     }
 
     override fun onGetActivityAiFailure(code: String, message: String?) {
-        val errorMessage = when {
-            code == "COMMON500" -> "서버 오류입니다. 관리자에게 문의해주세요."
-            code == "NETWORK_ERROR" -> "네트워크 오류가 발생했습니다."
-            code == "PARSE_ERROR" -> "서버 응답을 해석할 수 없습니다."
+        val errorMessage = when (code) {
+            "COMMON500" -> "서버 오류입니다. 관리자에게 문의해주세요."
+            "NETWORK_ERROR" -> "네트워크 오류가 발생했습니다."
+            "PARSE_ERROR" -> "서버 응답을 해석할 수 없습니다."
             else -> "ai컨텐츠 조회에 실패했습니다. 다시 시도해주세요."
         }
         Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()

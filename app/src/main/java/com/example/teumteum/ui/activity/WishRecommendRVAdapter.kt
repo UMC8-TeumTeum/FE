@@ -6,10 +6,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.teumteum.R
-import com.example.teumteum.data.entities.WishRecommend
+import com.example.teumteum.data.remote.activity.dto.ActivityWishResult
 import com.example.teumteum.databinding.ItemWishlistBinding
 
-class WishRecommendRVAdapter(private var wishList: List<WishRecommend>, private val fragmentManager: FragmentManager) : RecyclerView.Adapter<WishRecommendRVAdapter.ViewHolder>() {
+class WishRecommendRVAdapter(private var wishList: List<ActivityWishResult>, private val fragmentManager: FragmentManager) : RecyclerView.Adapter<WishRecommendRVAdapter.ViewHolder>() {
 
     inner class ViewHolder(val binding: ItemWishlistBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -21,8 +21,9 @@ class WishRecommendRVAdapter(private var wishList: List<WishRecommend>, private 
     override fun onBindViewHolder(holder: WishRecommendRVAdapter.ViewHolder, position: Int) {
         val item = wishList[position]
         val binding = holder.binding
-        binding.wishTitleTv.text = item.title
-        binding.wishTimeTv.text = item.time
+
+        binding.wishTitleTv.text = item.content
+        binding.wishTimeTv.text = item.estimatedDuration
 
         binding.fillButton.setOnClickListener {
             val fragment = FillingSetting01Fragment().apply {
@@ -41,7 +42,7 @@ class WishRecommendRVAdapter(private var wishList: List<WishRecommend>, private 
 
     override fun getItemCount(): Int = minOf(wishList.size, 3)
 
-    fun updateList(newList: List<WishRecommend>) {
+    fun updateList(newList: List<ActivityWishResult>) {
         wishList = newList
         notifyDataSetChanged()
     }

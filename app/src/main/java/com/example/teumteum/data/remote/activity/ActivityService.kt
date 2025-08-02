@@ -58,7 +58,7 @@ class ActivityService {
                     val activityWishResponse = response.body()
 
                     if (activityWishResponse != null && activityWishResponse.code == "ACTIVITY2001") {
-                        val wishes = activityWishResponse.wishes ?: emptyList()
+                        val wishes = activityWishResponse.result?.wishes ?: emptyList()
                         activityWishView.onGetActivityWishSuccess(activityWishResponse.code, wishes)
                     } else {
                         activityWishView.onGetActivityWishFailure(activityWishResponse?.code ?: "UNKNOWN")
