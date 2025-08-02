@@ -10,7 +10,9 @@ import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentFriend02ResponseBinding
 import com.example.teumteum.ui.main.MainActivity
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class Friend02ResponseFragment  : Fragment(){
 
     private var _binding: FragmentFriend02ResponseBinding? = null

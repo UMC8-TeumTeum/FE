@@ -19,7 +19,9 @@ import com.example.teumteum.ui.main.HomeFragment
 import com.example.teumteum.ui.wish.view.FillWishView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class WishSetting02Fragment : Fragment(), FillWishView {
 
     private lateinit var binding: FragmentWishSetting02Binding

@@ -4,9 +4,6 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
-import android.util.TypedValue
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,35 +20,37 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import com.example.teumteum.databinding.FragmentTodoRegisterBinding
 import com.example.teumteum.R
-import com.example.teumteum.data.entities.Todo
 
-import androidx.lifecycle.lifecycleScope
+import com.example.teumteum.data.remote.onboarding.OnBoardingService
 import com.example.teumteum.data.remote.todo.TodoService
 import com.example.teumteum.data.remote.todo.dto.RegisterTodoRequest
-import com.example.teumteum.data.remote.wish.WishService
-import com.example.teumteum.data.remote.wish.dto.RegisterWishRequest
+
 import com.example.teumteum.ui.wish.WishRegisterFragment
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+
 import com.example.teumteum.ui.calendar.IDateClickListener
 import com.example.teumteum.ui.calendar.MonthlyCalendarFragment
 import com.example.teumteum.ui.todo.view.RegisterTodoView
 import com.example.teumteum.utils.combineDateTime
-import com.google.android.material.button.MaterialButton
+import dagger.hilt.android.AndroidEntryPoint
+
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener, RegisterTodoView {
 
     private lateinit var binding: FragmentTodoRegisterBinding
 
     private var currentTargetTextView: TextView? = null
     private var popupWindow: PopupWindow? = null
+
+    @Inject
+    lateinit var todoService: TodoService
 
     private val alarmLabelToMinutes = mapOf(
         "30분 전" to 30,
@@ -517,7 +516,6 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener, Re
 
         val request = getTodoRequest()
 
-        val todoService = TodoService()
         todoService.setTodoRegisterView(this)
         todoService.registerTodo(request)
     }

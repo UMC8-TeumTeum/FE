@@ -7,7 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentTermsDetailBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class TermsDetailFragment : Fragment() {
 
     private lateinit var binding: FragmentTermsDetailBinding

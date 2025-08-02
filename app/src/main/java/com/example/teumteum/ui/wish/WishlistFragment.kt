@@ -18,7 +18,10 @@ import com.example.teumteum.ui.wish.view.WishlistViewModel
 import com.example.teumteum.utils.applyBlurShadow
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.button.MaterialButton
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class WishlistFragment() : Fragment(), WishlistView {
 
     private lateinit var binding: FragmentWishlistBinding
@@ -26,6 +29,9 @@ class WishlistFragment() : Fragment(), WishlistView {
 
     private var wishlistItems: List<WishlistItem> = emptyList()
     private val wishlistViewModel: WishlistViewModel by activityViewModels()
+
+    @Inject
+    lateinit var wishService: WishService
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -163,7 +169,6 @@ class WishlistFragment() : Fragment(), WishlistView {
     }
 
     private fun getList(duration: String, page: Int) {
-        val wishService = WishService()
         wishService.setWishlistGetView(this)
         wishService.getWishlist(duration, page)
     }

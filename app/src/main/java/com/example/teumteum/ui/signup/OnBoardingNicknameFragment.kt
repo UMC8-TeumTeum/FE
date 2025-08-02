@@ -1,6 +1,5 @@
 package com.example.teumteum.ui.signup
 
-import android.R.attr.fragment
 import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
@@ -16,10 +15,16 @@ import com.example.teumteum.data.remote.onboarding.OnBoardingService
 import com.example.teumteum.data.remote.onboarding.dto.NicknameJobRequest
 import com.example.teumteum.databinding.FragmentOnBoardingNicknameBinding
 import com.example.teumteum.ui.signup.view.NicknameJobFieldView
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class OnBoardingNicknameFragment : Fragment(), NicknameJobFieldView {
 
     private lateinit var binding: FragmentOnBoardingNicknameBinding
+
+    @Inject
+    lateinit var onBoardingService: OnBoardingService
 
     override fun onNicknameJobSuccess(code: String) {
         val msg = "닉네임, 직종 입력 성공 (code: $code)"
@@ -91,7 +96,6 @@ class OnBoardingNicknameFragment : Fragment(), NicknameJobFieldView {
 //            }
 
             val request = getNicknameJobRequest()
-            val onBoardingService = OnBoardingService()
             onBoardingService.setNicknameJobFieldView(this)
             onBoardingService.postNicknameAndJobField(request)
 

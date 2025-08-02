@@ -18,7 +18,10 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class WishRegisterFragment : BottomSheetDialogFragment(), RegisterWishView {
 
     private lateinit var binding: FragmentWishRegisterBinding
@@ -27,6 +30,9 @@ class WishRegisterFragment : BottomSheetDialogFragment(), RegisterWishView {
 
     private var isWishSelected = true
     private var isFromWish: Boolean = false
+
+    @Inject
+    lateinit var wishService: WishService
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -202,7 +208,6 @@ class WishRegisterFragment : BottomSheetDialogFragment(), RegisterWishView {
 
         val request = getWishRequest()
 
-        val wishService = WishService()
         wishService.setWishRegisterView(this)
         wishService.registerWish(request)
     }

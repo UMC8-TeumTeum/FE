@@ -13,7 +13,9 @@ import com.example.teumteum.R
 import com.example.teumteum.databinding.BottomSheetFriend02AcceptBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class Friend02AcceptBottomSheetFragment : BottomSheetDialogFragment() {
 
     private var _binding: BottomSheetFriend02AcceptBinding? = null

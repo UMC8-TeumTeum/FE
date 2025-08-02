@@ -14,13 +14,18 @@ import androidx.core.content.ContextCompat
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.agreement.AgreementService
 import com.example.teumteum.data.remote.agreement.dto.AgreementRequest
-import com.example.teumteum.data.remote.todo.TodoService
 import com.example.teumteum.databinding.FragmentAgreementBinding
 import com.example.teumteum.ui.signup.view.AgreementView
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class AgreementFragment : Fragment(), AgreementView {
 
     private lateinit var binding: FragmentAgreementBinding
+
+    @Inject
+    lateinit var agreementService: AgreementService
 
     override fun onAgreementSuccess(code: String) {
         val msg = "약관 동의 성공 (code: $code)"
@@ -71,7 +76,6 @@ class AgreementFragment : Fragment(), AgreementView {
 
         binding.nextBtn.setOnClickListener {
             val request = getAgreementRequest()
-            val agreementService = AgreementService()
             agreementService.setAgreementView(this)
             agreementService.postAgreements(request)
         }

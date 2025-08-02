@@ -1,18 +1,17 @@
 package com.example.teumteum.ui.friend
 
-import android.app.TimePickerDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TimePicker
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentFriend02PossibleTimeBinding
 import com.example.teumteum.ui.main.MainActivity
-import java.util.*
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class Friend02PossibleTimeFragment : Fragment() {
 
     private var _binding: FragmentFriend02PossibleTimeBinding? = null

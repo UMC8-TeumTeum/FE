@@ -12,7 +12,9 @@ import com.example.teumteum.databinding.FragmentFillingActivity02Binding
 import com.example.teumteum.ui.friend.FriendFragment
 import com.example.teumteum.utils.applyBlurShadow
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class FillingActivity02Fragment : Fragment() {
 
     private lateinit var binding: FragmentFillingActivity02Binding

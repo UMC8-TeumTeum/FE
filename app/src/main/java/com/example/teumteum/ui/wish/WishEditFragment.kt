@@ -15,7 +15,6 @@ import com.example.teumteum.data.entities.Wish
 import com.example.teumteum.data.remote.wish.WishService
 import com.example.teumteum.data.remote.wish.dto.DeleteWishesRequest
 import com.example.teumteum.data.remote.wish.dto.EditWishRequest
-import com.example.teumteum.data.remote.wish.dto.WishlistItem
 import com.example.teumteum.databinding.DialogConfirmWishDeleteBinding
 import com.example.teumteum.databinding.DialogConfirmWishEditBinding
 import com.example.teumteum.databinding.FragmentWishEditBinding
@@ -26,7 +25,10 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class WishEditFragment : BottomSheetDialogFragment(), WishView, EditWishView, DeleteWishesView {
 
     private lateinit var binding: FragmentWishEditBinding
@@ -39,6 +41,9 @@ class WishEditFragment : BottomSheetDialogFragment(), WishView, EditWishView, De
     private var originalContent: String = ""
     private var originalTime: String = ""
     private var originalCategoryIds: List<Long> = emptyList()
+
+    @Inject
+    lateinit var wishService: WishService
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -83,7 +88,6 @@ class WishEditFragment : BottomSheetDialogFragment(), WishView, EditWishView, De
                 categories = selectedCategoryIds
             )
 
-            val wishService = WishService()
             wishService.setWishEditView(this)
             wishService.editWish(wishId, request)
         }
@@ -151,8 +155,7 @@ class WishEditFragment : BottomSheetDialogFragment(), WishView, EditWishView, De
             .create()
 
         dialogBinding.wishConfirmTv.setOnClickListener {
-            val service = WishService()
-            service.setWishDeleteView(object : DeleteWishesView {
+            wishService.setWishDeleteView(object : DeleteWishesView {
                 override fun onDeleteWishesSuccess(code: String, message: String?) {
                     Toast.makeText(requireContext(), "위시가 성공적으로 삭제되었습니다.", Toast.LENGTH_SHORT).show()
 
@@ -170,7 +173,7 @@ class WishEditFragment : BottomSheetDialogFragment(), WishView, EditWishView, De
             })
 
             val deleteRequest = DeleteWishesRequest(listOf(wishId)) // 바텀시트에 넘겨받은 Wish
-            service.deleteWishes(deleteRequest)
+            wishService.deleteWishes(deleteRequest)
         }
 
         dialogBinding.wishCancelTv.setOnClickListener {
@@ -325,7 +328,6 @@ class WishEditFragment : BottomSheetDialogFragment(), WishView, EditWishView, De
     }
 
     private fun get(wishId: Long) {
-        val wishService = WishService()
         wishService.setWishGetView(this)
         wishService.getWish(wishId)
     }

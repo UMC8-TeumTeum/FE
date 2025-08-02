@@ -12,8 +12,10 @@ import com.example.teumteum.data.remote.calendar.dto.CalendarResult
 import com.example.teumteum.databinding.FragmentWeeklyCalendarBinding
 import com.example.teumteum.ui.calendar.view.CalendarView
 import com.example.teumteum.utils.*
+import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
 
+@AndroidEntryPoint
 class WeeklyCalendarFragment : Fragment(), CalendarView {
 
     private lateinit var binding: FragmentWeeklyCalendarBinding

@@ -34,10 +34,12 @@ import com.example.teumteum.ui.todo.view.EditTodoView
 import com.example.teumteum.ui.todo.view.TodoView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
+@AndroidEntryPoint
 class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener, TodoView, EditTodoView, DeleteTodoView {
 
     private lateinit var binding: FragmentTodoEditBinding

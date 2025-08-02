@@ -16,7 +16,10 @@ import com.example.teumteum.ui.wish.adapter.WishlistEditRVAdapter
 import com.example.teumteum.ui.wish.view.DeleteWishesView
 import com.example.teumteum.ui.wish.view.WishlistViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class WishlistEditFragment() : Fragment(), DeleteWishesView {
 
     private lateinit var binding: FragmentWishlistEditBinding
@@ -24,6 +27,9 @@ class WishlistEditFragment() : Fragment(), DeleteWishesView {
     private lateinit var adapter: WishlistEditRVAdapter
     private lateinit var editedWishlist: MutableList<WishlistItem>
     private val wishlistViewModel: WishlistViewModel by activityViewModels()
+
+    @Inject
+    lateinit var wishService: WishService
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -86,9 +92,8 @@ class WishlistEditFragment() : Fragment(), DeleteWishesView {
 
             if (deletedIds.isNotEmpty()) {
                 val request = DeleteWishesRequest(deletedIds)
-                val service = WishService()
-                service.setWishDeleteView(this)
-                service.deleteWishes(request)
+                wishService.setWishDeleteView(this)
+                wishService.deleteWishes(request)
 
                 // ViewModel에도 반영
                 wishlistViewModel.wishlistItems.removeAll { it.id in deletedIds }

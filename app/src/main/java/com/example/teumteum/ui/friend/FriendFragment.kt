@@ -17,7 +17,9 @@ import com.example.teumteum.ui.friend.RecommendAdapter
 import com.example.teumteum.ui.friend.adapter.FollowingAdapter
 import com.example.teumteum.ui.friend.data.FollowerData
 import com.example.teumteum.ui.main.MainActivity
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class FriendFragment : Fragment() {
 
     private var _binding: FragmentFriendBinding? = null
