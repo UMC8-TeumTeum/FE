@@ -1,5 +1,6 @@
 package com.example.teumteum.ui.friend.viewModel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -49,6 +50,7 @@ class FriendViewModel @Inject constructor(
                         else -> {
                             _searchResults.value = filtered
                             _successMessage.value = "사용자 조회 성공"
+                            Log.d("VIEWMODEL", "성공 메시지 emit됨")
                         }
                     }
                 }

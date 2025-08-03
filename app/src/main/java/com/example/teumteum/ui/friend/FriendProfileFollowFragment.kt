@@ -44,9 +44,10 @@ class FriendProfileFollowFragment : Fragment() {
             return
         }
 
+        // 프로필 정보 요청
         viewModel.getFriendProfile(userId)
 
-        // ✅ 프로필 데이터 관찰
+        //  성공 시
         viewModel.friendProfile.observe(viewLifecycleOwner) { result ->
             binding.profileNicknameTv.text = result.name
             binding.profileFieldTv.text = result.field
@@ -60,7 +61,7 @@ class FriendProfileFollowFragment : Fragment() {
             binding.modifyProfileBtn.text = if (result.following) "팔로잉" else "팔로우"
         }
 
-        // ✅ 실패 메시지 관찰
+        //  실패 시
         viewModel.errorMessage.observe(viewLifecycleOwner) { message ->
             message?.let {
                 Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
@@ -73,18 +74,33 @@ class FriendProfileFollowFragment : Fragment() {
             }
         }
 
-        // 🔙 뒤로가기
+        //  뒤로가기
         binding.backBtn.setOnClickListener {
             parentFragmentManager.popBackStack()
             (activity as? MainActivity)?.showBottomBar()
         }
 
-        // ➕ 팔로잉 리스트로 이동
+        //  팔로잉 리스트로 이동
         binding.modifyProfileBtn.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, FriendProfileFollowingFragment())
-                .addToBackStack(null)
-                .commit()
+            val result = viewModel.friendProfile.value
+            if (result != null) {
+                val bundle = Bundle().apply {
+                    putString("name", result.name)
+                    putString("field", result.field)
+                    putString("imageUrl", result.profileImageUrl)
+                }
+
+                val followingFragment = FriendProfileFollowingFragment().apply {
+                    arguments = bundle
+                }
+
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.main_frm, followingFragment)
+                    .addToBackStack(null)
+                    .commit()
+            } else {
+                Toast.makeText(requireContext(), "프로필 정보를 불러오는 중입니다.", Toast.LENGTH_SHORT).show()
+            }
         }
 
         binding.settingBtn.setOnClickListener {
