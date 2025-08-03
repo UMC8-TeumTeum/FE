@@ -3,30 +3,36 @@ package com.example.teumteum.ui.wish
 import android.app.Dialog
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.viewModels
 import com.example.teumteum.R
-import com.example.teumteum.data.remote.wish.dto.RegisterWishRequest
-import com.example.teumteum.data.remote.wish.WishService
+import com.example.teumteum.data.remote.wish.model.RegisterWishRequest
 import com.example.teumteum.databinding.FragmentWishRegisterBinding
 import com.example.teumteum.ui.todo.TodoRegisterFragment
-import com.example.teumteum.ui.wish.view.RegisterWishView
+import com.example.teumteum.ui.wish.viewModel.WishViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
+import dagger.hilt.android.AndroidEntryPoint
 
-class WishRegisterFragment : BottomSheetDialogFragment(), RegisterWishView {
+@AndroidEntryPoint
+class WishRegisterFragment : BottomSheetDialogFragment() {
 
     private lateinit var binding: FragmentWishRegisterBinding
+
     private var selectedTimeButton: View? = null
     private val selectedCategoryButtons = mutableListOf<MaterialButton>()
 
     private var isWishSelected = true
     private var isFromWish: Boolean = false
+
+    private val wishViewModel: WishViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,21 +48,23 @@ class WishRegisterFragment : BottomSheetDialogFragment(), RegisterWishView {
 
         isFromWish = arguments?.getBoolean("isFromWish") ?: false
 
-        if (isFromWish) {
-            binding.btnTodo.visibility = View.GONE
-        } else {
-            binding.btnTodo.visibility = View.VISIBLE
-        }
+        setupUI()
+        setupObservers()
+    }
+
+    private fun setupUI() {
+        binding.btnTodo.visibility = if (isFromWish) View.GONE else View.VISIBLE
 
         binding.btnTodo.setOnClickListener {
             if (isWishSelected) {
+
                 binding.btnWish.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.teumteum_bg))
                 binding.btnWish.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
 
                 binding.btnTodo.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
                 binding.btnTodo.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
-                isWishSelected = false
 
+                isWishSelected = false
                 childFragmentManager.beginTransaction()
                     .replace(R.id.register_fragment_container, TodoRegisterFragment())
                     .commit()
@@ -64,11 +72,45 @@ class WishRegisterFragment : BottomSheetDialogFragment(), RegisterWishView {
         }
 
         binding.btnWishRegister.setOnClickListener {
-            register()
+            if (validateInputs()) {
+                wishViewModel.registerWish(getWishRequest())
+            }
         }
 
         setupTimeButtons()
         setupCategoryButtons()
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        dialog?.let { dialog ->
+            val bottomSheet = dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+            bottomSheet?.let {
+                val screenHeight = resources.displayMetrics.heightPixels
+                val desiredHeight = (screenHeight * 0.84).toInt()
+
+                it.layoutParams.height = desiredHeight
+                it.requestLayout()
+
+                val behavior = BottomSheetBehavior.from(it)
+                behavior.peekHeight = desiredHeight
+                behavior.state = BottomSheetBehavior.STATE_COLLAPSED
+                behavior.isDraggable = false // 확장 불가능
+            }
+        }
+    }
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
+
+        dialog.setOnShowListener { dialogInterface ->
+            val bottomSheet = (dialogInterface as BottomSheetDialog)
+                .findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+            bottomSheet?.setBackgroundResource(R.drawable.calendar_background)
+        }
+
+        return dialog
     }
 
     private fun setupTimeButtons() {
@@ -138,36 +180,42 @@ class WishRegisterFragment : BottomSheetDialogFragment(), RegisterWishView {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
+    private fun setupObservers() {
+        wishViewModel.registerSuccess.observe(viewLifecycleOwner) { isSuccess ->
+            if (isSuccess) {
+                Toast.makeText(requireContext(), "위시가 등록되었습니다.", Toast.LENGTH_SHORT).show()
+                parentFragmentManager.setFragmentResult("wish_register", Bundle())
 
-        dialog?.let { dialog ->
-            val bottomSheet = dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
-            bottomSheet?.let {
-                val screenHeight = resources.displayMetrics.heightPixels
-                val desiredHeight = (screenHeight * 0.84).toInt()
-
-                it.layoutParams.height = desiredHeight
-                it.requestLayout()
-
-                val behavior = BottomSheetBehavior.from(it)
-                behavior.peekHeight = desiredHeight
-                behavior.state = BottomSheetBehavior.STATE_COLLAPSED
-                behavior.isDraggable = false // 확장 불가능
+                // 모든 바텀시트 닫기
+                (requireActivity().supportFragmentManager.fragments).forEach { fragment ->
+                    if (fragment is BottomSheetDialogFragment) {
+                        fragment.dismissAllowingStateLoss()
+                    }
+                }
             }
+        }
+
+        wishViewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
+            Log.e("WishRegister", "위시 등록 실패: $errorMessage")
         }
     }
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
-
-        dialog.setOnShowListener { dialogInterface ->
-            val bottomSheet = (dialogInterface as BottomSheetDialog)
-                .findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
-            bottomSheet?.setBackgroundResource(R.drawable.calendar_background)
+    private fun validateInputs(): Boolean {
+        if (binding.wishTitleEt.text.toString().isEmpty()) {
+            Toast.makeText(requireContext(), "제목을 입력해주세요.", Toast.LENGTH_SHORT).show()
+            return false
         }
 
-        return dialog
+        if (selectedTimeButton == null) {
+            Toast.makeText(requireContext(), "시간을 선택해주세요.", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        if (selectedCategoryButtons.isEmpty()) {
+            Toast.makeText(requireContext(), "카테고리를 1개 이상 선택해주세요.", Toast.LENGTH_SHORT).show()
+            return false
+        }
+        return true
     }
 
     private fun getWishRequest(): RegisterWishRequest {
@@ -184,52 +232,4 @@ class WishRegisterFragment : BottomSheetDialogFragment(), RegisterWishView {
         )
     }
 
-    private fun register() {
-        if (binding.wishTitleEt.text.toString().isEmpty()) {
-            Toast.makeText(requireContext(), "제목을 입력해주세요.", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        if (selectedTimeButton == null) {
-            Toast.makeText(requireContext(), "시간을 선택해주세요.", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        if (selectedCategoryButtons.isEmpty()) {
-            Toast.makeText(requireContext(), "카테고리를 1개 이상 선택해주세요.", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val request = getWishRequest()
-
-        val wishService = WishService()
-        wishService.setWishRegisterView(this)
-        wishService.registerWish(request)
-    }
-
-    override fun onRegisterWishSuccess(code: String, message: String?) {
-        val successMessage = message ?: "위시가 성공적으로 생성되었습니다."
-        Toast.makeText(requireContext(), successMessage, Toast.LENGTH_SHORT).show()
-
-        // 이벤트 전송
-        parentFragmentManager.setFragmentResult("wish_register", Bundle())
-
-        // 모든 바텀시트 닫기
-        (requireActivity().supportFragmentManager.fragments).forEach {
-            if (it is BottomSheetDialogFragment) {
-                it.dismissAllowingStateLoss()
-            }
-        }
-    }
-
-    override fun onRegisterWishFailure(code: String, message: String?) {
-        val errorMessage = when (code) {
-            "COMMON400" -> "제목 또는 카테고리가 비어있습니다."
-            "HOME4042" -> "해당 카테고리를 찾을 수 없습니다."
-            "NETWORK_ERROR" -> "네트워크 오류가 발생했습니다."
-            "PARSE_ERROR" -> "서버 응답을 해석할 수 없습니다."
-            else -> message ?: "등록에 실패했습니다. 다시 시도해주세요."
-        }
-        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
-    }
 }

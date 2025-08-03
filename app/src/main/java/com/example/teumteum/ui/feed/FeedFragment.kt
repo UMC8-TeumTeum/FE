@@ -15,7 +15,9 @@ import com.example.teumteum.databinding.FragmentFeedBinding
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class FeedFragment : Fragment() {
 
     private lateinit var binding: FragmentFeedBinding

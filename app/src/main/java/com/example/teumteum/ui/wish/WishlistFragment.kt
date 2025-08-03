@@ -9,23 +9,24 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
-import com.example.teumteum.data.remote.wish.dto.WishlistItem
-import com.example.teumteum.data.remote.wish.WishService
+import com.example.teumteum.data.remote.wish.model.WishlistItem
 import com.example.teumteum.databinding.FragmentWishlistBinding
 import com.example.teumteum.ui.wish.adapter.WishlistRVAdapter
-import com.example.teumteum.ui.wish.view.WishlistView
-import com.example.teumteum.ui.wish.view.WishlistViewModel
+import com.example.teumteum.ui.wish.viewModel.WishViewModel
 import com.example.teumteum.utils.applyBlurShadow
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.button.MaterialButton
+import dagger.hilt.android.AndroidEntryPoint
 
-class WishlistFragment() : Fragment(), WishlistView {
+@AndroidEntryPoint
+class WishlistFragment() : Fragment() {
 
     private lateinit var binding: FragmentWishlistBinding
     private lateinit var adapter: WishlistRVAdapter
 
     private var wishlistItems: List<WishlistItem> = emptyList()
-    private val wishlistViewModel: WishlistViewModel by activityViewModels()
+
+    private val wishViewModel: WishViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,7 +36,9 @@ class WishlistFragment() : Fragment(), WishlistView {
         binding = FragmentWishlistBinding.inflate(inflater, container, false)
 
         binding.editTv.setOnClickListener {
-            wishlistViewModel.wishlistItems = wishlistItems.toMutableList()  // 기존 리스트 전달
+            val currentList = wishViewModel.wishlistItems.value ?: emptyList()
+            wishViewModel.updateWishlistItems(currentList.toMutableList())
+
             parentFragmentManager.beginTransaction()
                 .replace(R.id.main_frm, WishlistEditFragment())
                 .addToBackStack(null)
@@ -56,6 +59,7 @@ class WishlistFragment() : Fragment(), WishlistView {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         adapter = WishlistRVAdapter(wishlistItems, parentFragmentManager)
         binding.wishlistRv.adapter = adapter
@@ -76,6 +80,7 @@ class WishlistFragment() : Fragment(), WishlistView {
         }
 
         setupTimeFilterButtons()
+        setupObservers()
 
         // 위시 등록 성공 이벤트 수신
         parentFragmentManager.setFragmentResultListener("wish_register", viewLifecycleOwner) { _, _ ->
@@ -92,8 +97,7 @@ class WishlistFragment() : Fragment(), WishlistView {
             refreshWishlist()
         }
 
-        getList(duration = "all", page = 1)
-
+        wishViewModel.getWishlist(duration = "all", page = 1)
     }
 
     private fun setupTimeFilterButtons() {
@@ -162,42 +166,26 @@ class WishlistFragment() : Fragment(), WishlistView {
         }
     }
 
-    private fun getList(duration: String, page: Int) {
-        val wishService = WishService()
-        wishService.setWishlistGetView(this)
-        wishService.getWishlist(duration, page)
+    private fun setupObservers() {
+        wishViewModel.wishlistItems.observe(viewLifecycleOwner) { itemList ->
+            wishlistItems = itemList
+
+            if (itemList.isEmpty()) {
+                binding.wishlistRv.visibility = View.GONE
+                binding.wishNotExistsCv.visibility = View.VISIBLE
+            } else {
+                binding.wishlistRv.visibility = View.VISIBLE
+                binding.wishNotExistsCv.visibility = View.GONE
+                adapter.updateList(itemList)
+            }
+        }
+
+        wishViewModel.errorMessage.observe(viewLifecycleOwner) { error ->
+            Toast.makeText(requireContext(), "위시리스트 조회 실패: $error", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun refreshWishlist() {
-        getList(duration = "all", page = 1)
-    }
-
-    override fun onGetWishListSuccess(wishlist: List<WishlistItem>) {
-        this.wishlistItems = wishlist
-
-        if (wishlist.isEmpty()) {
-            // 위시가 없을 때
-            binding.wishlistRv.visibility = View.GONE
-            binding.wishNotExistsCv.visibility = View.VISIBLE
-        } else {
-            // 위시가 있을 때
-            binding.wishlistRv.visibility = View.VISIBLE
-            binding.wishNotExistsCv.visibility = View.GONE
-            adapter.updateList(wishlist)
-        }
-    }
-
-
-    override fun onGetWishListFailure(code: String, message: String?) {
-        val errorMessage = when {
-            code == "HOME4002" -> "잘못된 조회 기간입니다. (all, 10m, 20m, 30m, 1h만 입력 가능)"
-            code == "COMMON500" && message?.contains("Page index must not be less than zero") == true ->
-                "페이지 번호는 0 이상이어야 합니다."
-            code == "COMMON500" -> "서버 오류입니다. 관리자에게 문의해주세요."
-            code == "NETWORK_ERROR" -> "네트워크 오류가 발생했습니다."
-            code == "PARSE_ERROR" -> "서버 응답을 해석할 수 없습니다."
-            else -> "위시리스트 조회에 실패했습니다. 다시 시도해주세요."
-        }
-        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
+        wishViewModel.getWishlist(duration = "all", page = 1)
     }
 }

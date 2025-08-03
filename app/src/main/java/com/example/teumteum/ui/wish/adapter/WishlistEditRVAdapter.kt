@@ -8,7 +8,7 @@ import android.widget.CompoundButton
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.teumteum.R
-import com.example.teumteum.data.remote.wish.dto.WishlistItem
+import com.example.teumteum.data.remote.wish.model.WishlistItem
 import com.example.teumteum.databinding.ItemWishlistEditBinding
 
 class WishlistEditRVAdapter(private val wishlist: MutableList<WishlistItem>) : RecyclerView.Adapter<WishlistEditRVAdapter.ViewHolder>() {

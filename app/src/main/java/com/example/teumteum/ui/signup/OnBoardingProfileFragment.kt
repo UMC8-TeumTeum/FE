@@ -22,18 +22,24 @@ import com.example.teumteum.ui.signup.view.ProfileImageView
 import androidx.core.graphics.drawable.toDrawable
 import com.example.teumteum.data.remote.onboarding.dto.PresignedFileInfo
 import com.example.teumteum.data.remote.onboarding.dto.ProfileImageRequest
+import dagger.hilt.android.AndroidEntryPoint
 import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.IOException
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class OnBoardingProfileFragment : Fragment(), ProfileImageView {
 
     private lateinit var binding: FragmentOnBoardingProfileBinding
 
     private var lastSelectedImageUri: Uri? = null
+
+    @Inject
+    lateinit var onBoardingService: OnBoardingService
 
     private val galleryLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -65,7 +71,6 @@ class OnBoardingProfileFragment : Fragment(), ProfileImageView {
         uploadImageToS3(result.presignedUrl, uri, contentType) {
             //업로드 성공 후 등록 API
             val request = ProfileImageRequest(result.fileName)
-            val onBoardingService = OnBoardingService()
             onBoardingService.setProfileImageView(this)
             onBoardingService.postProfileImage(request)
         }
@@ -169,7 +174,6 @@ class OnBoardingProfileFragment : Fragment(), ProfileImageView {
             lastSelectedImageUri?.let { uri ->
                 val contentType = getMimeType(uri)
                 val request = PresignedRequest(contentType)
-                val onBoardingService = OnBoardingService()
                 onBoardingService.setProfileImageView(this)
                 onBoardingService.requestPresignedUrl(request)
             } ?: run {

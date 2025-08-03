@@ -18,7 +18,9 @@ import com.example.teumteum.ui.clock.IconPieChartRenderer
 import com.example.teumteum.ui.friend.adapter.FriendProfileAdapter
 import com.example.teumteum.ui.friend.data.FriendProfileData
 import com.example.teumteum.ui.main.MainActivity
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class FriendRoommateTimeFragment : Fragment() {
 
     private var _binding: FragmentFriendRoommateTimeBinding? = null

@@ -3,14 +3,15 @@ package com.example.teumteum.data.remote.alarm
 import android.util.Log
 import com.example.teumteum.data.remote.alarm.dto.GetAlarmListResponse
 import com.example.teumteum.ui.alarm.view.AlarmListView
-import com.example.teumteum.utils.getRetrofitWithToken
 import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import javax.inject.Inject
 
-class AlarmService {
-
+class AlarmService @Inject constructor(
+    private val alarmApi: AlarmRetrofitInterface
+){
     private lateinit var alarmListView: AlarmListView
 
     fun setAlarmListGetView(alarmListView: AlarmListView) {
@@ -23,9 +24,8 @@ class AlarmService {
 
     // 알림 리스트 조회
     fun getAlarmList(duration: String, page: Int) {
-        val alarmService = getRetrofitWithToken().create(AlarmRetrofitInterface::class.java)
 
-        alarmService.getAlarmList(duration, page).enqueue(object : Callback<GetAlarmListResponse> {
+        alarmApi.getAlarmList(duration, page).enqueue(object : Callback<GetAlarmListResponse> {
             override fun onResponse(
                 call: Call<GetAlarmListResponse>,
                 response: Response<GetAlarmListResponse>

@@ -8,7 +8,9 @@ import android.view.ViewGroup
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentMyAlarmSettingBinding
 import com.example.teumteum.ui.main.MainActivity
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MyAlarmSettingFragment : Fragment() {
 
     private lateinit var binding: FragmentMyAlarmSettingBinding

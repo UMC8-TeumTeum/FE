@@ -20,7 +20,10 @@ import com.example.teumteum.utils.ActivityRequestUtils.getCustomCategoryIfOther
 import com.example.teumteum.utils.ActivityRequestUtils.getEstimatedDurationType
 import com.example.teumteum.utils.applyBlurShadow
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class FillingActivity02Fragment : Fragment(), ActivityWishView {
 
     private lateinit var binding: FragmentFillingActivity02Binding
@@ -34,6 +37,9 @@ class FillingActivity02Fragment : Fragment(), ActivityWishView {
         AiRecommend(2, "영단어 10개 외우기", "20m", "자기계발"),
         AiRecommend(3, "독서하기", "30m", "자기계발")
     )
+
+    @Inject
+    lateinit var service: ActivityService
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -66,7 +72,6 @@ class FillingActivity02Fragment : Fragment(), ActivityWishView {
             customCategory = getCustomCategoryIfOther(selectedCategory, customCategory)
         )
 
-        val service = ActivityService()
         service.setActivityWishView(this)
         service.activityWish(request)  // 서버에 요청 보내기
 

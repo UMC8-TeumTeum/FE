@@ -14,7 +14,9 @@ import androidx.fragment.app.Fragment
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentFriend01SearchBinding
 import com.example.teumteum.ui.main.MainActivity
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class Friend01SearchFragment : Fragment() {
 
     private var _binding: FragmentFriend01SearchBinding? = null
@@ -31,8 +33,6 @@ class Friend01SearchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-
 
         //  바텀 네비게이션 숨기기
         (activity as? MainActivity)?.hideBottomBar()

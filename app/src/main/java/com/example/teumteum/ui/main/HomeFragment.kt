@@ -28,19 +28,17 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 import com.example.teumteum.data.TimeBlock
-import com.example.teumteum.data.TimeType
-import com.example.teumteum.data.entities.TodoList
-import com.example.teumteum.data.remote.agreement.AgreementService
 import com.example.teumteum.data.remote.home.HomeService
 import com.example.teumteum.data.remote.home.dto.ScheduleResult
 import com.example.teumteum.ui.clock.ChartUtils
 import com.example.teumteum.ui.clock.IconPieChartRenderer
 import com.example.teumteum.ui.main.view.HomeView
-import com.example.teumteum.ui.signup.CompleteFragment
-import com.example.teumteum.ui.todo.view.TodoListView
 import com.example.teumteum.utils.applyBlurShadow
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-class HomeFragment : Fragment(), IDateClickListener, TodoListView, HomeView {
+@AndroidEntryPoint
+class HomeFragment : Fragment(), IDateClickListener, HomeView {
 
     lateinit var binding: FragmentHomeBinding
 
@@ -48,6 +46,9 @@ class HomeFragment : Fragment(), IDateClickListener, TodoListView, HomeView {
     private lateinit var selectedDate: LocalDate
 
     private lateinit var adapter: TodoRVAdapter
+
+    @Inject
+    lateinit var homeService: HomeService
 
     private val fullDaySchedule = mutableListOf<TimeBlock>()
 //    private val fullDaySchedule = listOf(
@@ -127,7 +128,6 @@ class HomeFragment : Fragment(), IDateClickListener, TodoListView, HomeView {
 //        adapter = TodoRVAdapter(parentFragmentManager, todoDummyList)
 //        binding.todolistRv.adapter = adapter
         val date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-        val homeService = HomeService()
         homeService.setHomeView(this)
         homeService.getTodaySchedule(date)
 
@@ -338,20 +338,6 @@ class HomeFragment : Fragment(), IDateClickListener, TodoListView, HomeView {
 
     companion object {
         private const val DATE_PATTERN = "yyyy년 M월"
-    }
-
-    override fun onGetTodoListSuccess(code: String, todoList: List<TodoList>) {
-        Toast.makeText(requireContext(), "투두리스트가 성공적으로 조회되었습니다.", Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onGetTodoListFailure(code: String, message: String?) {
-        val errorMessage = when {
-            code == "COMMON500" -> "서버 오류입니다. 관리자에게 문의해주세요."
-            code == "NETWORK_ERROR" -> "네트워크 오류가 발생했습니다."
-            code == "PARSE_ERROR" -> "서버 응답을 해석할 수 없습니다."
-            else -> "투두리스트 조회에 실패했습니다. 다시 시도해주세요."
-        }
-        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
     }
 
     override fun onScheduleSuccess(code: String, result: List<ScheduleResult>) {

@@ -13,7 +13,9 @@ import com.example.teumteum.databinding.FragmentWishSetting01Binding
 import com.example.teumteum.ui.clock.ChartUtils
 import com.example.teumteum.ui.clock.IconPieChartRenderer
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class WishSetting01Fragment : Fragment() {
 
     private lateinit var binding: FragmentWishSetting01Binding

@@ -14,7 +14,9 @@ import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentFriend02SuggestBinding
 import com.example.teumteum.ui.main.MainActivity
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class Friend02SuggestFragment : Fragment() {
 
     private var _binding: FragmentFriend02SuggestBinding? = null
@@ -45,9 +47,9 @@ class Friend02SuggestFragment : Fragment() {
         // 바텀 네비게이션 숨기기
         (activity as? MainActivity)?.hideBottomBar()
 
-        // ViewPager2 + Adapter 연결
-        adapter = FriendRequestCardAdapter(getDummyList())
-        binding.requestViewPager.adapter = adapter
+//        // ViewPager2 + Adapter 연결
+//        adapter = FriendRequestCardAdapter(getDummyList())
+//        binding.requestViewPager.adapter = adapter
 
         // 시간 카드 1 클릭 시
         binding.startTime1.setOnClickListener {

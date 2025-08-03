@@ -1,18 +1,17 @@
 package com.example.teumteum.ui.friend
 
-import android.app.TimePickerDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TimePicker
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentFriend02PossibleTimeBinding
 import com.example.teumteum.ui.main.MainActivity
-import java.util.*
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class Friend02PossibleTimeFragment : Fragment() {
 
     private var _binding: FragmentFriend02PossibleTimeBinding? = null
@@ -43,9 +42,9 @@ class Friend02PossibleTimeFragment : Fragment() {
         //  바텀 네비게이션 숨기기
         (activity as? MainActivity)?.hideBottomBar()
 
-        // 1. ViewPager2 + Adapter 연결
-        adapter = FriendRequestCardAdapter(getDummyList())
-        binding.requestViewPager.adapter = adapter
+//        // 1. ViewPager2 + Adapter 연결
+//        adapter = FriendRequestCardAdapter(getDummyList())
+//        binding.requestViewPager.adapter = adapter
 
         // 함께할래요 버튼 클릭 시 바텀시트 띄우기 + Toast 메시지
         binding.btnFind.setOnClickListener {

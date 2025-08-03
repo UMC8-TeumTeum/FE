@@ -11,20 +11,19 @@ import com.example.teumteum.data.remote.onboarding.dto.SleepPatternRequest
 import com.example.teumteum.data.remote.onboarding.dto.SleepPatternResponse
 import com.example.teumteum.data.remote.onboarding.dto.ScheduleRequest
 import com.example.teumteum.data.remote.onboarding.dto.ScheduleResponse
-import com.example.teumteum.data.remote.wish.WishRetrofitInterface
-import com.example.teumteum.data.remote.wish.dto.RegisterWishRequest
-import com.example.teumteum.data.remote.wish.dto.RegisterWishResponse
 import com.example.teumteum.ui.signup.view.NicknameJobFieldView
 import com.example.teumteum.ui.signup.view.ProfileImageView
 import com.example.teumteum.ui.signup.view.SleepPatternView
 import com.example.teumteum.ui.signup.view.ScheduleView
-import com.example.teumteum.utils.getRetrofitWithToken
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import javax.inject.Inject
 import kotlin.jvm.java
 
-class OnBoardingService {
+class OnBoardingService @Inject constructor(
+    private val onBoardingApi: OnBoardingRetrofitInterface
+){
 
     private lateinit var nicknameJobFieldView: NicknameJobFieldView
     private lateinit var sleepPatternView: SleepPatternView
@@ -49,10 +48,8 @@ class OnBoardingService {
 
     //온보딩 : 닉네임, 직종 입력
     fun postNicknameAndJobField(request: NicknameJobRequest) {
-        val nicknameJobApi = getRetrofitWithToken().create(OnBoardingRetrofitInterface::class.java)
-        val call = nicknameJobApi.postNicknameAndJobField(request)
 
-        call.enqueue(object : Callback<NicknameJobResponse> {
+        onBoardingApi.postNicknameAndJobField(request).enqueue(object : Callback<NicknameJobResponse> {
             override fun onResponse(
                 call: Call<NicknameJobResponse>,
                 response: Response<NicknameJobResponse>
@@ -78,12 +75,9 @@ class OnBoardingService {
 
     //수면패턴 등록
     fun postSleepPattern(request: SleepPatternRequest) {
-        val sleepPatternApi = getRetrofitWithToken().create(OnBoardingRetrofitInterface::class.java)
-        val call = sleepPatternApi.postSleepPattern(request)
+
         Log.d("SLEEP_PATTERN_REQUEST", request.toString())
-
-
-        call.enqueue(object : Callback<SleepPatternResponse> {
+        onBoardingApi.postSleepPattern(request).enqueue(object : Callback<SleepPatternResponse> {
             override fun onResponse(
                 call: Call<SleepPatternResponse>,
                 response: Response<SleepPatternResponse>
@@ -109,12 +103,9 @@ class OnBoardingService {
 
     //반복일정 등록
     fun postSchedules(request: ScheduleRequest) {
-        val scheduleApi = getRetrofitWithToken().create(OnBoardingRetrofitInterface::class.java)
-        val call = scheduleApi.postSchedules(request)
 
         Log.d("SCHEDULE_REQUEST", request.toString())
-
-        call.enqueue(object : Callback<ScheduleResponse> {
+        onBoardingApi.postSchedules(request).enqueue(object : Callback<ScheduleResponse> {
             override fun onResponse(
                 call: Call<ScheduleResponse>,
                 response: Response<ScheduleResponse>
@@ -141,12 +132,9 @@ class OnBoardingService {
 
     //PresignedUrl 발급
     fun requestPresignedUrl(request: PresignedRequest) {
-        val presignedApi = getRetrofitWithToken().create(OnBoardingRetrofitInterface::class.java)
-        val call = presignedApi.requestPresignedUrl(request)
 
         Log.d("PRESIGNED_REQUEST", request.toString())
-
-        call.enqueue(object : Callback<PresignedResponse> {
+        onBoardingApi.requestPresignedUrl(request).enqueue(object : Callback<PresignedResponse> {
             override fun onResponse(
                 call: Call<PresignedResponse>,
                 response: Response<PresignedResponse>
@@ -173,12 +161,9 @@ class OnBoardingService {
 
     //이미지 등록
     fun postProfileImage(request: ProfileImageRequest) {
-        val profileImageApi = getRetrofitWithToken().create(OnBoardingRetrofitInterface::class.java)
-        val call = profileImageApi.postProfileImage(request)
 
         Log.d("PROFILE_IMAGE_REQUEST", request.toString())
-
-        call.enqueue(object : Callback<ProfileImageResponse> {
+        onBoardingApi.postProfileImage(request).enqueue(object : Callback<ProfileImageResponse> {
             override fun onResponse(
                 call: Call<ProfileImageResponse>,
                 response: Response<ProfileImageResponse>

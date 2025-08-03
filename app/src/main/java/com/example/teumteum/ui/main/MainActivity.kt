@@ -14,7 +14,9 @@ import com.example.teumteum.ui.myhome.MyHomeFragment
 import com.example.teumteum.R
 import com.example.teumteum.receiver.ScreenOnReceiver
 import com.example.teumteum.databinding.ActivityMainBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityMainBinding

@@ -14,13 +14,17 @@ import com.example.teumteum.data.remote.friend.dto.FriendProfileResult
 import com.example.teumteum.data.remote.friend.dto.FriendProfileService
 import com.example.teumteum.ui.friend.view.FriendProfileView
 import com.example.teumteum.ui.main.MainActivity
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class FriendProfileFollowFragment : Fragment(), FriendProfileView {
 
     private var _binding: FragmentFriendProfileFollowBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var friendProfileService: FriendProfileService
+    @Inject
+    lateinit var friendProfileService: FriendProfileService
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,7 +49,6 @@ class FriendProfileFollowFragment : Fragment(), FriendProfileView {
         }
 
         // 2. 서비스 설정 및 호출
-        friendProfileService = FriendProfileService()
         friendProfileService.setFriendProfileView(this)
         friendProfileService.getFriendProfile(userId)
 

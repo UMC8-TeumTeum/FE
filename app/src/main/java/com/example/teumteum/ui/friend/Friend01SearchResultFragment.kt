@@ -15,14 +15,19 @@ import com.example.teumteum.databinding.FragmentFriend01SearchResultBinding
 import com.example.teumteum.ui.friend.adapter.SearchResultAdapter
 import com.example.teumteum.ui.friend.view.FriendSearchView
 import com.example.teumteum.ui.main.MainActivity
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class Friend01SearchResultFragment : Fragment(), FriendSearchView {
 
     private var _binding: FragmentFriend01SearchResultBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var adapter: SearchResultAdapter
-    private lateinit var service: FriendSearchService
+
+    @Inject
+    lateinit var service: FriendSearchService
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,7 +54,6 @@ class Friend01SearchResultFragment : Fragment(), FriendSearchView {
         binding.searchResultRecyclerView.adapter = adapter
 
         // 검색 서비스 실행
-        service = FriendSearchService()
         service.setFriendSearchView(this)
         service.searchUser(keyword)
 

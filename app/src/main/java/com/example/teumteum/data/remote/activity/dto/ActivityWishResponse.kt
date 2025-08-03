@@ -1,6 +1,6 @@
 package com.example.teumteum.data.remote.activity.dto
 
-import com.example.teumteum.data.remote.todo.dto.TodoResult
+import com.example.teumteum.data.remote.todo.model.TodoResult
 import com.google.gson.annotations.SerializedName
 
 data class ActivityWishResponse(

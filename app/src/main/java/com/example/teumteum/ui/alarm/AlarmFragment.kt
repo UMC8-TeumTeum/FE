@@ -12,7 +12,9 @@ import com.example.teumteum.data.entities.AlarmItem
 import com.example.teumteum.databinding.FragmentHomeAlarmBinding
 import com.example.teumteum.ui.alarm.view.AlarmListView
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class AlarmFragment : Fragment(), AlarmListView {
 
     private lateinit var binding: FragmentHomeAlarmBinding

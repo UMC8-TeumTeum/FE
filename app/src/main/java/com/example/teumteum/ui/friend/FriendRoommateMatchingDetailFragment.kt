@@ -16,7 +16,9 @@ import com.example.teumteum.databinding.FragmentFriendRoommateMatchingDetailBind
 import com.example.teumteum.ui.main.MainActivity
 import com.example.teumteum.ui.signup.SignUpActivity
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class FriendRoommateMatchingDetailFragment : Fragment() {
 
     private lateinit var binding: FragmentFriendRoommateMatchingDetailBinding

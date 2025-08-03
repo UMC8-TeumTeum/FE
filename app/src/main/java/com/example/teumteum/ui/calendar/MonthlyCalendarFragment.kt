@@ -10,9 +10,11 @@ import androidx.fragment.app.Fragment
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentMonthlyCalendarBinding
 import com.example.teumteum.utils.*
+import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
 import java.time.YearMonth
 
+@AndroidEntryPoint
 class MonthlyCalendarFragment : Fragment() {
 
     private lateinit var binding: FragmentMonthlyCalendarBinding

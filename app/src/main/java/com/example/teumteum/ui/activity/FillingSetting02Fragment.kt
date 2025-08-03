@@ -19,7 +19,9 @@ import com.example.teumteum.ui.activity.view.FillAiView
 import com.example.teumteum.ui.main.HomeFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class FillingSetting02Fragment : Fragment(), FillAiView {
 
     private lateinit var binding: FragmentFillingSetting02Binding
