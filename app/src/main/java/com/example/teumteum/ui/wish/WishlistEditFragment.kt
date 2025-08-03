@@ -100,21 +100,23 @@ class WishlistEditFragment() : Fragment() {
     }
 
     private fun setupObservers() {
-        wishViewModel.successMessage.observe(viewLifecycleOwner) { _ ->
-            Toast.makeText(requireContext(), "삭제가 완료되었어요.", Toast.LENGTH_SHORT).show()
+        wishViewModel.deleteSuccess.observe(viewLifecycleOwner) { isSuccess ->
+            if (isSuccess) {
+                Toast.makeText(requireContext(), "삭제가 완료되었어요.", Toast.LENGTH_SHORT).show()
 
-            // ViewModel에서 삭제 반영
-            val deletedIds = editedWishlist.filter { it.isDeleted }.map { it.id }
-            val updatedList = wishViewModel.wishlistItems.value?.filterNot { it.id in deletedIds } ?: emptyList()
-            wishViewModel.wishlistItems.value = updatedList
+                // ViewModel 내 리스트 갱신
+                val deletedIds = editedWishlist.filter { it.isDeleted }.map { it.id }
+                val updatedList = wishViewModel.wishlistItems.value?.filterNot { it.id in deletedIds } ?: emptyList()
+                wishViewModel.updateWishlistItems(updatedList)
 
-            // 결과 전달
-            parentFragmentManager.setFragmentResult("wish_delete", Bundle())
+                // 삭제 결과 전달
+                parentFragmentManager.setFragmentResult("wish_delete", Bundle())
 
-            // 뒤로 이동
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, WishlistFragment())
-                .commit()
+                // 위시리스트 화면으로 이동
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.main_frm, WishlistFragment())
+                    .commit()
+            }
         }
 
         wishViewModel.errorMessage.observe(viewLifecycleOwner) { error ->

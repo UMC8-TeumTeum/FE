@@ -19,23 +19,30 @@ class WishViewModel @Inject constructor(
     private val wishRepository: WishRepository
 ) : ViewModel() {
 
-    private val _successMessage = MutableLiveData<String>()
-    val successMessage: LiveData<String> = _successMessage
-
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> get() = _errorMessage
 
     private val _wish = MutableLiveData<Wish>()
     val wish: LiveData<Wish> = _wish
 
-    val wishlistItems = MutableLiveData<List<WishlistItem>>()
+    private val _wishlistItems = MutableLiveData<List<WishlistItem>>()
+    val wishlistItems: LiveData<List<WishlistItem>> get() = _wishlistItems
+
+    private val _registerSuccess = MutableLiveData<Boolean>()
+    val registerSuccess: LiveData<Boolean> get() = _registerSuccess
+
+    private val _editSuccess = MutableLiveData<Boolean>()
+    val editSuccess: LiveData<Boolean> get() = _editSuccess
+
+    private val _deleteSuccess = MutableLiveData<Boolean>()
+    val deleteSuccess: LiveData<Boolean> get() = _deleteSuccess
 
     // 위시 등록
     fun registerWish(request: RegisterWishRequest) {
         viewModelScope.launch {
             val result = wishRepository.registerWish(request)
             result.onSuccess {
-                _successMessage.value = "위시가 등록되었습니다."
+                _registerSuccess.value = true
             }
             result.onFailure { e ->
                 _errorMessage.value = e.localizedMessage ?: "위시 등록에 실패했습니다."
@@ -49,8 +56,7 @@ class WishViewModel @Inject constructor(
             val result = wishRepository.getWishlist(duration, page)
 
             result.onSuccess { response ->
-                wishlistItems.value = response.wishlist
-                _successMessage.value = "위시리스트가 성공적으로 조회되었습니다."
+                _wishlistItems.value = response.wishlist
             }.onFailure { e ->
                 _errorMessage.value = e.localizedMessage ?: "위시리스트 조회에 실패했습니다."
             }
@@ -62,9 +68,8 @@ class WishViewModel @Inject constructor(
         viewModelScope.launch {
             val result = wishRepository.getWish(wishId)
 
-            result.onSuccess { response ->
-                _wish.value = response
-                _successMessage.value = "위시가 성공적으로 조회되었습니다."
+            result.onSuccess {
+                _wish.value = it
             }.onFailure { e ->
                 _errorMessage.value = e.localizedMessage ?: "위시 조회에 실패했습니다."
             }
@@ -75,22 +80,24 @@ class WishViewModel @Inject constructor(
     fun editWish(wishId: Long, request: EditWishRequest) {
         viewModelScope.launch {
             val result = wishRepository.editWish(wishId, request)
-            _successMessage.value = result.toString()
             result.onSuccess {
-                _successMessage.value = "위시가 성공적으로 수정되었습니다."
+                _editSuccess.value = true
             }.onFailure { e ->
                 _errorMessage.value = e.localizedMessage ?: "위시 수정에 실패했습니다."
             }
         }
     }
 
+    fun updateWishlistItems(updated: List<WishlistItem>) {
+        _wishlistItems.value = updated
+    }
+
     // 위시 삭제(리스트 형태)
     fun deleteWishes(request: DeleteWishesRequest) {
         viewModelScope.launch {
             val result = wishRepository.deleteWish(request)
-            _successMessage.value = result.toString()
             result.onSuccess {
-                _successMessage.value = "위시가 성공적으로 삭제되었습니다."
+                _deleteSuccess.value = true
             }.onFailure { e ->
                 _errorMessage.value = e.localizedMessage ?: "위시 삭제에 실패했습니다."
             }
