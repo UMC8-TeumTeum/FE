@@ -1,6 +1,7 @@
 package com.example.teumteum.data.remote.wish.repository
 
 import android.util.Log
+import com.example.teumteum.data.entities.Wish
 import com.example.teumteum.data.remote.wish.model.DeleteWishesRequest
 import com.example.teumteum.data.remote.wish.model.DeleteWishesResponse
 import com.example.teumteum.data.remote.wish.model.EditWishRequest
@@ -45,7 +46,7 @@ class WishRepository @Inject constructor(
     }
 
     // 특정 위시 조회
-    suspend fun getWish(wishId: Long): Result<GetWishResponse> {
+    suspend fun getWish(wishId: Long): Result<Wish> {
         return try {
             val response = wishService.getWish(wishId)
 

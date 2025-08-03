@@ -27,8 +27,11 @@ class WishGetViewModel @Inject constructor(
     fun getWish(wishId: Long) {
         viewModelScope.launch {
             val result = wishRepository.getWish(wishId)
-            _getSuccess.value = result.toString()
-            result.onFailure { e ->
+
+            result.onSuccess { response ->
+                _wish.value = response
+                _getSuccess.value = "위시 조회 성공"
+            }.onFailure { e ->
                 _getError.value = e.localizedMessage ?: "위시 조회에 실패했습니다."
             }
         }
