@@ -20,7 +20,7 @@ class WishRepository @Inject constructor(
     private val wishService: WishService
 ) {
     // 위시 등록
-    suspend fun registerWish(request: RegisterWishRequest): Result<RegisterWishResponse> {
+    suspend fun registerWish(request: RegisterWishRequest): Result<Unit> {
         return try {
             val response = wishService.registerWish(request)
             Log.d("WishRegister", "response = ${response.body()}")
@@ -29,9 +29,11 @@ class WishRepository @Inject constructor(
                 val apiResponse = response.body()
                     ?: return Result.failure(Exception("서버 응답이 비어 있습니다."))
 
-                apiResponse.result?.let { data ->
-                    Result.success(data)
-                } ?: Result.failure(Exception("서버 응답이 올바르지 않습니다."))
+                return if (apiResponse.isSuccess) {
+                    Result.success(Unit)
+                } else {
+                    Result.failure(Exception(apiResponse.message))
+                }
             } else {
                 Result.failure(Exception("서버 오류 발생"))
             }
