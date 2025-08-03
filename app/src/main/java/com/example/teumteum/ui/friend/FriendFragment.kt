@@ -21,7 +21,9 @@ import com.example.teumteum.data.remote.friend.dto.TeumRequestService
 import com.example.teumteum.data.remote.friend.dto.TeumReceivedService
 import com.example.teumteum.ui.friend.adapter.RecommendAdapter
 import com.example.teumteum.ui.main.MainActivity
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class FriendFragment : Fragment(), TeumRequestView, TeumReceivedView {
 
     private var _binding: FragmentFriendBinding? = null

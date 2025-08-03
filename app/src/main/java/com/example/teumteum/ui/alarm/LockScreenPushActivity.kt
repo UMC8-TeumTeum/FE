@@ -6,9 +6,11 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.teumteum.data.PushAlarmItem
 import com.example.teumteum.databinding.ActivityLockScreenPushBinding
 import com.example.teumteum.ui.alarm.PushAlarmRVAdapter
+import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
 import java.util.*
 
+@AndroidEntryPoint
 class LockScreenPushActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLockScreenPushBinding

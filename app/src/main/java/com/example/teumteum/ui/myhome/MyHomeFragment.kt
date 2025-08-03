@@ -8,7 +8,9 @@ import androidx.fragment.app.Fragment
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentMyHomeBinding
 import com.example.teumteum.ui.main.MainActivity
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MyHomeFragment : Fragment() {
 
     lateinit var binding: FragmentMyHomeBinding

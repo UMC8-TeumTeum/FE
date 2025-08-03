@@ -14,7 +14,9 @@ import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentFriend02SuggestBinding
 import com.example.teumteum.ui.main.MainActivity
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class Friend02SuggestFragment : Fragment() {
 
     private var _binding: FragmentFriend02SuggestBinding? = null

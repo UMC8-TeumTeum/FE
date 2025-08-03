@@ -3,13 +3,15 @@ package com.example.teumteum.data.remote.calendar
 import android.util.Log
 import com.example.teumteum.data.remote.calendar.dto.CalendarResponse
 import com.example.teumteum.ui.calendar.view.CalendarView
-import com.example.teumteum.utils.getRetrofitWithToken
 import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import javax.inject.Inject
 
-class CalendarService {
+class CalendarService @Inject constructor(
+    private val calendarApi: CalendarRetrofitInterface
+){
     private lateinit var calendarView: CalendarView
 
     fun setCalendarView(calendarView: CalendarView) {
@@ -21,9 +23,8 @@ class CalendarService {
     }
 
     fun getCalendarData(startDate: String, endDate: String) {
-        val calendarService = getRetrofitWithToken().create(CalendarRetrofitInterface::class.java)
 
-        calendarService.getCalendarData(startDate, endDate).enqueue(object : Callback<CalendarResponse> {
+        calendarApi.getCalendarData(startDate, endDate).enqueue(object : Callback<CalendarResponse> {
             override fun onResponse(
                 call: Call<CalendarResponse>,
                 response: Response<CalendarResponse>

@@ -14,8 +14,10 @@ import com.example.teumteum.ui.friend.adapter.TeumRequestAdapter
 import com.example.teumteum.ui.friend.adapter.TeumRequestItem
 import com.example.teumteum.ui.main.MainActivity
 import com.example.teumteum.utils.getSavedDateOrToday
+import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
 
+@AndroidEntryPoint
 class FriendTeumRequestFragment : Fragment() {
 
     private var _binding: FragmentFriendTeumRequestBinding? = null

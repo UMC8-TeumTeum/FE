@@ -11,9 +11,12 @@ import com.example.teumteum.data.remote.friend.dto.TeumReceivedItem
 import com.example.teumteum.databinding.FragmentFriend02RequestBinding
 import com.example.teumteum.ui.main.MainActivity
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
+import com.tbuonomo.viewpagerdotsindicator.WormDotsIndicator
+import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+@AndroidEntryPoint
 class Friend02RequestFragment : Fragment() {
 
     private var _binding: FragmentFriend02RequestBinding? = null

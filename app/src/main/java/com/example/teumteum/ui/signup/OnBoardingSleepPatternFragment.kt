@@ -1,6 +1,5 @@
 package com.example.teumteum.ui.signup
 
-import android.R.attr.fragment
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -14,21 +13,25 @@ import android.widget.TextView
 import android.widget.Toast
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.onboarding.OnBoardingService
-import com.example.teumteum.data.remote.onboarding.dto.NicknameJobRequest
 import com.example.teumteum.data.remote.onboarding.dto.SleepPatternRequest
 import com.example.teumteum.databinding.FragmentOnBoardingSleepPatternBinding
 import com.example.teumteum.ui.signup.view.SleepPatternView
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import java.time.Duration
+import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class OnBoardingSleepPatternFragment : Fragment(), SleepPatternView {
 
     private lateinit var binding: FragmentOnBoardingSleepPatternBinding
 
     private var selectedStartTime: LocalTime? = null
     private var selectedEndTime: LocalTime? = null
+
+    @Inject
+    lateinit var onBoardingService: OnBoardingService
 
     override fun onSleepPatternSuccess(code: String) {
         val msg = "수면패턴 입력 완료 (code: $code)"
@@ -92,7 +95,6 @@ class OnBoardingSleepPatternFragment : Fragment(), SleepPatternView {
             //입력 값이 있을 때 만 호출
             if(selectedStartTime != null && selectedEndTime != null){
                 val request = getSleepPatternRequest()
-                val onBoardingService = OnBoardingService()
                 onBoardingService.setSleepPatternView(this)
                 onBoardingService.postSleepPattern(request)
             }else{

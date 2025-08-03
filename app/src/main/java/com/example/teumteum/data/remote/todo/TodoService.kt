@@ -8,25 +8,20 @@ import com.example.teumteum.data.remote.todo.dto.GetTodoListResponse
 import com.example.teumteum.data.remote.todo.dto.GetTodoResponse
 import com.example.teumteum.data.remote.todo.dto.RegisterTodoRequest
 import com.example.teumteum.data.remote.todo.dto.RegisterTodoResponse
-import com.example.teumteum.data.remote.wish.WishRetrofitInterface
-import com.example.teumteum.data.remote.wish.WishService
-import com.example.teumteum.data.remote.wish.WishService.Companion
-import com.example.teumteum.data.remote.wish.dto.DeleteWishesRequest
-import com.example.teumteum.data.remote.wish.dto.DeleteWishesResponse
-import com.example.teumteum.data.remote.wish.dto.EditWishRequest
-import com.example.teumteum.data.remote.wish.dto.EditWishResponse
 import com.example.teumteum.ui.todo.view.DeleteTodoView
 import com.example.teumteum.ui.todo.view.EditTodoView
 import com.example.teumteum.ui.todo.view.TodoListView
 import com.example.teumteum.ui.todo.view.RegisterTodoView
 import com.example.teumteum.ui.todo.view.TodoView
-import com.example.teumteum.utils.getRetrofitWithToken
 import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import javax.inject.Inject
 
-class TodoService {
+class TodoService @Inject constructor(
+    private val todoApi: TodoRetrofitInterface
+){
     private lateinit var todoRegisterView: RegisterTodoView
     private lateinit var todoListView: TodoListView
     private lateinit var todoView: TodoView
@@ -60,9 +55,7 @@ class TodoService {
     // 투두 등록
     fun registerTodo(request: RegisterTodoRequest) {
 
-        val todoService = getRetrofitWithToken().create(TodoRetrofitInterface::class.java)
-
-        todoService.registerTodo(request).enqueue(object : Callback<RegisterTodoResponse> {
+        todoApi.registerTodo(request).enqueue(object : Callback<RegisterTodoResponse> {
             override fun onResponse(
                 call: Call<RegisterTodoResponse>,
                 response: Response<RegisterTodoResponse>
@@ -108,9 +101,8 @@ class TodoService {
 
     // 투두리스트 조회
     fun getTodoList(date: String) {
-        val todoService = getRetrofitWithToken().create(TodoRetrofitInterface::class.java)
 
-        todoService.getTodoList(date).enqueue(object : Callback<GetTodoListResponse> {
+        todoApi.getTodoList(date).enqueue(object : Callback<GetTodoListResponse> {
             override fun onResponse(
                 call: Call<GetTodoListResponse>,
                 response: Response<GetTodoListResponse>
@@ -157,9 +149,8 @@ class TodoService {
 
     // 특정 투두 조회
     fun getTodo(todoId: Long) {
-        val todoService = getRetrofitWithToken().create(TodoRetrofitInterface::class.java)
 
-        todoService.getTodo(todoId).enqueue(object : Callback<GetTodoResponse> {
+        todoApi.getTodo(todoId).enqueue(object : Callback<GetTodoResponse> {
             override fun onResponse(
                 call: Call<GetTodoResponse>,
                 response: Response<GetTodoResponse>
@@ -209,9 +200,7 @@ class TodoService {
     // 투두 수정
     fun editTodo(todoId: Long, request: EditTodoRequest) {
 
-        val todoService = getRetrofitWithToken().create(TodoRetrofitInterface::class.java)
-
-        todoService.editTodo(todoId, request).enqueue(object : Callback<EditTodoResponse> {
+        todoApi.editTodo(todoId, request).enqueue(object : Callback<EditTodoResponse> {
             override fun onResponse(
                 call: Call<EditTodoResponse>,
                 response: Response<EditTodoResponse>
@@ -256,9 +245,7 @@ class TodoService {
     // 투두 삭제
     fun deleteTodo(todoId: Long) {
 
-        val todoService = getRetrofitWithToken().create(TodoRetrofitInterface::class.java)
-
-        todoService.deleteTodo(todoId).enqueue(object : Callback<DeleteTodoResponse> {
+        todoApi.deleteTodo(todoId).enqueue(object : Callback<DeleteTodoResponse> {
             override fun onResponse(
                 call: Call<DeleteTodoResponse>,
                 response: Response<DeleteTodoResponse>

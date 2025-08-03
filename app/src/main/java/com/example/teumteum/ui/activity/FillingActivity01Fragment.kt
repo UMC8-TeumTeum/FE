@@ -14,7 +14,9 @@ import com.example.teumteum.databinding.FragmentFillingActivity01Binding
 import com.example.teumteum.ui.activity.view.ActivityAiView
 import com.example.teumteum.ui.activity.view.ActivityWishView
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class FillingActivity01Fragment : Fragment(), ActivityWishView, ActivityAiView {
 
     private lateinit var binding: FragmentFillingActivity01Binding

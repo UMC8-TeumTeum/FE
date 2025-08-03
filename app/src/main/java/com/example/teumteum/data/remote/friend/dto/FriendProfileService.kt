@@ -2,12 +2,14 @@ package com.example.teumteum.data.remote.friend.dto
 
 import com.example.teumteum.data.remote.friend.profile.FriendProfileRetrofitInterface
 import com.example.teumteum.ui.friend.view.FriendProfileView
-import com.example.teumteum.utils.getRetrofitWithToken
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import javax.inject.Inject
 
-class FriendProfileService {
+class FriendProfileService @Inject constructor(
+    private val friendProfileApi: FriendProfileRetrofitInterface
+){
 
     private lateinit var friendProfileView: FriendProfileView
 
@@ -16,10 +18,8 @@ class FriendProfileService {
     }
 
     fun getFriendProfile(userId: Int) {
-        val friendApi = getRetrofitWithToken().create(FriendProfileRetrofitInterface::class.java)
-        val call = friendApi.getFriendProfile(userId)
 
-        call.enqueue(object : Callback<FriendProfileResponse> {
+        friendProfileApi.getFriendProfile(userId).enqueue(object : Callback<FriendProfileResponse> {
             override fun onResponse(
                 call: Call<FriendProfileResponse>,
                 response: Response<FriendProfileResponse>

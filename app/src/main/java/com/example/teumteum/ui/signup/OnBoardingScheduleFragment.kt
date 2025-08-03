@@ -19,10 +19,13 @@ import com.example.teumteum.data.remote.onboarding.OnBoardingService
 import com.example.teumteum.data.remote.onboarding.dto.ScheduleRequest
 import com.example.teumteum.data.remote.onboarding.dto.Week
 import com.example.teumteum.ui.signup.view.ScheduleView
+import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalTime
 import java.util.Calendar
+import javax.inject.Inject
 import kotlin.collections.forEachIndexed
 
+@AndroidEntryPoint
 class OnBoardingScheduleFragment : Fragment(), ScheduleView{
 
     private lateinit var binding: FragmentOnBoardingScheduleBinding
@@ -36,6 +39,9 @@ class OnBoardingScheduleFragment : Fragment(), ScheduleView{
 
     private var sleepStart: LocalTime? = null
     private var sleepEnd: LocalTime? = null
+
+    @Inject
+    lateinit var onBoardingService: OnBoardingService
 
     override fun onScheduleSuccess(code: String) {
         val msg = "반복 일정 등록 성공 (code: $code)"
@@ -126,7 +132,6 @@ class OnBoardingScheduleFragment : Fragment(), ScheduleView{
 //                .commit()
             if(scheduleMap.isNotEmpty()) {
                 val request = getScheduleRequest()
-                val onBoardingService = OnBoardingService()
                 onBoardingService.setScheduleView(this)
                 onBoardingService.postSchedules(request)
             }

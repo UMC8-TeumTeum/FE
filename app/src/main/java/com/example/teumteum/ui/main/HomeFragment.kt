@@ -28,18 +28,18 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 import com.example.teumteum.data.TimeBlock
-import com.example.teumteum.data.TimeType
 import com.example.teumteum.data.entities.TodoList
-import com.example.teumteum.data.remote.agreement.AgreementService
 import com.example.teumteum.data.remote.home.HomeService
 import com.example.teumteum.data.remote.home.dto.ScheduleResult
 import com.example.teumteum.ui.clock.ChartUtils
 import com.example.teumteum.ui.clock.IconPieChartRenderer
 import com.example.teumteum.ui.main.view.HomeView
-import com.example.teumteum.ui.signup.CompleteFragment
 import com.example.teumteum.ui.todo.view.TodoListView
 import com.example.teumteum.utils.applyBlurShadow
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class HomeFragment : Fragment(), IDateClickListener, TodoListView, HomeView {
 
     lateinit var binding: FragmentHomeBinding
@@ -48,6 +48,9 @@ class HomeFragment : Fragment(), IDateClickListener, TodoListView, HomeView {
     private lateinit var selectedDate: LocalDate
 
     private lateinit var adapter: TodoRVAdapter
+
+    @Inject
+    lateinit var homeService: HomeService
 
     private val fullDaySchedule = mutableListOf<TimeBlock>()
 //    private val fullDaySchedule = listOf(
@@ -127,7 +130,6 @@ class HomeFragment : Fragment(), IDateClickListener, TodoListView, HomeView {
 //        adapter = TodoRVAdapter(parentFragmentManager, todoDummyList)
 //        binding.todolistRv.adapter = adapter
         val date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-        val homeService = HomeService()
         homeService.setHomeView(this)
         homeService.getTodaySchedule(date)
 

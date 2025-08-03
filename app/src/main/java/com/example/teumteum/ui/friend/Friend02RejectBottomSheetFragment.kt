@@ -15,7 +15,9 @@ import com.example.teumteum.R
 import com.example.teumteum.databinding.BottomSheetFriend02RejectBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class Friend02RejectBottomSheetFragment : BottomSheetDialogFragment() {
     private var _binding: BottomSheetFriend02RejectBinding? = null
     private val binding get() = _binding!!

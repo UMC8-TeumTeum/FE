@@ -8,7 +8,9 @@ import androidx.fragment.app.Fragment
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentFriendRoommateFriendBinding
 import com.example.teumteum.ui.main.MainActivity
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class FriendRoommateFriendFragment : Fragment() {
 
     private var _binding: FragmentFriendRoommateFriendBinding? = null

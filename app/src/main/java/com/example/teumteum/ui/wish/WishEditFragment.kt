@@ -3,6 +3,7 @@ package com.example.teumteum.ui.wish
 import android.app.Dialog
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -10,24 +11,23 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.viewModels
 import com.example.teumteum.R
 import com.example.teumteum.data.entities.Wish
-import com.example.teumteum.data.remote.wish.WishService
-import com.example.teumteum.data.remote.wish.dto.DeleteWishesRequest
-import com.example.teumteum.data.remote.wish.dto.EditWishRequest
-import com.example.teumteum.data.remote.wish.dto.WishlistItem
+import com.example.teumteum.data.remote.wish.model.DeleteWishesRequest
+import com.example.teumteum.data.remote.wish.model.EditWishRequest
 import com.example.teumteum.databinding.DialogConfirmWishDeleteBinding
 import com.example.teumteum.databinding.DialogConfirmWishEditBinding
 import com.example.teumteum.databinding.FragmentWishEditBinding
-import com.example.teumteum.ui.wish.view.DeleteWishesView
-import com.example.teumteum.ui.wish.view.EditWishView
-import com.example.teumteum.ui.wish.view.WishView
+import com.example.teumteum.ui.wish.viewModel.WishViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
+import dagger.hilt.android.AndroidEntryPoint
 
-class WishEditFragment : BottomSheetDialogFragment(), WishView, EditWishView, DeleteWishesView {
+@AndroidEntryPoint
+class WishEditFragment : BottomSheetDialogFragment() {
 
     private lateinit var binding: FragmentWishEditBinding
     private var wishId: Long = -1L
@@ -39,6 +39,8 @@ class WishEditFragment : BottomSheetDialogFragment(), WishView, EditWishView, De
     private var originalContent: String = ""
     private var originalTime: String = ""
     private var originalCategoryIds: List<Long> = emptyList()
+
+    private val wishViewModel: WishViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -52,18 +54,24 @@ class WishEditFragment : BottomSheetDialogFragment(), WishView, EditWishView, De
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupObservers()
+
         wishId = arguments?.getLong("wish_id") ?: -1L
+        if (wishId != -1L) {
+            wishViewModel.getWish(wishId)
+        }
 
         binding.btnWishSave.setOnClickListener {
             val titleText = binding.wishTitleEt.text.toString().trim()
             val contentText = binding.detailTextEt.text.toString().trim()
+            val selectedTime = selectedTimeButton?.tag as? String
+            val selectedCategoryIds = selectedCategoryButtons.mapNotNull { it.tag as? Long }
 
             if (titleText.isEmpty()) {
                 Toast.makeText(requireContext(), "제목을 입력해주세요.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            val selectedTime = selectedTimeButton?.tag as? String
             if (selectedTime == null) {
                 Toast.makeText(requireContext(), "시간을 선택해주세요.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -74,8 +82,6 @@ class WishEditFragment : BottomSheetDialogFragment(), WishView, EditWishView, De
                 return@setOnClickListener
             }
 
-            val selectedCategoryIds = selectedCategoryButtons.mapNotNull { it.tag as? Long }
-
             val request = EditWishRequest(
                 title = titleText,
                 content = contentText,
@@ -83,19 +89,50 @@ class WishEditFragment : BottomSheetDialogFragment(), WishView, EditWishView, De
                 categories = selectedCategoryIds
             )
 
-            val wishService = WishService()
-            wishService.setWishEditView(this)
-            wishService.editWish(wishId, request)
+            wishViewModel.editWish(wishId, request)
         }
 
         binding.btnWishDelete.setOnClickListener {
-            showWishDeleteDialog(wishId)
+            val deleteRequest = DeleteWishesRequest(listOf(wishId))
+            showWishDeleteDialog(deleteRequest)
         }
 
-        if (wishId != -1L) {
-            get(wishId)
+    }
+
+    private fun setupObservers() {
+        wishViewModel.wish.observe(viewLifecycleOwner) { wish ->
+
+            binding.wishTitleEt.setText(wish.title)
+            binding.detailTextEt.setText(wish.content)
+            setupTimeButtons(wish.estimatedDuration)
+            setupCategoryButtons(wish)
+
+            // 선택 여부 확인용 원본 저장
+            originalTitle = wish.title
+            originalContent = wish.content
+            originalTime = wish.estimatedDuration
+            originalCategoryIds = wish.categories.map { it.categoryId }.sorted()
         }
 
+        wishViewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
+            Log.e("WishGet", "위시 조회 실패: $errorMessage")
+        }
+
+        wishViewModel.successMessage.observe(viewLifecycleOwner) {
+            Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+            parentFragmentManager.setFragmentResult("wish_edit", Bundle())
+
+            // 모든 바텀시트 닫기
+            (requireActivity().supportFragmentManager.fragments).forEach {
+                if (it is BottomSheetDialogFragment) {
+                    it.dismissAllowingStateLoss()
+                }
+            }
+        }
+
+        wishViewModel.errorMessage.observe(viewLifecycleOwner) {
+            Log.e("WishEdit", "수정 실패: $it")
+        }
     }
 
     override fun onStart() {
@@ -143,7 +180,7 @@ class WishEditFragment : BottomSheetDialogFragment(), WishView, EditWishView, De
         return dialog
     }
 
-    private fun showWishDeleteDialog(wishId: Long) {
+    private fun showWishDeleteDialog(request: DeleteWishesRequest) {
         val dialogBinding = DialogConfirmWishDeleteBinding.inflate(layoutInflater)
 
         val dialog = AlertDialog.Builder(requireContext(), R.style.RoundedAlertDialog)
@@ -151,26 +188,19 @@ class WishEditFragment : BottomSheetDialogFragment(), WishView, EditWishView, De
             .create()
 
         dialogBinding.wishConfirmTv.setOnClickListener {
-            val service = WishService()
-            service.setWishDeleteView(object : DeleteWishesView {
-                override fun onDeleteWishesSuccess(code: String, message: String?) {
-                    Toast.makeText(requireContext(), "위시가 성공적으로 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+            wishViewModel.deleteWishes(request)
 
-                    // 이벤트 전송
-                    parentFragmentManager.setFragmentResult("wish_delete", Bundle())
+            wishViewModel.successMessage.observe(viewLifecycleOwner) {
+                Toast.makeText(requireContext(), "위시가 성공적으로 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+                parentFragmentManager.setFragmentResult("wish_delete", Bundle())
+                dialog.dismiss()
+                dismiss() // 바텀시트 닫기
+            }
 
-                    dialog.dismiss()
-                    dismiss() // 바텀시트 닫기
-                }
-
-                override fun onDeleteWishesFailure(code: String, message: String?) {
-                    Toast.makeText(requireContext(), "삭제에 실패했어요. 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
-                    dialog.dismiss()
-                }
-            })
-
-            val deleteRequest = DeleteWishesRequest(listOf(wishId)) // 바텀시트에 넘겨받은 Wish
-            service.deleteWishes(deleteRequest)
+            wishViewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
+                Toast.makeText(requireContext(), "위시 삭제에 실패했어요: $errorMessage", Toast.LENGTH_SHORT).show()
+                dialog.dismiss()
+            }
         }
 
         dialogBinding.wishCancelTv.setOnClickListener {
@@ -324,12 +354,6 @@ class WishEditFragment : BottomSheetDialogFragment(), WishView, EditWishView, De
         }
     }
 
-    private fun get(wishId: Long) {
-        val wishService = WishService()
-        wishService.setWishGetView(this)
-        wishService.getWish(wishId)
-    }
-
     private fun isModified(): Boolean {
         val currentTitle = binding.wishTitleEt.text.toString().trim()
         val currentContent = binding.detailTextEt.text.toString().trim()
@@ -342,65 +366,4 @@ class WishEditFragment : BottomSheetDialogFragment(), WishView, EditWishView, De
                 currentCategoryIds != originalCategoryIds
     }
 
-    override fun onGetWishSuccess(wish: Wish) {
-        binding.wishTitleEt.setText(wish.title)
-        binding.detailTextEt.setText(wish.content)
-        setupTimeButtons(wish.estimatedDuration)
-        setupCategoryButtons(wish)
-
-        originalTitle = wish.title
-        originalContent = wish.content
-        originalTime = wish.estimatedDuration
-        originalCategoryIds = wish.categories.map { it.categoryId }.sorted()
-    }
-
-    override fun onGetWishFailure(code: String, message: String?) {
-        val errorMessage = when (code) {
-            "HOME4043" -> "해당 위시 정보를 찾을 수 없습니다."
-            "COMMON500" -> "서버 오류입니다. 관리자에게 문의해주세요."
-            "NETWORK_ERROR" -> "네트워크 오류가 발생했습니다."
-            "PARSE_ERROR" -> "서버 응답을 해석할 수 없습니다."
-            else -> "위시 조회에 실패했습니다. 다시 시도해주세요."
-        }
-        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onEditWishSuccess(code: String, message: String?) {
-        val successMessage = message ?: "위시 정보가 성공적으로 수정되었습니다."
-        Toast.makeText(requireContext(), successMessage, Toast.LENGTH_SHORT).show()
-
-        // 이벤트 전송
-        parentFragmentManager.setFragmentResult("wish_edit", Bundle())
-
-        // 모든 바텀시트 닫기
-        (requireActivity().supportFragmentManager.fragments).forEach {
-            if (it is BottomSheetDialogFragment) {
-                it.dismissAllowingStateLoss()
-            }
-        }
-    }
-
-    override fun onEditWishFailure(code: String, message: String?) {
-        val errorMessage = when (code) {
-            "COMMON400" -> "제목 또는 카테고리가 비어있습니다."
-            "HOME4042" -> "해당 카테고리를 찾을 수 없습니다."
-            "NETWORK_ERROR" -> "네트워크 오류가 발생했습니다."
-            "PARSE_ERROR" -> "서버 응답을 해석할 수 없습니다."
-            else -> message ?: "등록에 실패했습니다. 다시 시도해주세요."
-        }
-        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onDeleteWishesSuccess(code: String, message: String?) {
-        Toast.makeText(requireContext(), "위시가 성공적으로 삭제되었습니다.", Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onDeleteWishesFailure(code: String, message: String?) {
-        val errorMessage = when (code) {
-            "NETWORK_ERROR" -> "네트워크 오류가 발생했습니다."
-            "PARSE_ERROR" -> "서버 응답을 해석할 수 없습니다."
-            else -> message ?: "삭제에 실패했습니다. 다시 시도해주세요."
-        }
-        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
-    }
 }

@@ -9,7 +9,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.teumteum.data.Contents
 import com.example.teumteum.data.Feed
 import com.example.teumteum.databinding.FragmentFeedContentBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class FeedContentFragment : Fragment() {
 
     private lateinit var binding: FragmentFeedContentBinding
