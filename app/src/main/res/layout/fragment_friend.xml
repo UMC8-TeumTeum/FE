@@ -80,6 +80,60 @@
             android:textColor="@android:color/white"
             android:textSize="20sp" />
 
+
+
+        <!-- 틈 요청 없을 때 뷰 -->
+
+        <androidx.cardview.widget.CardView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/emptyTeumRequestLayout"
+            android:layout_width="match_parent"
+            android:layout_height="163dp"
+            android:layout_marginTop="185dp"
+            android:layout_marginStart="21dp"
+            android:layout_marginEnd="19dp"
+            app:cardCornerRadius="15dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="#A6FFFFFF">>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <!-- 캐릭터 이미지 -->
+                <ImageView
+                    android:id="@+id/iv_teum_icon"
+                    android:layout_width="130dp"
+                    android:layout_height="100dp"
+                    android:layout_marginStart="116dp"
+                    android:layout_marginEnd="104dp"
+                    android:layout_marginTop="5dp"
+                    android:src="@drawable/purple_teum"
+                    android:contentDescription="틈 없음 아이콘" />
+
+                <!-- 텍스트 -->
+                <TextView
+                    android:id="@+id/tv_teum_message"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="새로운 틈 요청이 없어요"
+                    android:includeFontPadding="false"
+                    android:layout_marginStart="108dp"
+                    android:layout_marginEnd="96dp"
+                    android:layout_marginBottom="31dp"
+                    android:textSize="15sp"
+                    android:textColor="#0F0F0F"
+                    android:layout_marginTop="6dp"
+                    android:fontFamily="@font/noto_sans_kr_medium" />
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+
+        <!-- 틈 요청 있을 때 뷰 -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recommendRecyclerView"
             android:layout_width="match_parent"
