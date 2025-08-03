@@ -54,9 +54,11 @@ class WishRepository @Inject constructor(
                 val apiResponse = response.body()
                     ?: return Result.failure(Exception("서버 응답이 비어 있습니다."))
 
-                apiResponse.result?.let { data ->
-                    Result.success(data)
-                } ?: Result.failure(Exception("서버 응답이 올바르지 않습니다."))
+                if (apiResponse.isSuccess && apiResponse.result != null) {
+                    Result.success(apiResponse.result)
+                } else {
+                    Result.failure(Exception(apiResponse.message))
+                }
             } else {
                 Result.failure(Exception("서버 오류 발생"))
             }
@@ -68,7 +70,7 @@ class WishRepository @Inject constructor(
     }
 
     // 특정 위시 편집
-    suspend fun editWish(wishId: Long, request: EditWishRequest): Result<EditWishResponse> {
+    suspend fun editWish(wishId: Long, request: EditWishRequest): Result<Unit> {
         return try {
             val response = wishService.editWish(wishId, request)
 
@@ -76,9 +78,11 @@ class WishRepository @Inject constructor(
                 val apiResponse = response.body()
                     ?: return Result.failure(Exception("서버 응답이 비어 있습니다."))
 
-                apiResponse.result?.let { data ->
-                    Result.success(data)
-                } ?: Result.failure(Exception("서버 응답이 올바르지 않습니다."))
+                if (apiResponse.isSuccess) {
+                    Result.success(Unit)
+                } else {
+                    Result.failure(Exception(apiResponse.message))
+                }
             } else {
                 Result.failure(Exception("서버 오류 발생"))
             }
@@ -90,7 +94,7 @@ class WishRepository @Inject constructor(
     }
 
     // 특정 위시 삭제
-    suspend fun deleteWish(request: DeleteWishesRequest): Result<DeleteWishesResponse> {
+    suspend fun deleteWish(request: DeleteWishesRequest): Result<Unit> {
         return try {
             val response = wishService.deleteWishes(request)
 
@@ -98,9 +102,11 @@ class WishRepository @Inject constructor(
                 val apiResponse = response.body()
                     ?: return Result.failure(Exception("서버 응답이 비어 있습니다."))
 
-                apiResponse.result?.let { data ->
-                    Result.success(data)
-                } ?: Result.failure(Exception("서버 응답이 올바르지 않습니다."))
+                if (apiResponse.isSuccess) {
+                    Result.success(Unit)
+                } else {
+                    Result.failure(Exception(apiResponse.message))
+                }
             } else {
                 Result.failure(Exception("서버 오류 발생"))
             }
@@ -121,9 +127,11 @@ class WishRepository @Inject constructor(
                 val apiResponse = response.body()
                     ?: return Result.failure(Exception("서버 응답이 비어 있습니다."))
 
-                apiResponse.result?.let { data ->
-                    Result.success(data)
-                } ?: Result.failure(Exception("서버 응답이 올바르지 않습니다."))
+                if (apiResponse.isSuccess && apiResponse.result != null) {
+                    Result.success(apiResponse.result)
+                } else {
+                    Result.failure(Exception(apiResponse.message))
+                }
             } else {
                 Result.failure(Exception("서버 오류 발생"))
             }
