@@ -18,12 +18,11 @@ import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
+import androidx.fragment.app.viewModels
 import com.example.teumteum.databinding.FragmentTodoRegisterBinding
 import com.example.teumteum.R
 
-import com.example.teumteum.data.remote.onboarding.OnBoardingService
-import com.example.teumteum.data.remote.todo.TodoService
-import com.example.teumteum.data.remote.todo.dto.RegisterTodoRequest
+import com.example.teumteum.data.remote.todo.model.RegisterTodoRequest
 
 import com.example.teumteum.ui.wish.WishRegisterFragment
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -32,25 +31,21 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 import com.example.teumteum.ui.calendar.IDateClickListener
 import com.example.teumteum.ui.calendar.MonthlyCalendarFragment
-import com.example.teumteum.ui.todo.view.RegisterTodoView
+import com.example.teumteum.ui.todo.viewModel.TodoViewModel
 import com.example.teumteum.utils.combineDateTime
 import dagger.hilt.android.AndroidEntryPoint
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
-import javax.inject.Inject
 
 @AndroidEntryPoint
-class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener, RegisterTodoView {
+class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
 
     private lateinit var binding: FragmentTodoRegisterBinding
 
     private var currentTargetTextView: TextView? = null
     private var popupWindow: PopupWindow? = null
-
-    @Inject
-    lateinit var todoService: TodoService
 
     private val alarmLabelToMinutes = mapOf(
         "30분 전" to 30,
@@ -69,6 +64,8 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener, Re
     private var calendarFragmentStart: MonthlyCalendarFragment? = null
     private var calendarFragmentEnd: MonthlyCalendarFragment? = null
     private var isStartDateSelected = true
+
+    private val todoViewModel: TodoViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -156,6 +153,7 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener, Re
             toggleCalendarVisibility()
         }
 
+        setupObservers()
     }
 
     private fun applyTextStyleToNumberPicker(picker: NumberPicker, context: Context) {
@@ -515,34 +513,18 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener, Re
         }
 
         val request = getTodoRequest()
-
-        todoService.setTodoRegisterView(this)
-        todoService.registerTodo(request)
+        todoViewModel.registerTodo(request)
     }
 
-    override fun onRegisterTodoSuccess(code: String, todoId: Long?) {
-        Toast.makeText(requireContext(), "투두가 성공적으로 생성되었습니다.", Toast.LENGTH_SHORT).show()
-
-        // 이벤트 전송
-        parentFragmentManager.setFragmentResult("todo_register", Bundle())
-
-        // 모든 바텀시트 닫기
-        (requireActivity().supportFragmentManager.fragments).forEach {
-            if (it is BottomSheetDialogFragment) {
-                it.dismissAllowingStateLoss()
-            }
+    private fun setupObservers() {
+        todoViewModel.registerSuccess.observe(viewLifecycleOwner) {
+            Toast.makeText(requireContext(), "투두가 성공적으로 등록되었습니다.", Toast.LENGTH_SHORT).show()
+            dismiss() // 바텀시트 닫기
         }
-    }
 
-    override fun onRegisterTodoFailure(code: String, message: String?) {
-        val errorMessage = when (code) {
-            "COMMON400" -> "제목 또는 시작시간/종료시간이 비어있습니다."
-            "HOME4001" -> "endTime은 startTime을 앞설 수 없습니다."
-            "NETWORK_ERROR" -> "네트워크 오류가 발생했습니다."
-            "PARSE_ERROR" -> "서버 응답을 해석할 수 없습니다."
-            else -> message ?: "등록에 실패했습니다. 다시 시도해주세요."
+        todoViewModel.errorMessage.observe(viewLifecycleOwner) { errorMsg ->
+            Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_SHORT).show()
         }
-        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
     }
 
 }

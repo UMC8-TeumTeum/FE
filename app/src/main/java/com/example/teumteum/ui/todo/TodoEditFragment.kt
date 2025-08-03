@@ -24,14 +24,11 @@ import com.example.teumteum.databinding.FragmentTodoEditBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 import com.example.teumteum.data.entities.TodoHomeItem
-import com.example.teumteum.data.remote.todo.dto.GetTodoResult
+import com.example.teumteum.data.remote.todo.model.GetTodoResult
 import com.example.teumteum.databinding.DialogConfirmTodoDeleteBinding
 import com.example.teumteum.databinding.DialogConfirmTodoEditBinding
 import com.example.teumteum.ui.calendar.IDateClickListener
 import com.example.teumteum.ui.calendar.MonthlyCalendarFragment
-import com.example.teumteum.ui.todo.view.DeleteTodoView
-import com.example.teumteum.ui.todo.view.EditTodoView
-import com.example.teumteum.ui.todo.view.TodoView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
@@ -40,7 +37,7 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 @AndroidEntryPoint
-class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener, TodoView, EditTodoView, DeleteTodoView {
+class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
 
     private lateinit var binding: FragmentTodoEditBinding
 
@@ -604,47 +601,5 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener, TodoVi
         }
 
         isCalendarVisible = false
-    }
-
-    override fun onGetTodoSuccess(todo: GetTodoResult) {
-        Toast.makeText(requireContext(), "투두가 성공적으로 조회되었습니다.", Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onGetTodoFailure(code: String, message: String?) {
-        val errorMessage = when (code) {
-            "COMMON500" -> "서버 오류입니다. 관리자에게 문의해주세요."
-            "NETWORK_ERROR" -> "네트워크 오류가 발생했습니다."
-            "PARSE_ERROR" -> "서버 응답을 해석할 수 없습니다."
-            else -> "투두 조회에 실패했습니다. 다시 시도해주세요."
-        }
-        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onEditTodoSuccess(code: String, message: String?) {
-        Toast.makeText(requireContext(), "투두 정보가 성공적으로 수정되었습니다.", Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onEditTodoFailure(code: String, message: String?) {
-        val errorMessage = when (code) {
-            "COMMON400" -> "제목 또는 시작시간/종료시간이 비어있습니다."
-            "HOME4001" -> "endTime은 startTime을 앞설 수 없습니다."
-            "NETWORK_ERROR" -> "네트워크 오류가 발생했습니다."
-            "PARSE_ERROR" -> "서버 응답을 해석할 수 없습니다."
-            else -> message ?: "등록에 실패했습니다. 다시 시도해주세요."
-        }
-        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onDeleteTodoSuccess(code: String, message: String?) {
-        Toast.makeText(requireContext(), "투두가 성공적으로 삭제되었습니다.", Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onDeleteTodoFailure(code: String, message: String?) {
-        val errorMessage = when (code) {
-            "NETWORK_ERROR" -> "네트워크 오류가 발생했습니다."
-            "PARSE_ERROR" -> "서버 응답을 해석할 수 없습니다."
-            else -> message ?: "삭제에 실패했습니다. 다시 시도해주세요."
-        }
-        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
     }
 }

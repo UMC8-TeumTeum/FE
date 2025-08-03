@@ -7,7 +7,7 @@ import com.example.teumteum.data.remote.friend.profile.FriendProfileRetrofitInte
 import com.example.teumteum.data.remote.friend.search.FriendSearchRetrofitInterface
 import com.example.teumteum.data.remote.home.HomeRetrofitInterface
 import com.example.teumteum.data.remote.onboarding.OnBoardingRetrofitInterface
-import com.example.teumteum.data.remote.todo.TodoRetrofitInterface
+import com.example.teumteum.data.remote.todo.service.TodoService
 import com.example.teumteum.data.remote.wish.service.WishService
 import dagger.Module
 import dagger.Provides
@@ -22,8 +22,8 @@ class ApiModule {
 
     @Provides
     @Singleton
-    fun provideTodoApi(retrofit: Retrofit): TodoRetrofitInterface {
-        return retrofit.create(TodoRetrofitInterface::class.java)
+    fun provideTodoApi(retrofit: Retrofit): TodoService {
+        return retrofit.create(TodoService::class.java)
     }
 
     @Provides
