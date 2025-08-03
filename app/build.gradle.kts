@@ -4,11 +4,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("org.jetbrains.kotlin.kapt")
-<<<<<<< HEAD
     id("dagger.hilt.android.plugin")
-=======
-    id ("kotlin-parcelize")
->>>>>>> 15a2b2a2946c47c60eb17fe0c1c352df5529f9a4
+    id("kotlin-parcelize")
 }
 
 val properties = Properties().apply {

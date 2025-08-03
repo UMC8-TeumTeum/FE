@@ -54,3 +54,29 @@ class NetworkModule {
             .build()
     }
 }
+
+const val BASE_URL = BuildConfig.BASE_URL
+
+fun getRetrofit(): Retrofit {
+    return Retrofit.Builder()
+        .baseUrl(BASE_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+}
+
+fun getRetrofitWithToken(): Retrofit {
+    val client = OkHttpClient.Builder()
+        .addInterceptor { chain ->
+            val request = chain.request().newBuilder()
+                .addHeader("Authorization", "Bearer ${BuildConfig.TEMP_ACCESS_TOKEN}")
+                .build()
+            chain.proceed(request)
+        }
+        .build()
+
+    return Retrofit.Builder()
+        .baseUrl(BASE_URL)
+        .client(client)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+}

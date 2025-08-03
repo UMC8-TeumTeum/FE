@@ -167,6 +167,8 @@ class WishlistFragment() : Fragment() {
 
     private fun setupObservers() {
         wishlistGetViewModel.wishlistItems.observe(viewLifecycleOwner) { itemList ->
+            wishlistItems = itemList
+
             if (itemList.isEmpty()) {
                 binding.wishlistRv.visibility = View.GONE
                 binding.wishNotExistsCv.visibility = View.VISIBLE
@@ -185,33 +187,4 @@ class WishlistFragment() : Fragment() {
     private fun refreshWishlist() {
         wishlistGetViewModel.getWishlist(duration = "all", page = 1)
     }
-
-//    override fun onGetWishListSuccess(wishlist: List<WishlistItem>) {
-//        this.wishlistItems = wishlist
-//
-//        if (wishlist.isEmpty()) {
-//            // 위시가 없을 때
-//            binding.wishlistRv.visibility = View.GONE
-//            binding.wishNotExistsCv.visibility = View.VISIBLE
-//        } else {
-//            // 위시가 있을 때
-//            binding.wishlistRv.visibility = View.VISIBLE
-//            binding.wishNotExistsCv.visibility = View.GONE
-//            adapter.updateList(wishlist)
-//        }
-//    }
-//
-//
-//    override fun onGetWishListFailure(code: String, message: String?) {
-//        val errorMessage = when {
-//            code == "HOME4002" -> "잘못된 조회 기간입니다. (all, 10m, 20m, 30m, 1h만 입력 가능)"
-//            code == "COMMON500" && message?.contains("Page index must not be less than zero") == true ->
-//                "페이지 번호는 0 이상이어야 합니다."
-//            code == "COMMON500" -> "서버 오류입니다. 관리자에게 문의해주세요."
-//            code == "NETWORK_ERROR" -> "네트워크 오류가 발생했습니다."
-//            code == "PARSE_ERROR" -> "서버 응답을 해석할 수 없습니다."
-//            else -> "위시리스트 조회에 실패했습니다. 다시 시도해주세요."
-//        }
-//        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
-//    }
 }
