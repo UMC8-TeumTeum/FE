@@ -12,7 +12,7 @@ import com.example.teumteum.R
 import com.example.teumteum.data.remote.wish.model.WishlistItem
 import com.example.teumteum.databinding.FragmentWishlistBinding
 import com.example.teumteum.ui.wish.adapter.WishlistRVAdapter
-import com.example.teumteum.ui.wish.viewModel.WishlistGetViewModel
+import com.example.teumteum.ui.wish.viewModel.WishViewModel
 import com.example.teumteum.utils.applyBlurShadow
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.button.MaterialButton
@@ -26,7 +26,7 @@ class WishlistFragment() : Fragment() {
 
     private var wishlistItems: List<WishlistItem> = emptyList()
 
-    private val wishlistGetViewModel: WishlistGetViewModel by activityViewModels()
+    private val wishViewModel: WishViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,8 +36,8 @@ class WishlistFragment() : Fragment() {
         binding = FragmentWishlistBinding.inflate(inflater, container, false)
 
         binding.editTv.setOnClickListener {
-            val currentList = wishlistGetViewModel.wishlistItems.value ?: emptyList()
-            wishlistGetViewModel.wishlistItems.value = currentList.toMutableList()
+            val currentList = wishViewModel.wishlistItems.value ?: emptyList()
+            wishViewModel.wishlistItems.value = currentList.toMutableList()
             parentFragmentManager.beginTransaction()
                 .replace(R.id.main_frm, WishlistEditFragment())
                 .addToBackStack(null)
@@ -96,7 +96,7 @@ class WishlistFragment() : Fragment() {
             refreshWishlist()
         }
 
-        wishlistGetViewModel.getWishlist(duration = "all", page = 1)
+        wishViewModel.getWishlist(duration = "all", page = 1)
     }
 
     private fun setupTimeFilterButtons() {
@@ -166,7 +166,7 @@ class WishlistFragment() : Fragment() {
     }
 
     private fun setupObservers() {
-        wishlistGetViewModel.wishlistItems.observe(viewLifecycleOwner) { itemList ->
+        wishViewModel.wishlistItems.observe(viewLifecycleOwner) { itemList ->
             wishlistItems = itemList
 
             if (itemList.isEmpty()) {
@@ -179,12 +179,12 @@ class WishlistFragment() : Fragment() {
             }
         }
 
-        wishlistGetViewModel.getError.observe(viewLifecycleOwner) { error ->
+        wishViewModel.errorMessage.observe(viewLifecycleOwner) { error ->
             Toast.makeText(requireContext(), "위시리스트 조회 실패: $error", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun refreshWishlist() {
-        wishlistGetViewModel.getWishlist(duration = "all", page = 1)
+        wishViewModel.getWishlist(duration = "all", page = 1)
     }
 }

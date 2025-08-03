@@ -12,8 +12,7 @@ import com.example.teumteum.data.remote.wish.model.DeleteWishesRequest
 import com.example.teumteum.data.remote.wish.model.WishlistItem
 import com.example.teumteum.databinding.FragmentWishlistEditBinding
 import com.example.teumteum.ui.wish.adapter.WishlistEditRVAdapter
-import com.example.teumteum.ui.wish.viewModel.WishDeleteViewModel
-import com.example.teumteum.ui.wish.viewModel.WishlistGetViewModel
+import com.example.teumteum.ui.wish.viewModel.WishViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -25,8 +24,7 @@ class WishlistEditFragment() : Fragment() {
     private lateinit var adapter: WishlistEditRVAdapter
     private lateinit var editedWishlist: MutableList<WishlistItem>
 
-    private val wishlistDeleteViewModel: WishDeleteViewModel by activityViewModels()
-    private val wishlistGetViewModel: WishlistGetViewModel by activityViewModels()
+    private val wishViewModel: WishViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,7 +34,7 @@ class WishlistEditFragment() : Fragment() {
         binding = FragmentWishlistEditBinding.inflate(inflater, container, false)
 
         // ViewModel에서 데이터 복사
-        editedWishlist = wishlistGetViewModel.wishlistItems.value?.map { it.copy() }?.toMutableList() ?: mutableListOf()
+        editedWishlist = wishViewModel.wishlistItems.value?.map { it.copy() }?.toMutableList() ?: mutableListOf()
 
         return binding.root
     }
@@ -88,7 +86,7 @@ class WishlistEditFragment() : Fragment() {
 
             if (deletedIds.isNotEmpty()) {
                 val request = DeleteWishesRequest(deletedIds)
-                wishlistDeleteViewModel.deleteWishes(request)
+                wishViewModel.deleteWishes(request)
             }
 
             parentFragmentManager.beginTransaction()
@@ -102,13 +100,13 @@ class WishlistEditFragment() : Fragment() {
     }
 
     private fun setupObservers() {
-        wishlistDeleteViewModel.deleteSuccess.observe(viewLifecycleOwner) { _ ->
+        wishViewModel.successMessage.observe(viewLifecycleOwner) { _ ->
             Toast.makeText(requireContext(), "삭제가 완료되었어요.", Toast.LENGTH_SHORT).show()
 
             // ViewModel에서 삭제 반영
             val deletedIds = editedWishlist.filter { it.isDeleted }.map { it.id }
-            val updatedList = wishlistGetViewModel.wishlistItems.value?.filterNot { it.id in deletedIds } ?: emptyList()
-            wishlistGetViewModel.wishlistItems.value = updatedList
+            val updatedList = wishViewModel.wishlistItems.value?.filterNot { it.id in deletedIds } ?: emptyList()
+            wishViewModel.wishlistItems.value = updatedList
 
             // 결과 전달
             parentFragmentManager.setFragmentResult("wish_delete", Bundle())
@@ -119,7 +117,7 @@ class WishlistEditFragment() : Fragment() {
                 .commit()
         }
 
-        wishlistDeleteViewModel.deleteError.observe(viewLifecycleOwner) { error ->
+        wishViewModel.errorMessage.observe(viewLifecycleOwner) { error ->
             Toast.makeText(requireContext(), "삭제 실패: $error", Toast.LENGTH_SHORT).show()
         }
     }

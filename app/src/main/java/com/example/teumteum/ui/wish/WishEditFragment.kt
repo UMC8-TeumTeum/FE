@@ -19,9 +19,7 @@ import com.example.teumteum.data.remote.wish.model.EditWishRequest
 import com.example.teumteum.databinding.DialogConfirmWishDeleteBinding
 import com.example.teumteum.databinding.DialogConfirmWishEditBinding
 import com.example.teumteum.databinding.FragmentWishEditBinding
-import com.example.teumteum.ui.wish.viewModel.WishDeleteViewModel
-import com.example.teumteum.ui.wish.viewModel.WishEditViewModel
-import com.example.teumteum.ui.wish.viewModel.WishGetViewModel
+import com.example.teumteum.ui.wish.viewModel.WishViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -42,9 +40,7 @@ class WishEditFragment : BottomSheetDialogFragment() {
     private var originalTime: String = ""
     private var originalCategoryIds: List<Long> = emptyList()
 
-    private val getViewModel: WishGetViewModel by viewModels()
-    private val editViewModel: WishEditViewModel by viewModels()
-    private val deleteViewModel: WishDeleteViewModel by viewModels()
+    private val wishViewModel: WishViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -62,7 +58,7 @@ class WishEditFragment : BottomSheetDialogFragment() {
 
         wishId = arguments?.getLong("wish_id") ?: -1L
         if (wishId != -1L) {
-            getViewModel.getWish(wishId)
+            wishViewModel.getWish(wishId)
         }
 
         binding.btnWishSave.setOnClickListener {
@@ -93,7 +89,7 @@ class WishEditFragment : BottomSheetDialogFragment() {
                 categories = selectedCategoryIds
             )
 
-            editViewModel.editWish(wishId, request)
+            wishViewModel.editWish(wishId, request)
         }
 
         binding.btnWishDelete.setOnClickListener {
@@ -104,7 +100,7 @@ class WishEditFragment : BottomSheetDialogFragment() {
     }
 
     private fun setupObservers() {
-        getViewModel.wish.observe(viewLifecycleOwner) { wish ->
+        wishViewModel.wish.observe(viewLifecycleOwner) { wish ->
 
             binding.wishTitleEt.setText(wish.title)
             binding.detailTextEt.setText(wish.content)
@@ -118,11 +114,11 @@ class WishEditFragment : BottomSheetDialogFragment() {
             originalCategoryIds = wish.categories.map { it.categoryId }.sorted()
         }
 
-        getViewModel.getError.observe(viewLifecycleOwner) { errorMessage ->
+        wishViewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
             Log.e("WishGet", "위시 조회 실패: $errorMessage")
         }
 
-        editViewModel.editSuccess.observe(viewLifecycleOwner) {
+        wishViewModel.successMessage.observe(viewLifecycleOwner) {
             Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
             parentFragmentManager.setFragmentResult("wish_edit", Bundle())
 
@@ -134,7 +130,7 @@ class WishEditFragment : BottomSheetDialogFragment() {
             }
         }
 
-        editViewModel.editError.observe(viewLifecycleOwner) {
+        wishViewModel.errorMessage.observe(viewLifecycleOwner) {
             Log.e("WishEdit", "수정 실패: $it")
         }
     }
@@ -192,16 +188,16 @@ class WishEditFragment : BottomSheetDialogFragment() {
             .create()
 
         dialogBinding.wishConfirmTv.setOnClickListener {
-            deleteViewModel.deleteWishes(request)
+            wishViewModel.deleteWishes(request)
 
-            deleteViewModel.deleteSuccess.observe(viewLifecycleOwner) {
+            wishViewModel.successMessage.observe(viewLifecycleOwner) {
                 Toast.makeText(requireContext(), "위시가 성공적으로 삭제되었습니다.", Toast.LENGTH_SHORT).show()
                 parentFragmentManager.setFragmentResult("wish_delete", Bundle())
                 dialog.dismiss()
                 dismiss() // 바텀시트 닫기
             }
 
-            deleteViewModel.deleteError.observe(viewLifecycleOwner) { errorMessage ->
+            wishViewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
                 Toast.makeText(requireContext(), "위시 삭제에 실패했어요: $errorMessage", Toast.LENGTH_SHORT).show()
                 dialog.dismiss()
             }

@@ -14,7 +14,7 @@ import com.example.teumteum.R
 import com.example.teumteum.data.remote.wish.model.RegisterWishRequest
 import com.example.teumteum.databinding.FragmentWishRegisterBinding
 import com.example.teumteum.ui.todo.TodoRegisterFragment
-import com.example.teumteum.ui.wish.viewModel.WishRegisterViewModel
+import com.example.teumteum.ui.wish.viewModel.WishViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -32,7 +32,7 @@ class WishRegisterFragment : BottomSheetDialogFragment() {
     private var isWishSelected = true
     private var isFromWish: Boolean = false
 
-    private val registerViewModel: WishRegisterViewModel by viewModels()
+    private val wishViewModel: WishViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -73,7 +73,7 @@ class WishRegisterFragment : BottomSheetDialogFragment() {
 
         binding.btnWishRegister.setOnClickListener {
             if (validateInputs()) {
-                registerViewModel.registerWish(getWishRequest())
+                wishViewModel.registerWish(getWishRequest())
             }
         }
 
@@ -181,7 +181,7 @@ class WishRegisterFragment : BottomSheetDialogFragment() {
     }
 
     private fun setupObservers() {
-        registerViewModel.registerSuccess.observe(viewLifecycleOwner) {
+        wishViewModel.successMessage.observe(viewLifecycleOwner) {
             Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
             parentFragmentManager.setFragmentResult("wish_register", Bundle())
 
@@ -192,7 +192,7 @@ class WishRegisterFragment : BottomSheetDialogFragment() {
             }
         }
 
-        registerViewModel.registerError.observe(viewLifecycleOwner) { errorMessage ->
+        wishViewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
             Log.e("WishRegister", "위시 등록 실패: $errorMessage")
         }
     }
