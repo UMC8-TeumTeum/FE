@@ -42,9 +42,9 @@ class Friend02PossibleTimeFragment : Fragment() {
         //  바텀 네비게이션 숨기기
         (activity as? MainActivity)?.hideBottomBar()
 
-        // 1. ViewPager2 + Adapter 연결
-        adapter = FriendRequestCardAdapter(getDummyList())
-        binding.requestViewPager.adapter = adapter
+//        // 1. ViewPager2 + Adapter 연결
+//        adapter = FriendRequestCardAdapter(getDummyList())
+//        binding.requestViewPager.adapter = adapter
 
         // 함께할래요 버튼 클릭 시 바텀시트 띄우기 + Toast 메시지
         binding.btnFind.setOnClickListener {

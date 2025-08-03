@@ -9,6 +9,7 @@ import com.example.teumteum.data.remote.wish.model.GetWishResponse
 import com.example.teumteum.data.remote.wish.model.GetWishlistResponse
 import com.example.teumteum.data.remote.wish.model.RegisterWishRequest
 import com.example.teumteum.data.remote.wish.model.RegisterWishResponse
+import com.example.teumteum.data.remote.wish.model.WishlistResult
 import com.example.teumteum.data.remote.wish.service.WishService
 import java.io.IOException
 import javax.inject.Inject
@@ -108,9 +109,10 @@ class WishRepository @Inject constructor(
     }
 
     // 위시리스트 조회
-    suspend fun getWishlist(duration: String, page: Int): Result<GetWishlistResponse> {
+    suspend fun getWishlist(duration: String, page: Int): Result<WishlistResult> {
         return try {
             val response = wishService.getWishlist(duration, page)
+            Log.d("WishlistGet", "response = ${response.body()}")
 
             if (response.isSuccessful) {
                 val apiResponse = response.body()

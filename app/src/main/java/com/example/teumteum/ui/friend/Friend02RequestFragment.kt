@@ -7,11 +7,14 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.teumteum.R
+import com.example.teumteum.data.remote.friend.dto.TeumReceivedItem
 import com.example.teumteum.databinding.FragmentFriend02RequestBinding
 import com.example.teumteum.ui.main.MainActivity
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
 import com.tbuonomo.viewpagerdotsindicator.WormDotsIndicator
 import dagger.hilt.android.AndroidEntryPoint
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @AndroidEntryPoint
 class Friend02RequestFragment : Fragment() {
@@ -20,6 +23,7 @@ class Friend02RequestFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var adapter: FriendRequestCardAdapter
+    var teumList: List<TeumReceivedItem> = emptyList()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,68 +37,105 @@ class Friend02RequestFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //  바텀 네비게이션 숨기기
         (activity as? MainActivity)?.hideBottomBar()
 
-        //  뒤로가기 버튼 처리
+        val receivedList = arguments?.getParcelableArrayList<TeumReceivedItem>("teumList") ?: emptyList()
+        val selectedPosition = arguments?.getInt("selectedPosition") ?: 0
+        val selectedItem = receivedList.getOrNull(selectedPosition)
+
+        // 1. 유효한 요청만 필터링
+        val validList = filterValidTeumRequests(receivedList)
+
+        // 2. 정렬
+        val sortedList = sortTeumList(validList)
+
+        // 3. 선택된 요청을 맨 앞으로
+        teumList = if (selectedItem != null && sortedList.contains(selectedItem)) {
+            reorderWithSelectedFirst(sortedList, selectedItem)
+        } else {
+            sortedList
+        }
+
+        // 4. 어댑터 연결
+        adapter = FriendRequestCardAdapter(teumList)
+        binding.requestViewPager.adapter = adapter
+
+        // 5. 선택한 카드부터 시작
+        binding.requestViewPager.setCurrentItem(0, false)
+
+        // 6. 인디케이터
+        binding.dotsIndicator.setViewPager2(binding.requestViewPager)
+
+        // 7. 버튼 이벤트
+        binding.btnReject.setOnClickListener {
+            val bottomSheet = Friend02RejectBottomSheetFragment()
+            bottomSheet.show(parentFragmentManager, bottomSheet.tag)
+            Toast.makeText(requireContext(), "거절 버튼이 눌렸습니다.", Toast.LENGTH_SHORT).show()
+        }
+
+        binding.btnAccept.setOnClickListener {
+            val bottomSheet = Friend02AcceptBottomSheetFragment()
+            bottomSheet.show(parentFragmentManager, bottomSheet.tag)
+            Toast.makeText(requireContext(), "함께할래요 버튼이 눌렸습니다.", Toast.LENGTH_SHORT).show()
+        }
+
+        // 8. 뒤로가기
         binding.backButton.setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.main_frm, FriendFragment())
                 .addToBackStack(null)
                 .commit()
         }
-
-        // 1. ViewPager2 + Adapter 연결
-        adapter = FriendRequestCardAdapter(getDummyList())
-        binding.requestViewPager.adapter = adapter
-
-        // 2. DotsIndicator 연결
-        val dotsIndicator: DotsIndicator = binding.dotsIndicator
-        dotsIndicator.setViewPager2(binding.requestViewPager)
-
-        // 3. 버튼 클릭 리스너
-        // 이때는 시간이 안돼요 버튼 클릭 시
-        binding.btnReject.setOnClickListener {
-            // 바텀시트 띄우기
-            val bottomSheet = Friend02RejectBottomSheetFragment()
-            bottomSheet.show(parentFragmentManager, bottomSheet.tag)
-
-            Toast.makeText(requireContext(), "거절 버튼이 눌렸습니다.", Toast.LENGTH_SHORT).show()
-        }
-
-
-        // 함께할래요 버튼 클릭 시 바텀시트 띄우기 + Toast 메시지
-        binding.btnAccept.setOnClickListener {
-            // 바텀시트 띄우기
-            val bottomSheet = Friend02AcceptBottomSheetFragment()
-            bottomSheet.show(parentFragmentManager, bottomSheet.tag)
-
-            // Toast 메시지
-            Toast.makeText(requireContext(), "함께할래요 버튼이 눌렸습니다.", Toast.LENGTH_SHORT).show()
-        }
     }
 
-    private fun getDummyList(): List<FriendRequestData> {
-        return listOf(
-            FriendRequestData(
-                name = "이름",
-                date = "25.05.02",
-                time = "15:20 ~ 16:10",
-                title = "강아지 산책 가자",
-                desc = "모모랑 초코랑 종합천 한바퀴 쓰윽 돌고\n돌아오는 길에 호떡 먹자!"
-            ),
-            FriendRequestData(
-                name = "보보",
-                date = "25.05.03",
-                time = "11:00 ~ 12:00",
-                title = "산책 좋아하는 보보",
-                desc = "동물병원 들렀다가 간식도 먹고 돌아오자!"
-            )
+    //  미확인 → 최신순 정렬
+    private fun sortTeumList(teumList: List<TeumReceivedItem>): List<TeumReceivedItem> {
+        return teumList.sortedWith(
+            compareBy<TeumReceivedItem> { it.read } // false = 미확인 먼저
+                .thenByDescending { it.requestId } // 최신순
         )
+    }
+
+    //  선택된 요청을 가장 앞으로
+    private fun reorderWithSelectedFirst(
+        sortedList: List<TeumReceivedItem>,
+        selectedItem: TeumReceivedItem
+    ): List<TeumReceivedItem> {
+        return listOf(selectedItem) + sortedList.filter { it != selectedItem }
+    }
+
+    //  시간이 지나지 않고, 아직 안 읽은 요청만 필터링
+    private fun filterValidTeumRequests(teumList: List<TeumReceivedItem>): List<TeumReceivedItem> {
+        val now = LocalDateTime.now()
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+
+        return teumList.filter { item ->
+            try {
+                val dateTimeStr = "${item.date} ${item.timeSlot.end}"
+                val endDateTime = LocalDateTime.parse(dateTimeStr, formatter)
+
+                val isFuture = endDateTime.isAfter(now)
+                val isUnread = !item.read
+
+                isFuture && isUnread
+            } catch (e: Exception) {
+                false // 날짜 파싱 실패한 항목 제외
+            }
+        }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object {
+        fun newInstance(teumList: ArrayList<TeumReceivedItem>): Friend02RequestFragment {
+            return Friend02RequestFragment().apply {
+                arguments = Bundle().apply {
+                    putParcelableArrayList("teumList", teumList)
+                }
+            }
+        }
     }
 }

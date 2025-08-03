@@ -28,7 +28,7 @@ class WishlistGetViewModel @Inject constructor(
             val result = wishRepository.getWishlist(duration, page)
 
             result.onSuccess { response ->
-                wishlistItems.value = response.result?.wishlist ?: emptyList()
+                wishlistItems.value = response.wishlist
             }.onFailure { e ->
                 _getError.value = e.localizedMessage ?: "위시리스트 조회에 실패했습니다."
             }

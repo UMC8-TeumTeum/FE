@@ -10,6 +10,7 @@ import com.example.teumteum.data.remote.wish.model.GetWishResponse
 import com.example.teumteum.data.remote.wish.model.GetWishlistResponse
 import com.example.teumteum.data.remote.wish.model.RegisterWishRequest
 import com.example.teumteum.data.remote.wish.model.RegisterWishResponse
+import com.example.teumteum.data.remote.wish.model.WishlistResult
 import com.example.teumteum.utils.ApiResponse
 import retrofit2.Response
 import retrofit2.http.Body
@@ -26,7 +27,7 @@ interface WishService {
     suspend fun registerWish(@Body request: RegisterWishRequest): Response<ApiResponse<RegisterWishResponse>>
 
     @GET("/api/wishes/wishlist")
-    suspend fun getWishlist(@Query("duration") duration: String, @Query("page") page: Int): Response<ApiResponse<GetWishlistResponse>>
+    suspend fun getWishlist(@Query("duration") duration: String, @Query("page") page: Int): Response<ApiResponse<WishlistResult>>
 
     @GET("/api/wishes/{wishId}")
     suspend fun getWish(@Path("wishId") wishId: Long): Response<ApiResponse<GetWishResponse>>
