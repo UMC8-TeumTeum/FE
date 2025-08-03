@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.teumteum.R
-import com.example.teumteum.data.remote.friend.dto.TeumReceivedItem
+import com.example.teumteum.data.remote.friend.model.TeumReceivedItem
 import com.example.teumteum.databinding.FragmentFriend02RequestBinding
 import com.example.teumteum.ui.main.MainActivity
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator

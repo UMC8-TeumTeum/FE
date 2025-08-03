@@ -8,13 +8,18 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.teumteum.R
-import com.example.teumteum.data.remote.friend.dto.FriendSearchResult
+import com.example.teumteum.data.remote.friend.model.FriendSearchResult
 import com.google.android.material.imageview.ShapeableImageView
 
 class SearchResultAdapter(
-    private val results: List<FriendSearchResult>,
+    private var results: List<FriendSearchResult>,
     private val onItemClick: (userId: Int) -> Unit
 ) : RecyclerView.Adapter<SearchResultAdapter.ViewHolder>() {
+
+    fun updateData(newResults: List<FriendSearchResult>) {
+        results = newResults
+        notifyDataSetChanged()
+    }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val profileImage: ShapeableImageView = itemView.findViewById(R.id.profileLayout)

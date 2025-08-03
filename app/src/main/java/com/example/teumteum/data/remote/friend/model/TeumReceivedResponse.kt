@@ -1,4 +1,4 @@
-package com.example.teumteum.data.remote.friend.dto
+package com.example.teumteum.data.remote.friend.model
 
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName

@@ -11,8 +11,11 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentFriend01SearchBinding
+import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.example.teumteum.ui.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -22,7 +25,7 @@ class Friend01SearchFragment : Fragment() {
     private var _binding: FragmentFriend01SearchBinding? = null
     private val binding get() = _binding!!
 
-    private val recentKeywords = mutableListOf("미나리", "애플", "벨라")
+    private val viewModel: FriendViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -34,12 +37,14 @@ class Friend01SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //  바텀 네비게이션 숨기기
         (activity as? MainActivity)?.hideBottomBar()
 
-        updateSearchList()
+        //  최근 검색어 목록 관찰
+        viewModel.recentKeywords.observe(viewLifecycleOwner, Observer { keywords ->
+            updateSearchList(keywords)
+        })
 
-        //  뒤로가기 버튼 → FriendFragment로 이동
+        //  뒤로가기
         binding.backButton.setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.main_frm, FriendFragment())
@@ -47,15 +52,12 @@ class Friend01SearchFragment : Fragment() {
                 .commit()
         }
 
-        //  삭제 버튼 → 최근 검색어 하나씩 제거
+        //  최근 검색어 하나 삭제
         binding.btnDeleteRecent.setOnClickListener {
-            if (recentKeywords.isNotEmpty()) {
-                recentKeywords.removeAt(recentKeywords.size - 1)
-                updateSearchList()
-            }
+            viewModel.removeLastKeyword()
         }
 
-        //  키보드 검색(Enter) 시 검색어 추가
+        //  검색 엔터 입력 시
         binding.searchEditText.setOnEditorActionListener { _, actionId, event ->
             val isSearchAction = actionId == EditorInfo.IME_ACTION_SEARCH
             val isEnterKey = event?.action == KeyEvent.ACTION_DOWN && event.keyCode == KeyEvent.KEYCODE_ENTER
@@ -63,12 +65,10 @@ class Friend01SearchFragment : Fragment() {
             if (isSearchAction || isEnterKey) {
                 val keyword = binding.searchEditText.text.toString().trim()
                 if (keyword.isNotEmpty()) {
-                    // 1. 최근 검색어 추가
-                    recentKeywords.add(keyword)
+                    viewModel.addRecentKeyword(keyword)
                     binding.searchEditText.text.clear()
-                    updateSearchList()
 
-                    // 2. 검색 결과 프래그먼트로 이동
+                    // 👉 검색 수행 및 결과 프래그먼트로 이동
                     val bundle = Bundle().apply {
                         putString("searchKeyword", keyword)
                     }
@@ -87,10 +87,11 @@ class Friend01SearchFragment : Fragment() {
         }
     }
 
-    private fun updateSearchList() {
+    //  최근 검색어 리스트 업데이트
+    private fun updateSearchList(keywords: List<String>) {
         binding.recentSearchList.removeAllViews()
 
-        for ((index, keyword) in recentKeywords.withIndex()) {
+        for (keyword in keywords) {
             val textView = TextView(requireContext()).apply {
                 text = keyword
                 textSize = 16f
@@ -105,7 +106,6 @@ class Friend01SearchFragment : Fragment() {
 
             binding.recentSearchList.addView(textView)
 
-            //  항상 선 추가 (마지막 항목도 포함)
             val dividerHeightPx = (1.2 * resources.displayMetrics.density).toInt().coerceAtLeast(1)
             val divider = View(requireContext()).apply {
                 layoutParams = LinearLayout.LayoutParams(
@@ -119,7 +119,6 @@ class Friend01SearchFragment : Fragment() {
             binding.recentSearchList.addView(divider)
         }
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

@@ -3,8 +3,7 @@ package com.example.teumteum.utils
 import com.example.teumteum.data.remote.agreement.AgreementRetrofitInterface
 import com.example.teumteum.data.remote.alarm.AlarmRetrofitInterface
 import com.example.teumteum.data.remote.calendar.CalendarRetrofitInterface
-import com.example.teumteum.data.remote.friend.profile.FriendProfileRetrofitInterface
-import com.example.teumteum.data.remote.friend.search.FriendSearchRetrofitInterface
+import com.example.teumteum.data.remote.friend.service.FriendService
 import com.example.teumteum.data.remote.home.HomeRetrofitInterface
 import com.example.teumteum.data.remote.onboarding.OnBoardingRetrofitInterface
 import com.example.teumteum.data.remote.todo.TodoRetrofitInterface
@@ -52,15 +51,10 @@ class ApiModule {
 
     @Provides
     @Singleton
-    fun provideFriendProfileApi(retrofit: Retrofit): FriendProfileRetrofitInterface {
-        return retrofit.create(FriendProfileRetrofitInterface::class.java)
+    fun provideFriendApi(retrofit: Retrofit): FriendService {
+        return retrofit.create(FriendService::class.java)
     }
 
-    @Provides
-    @Singleton
-    fun provideFriendSearchApi(retrofit: Retrofit): FriendSearchRetrofitInterface {
-        return retrofit.create(FriendSearchRetrofitInterface::class.java)
-    }
 
     @Provides
     @Singleton
