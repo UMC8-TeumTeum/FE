@@ -7,24 +7,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.example.teumteum.R
 import com.example.teumteum.data.entities.AiRecommend
-import com.example.teumteum.data.remote.activity.ActivityService
-import com.example.teumteum.data.remote.activity.dto.ActivityWishRequest
-import com.example.teumteum.data.remote.activity.dto.ActivityWishResult
+import com.example.teumteum.data.remote.activity.model.ActivityWishResult
 import com.example.teumteum.databinding.FragmentFillingActivity02Binding
-import com.example.teumteum.ui.activity.view.ActivityWishView
+import com.example.teumteum.ui.activity.viewModel.ActivityViewModel
 import com.example.teumteum.ui.friend.FriendFragment
-import com.example.teumteum.utils.ActivityRequestUtils.getCategoryIdIfExists
-import com.example.teumteum.utils.ActivityRequestUtils.getCustomCategoryIfOther
-import com.example.teumteum.utils.ActivityRequestUtils.getEstimatedDurationType
 import com.example.teumteum.utils.applyBlurShadow
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
-class FillingActivity02Fragment : Fragment(), ActivityWishView {
+class FillingActivity02Fragment : Fragment() {
 
     private lateinit var binding: FragmentFillingActivity02Binding
 
@@ -38,8 +33,7 @@ class FillingActivity02Fragment : Fragment(), ActivityWishView {
         AiRecommend(3, "독서하기", "30m", "자기계발")
     )
 
-    @Inject
-    lateinit var service: ActivityService
+    private val activityViewModel: ActivityViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -61,20 +55,6 @@ class FillingActivity02Fragment : Fragment(), ActivityWishView {
         // 바텀 내비게이션 숨기기
         val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
         bottomNav?.visibility = View.GONE
-
-        val selectedTime = arguments?.getString("selectedTime")
-        val selectedCategory = arguments?.getString("selectedCategory")
-        val customCategory = arguments?.getString("customCategory")
-
-        val request = ActivityWishRequest(
-            estimatedDuration = getEstimatedDurationType(selectedTime!!),
-            categoryId = getCategoryIdIfExists(selectedCategory),
-            customCategory = getCustomCategoryIfOther(selectedCategory, customCategory)
-        )
-
-        service.setActivityWishView(this)
-        service.activityWish(request)  // 서버에 요청 보내기
-
 
         binding.backArrowIv.setOnClickListener {
             parentFragmentManager.popBackStack()
@@ -106,33 +86,37 @@ class FillingActivity02Fragment : Fragment(), ActivityWishView {
             )
         }
 
+        setupObservers()
+
     }
 
-    override fun onGetActivityWishSuccess(code: String, wishes: List<ActivityWishResult>) {
-        Toast.makeText(requireContext(), "채움활동 위시 조회 성공", Toast.LENGTH_SHORT).show()
-
-        if (wishes.isEmpty()) {
-            // 위시 없음 → 안내 컴포넌트 표시
-            binding.fillingActivityWishNotExistsCv.visibility = View.VISIBLE
-            binding.wishRecommendRv.visibility = View.GONE
-        } else {
-            // 위시 있음 → 리스트 표시
-            binding.fillingActivityWishNotExistsCv.visibility = View.GONE
-            binding.wishRecommendRv.visibility = View.VISIBLE
+    private fun setupObservers() {
+        activityViewModel.activityWishSuccess.observe(viewLifecycleOwner) { success ->
+            if (success) {
+                Toast.makeText(requireContext(), "채움활동 위시가 성공적으로 조회되었습니다.", Toast.LENGTH_SHORT).show()
+            }
         }
 
-        wishList.clear()
-        wishList.addAll(wishes)
-        wishAdapter.notifyDataSetChanged()
+        activityViewModel.activityWishes.observe(viewLifecycleOwner) { wishes ->
+            wishList.clear()
+            wishList.addAll(wishes)
+
+            if (wishes.isEmpty()) {
+                binding.fillingActivityWishNotExistsCv.visibility = View.VISIBLE
+                binding.wishRecommendRv.visibility = View.GONE
+            } else {
+                binding.fillingActivityWishNotExistsCv.visibility = View.GONE
+                binding.wishRecommendRv.visibility = View.VISIBLE
+            }
+
+            wishAdapter.notifyDataSetChanged()
+        }
+
+        activityViewModel.errorMessage.observe(viewLifecycleOwner) { errorMsg ->
+            errorMsg?.let {
+                Log.e("FillingActivity02Fragment", "에러 발생: $it")
+            }
+        }
     }
 
-    override fun onGetActivityWishFailure(code: String, message: String?) {
-        val errorMessage = when (code) {
-            "COMMON500" -> "서버 오류입니다. 관리자에게 문의해주세요."
-            "NETWORK_ERROR" -> "네트워크 오류가 발생했습니다."
-            "PARSE_ERROR" -> "서버 응답을 해석할 수 없습니다."
-            else -> "채움활동 위시 조회에 실패했습니다. 다시 시도해주세요."
-        }
-        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
-    }
 }

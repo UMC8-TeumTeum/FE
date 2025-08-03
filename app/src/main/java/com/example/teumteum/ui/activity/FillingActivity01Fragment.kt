@@ -1,23 +1,23 @@
 package com.example.teumteum.ui.activity
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.example.teumteum.R
-import com.example.teumteum.data.remote.activity.dto.ActivityAiResult
-import com.example.teumteum.data.remote.activity.dto.ActivityWishResult
+import com.example.teumteum.data.remote.activity.model.ActivityWishRequest
 import com.example.teumteum.databinding.FragmentFillingActivity01Binding
-import com.example.teumteum.ui.activity.view.ActivityAiView
-import com.example.teumteum.ui.activity.view.ActivityWishView
+import com.example.teumteum.ui.activity.viewModel.ActivityViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class FillingActivity01Fragment : Fragment(), ActivityWishView, ActivityAiView {
+class FillingActivity01Fragment : Fragment() {
 
     private lateinit var binding: FragmentFillingActivity01Binding
 
@@ -28,6 +28,8 @@ class FillingActivity01Fragment : Fragment(), ActivityWishView, ActivityAiView {
 
     private var selectedCategoryText: String? = null
     private var selectedCategoryButton: View? = null
+
+    private val activityViewModel: ActivityViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -137,6 +139,13 @@ class FillingActivity01Fragment : Fragment(), ActivityWishView, ActivityAiView {
 
         binding.searchBtn.setOnClickListener {
 
+            val request = ActivityWishRequest(
+                estimatedDuration = selectedTimeTag ?: "",
+                categoryId = selectedCategoryButton?.tag as? Long,
+                customCategory = binding.fillingActivityCategoryEt.text.toString()
+            )
+            activityViewModel.activityWish(request)
+
             val bundle = Bundle().apply {
                 putString("selectedTime", selectedTimeTag)
                 putString("selectedCategory", selectedCategoryText)
@@ -152,6 +161,8 @@ class FillingActivity01Fragment : Fragment(), ActivityWishView, ActivityAiView {
                 .addToBackStack(null)
                 .commit()
         }
+
+        setupObservers()
     }
 
     private fun updateNextButtonState() {
@@ -172,35 +183,12 @@ class FillingActivity01Fragment : Fragment(), ActivityWishView, ActivityAiView {
         )
     }
 
-    override fun onGetActivityWishSuccess(code: String, wishes: List<ActivityWishResult>) {
-        Toast.makeText(requireContext(), "채움활동 위시 탐색 성공", Toast.LENGTH_SHORT).show()
-    }
+    private fun setupObservers() {
 
-    override fun onGetActivityWishFailure(code: String, message: String?) {
-        val errorMessage = when (code) {
-            "HOME4042" -> "해당 카테고리를 찾을 수 없습니다."
-            "HOME4003" -> "카테고리는 필수 항목입니다."
-            "HOME4004" -> "카테고리와 직접 입력은 둘 중 하나만 선택해야 합니다."
-            "COMMON400" -> "널이어서는 안됩니다."
-            "COMMON500" -> "서버 오류입니다. 관리자에게 문의해주세요."
-            "NETWORK_ERROR" -> "네트워크 오류가 발생했습니다."
-            "PARSE_ERROR" -> "서버 응답을 해석할 수 없습니다."
-            else -> "위시 조회에 실패했습니다. 다시 시도해주세요."
+        activityViewModel.errorMessage.observe(viewLifecycleOwner) { errorMsg ->
+            errorMsg?.let {
+                Log.e("FillingActivity01Fragment", "에러 발생: $it")
+            }
         }
-        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onGetActivityAiSuccess(code: String, wishes: List<ActivityAiResult>) {
-        Toast.makeText(requireContext(), "채움활동 ai컨텐츠 탐색 성공", Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onGetActivityAiFailure(code: String, message: String?) {
-        val errorMessage = when (code) {
-            "COMMON500" -> "서버 오류입니다. 관리자에게 문의해주세요."
-            "NETWORK_ERROR" -> "네트워크 오류가 발생했습니다."
-            "PARSE_ERROR" -> "서버 응답을 해석할 수 없습니다."
-            else -> "ai컨텐츠 조회에 실패했습니다. 다시 시도해주세요."
-        }
-        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
     }
 }

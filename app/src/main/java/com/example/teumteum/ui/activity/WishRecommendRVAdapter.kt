@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.teumteum.R
-import com.example.teumteum.data.remote.activity.dto.ActivityWishResult
+import com.example.teumteum.data.remote.activity.model.ActivityWishResult
 import com.example.teumteum.databinding.ItemWishlistBinding
 
 class WishRecommendRVAdapter(private var wishList: List<ActivityWishResult>, private val fragmentManager: FragmentManager) : RecyclerView.Adapter<WishRecommendRVAdapter.ViewHolder>() {

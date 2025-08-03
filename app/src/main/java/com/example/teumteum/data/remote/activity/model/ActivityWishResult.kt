@@ -1,4 +1,4 @@
-package com.example.teumteum.data.remote.activity.dto
+package com.example.teumteum.data.remote.activity.model
 
 import com.google.gson.annotations.SerializedName
 
