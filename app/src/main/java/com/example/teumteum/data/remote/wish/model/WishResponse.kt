@@ -1,7 +1,7 @@
 package com.example.teumteum.data.remote.wish.model
 
 import com.example.teumteum.data.entities.Wish
-import com.example.teumteum.data.remote.todo.dto.TodoResult
+import com.example.teumteum.data.remote.todo.model.TodoResult
 import com.google.gson.annotations.SerializedName
 
 data class RegisterWishResponse(
