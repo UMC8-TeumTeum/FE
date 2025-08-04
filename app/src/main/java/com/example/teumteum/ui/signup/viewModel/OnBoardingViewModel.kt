@@ -1,12 +1,12 @@
 package com.example.teumteum.ui.signup.viewModel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.teumteum.data.remote.onboarding.model.AgreementRequest
 import com.example.teumteum.data.remote.onboarding.model.NicknameJobRequest
+import com.example.teumteum.data.remote.onboarding.model.PresignedRequest
 import com.example.teumteum.data.remote.onboarding.model.ProfileImageRequest
 import com.example.teumteum.data.remote.onboarding.model.ScheduleRequest
 import com.example.teumteum.data.remote.onboarding.model.SleepPatternRequest
@@ -53,7 +53,23 @@ class OnBoardingViewModel @Inject constructor(
         }
     }
 
-    /** 프로필 이미지 등록 (선택적) */
+    /** 프리사인드 url 요청 */
+    fun requestPresignedUrl(request: PresignedRequest) {
+        _state.value = OnBoardingUiState.Loading
+        viewModelScope.launch {
+            repository.requestPresignedUrl(request)
+                .onSuccess {
+                    _state.value = OnBoardingUiState.PresignedSuccess(
+                        presignedUrl = it.presignedUrl,
+                        fileName = it.fileName,
+                        contentType = request.contentType
+                    )
+                }
+                .onFailure { handleError(it) }
+        }
+    }
+
+    /** 프로필 이미지 등록 */
     fun postProfileImage(request: ProfileImageRequest) {
         _state.value = OnBoardingUiState.Loading
         viewModelScope.launch {
