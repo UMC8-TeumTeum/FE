@@ -16,9 +16,11 @@ import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
+import androidx.fragment.app.viewModels
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentTodoEditBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -29,11 +31,13 @@ import com.example.teumteum.databinding.DialogConfirmTodoDeleteBinding
 import com.example.teumteum.databinding.DialogConfirmTodoEditBinding
 import com.example.teumteum.ui.calendar.IDateClickListener
 import com.example.teumteum.ui.calendar.MonthlyCalendarFragment
+import com.example.teumteum.ui.todo.viewModel.TodoViewModel
 import com.example.teumteum.ui.wish.WishEditFragment
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -44,7 +48,7 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
 
     private var currentTargetTextView: TextView? = null
 
-    private var todoId: Int = -1
+    private var todoId: Long = -1
 
     private val selectedItems = mutableSetOf<String>()
     private val alarmOptions = listOf("30분 전", "10분 전", "5분 전", "3분 전", "1분 전")
@@ -55,9 +59,19 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
     private var calendarFragmentEnd: MonthlyCalendarFragment? = null
     private var isStartDateSelected = true
 
+    private val todoViewModel: TodoViewModel by viewModels()
+
+    private val alarmLabelToMinutes = mapOf(
+        "30분 전" to 30,
+        "10분 전" to 10,
+        "5분 전" to 5,
+        "3분 전" to 3,
+        "1분 전" to 1
+    )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        todoId = arguments?.getInt("todo_id") ?: -1
+        todoId = arguments?.getLong("todo_id") ?: -1L
     }
 
     override fun onCreateView(
@@ -69,19 +83,6 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val isDummy = arguments?.getBoolean("is_dummy") ?: false
-        if (isDummy) {
-            val title = arguments?.getString("title") ?: ""
-            val start = arguments?.getString("start_time") ?: ""
-            val end = arguments?.getString("end_time") ?: ""
-            val isPublic = arguments?.getBoolean("is_public") ?: false
-
-            binding.todoTitleEt.setText(title)
-            binding.startTimeTv.text = start
-            binding.endTimeTv.text = end
-            binding.categoryToggle03Iv.isChecked = isPublic
-        }
 
         val isAlarmOn = arguments?.let {
             if (it.containsKey("is_alarm_on")) {
@@ -171,7 +172,7 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
             toggleCalendarVisibility()
         }
 
-        if (todoId == 3) {
+        if (todoId == 3L) {
             val deactiveColor = ContextCompat.getColor(requireContext(), R.color.teumteum_deactive)
 
             binding.todoTitleEt.setTextColor(deactiveColor)
@@ -203,10 +204,10 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
             binding.btnPlus.isEnabled = false
             binding.detailTextEt.isEnabled = false
 
-            binding.categoryToggle01Iv.isEnabled = false
-            binding.categoryToggle02Iv.isEnabled = false
-            binding.categoryToggle03Iv.isEnabled = false
-            binding.categoryToggle04Iv.isEnabled = false
+            binding.alarmToggle01Iv.isEnabled = false
+            binding.alarmToggle02Iv.isEnabled = false
+            binding.publicToggle01Iv.isEnabled = false
+            binding.includeToggle01Iv.isEnabled = false
 
             binding.btnTodoDelete.isEnabled = false
             binding.btnTodoSave.isEnabled = false
@@ -214,6 +215,11 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
             Toast.makeText(requireContext(), "이 일정은 편집할 수 없습니다.", Toast.LENGTH_SHORT).show()
         }
 
+        if (todoId != -1L) {
+            todoViewModel.getTodo(todoId)
+        }
+
+        setupObservers()
     }
 
     override fun onStart() {
@@ -595,6 +601,64 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
                     putLong("todo_id", todoId)
                 }
             }
+        }
+    }
+
+    private fun getSelectedRemindAlarms(): List<Int> {
+        val alarms = mutableListOf<Int>()
+
+        if (binding.alarmToggle01Iv.isChecked) {
+            alarms.add(30)
+        }
+        if (binding.alarmToggle02Iv.isChecked) {
+            alarms.add(10)
+        }
+
+        // 추가된 알림 항목들
+        for (i in 0 until binding.alarmLayoutContainer.childCount) {
+            val child = binding.alarmLayoutContainer.getChildAt(i)
+            val toggle = child.findViewById<SwitchCompat>(R.id.alarm_toggle_tv)
+            val labelText = child.findViewById<TextView>(R.id.alarm_set_tv).text.toString()
+
+            if (toggle.isChecked) { // 커스텀 토글이 실제로 체크 가능한 경우
+                alarmLabelToMinutes[labelText]?.let { alarms.add(it) }
+            }
+        }
+
+        return alarms
+    }
+
+    private fun setupObservers() {
+        todoViewModel.todo.observe(viewLifecycleOwner) { todo ->
+
+            binding.todoTitleEt.setText(todo.title)
+
+            val startDateTime = LocalDateTime.parse(todo.startTime)
+            val endDateTime = LocalDateTime.parse(todo.endTime)
+
+            val dateFormatter = DateTimeFormatter.ofPattern("M월 d일 (E)", Locale.KOREAN)
+            val timeFormatter = DateTimeFormatter.ofPattern("a h:mm", Locale.KOREAN)
+
+            binding.startDateTv.text = startDateTime.toLocalDate().format(dateFormatter)
+            binding.endDateTv.text = endDateTime.toLocalDate().format(dateFormatter)
+
+            binding.startTimeTv.text = startDateTime.toLocalTime().format(timeFormatter)
+            binding.endTimeTv.text = endDateTime.toLocalTime().format(timeFormatter)
+
+            binding.detailTextEt.setText(todo.description)
+
+            binding.publicToggle01Iv.isChecked = todo.isPublic
+
+            binding.includeToggle01Iv.isChecked = todo.includeTeum
+
+            getSelectedRemindAlarms()
+
+            Toast.makeText(requireContext(), "투두 정보가 성공적으로 조회되었습니다.", Toast.LENGTH_SHORT).show()
+            parentFragmentManager.setFragmentResult("todo_get", Bundle())
+        }
+
+        todoViewModel.errorMessage.observe(viewLifecycleOwner) { errorMsg ->
+            Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_SHORT).show()
         }
     }
 }

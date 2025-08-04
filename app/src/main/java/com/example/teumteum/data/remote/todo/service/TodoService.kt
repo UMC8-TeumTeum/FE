@@ -5,6 +5,7 @@ import com.example.teumteum.data.remote.todo.model.DeleteTodoResponse
 import com.example.teumteum.data.remote.todo.model.EditTodoRequest
 import com.example.teumteum.data.remote.todo.model.EditTodoResponse
 import com.example.teumteum.data.remote.todo.model.GetTodoResponse
+import com.example.teumteum.data.remote.todo.model.GetTodoResult
 import com.example.teumteum.data.remote.todo.model.RegisterTodoRequest
 import com.example.teumteum.data.remote.todo.model.TodoListResult
 import com.example.teumteum.data.remote.todo.model.TodoResult
@@ -27,7 +28,7 @@ interface TodoService {
     suspend fun getTodoList(@Query("date") date: String): Response<ApiResponse<List<TodoList>>>
 
     @GET("/api/home/todo/{todoId}")
-    suspend fun getTodo(@Path("todoId") todoId: Long): Call<GetTodoResponse>
+    suspend fun getTodo(@Path("todoId") todoId: Long): Response<ApiResponse<GetTodoResult>>
 
     @PUT("/api/home/todo/{todoId}")
     suspend fun editTodo(@Path("todoId") todoId: Long, @Body request: EditTodoRequest): Call<EditTodoResponse>
