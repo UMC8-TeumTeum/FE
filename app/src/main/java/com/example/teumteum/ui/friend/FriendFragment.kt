@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -138,10 +139,13 @@ class FriendFragment : Fragment() {
 
         viewModel.receivedTeums.observe(viewLifecycleOwner) { teumList ->
             if (teumList.isNotEmpty()) {
+                Log.d("RECEIVED_FRAGMENT", "틈 요청 조회 성공 - 개수: ${teumList.size}")
                 binding.emptyTeumRequestLayout.visibility = View.GONE
                 binding.recommendRecyclerView.visibility = View.VISIBLE
                 recommendAdapter.setTeumList(teumList)
             } else {
+                Log.d("RECEIVED_FRAGMENT", "틈 요청이 없습니다.")
+
                 binding.emptyTeumRequestLayout.visibility = View.VISIBLE
                 binding.recommendRecyclerView.visibility = View.GONE
             }

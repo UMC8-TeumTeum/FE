@@ -49,6 +49,8 @@ class FriendProfileFollowFragment : Fragment() {
 
         //  성공 시
         viewModel.friendProfile.observe(viewLifecycleOwner) { result ->
+            Log.d("FRIEND_PROFILE_FRAGMENT", "프로필 조회 성공")
+
             binding.profileNicknameTv.text = result.name
             binding.profileFieldTv.text = result.field
 
