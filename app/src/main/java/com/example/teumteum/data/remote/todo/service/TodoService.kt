@@ -1,14 +1,13 @@
 package com.example.teumteum.data.remote.todo.service
 
+import com.example.teumteum.data.entities.TodoList
 import com.example.teumteum.data.remote.todo.model.DeleteTodoResponse
 import com.example.teumteum.data.remote.todo.model.EditTodoRequest
 import com.example.teumteum.data.remote.todo.model.EditTodoResponse
-import com.example.teumteum.data.remote.todo.model.GetTodoListResponse
 import com.example.teumteum.data.remote.todo.model.GetTodoResponse
 import com.example.teumteum.data.remote.todo.model.RegisterTodoRequest
-import com.example.teumteum.data.remote.todo.model.RegisterTodoResponse
+import com.example.teumteum.data.remote.todo.model.TodoListResult
 import com.example.teumteum.data.remote.todo.model.TodoResult
-import com.example.teumteum.data.remote.wish.model.RegisterWishResponse
 import com.example.teumteum.utils.ApiResponse
 import retrofit2.Call
 import retrofit2.Response
@@ -25,7 +24,7 @@ interface TodoService {
     suspend fun registerTodo(@Body request: RegisterTodoRequest): Response<ApiResponse<TodoResult>>
 
     @GET("/api/home/todolist")
-    suspend fun getTodoList(@Query("date") date: String): Call<GetTodoListResponse>
+    suspend fun getTodoList(@Query("date") date: String): Response<ApiResponse<List<TodoList>>>
 
     @GET("/api/home/todo/{todoId}")
     suspend fun getTodo(@Path("todoId") todoId: Long): Call<GetTodoResponse>

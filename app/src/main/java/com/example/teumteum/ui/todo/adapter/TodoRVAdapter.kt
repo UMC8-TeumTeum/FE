@@ -3,15 +3,15 @@ package com.example.teumteum.ui.todo.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.teumteum.R
-import com.example.teumteum.data.entities.TodoHomeItem
+import com.example.teumteum.data.entities.TodoList
+import com.example.teumteum.data.remote.wish.model.WishlistItem
 import com.example.teumteum.databinding.ItemTodolistBinding
 import com.example.teumteum.ui.todo.TodoEditFragment
 
-class TodoRVAdapter(private val fragmentManager: FragmentManager, private val todoList: List<TodoHomeItem>) : RecyclerView.Adapter<TodoRVAdapter.ViewHolder>() {
+class TodoRVAdapter(private val fragmentManager: FragmentManager, private var todoList: List<TodoList>) : RecyclerView.Adapter<TodoRVAdapter.ViewHolder>() {
 
     inner class ViewHolder(val binding: ItemTodolistBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -31,32 +31,32 @@ class TodoRVAdapter(private val fragmentManager: FragmentManager, private val to
             if (item.isPublic) R.drawable.ic_unlock_sv else R.drawable.ic_lock_sv
         )
 
-        // 반복일정 관련 작업 시 수정 필요
-        if (item.id == 3) {
-            binding.root.setCardBackgroundColor(ContextCompat.getColor(binding.root.context, R.color.main_2))
-        } else {
-            binding.root.setCardBackgroundColor(ContextCompat.getColor(binding.root.context, R.color.white))
-        }
+//        // 반복일정 관련 작업 시 수정 필요
+//        if (item.id == 3) {
+//            binding.root.setCardBackgroundColor(ContextCompat.getColor(binding.root.context, R.color.main_2))
+//        } else {
+//            binding.root.setCardBackgroundColor(ContextCompat.getColor(binding.root.context, R.color.white))
+//        }
 
         binding.root.setOnClickListener {
-            val bottomSheet = TodoEditFragment.newInstanceWithTodoDummy(item)
+            val bottomSheet = TodoEditFragment.newInstance(item.id)
             bottomSheet.show(fragmentManager, bottomSheet.tag)
         }
 
-        if (item.isAlarmOn == null) {
+        if (item.hasAlarm == null) {
             binding.ivAlarm.visibility = View.GONE
             binding.ivAlarm.setOnClickListener(null)
         } else {
             binding.ivAlarm.visibility = View.VISIBLE
             binding.ivAlarm.setImageResource(
-                if (item.isAlarmOn == true) R.drawable.ic_alarm_on_sv
+                if (item.hasAlarm == true) R.drawable.ic_alarm_on_sv
                 else R.drawable.ic_alarm_off_sv
             )
 
             binding.ivAlarm.setOnClickListener {
-                item.isAlarmOn = !(item.isAlarmOn ?: false)
+//                item.hasAlarm = !(item.hasAlarm ?: false)
                 binding.ivAlarm.setImageResource(
-                    if (item.isAlarmOn == true) R.drawable.ic_alarm_on_sv
+                    if (item.hasAlarm == true) R.drawable.ic_alarm_on_sv
                     else R.drawable.ic_alarm_off_sv
                 )
             }
@@ -74,5 +74,10 @@ class TodoRVAdapter(private val fragmentManager: FragmentManager, private val to
         } catch (e: Exception) {
             time // 변환 실패 시 원본 반환
         }
+    }
+
+    fun updateList(newList: List<TodoList>) {
+        todoList = newList
+        notifyDataSetChanged()
     }
 }

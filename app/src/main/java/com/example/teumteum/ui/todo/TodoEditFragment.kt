@@ -29,6 +29,7 @@ import com.example.teumteum.databinding.DialogConfirmTodoDeleteBinding
 import com.example.teumteum.databinding.DialogConfirmTodoEditBinding
 import com.example.teumteum.ui.calendar.IDateClickListener
 import com.example.teumteum.ui.calendar.MonthlyCalendarFragment
+import com.example.teumteum.ui.wish.WishEditFragment
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
@@ -359,22 +360,6 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
         }
     }
 
-    companion object {
-        fun newInstanceWithTodoDummy(item: TodoHomeItem): TodoEditFragment {
-            return TodoEditFragment().apply {
-                arguments = Bundle().apply {
-                    putBoolean("is_dummy", true)
-                    putInt("todo_id", item.id)
-                    putString("title", item.title)
-                    putString("start_time", item.startTime)
-                    putString("end_time", item.endTime)
-                    putBoolean("is_public", item.isPublic)
-                    item.isAlarmOn?.let { putBoolean("is_alarm_on", it) }
-                }
-            }
-        }
-    }
-
     private fun applyTextStyleToNumberPicker(picker: NumberPicker, context: Context) {
         try {
             val count = picker.childCount
@@ -601,5 +586,15 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
         }
 
         isCalendarVisible = false
+    }
+
+    companion object {
+        fun newInstance(todoId: Long): TodoEditFragment {
+            return TodoEditFragment().apply {
+                arguments = Bundle().apply {
+                    putLong("todo_id", todoId)
+                }
+            }
+        }
     }
 }

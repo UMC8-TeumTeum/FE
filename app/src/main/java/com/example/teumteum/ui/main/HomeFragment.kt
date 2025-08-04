@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.viewpager2.widget.ViewPager2
 import com.example.teumteum.ui.calendar.IDateClickListener
 import com.example.teumteum.R
@@ -28,11 +29,13 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 import com.example.teumteum.data.TimeBlock
+import com.example.teumteum.data.entities.TodoList
 import com.example.teumteum.data.remote.home.HomeService
 import com.example.teumteum.data.remote.home.dto.ScheduleResult
 import com.example.teumteum.ui.clock.ChartUtils
 import com.example.teumteum.ui.clock.IconPieChartRenderer
 import com.example.teumteum.ui.main.view.HomeView
+import com.example.teumteum.ui.todo.viewModel.TodoViewModel
 import com.example.teumteum.utils.applyBlurShadow
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -46,6 +49,8 @@ class HomeFragment : Fragment(), IDateClickListener, HomeView {
     private lateinit var selectedDate: LocalDate
 
     private lateinit var adapter: TodoRVAdapter
+    private var todolistItems: List<TodoList> = emptyList()
+    private val todoViewModel: TodoViewModel by viewModels()
 
     @Inject
     lateinit var homeService: HomeService
@@ -125,8 +130,8 @@ class HomeFragment : Fragment(), IDateClickListener, HomeView {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-//        adapter = TodoRVAdapter(parentFragmentManager, todoDummyList)
-//        binding.todolistRv.adapter = adapter
+        adapter = TodoRVAdapter(parentFragmentManager, todolistItems)
+        binding.todolistRv.adapter = adapter
         val date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
         homeService.setHomeView(this)
         homeService.getTodaySchedule(date)
@@ -160,8 +165,12 @@ class HomeFragment : Fragment(), IDateClickListener, HomeView {
 
         // 투두 등록 성공 이벤트 수신
         parentFragmentManager.setFragmentResultListener("todo_register", viewLifecycleOwner) { _, _ ->
-//            refreshTodolist()
+            refreshTodolist()
         }
+
+        todoViewModel.getTodoList(date)
+
+        setupObservers()
     }
 
     override fun onResume() {
@@ -363,6 +372,28 @@ class HomeFragment : Fragment(), IDateClickListener, HomeView {
         val msg = "약관 동의 실패 (code: $code, message: ${message ?: "없음"})"
         Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
         Log.e("HOME_FRAGMENT", msg)
+    }
+
+    private fun refreshTodolist() {
+        val today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        todoViewModel.getTodoList(date = today)
+    }
+
+    private fun setupObservers() {
+        todoViewModel.todolistItems.observe(viewLifecycleOwner) { itemList ->
+            todolistItems = itemList
+
+            if (itemList.isEmpty()) {
+                binding.todolistRv.visibility = View.GONE
+            } else {
+                binding.todolistRv.visibility = View.VISIBLE
+                adapter.updateList(itemList)
+            }
+        }
+
+        todoViewModel.errorMessage.observe(viewLifecycleOwner) { error ->
+            Toast.makeText(requireContext(), "투두리스트 조회 실패: $error", Toast.LENGTH_SHORT).show()
+        }
     }
 
 }
