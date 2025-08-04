@@ -11,104 +11,46 @@ import android.widget.Button
 import android.widget.NumberPicker
 import android.widget.TextView
 import android.widget.Toast
+import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.onboarding.OnBoardingService
 import com.example.teumteum.data.remote.onboarding.model.SleepPatternRequest
 import com.example.teumteum.databinding.FragmentOnBoardingSleepPatternBinding
 import com.example.teumteum.ui.signup.view.SleepPatternView
+import com.example.teumteum.ui.signup.viewModel.OnBoardingUiState
+import com.example.teumteum.ui.signup.viewModel.OnBoardingViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
-@AndroidEntryPoint
-class OnBoardingSleepPatternFragment : Fragment(), SleepPatternView {
+class OnBoardingSleepPatternFragment : Fragment() {
 
     private lateinit var binding: FragmentOnBoardingSleepPatternBinding
+    private val viewModel: OnBoardingViewModel by activityViewModels()
 
     private var selectedStartTime: LocalTime? = null
     private var selectedEndTime: LocalTime? = null
 
-    @Inject
-    lateinit var onBoardingService: OnBoardingService
-
-    override fun onSleepPatternSuccess(code: String) {
-        val msg = "수면패턴 입력 완료 (code: $code)"
-        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
-        Log.d("SLEEP_PATTERN_FRAGMENT", msg)
-
-        val fragment = OnBoardingScheduleFragment().apply {
-            arguments = Bundle().apply {
-                selectedStartTime?.let { putString("sleepStart", it.toString()) }
-                selectedEndTime?.let { putString("sleepEnd", it.toString()) }
-            }
-        }
-
-        parentFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, fragment)
-            .addToBackStack(null)
-            .commit()
-    }
-
-    override fun onSleepPatternFailure(code: String, message: String?) {
-        val msg = "수면 패턴 입력 실패 (code: $code, message: ${message ?: "없음"})"
-        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
-        Log.e("SLEEP_PATTERN_FRAGMENT", msg)
-
-        //온보딩 단계가 아닐 경우 - 이후 테스트를 위해 화면 이동하도록 구현
-        if (message?.contains("ONBOARDING4001") == true) {
-            Toast.makeText(requireContext(), "온보딩 단계가 아닙니다.", Toast.LENGTH_SHORT).show()
-
-            val fragment = OnBoardingScheduleFragment().apply {
-                arguments = Bundle().apply {
-                    selectedStartTime?.let { putString("sleepStart", it.toString()) }
-                    selectedEndTime?.let { putString("sleepEnd", it.toString()) }
-                }
-            }
-
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, fragment)
-                .addToBackStack(null)
-                .commit()
-        }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-
+    ): View {
         binding = FragmentOnBoardingSleepPatternBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         (activity as? SignUpActivity)?.setProgressBar(60)
 
-        binding.nextBtn.setOnClickListener {
-            //입력 값이 있을 때 만 호출
-            if(selectedStartTime != null && selectedEndTime != null){
-                val request = getSleepPatternRequest()
-                onBoardingService.setSleepPatternView(this)
-                onBoardingService.postSleepPattern(request)
-            }else{
-                val fragment = OnBoardingScheduleFragment().apply {
-                    arguments = Bundle().apply {
-                        selectedStartTime?.let { putString("sleepStart", it.toString()) }
-                        selectedEndTime?.let { putString("sleepEnd", it.toString()) }
-                    }
-                }
+        observeViewModel()
 
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container, fragment)
-                    .addToBackStack(null)
-                    .commit()
+        binding.nextBtn.setOnClickListener {
+            if (selectedStartTime != null && selectedEndTime != null) {
+                viewModel.postSleepPattern(getSleepPatternRequest())
+            } else {
+                navigateToNext()
             }
         }
 
@@ -128,7 +70,7 @@ class OnBoardingSleepPatternFragment : Fragment(), SleepPatternView {
             }
         }
 
-        binding.startUpArrow.setOnClickListener{
+        binding.startUpArrow.setOnClickListener {
             changeHour(binding.startChoiceTv, true)
         }
 
@@ -145,64 +87,95 @@ class OnBoardingSleepPatternFragment : Fragment(), SleepPatternView {
         }
     }
 
-    private fun showCustomTimePicker(onTimeSelected: (LocalTime) -> Unit) {
-        val dialogView = layoutInflater.inflate(R.layout.dialog_time_picker, null, false)
+    private fun observeViewModel() {
+        viewModel.state.observe(viewLifecycleOwner) { state ->
+            when (state) {
+                is OnBoardingUiState.Loading -> {
+                    binding.nextBtn.isEnabled = false
+                }
 
+                is OnBoardingUiState.Success -> {
+                    binding.nextBtn.isEnabled = true
+                    navigateToNext()
+                }
+
+                is OnBoardingUiState.Error -> {
+                    binding.nextBtn.isEnabled = true
+                    Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
+
+                    // 온보딩 단계를 넘겼을 때도 다음 화면으로 이동
+                    if (state.code.contains("ONBOARDING4001")) {
+                        navigateToNext()
+                    }
+                }
+
+                else -> Unit
+            }
+        }
+    }
+
+    private fun getSleepPatternRequest(): SleepPatternRequest {
+        return SleepPatternRequest(
+            sleepTime = selectedStartTime.toString(),
+            wakeTime = selectedEndTime.toString()
+        )
+    }
+
+    private fun navigateToNext() {
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, OnBoardingScheduleFragment().apply {
+                arguments = Bundle().apply {
+                    selectedStartTime?.let { putString("sleepStart", it.toString()) }
+                    selectedEndTime?.let { putString("sleepEnd", it.toString()) }
+                }
+            })
+            .addToBackStack(null)
+            .commit()
+
+        viewModel.resetState()
+    }
+
+    private fun showCustomTimePicker(onTimeSelected: (LocalTime) -> Unit) {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_time_picker, null)
         val ampmPicker = dialogView.findViewById<NumberPicker>(R.id.ampmPicker01Np)
         val hourPicker = dialogView.findViewById<NumberPicker>(R.id.hourPicker01Np)
         val minutePicker = dialogView.findViewById<NumberPicker>(R.id.minutePicker01Np)
-
         val minuteValues = arrayOf("00", "10", "20", "30", "40", "50")
 
-        // Picker 초기화
         ampmPicker.minValue = 0
         ampmPicker.maxValue = 1
         ampmPicker.displayedValues = arrayOf("AM", "PM")
 
         hourPicker.minValue = 1
         hourPicker.maxValue = 12
-        hourPicker.wrapSelectorWheel = true
 
         minutePicker.minValue = 0
         minutePicker.maxValue = minuteValues.size - 1
         minutePicker.displayedValues = minuteValues
-        minutePicker.wrapSelectorWheel = true
 
-        val dialog = BottomSheetDialog(requireContext())
-        dialog.setContentView(dialogView)
-
-        // 배경 적용
-        dialog.setOnShowListener { dialogInterface ->
-            val bottomSheet = (dialogInterface as BottomSheetDialog)
-                .findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
-            bottomSheet?.setBackgroundResource(R.drawable.calendar_background)
+        val dialog = BottomSheetDialog(requireContext()).apply {
+            setContentView(dialogView)
+            setOnShowListener {
+                findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+                    ?.setBackgroundResource(R.drawable.calendar_background)
+            }
         }
 
-        // 취소 버튼
         dialogView.findViewById<Button>(R.id.btnCancel).setOnClickListener {
             dialog.dismiss()
         }
 
-        // 확인 버튼
         dialogView.findViewById<Button>(R.id.btnOk).setOnClickListener {
-            val isAm = ampmPicker.value == 0
-
-            var hour = hourPicker.value % 12
-            if (!isAm) hour += 12
-            if (hour == 0) hour = 0
-
+            val hour = hourPicker.value % 12 + if (ampmPicker.value == 1) 12 else 0
             val minute = minuteValues[minutePicker.value].toInt()
-
             val selectedTime = LocalTime.of(hour, minute)
             onTimeSelected(selectedTime)
-
             dialog.dismiss()
         }
 
         dialog.show()
     }
 
-    //화살표로 시간 증가/감소
     private fun changeHour(targetTextView: TextView, increase: Boolean) {
         val currentText = targetTextView.text.toString()
         if (currentText.isNotBlank()) {
@@ -219,19 +192,16 @@ class OnBoardingSleepPatternFragment : Fragment(), SleepPatternView {
         }
     }
 
-    //다음으로 버튼 업데이트
     private fun updateNextButtonState() {
         val bothSelected = selectedStartTime != null && selectedEndTime != null
 
         binding.nextBtn.isEnabled = bothSelected
-
         binding.nextBtn.setBackgroundColor(
             if (bothSelected)
                 requireContext().getColor(R.color.black)
             else
                 Color.parseColor("#F6F6F6")
         )
-
         binding.nextBtn.setTextColor(
             if (bothSelected)
                 requireContext().getColor(R.color.white)
@@ -239,12 +209,4 @@ class OnBoardingSleepPatternFragment : Fragment(), SleepPatternView {
                 requireContext().getColor(R.color.black)
         )
     }
-
-    private fun getSleepPatternRequest(): SleepPatternRequest{
-        return SleepPatternRequest(
-            sleepTime = selectedStartTime.toString(),
-            wakeTime = selectedEndTime.toString()
-        )
-    }
-
 }
