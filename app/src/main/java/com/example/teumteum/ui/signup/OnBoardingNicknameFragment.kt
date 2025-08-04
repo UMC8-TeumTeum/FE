@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
-import com.example.teumteum.data.remote.onboarding.model.NicknameJobRequest
 import com.example.teumteum.databinding.FragmentOnBoardingNicknameBinding
 import com.example.teumteum.ui.signup.viewModel.OnBoardingUiState
 import com.example.teumteum.ui.signup.viewModel.OnBoardingViewModel
@@ -41,16 +40,39 @@ class OnBoardingNicknameFragment : Fragment() {
     }
 
     private fun setupUI() {
+        // 텍스트 입력 ViewModel 업데이트
+        binding.nicknameEt.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                viewModel.setNickname(s.toString())
+                updateNextButtonState()
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+
+        binding.fieldEt.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                viewModel.setField(s.toString())
+                updateNextButtonState()
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+
         binding.nextBtn.setOnClickListener {
-            val request = getNicknameJobRequest()
-            viewModel.postNicknameAndJob(request)
+            viewModel.postNicknameAndJob()
         }
 
-        binding.nicknameClearBtn.setOnClickListener { binding.nicknameEt.setText("") }
+        binding.nicknameClearBtn.setOnClickListener {
+            binding.nicknameEt.setText("")
+        }
         binding.fieldClearBtn.setOnClickListener { binding.fieldEt.setText("") }
 
         binding.nicknameEt.addTextChangedListener(textWatcher)
         binding.fieldEt.addTextChangedListener(textWatcher)
+
+        binding.nicknameEt.setText(viewModel.nickname.value)
+        binding.fieldEt.setText(viewModel.field.value)
     }
 
     private val textWatcher = object : TextWatcher {
@@ -62,7 +84,9 @@ class OnBoardingNicknameFragment : Fragment() {
     }
 
     private fun updateNextButtonState() {
-        val enabled = binding.nicknameEt.text.isNotEmpty() && binding.fieldEt.text.isNotEmpty()
+        val enabled = viewModel.nickname.value?.isNotEmpty() == true &&
+                viewModel.field.value?.isNotEmpty() == true
+
         binding.nextBtn.isEnabled = enabled
         binding.nextBtn.setBackgroundColor(
             if (enabled) requireContext().getColor(R.color.black)
@@ -71,13 +95,6 @@ class OnBoardingNicknameFragment : Fragment() {
         binding.nextBtn.setTextColor(
             if (enabled) requireContext().getColor(R.color.white)
             else requireContext().getColor(R.color.black)
-        )
-    }
-
-    private fun getNicknameJobRequest(): NicknameJobRequest {
-        return NicknameJobRequest(
-            nickname = binding.nicknameEt.text.toString(),
-            jobField = binding.fieldEt.text.toString()
         )
     }
 
@@ -105,11 +122,7 @@ class OnBoardingNicknameFragment : Fragment() {
     }
 
     private fun navigateToNext() {
-        val fragment = OnBoardingProfileFragment().apply {
-            arguments = Bundle().apply {
-                putString("nickname", binding.nicknameEt.text.toString())
-            }
-        }
+        val fragment = OnBoardingProfileFragment()
 
         parentFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)

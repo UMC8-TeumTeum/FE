@@ -11,6 +11,7 @@ import android.widget.Button
 import android.widget.NumberPicker
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.onboarding.model.SleepPatternRequest
@@ -43,11 +44,25 @@ class OnBoardingSleepPatternFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         (activity as? SignUpActivity)?.setProgressBar(60)
 
+        selectedStartTime = viewModel.sleepStartTime.value
+        selectedEndTime = viewModel.sleepEndTime.value
+
         observeViewModel()
 
+        viewModel.sleepStartTime.value?.let {
+            binding.startChoiceTv.text = it.format(DateTimeFormatter.ofPattern("HH:mm"))
+        }
+        viewModel.sleepEndTime.value?.let {
+            binding.endChoiceTv.text = it.format(DateTimeFormatter.ofPattern("HH:mm"))
+        }
+
+        updateNextButtonState()
+
         binding.nextBtn.setOnClickListener {
-            if (selectedStartTime != null && selectedEndTime != null) {
-                viewModel.postSleepPattern(getSleepPatternRequest())
+            val start = viewModel.sleepStartTime.value
+            val end = viewModel.sleepEndTime.value
+            if (start != null && end != null) {
+                viewModel.postSleepPattern(SleepPatternRequest(start.toString(), end.toString()))
             } else {
                 navigateToNext()
             }
@@ -55,7 +70,7 @@ class OnBoardingSleepPatternFragment : Fragment() {
 
         binding.sleepStartContainer.setOnClickListener {
             showCustomTimePicker { time ->
-                selectedStartTime = time
+                viewModel.setSleepStartTime(time)
                 binding.startChoiceTv.text = time.format(DateTimeFormatter.ofPattern("HH:mm"))
                 updateNextButtonState()
             }
@@ -63,35 +78,33 @@ class OnBoardingSleepPatternFragment : Fragment() {
 
         binding.sleepEndContainer.setOnClickListener {
             showCustomTimePicker { time ->
-                selectedEndTime = time
+                viewModel.setSleepEndTime(time)
                 binding.endChoiceTv.text = time.format(DateTimeFormatter.ofPattern("HH:mm"))
                 updateNextButtonState()
             }
         }
 
         binding.startUpArrow.setOnClickListener {
-            changeHour(binding.startChoiceTv, true)
+            changeHour(binding.startChoiceTv, true, true)
         }
 
         binding.startDownArrow.setOnClickListener {
-            changeHour(binding.startChoiceTv, false)
+            changeHour(binding.startChoiceTv, false, true)
         }
 
         binding.endUpArrow.setOnClickListener {
-            changeHour(binding.endChoiceTv, true)
+            changeHour(binding.endChoiceTv, true, false)
         }
 
         binding.endDownArrow.setOnClickListener {
-            changeHour(binding.endChoiceTv, false)
+            changeHour(binding.endChoiceTv, false, false)
         }
     }
 
     private fun observeViewModel() {
         viewModel.state.observe(viewLifecycleOwner) { state ->
             when (state) {
-                is OnBoardingUiState.Loading -> {
-                    binding.nextBtn.isEnabled = false
-                }
+                is OnBoardingUiState.Loading -> binding.nextBtn.isEnabled = false
 
                 is OnBoardingUiState.Success -> {
                     binding.nextBtn.isEnabled = true
@@ -101,11 +114,7 @@ class OnBoardingSleepPatternFragment : Fragment() {
                 is OnBoardingUiState.Error -> {
                     binding.nextBtn.isEnabled = true
                     Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
-
-                    // 온보딩 단계를 넘겼을 때도 다음 화면으로 이동
-                    if (state.code.contains("ONBOARDING4001")) {
-                        navigateToNext()
-                    }
+                    if (state.code.contains("ONBOARDING4001")) navigateToNext()
                 }
 
                 else -> Unit
@@ -122,12 +131,7 @@ class OnBoardingSleepPatternFragment : Fragment() {
 
     private fun navigateToNext() {
         parentFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, OnBoardingScheduleFragment().apply {
-                arguments = Bundle().apply {
-                    selectedStartTime?.let { putString("sleepStart", it.toString()) }
-                    selectedEndTime?.let { putString("sleepEnd", it.toString()) }
-                }
-            })
+            .replace(R.id.fragment_container, OnBoardingScheduleFragment())
             .addToBackStack(null)
             .commit()
 
@@ -175,34 +179,38 @@ class OnBoardingSleepPatternFragment : Fragment() {
         dialog.show()
     }
 
-    private fun changeHour(targetTextView: TextView, increase: Boolean) {
+    private fun changeHour(targetTextView: TextView, increase: Boolean, isStart: Boolean) {
         val currentText = targetTextView.text.toString()
         if (currentText.isNotBlank()) {
             val currentTime = LocalTime.parse(currentText)
             val newTime = if (increase) currentTime.plusHours(1) else currentTime.minusHours(1)
             targetTextView.text = newTime.format(DateTimeFormatter.ofPattern("HH:mm"))
 
-            if (targetTextView == binding.startChoiceTv) {
-                selectedStartTime = newTime
-            } else if (targetTextView == binding.endChoiceTv) {
-                selectedEndTime = newTime
+            if (isStart) {
+                viewModel.setSleepStartTime(newTime)
+            } else {
+                viewModel.setSleepEndTime(newTime)
             }
+
             updateNextButtonState()
         }
     }
 
     private fun updateNextButtonState() {
-        val bothSelected = selectedStartTime != null && selectedEndTime != null
+        val start = viewModel.sleepStartTime.value
+        val end = viewModel.sleepEndTime.value
 
-        binding.nextBtn.isEnabled = bothSelected
+        val shouldEnable = (start != null && end != null) || (start == null && end == null)
+
+        binding.nextBtn.isEnabled = shouldEnable
         binding.nextBtn.setBackgroundColor(
-            if (bothSelected)
+            if (shouldEnable)
                 requireContext().getColor(R.color.black)
             else
                 Color.parseColor("#F6F6F6")
         )
         binding.nextBtn.setTextColor(
-            if (bothSelected)
+            if (shouldEnable)
                 requireContext().getColor(R.color.white)
             else
                 requireContext().getColor(R.color.black)

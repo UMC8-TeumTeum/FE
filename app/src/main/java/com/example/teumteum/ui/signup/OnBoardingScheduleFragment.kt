@@ -19,7 +19,6 @@ import com.example.teumteum.ui.signup.data.Schedule
 import com.example.teumteum.data.remote.onboarding.model.ScheduleRequest
 import com.example.teumteum.data.remote.onboarding.model.Week
 import com.example.teumteum.ui.signup.view.ScheduleView
-import com.example.teumteum.ui.signup.viewModel.OnBoardingStep
 import com.example.teumteum.ui.signup.viewModel.OnBoardingUiState
 import com.example.teumteum.ui.signup.viewModel.OnBoardingViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -108,9 +107,7 @@ class OnBoardingScheduleFragment : Fragment() {
                 onScheduleAdded = { schedule ->
                     list.add(schedule)
                     scheduleAdapter.submitList(list.toList())
-                },
-                sleepStart = sleepStart,
-                sleepEnd = sleepEnd
+                }
             )
             bottomSheet.show(parentFragmentManager, "BottomSheetScheduleFragment")
         }
@@ -171,9 +168,7 @@ class OnBoardingScheduleFragment : Fragment() {
         viewModel.state.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is OnBoardingUiState.Success -> {
-                    if (viewModel.step.value == OnBoardingStep.Reminder) {
-                        navigateToNext()
-                    }
+                    navigateToNext()
                 }
                 is OnBoardingUiState.Error -> {
                     Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
