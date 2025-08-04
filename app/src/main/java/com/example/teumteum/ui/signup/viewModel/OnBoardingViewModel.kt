@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.teumteum.ui.signup.data.Schedule
 import com.example.teumteum.data.remote.onboarding.model.AgreementRequest
 import com.example.teumteum.data.remote.onboarding.model.NicknameJobRequest
 import com.example.teumteum.data.remote.onboarding.model.PresignedRequest
@@ -26,6 +27,8 @@ class OnBoardingViewModel @Inject constructor(
 
     private val _step = MutableLiveData<OnBoardingStep>(OnBoardingStep.Agreement)
     val step: LiveData<OnBoardingStep> get() = _step
+
+    val scheduleMap = mutableMapOf<Int, MutableList<Schedule>>()
 
     /** 약관 동의  */
     fun postAgreements(request: AgreementRequest) {
@@ -101,8 +104,8 @@ class OnBoardingViewModel @Inject constructor(
         viewModelScope.launch {
             repository.postSchedules(request)
                 .onSuccess {
-                    _state.value = OnBoardingUiState.Success
                     _step.value = OnBoardingStep.Reminder
+                    _state.value = OnBoardingUiState.Success
                 }
                 .onFailure { handleError(it) }
         }

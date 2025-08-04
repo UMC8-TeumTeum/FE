@@ -11,7 +11,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import com.example.teumteum.R
-import com.example.teumteum.data.Schedule
+import com.example.teumteum.ui.signup.data.Schedule
 import com.example.teumteum.databinding.FragmentBottomSheetScheduleBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
