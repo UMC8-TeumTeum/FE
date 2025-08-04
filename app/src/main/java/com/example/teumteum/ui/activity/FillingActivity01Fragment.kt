@@ -5,10 +5,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.activity.model.ActivityWishRequest
 import com.example.teumteum.databinding.FragmentFillingActivity01Binding
@@ -29,7 +28,7 @@ class FillingActivity01Fragment : Fragment() {
     private var selectedCategoryText: String? = null
     private var selectedCategoryButton: View? = null
 
-    private val activityViewModel: ActivityViewModel by viewModels()
+    private val activityViewModel: ActivityViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -138,12 +137,21 @@ class FillingActivity01Fragment : Fragment() {
         }
 
         binding.searchBtn.setOnClickListener {
+            val estimatedDuration = selectedTimeTag ?: ""
+            val categoryId = selectedCategoryButton?.tag as? Long
+            val customCategory = binding.fillingActivityCategoryEt.text.toString()
 
             val request = ActivityWishRequest(
                 estimatedDuration = selectedTimeTag ?: "",
                 categoryId = selectedCategoryButton?.tag as? Long,
                 customCategory = binding.fillingActivityCategoryEt.text.toString()
             )
+
+            // 🔵 요청 파라미터 로그 출력
+            Log.d("FillingActivity01Fragment", "⏱ estimatedDuration = $estimatedDuration")
+            Log.d("FillingActivity01Fragment", "📂 categoryId = $categoryId")
+            Log.d("FillingActivity01Fragment", "✍ customCategory = $customCategory")
+
             activityViewModel.activityWish(request)
 
             val bundle = Bundle().apply {

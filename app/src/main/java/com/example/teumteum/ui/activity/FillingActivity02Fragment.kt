@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
 import com.example.teumteum.data.entities.AiRecommend
 import com.example.teumteum.data.remote.activity.model.ActivityWishResult
@@ -33,7 +33,7 @@ class FillingActivity02Fragment : Fragment() {
         AiRecommend(3, "독서하기", "30m", "자기계발")
     )
 
-    private val activityViewModel: ActivityViewModel by viewModels()
+    private val activityViewModel: ActivityViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -91,13 +91,14 @@ class FillingActivity02Fragment : Fragment() {
     }
 
     private fun setupObservers() {
-        activityViewModel.activityWishSuccess.observe(viewLifecycleOwner) { success ->
-            if (success) {
-                Toast.makeText(requireContext(), "채움활동 위시가 성공적으로 조회되었습니다.", Toast.LENGTH_SHORT).show()
-            }
-        }
 
         activityViewModel.activityWishes.observe(viewLifecycleOwner) { wishes ->
+            val filtered = wishes.filter { it.content.isNotBlank() }
+            Log.d("위시확인", "받은 위시 개수: ${filtered.size}")
+            filtered.forEach {
+                Log.d("위시", "id=${it.id}, content='${it.content}'")
+            }
+
             wishList.clear()
             wishList.addAll(wishes)
 

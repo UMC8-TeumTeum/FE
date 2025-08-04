@@ -33,7 +33,9 @@ class ActivityViewModel @Inject constructor(
             val result = activityRepository.activityWish(request)
             result.onSuccess { response ->
                 _activityWishSuccess.value = true
-                _activityWishes.value = response.result?.wishes ?: emptyList()
+                _activityWishes.value = response.result?.wishes
+                    ?.filter { it.content.isNotBlank() }
+                    .orEmpty()
             }
             result.onFailure { e ->
                 _errorMessage.value = e.localizedMessage ?: "채움활동 위시 조회에 실패했습니다."
