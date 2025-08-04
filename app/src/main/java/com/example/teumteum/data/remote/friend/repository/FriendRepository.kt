@@ -1,9 +1,6 @@
 package com.example.teumteum.data.remote.friend.repository
 
-import com.example.teumteum.data.remote.friend.model.FriendProfileResult
-import com.example.teumteum.data.remote.friend.model.FriendSearchResult
-import com.example.teumteum.data.remote.friend.model.TeumReceivedItem
-import com.example.teumteum.data.remote.friend.model.TeumRequest
+import com.example.teumteum.data.remote.friend.model.*
 import com.example.teumteum.data.remote.friend.service.FriendService
 import javax.inject.Inject
 
@@ -34,11 +31,12 @@ class FriendRepository @Inject constructor(
         val response = api.getReceivedTeumRequests()
         val body = response.body()
         if (response.isSuccessful && body?.isSuccess == true) {
-            body.result?.content ?: emptyList()  // <-- result 내부에 리스트가 있는 경우
+            body.result?.content ?: emptyList()  //  수정됨
         } else {
             throw Exception("${body?.code ?: "HTTP ${response.code()}"} - ${body?.message ?: response.message()}")
         }
     }
+
 
     suspend fun sendTeumRequest(request: TeumRequest): Result<Int> = runCatching {
         val response = api.sendTeumRequest(request)

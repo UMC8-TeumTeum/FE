@@ -4,13 +4,6 @@ import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 
-data class TeumReceivedResponse(
-    @SerializedName("isSuccess") val isSuccess: Boolean,
-    @SerializedName("code") val code: String,
-    @SerializedName("message") val message: String,
-    @SerializedName("result") val result: TeumReceivedResult?
-)
-
 data class TeumReceivedResult(
     @SerializedName("totalElements") val totalElements: Long,
     @SerializedName("totalPages") val totalPages: Int,
@@ -68,3 +61,4 @@ data class PageableInfo(
     @SerializedName("pageSize") val pageSize: Int,
     @SerializedName("unpaged") val unpaged: Boolean
 ) : Parcelable
+

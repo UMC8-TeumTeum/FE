@@ -2,13 +2,6 @@ package com.example.teumteum.data.remote.friend.model
 
 import com.google.gson.annotations.SerializedName
 
-data class FriendProfileResponse(
-    @SerializedName("isSuccess") val isSuccess: Boolean,
-    @SerializedName("code") val code: String,
-    @SerializedName("message") val message: String,
-    @SerializedName("result") val result: FriendProfileResult?
-)
-
 data class FriendProfileResult(
     @SerializedName("userId") val userId: Int,
     @SerializedName("name") val name: String,
