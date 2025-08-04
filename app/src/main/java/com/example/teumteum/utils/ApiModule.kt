@@ -6,6 +6,7 @@ import com.example.teumteum.data.remote.calendar.CalendarRetrofitInterface
 import com.example.teumteum.data.remote.friend.service.FriendService
 import com.example.teumteum.data.remote.home.HomeRetrofitInterface
 import com.example.teumteum.data.remote.onboarding.OnBoardingRetrofitInterface
+import com.example.teumteum.data.remote.onboarding.service.OnBoardingService
 import com.example.teumteum.data.remote.wish.service.WishService
 import com.example.teumteum.data.remote.todo.service.TodoService
 import dagger.Module
@@ -14,6 +15,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import javax.inject.Singleton
+import kotlin.jvm.java
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -63,7 +65,13 @@ class ApiModule {
 
     @Provides
     @Singleton
-    fun provideOnBoardingApi(retrofit: Retrofit): OnBoardingRetrofitInterface {
+    fun provideOnBoardingApi(retrofit: Retrofit): OnBoardingService {
+        return retrofit.create(OnBoardingService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideOnBoardingRetrofitInterface(retrofit: Retrofit): OnBoardingRetrofitInterface {
         return retrofit.create(OnBoardingRetrofitInterface::class.java)
     }
 }

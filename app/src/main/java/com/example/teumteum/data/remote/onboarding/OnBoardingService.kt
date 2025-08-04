@@ -132,29 +132,29 @@ class OnBoardingService @Inject constructor(
     //PresignedUrl 발급
     fun requestPresignedUrl(request: PresignedRequest) {
 
-        Log.d("PRESIGNED_REQUEST", request.toString())
-        onBoardingApi.requestPresignedUrl(request).enqueue(object : Callback<PresignedResponse> {
-            override fun onResponse(
-                call: Call<PresignedResponse>,
-                response: Response<PresignedResponse>
-            ) {
-                if(response.isSuccessful) {
-                    val body = response.body()
-                    if(body != null && body.code == "ONBOARDING2003") {
-                        profileImageView.onPresignedSuccess(body.code, body.result)
-                    } else {
-                        profileImageView.onPresignedFailure(body?.code ?: "UNKNOWN", body?.message)
-                    }
-                } else {
-                    profileImageView.onPresignedFailure("HTTP_${response.code()}", response.errorBody()?.string())
-                }
-            }
-
-            override fun onFailure(call: Call<PresignedResponse>, t: Throwable) {
-                profileImageView.onPresignedFailure("NETWORK_ERROR", t.localizedMessage)
-            }
-
-        })
+//        Log.d("PRESIGNED_REQUEST", request.toString())
+//        onBoardingApi.requestPresignedUrl(request).enqueue(object : Callback<PresignedResponse> {
+//            override fun onResponse(
+//                call: Call<PresignedResponse>,
+//                response: Response<PresignedResponse>
+//            ) {
+//                if(response.isSuccessful) {
+//                    val body = response.body()
+//                    if(body != null && body.code == "ONBOARDING2003") {
+//                        profileImageView.onPresignedSuccess(body.code, body.result)
+//                    } else {
+//                        profileImageView.onPresignedFailure(body?.code ?: "UNKNOWN", body?.message)
+//                    }
+//                } else {
+//                    profileImageView.onPresignedFailure("HTTP_${response.code()}", response.errorBody()?.string())
+//                }
+//            }
+//
+//            override fun onFailure(call: Call<PresignedResponse>, t: Throwable) {
+//                profileImageView.onPresignedFailure("NETWORK_ERROR", t.localizedMessage)
+//            }
+//
+//        })
 
     }
 

@@ -11,90 +11,73 @@ import android.view.ViewGroup
 import android.widget.CompoundButton
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.agreement.AgreementService
-import com.example.teumteum.data.remote.agreement.dto.AgreementRequest
+import com.example.teumteum.data.remote.onboarding.model.AgreementRequest
 import com.example.teumteum.databinding.FragmentAgreementBinding
 import com.example.teumteum.ui.signup.view.AgreementView
+import com.example.teumteum.ui.signup.viewModel.OnBoardingUiState
+import com.example.teumteum.ui.signup.viewModel.OnBoardingViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class AgreementFragment : Fragment(), AgreementView {
+class AgreementFragment : Fragment() {
 
-    private lateinit var binding: FragmentAgreementBinding
+    private var _binding: FragmentAgreementBinding? = null
+    private val binding get() = _binding!!
 
-    @Inject
-    lateinit var agreementService: AgreementService
-
-    override fun onAgreementSuccess(code: String) {
-        val msg = "약관 동의 성공 (code: $code)"
-        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
-        Log.d("AGREEMENT_FRAGMENT", msg)
-
-        parentFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, CompleteFragment())
-            .addToBackStack(null)
-            .commit()
-    }
-
-    override fun onAgreementFailure(code: String, message: String?) {
-        val msg = "약관 동의 실패 (code: $code, message: ${message ?: "없음"})"
-        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
-        Log.e("AGREEMENT_FRAGMENT", msg)
-
-        //서버 로직 예외
-        if (message?.contains("ONBOARDING4001") == true) {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, CompleteFragment())
-                .addToBackStack(null)
-                .commit()
-        }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+    private val viewModel: OnBoardingViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentAgreementBinding.inflate(inflater, container, false)
+    ): View {
+        _binding = FragmentAgreementBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (activity as? SignUpActivity)?.setProgressBarVisible(true)
-        (activity as? SignUpActivity)?.setProgressBar(50)
 
+        (activity as? SignUpActivity)?.apply {
+            setProgressBarVisible(true)
+            setProgressBar(50)
+        }
 
+        setupUI()
+        observeViewModel()
+    }
+
+    private fun setupUI() {
         setupCheckBoxListeners()
-        updateNextButtonState()
         setupSelectAllCheckbox()
+        updateNextButtonState()
 
         binding.nextBtn.setOnClickListener {
             val request = getAgreementRequest()
-            agreementService.setAgreementView(this)
-            agreementService.postAgreements(request)
+            viewModel.postAgreements(request)
         }
 
-        //체크박스 초기 색상
-        setCheckBoxTint(binding.term1Checkbox, binding.term1Checkbox.isChecked)
-        setCheckBoxTint(binding.term2Checkbox, binding.term2Checkbox.isChecked)
-        setCheckBoxTint(binding.term3Checkbox, binding.term3Checkbox.isChecked)
-        setCheckBoxTint(binding.term4Checkbox, binding.term4Checkbox.isChecked)
-        setCheckBoxTint(binding.allCheckbox, binding.allCheckbox.isChecked)
+        listOf(
+            Triple(binding.term1Tv, "term1", "서비스 이용 약관 동의 (필수)"),
+            Triple(binding.term2Tv, "term2", "개인정보 수집 및 이용 동의 (필수)"),
+            Triple(binding.term3Tv, "term3", "개인정보 제3자 제공에 대한 안내 (선택)"),
+            Triple(binding.term4Tv, "term4", "마케팅 및 광고성 정보 수신 동의 (선택)")
+        ).forEach { (textView, key, title) ->
+            textView.setOnClickListener { openTermsDetail(key, title) }
+        }
 
-        // 약관 텍스트뷰 클릭 시 상세 프래그먼트로 이동
-        binding.term1Tv.setOnClickListener { openTermsDetail("term1","서비스 이용 약관 동의 (필수)") }
-        binding.term2Tv.setOnClickListener { openTermsDetail("term2","개인정보 수집 및 이용 동의 (필수)") }
-        binding.term3Tv.setOnClickListener { openTermsDetail("term3","개인정보 제3자 제공에 대한 안내 (선택)") }
-        binding.term4Tv.setOnClickListener { openTermsDetail("term4","마케팅 및 광고성 정보 수신 동의 (선택)") }
+        listOf(
+            binding.term1Checkbox,
+            binding.term2Checkbox,
+            binding.term3Checkbox,
+            binding.term4Checkbox,
+            binding.allCheckbox
+        ).forEach { setCheckBoxTint(it, it.isChecked) }
     }
 
-    //체크박스 리스너
     private fun setupCheckBoxListeners() {
         val listener = { checkBox: CompoundButton ->
             updateNextButtonState()
@@ -102,48 +85,41 @@ class AgreementFragment : Fragment(), AgreementView {
             setCheckBoxTint(checkBox, checkBox.isChecked)
         }
 
-        binding.term1Checkbox.setOnCheckedChangeListener { _, _ -> listener(binding.term1Checkbox) }
-        binding.term2Checkbox.setOnCheckedChangeListener { _, _ -> listener(binding.term2Checkbox) }
-        binding.term3Checkbox.setOnCheckedChangeListener { _, _ -> listener(binding.term3Checkbox) }
-        binding.term4Checkbox.setOnCheckedChangeListener { _, _ -> listener(binding.term4Checkbox) }
+        listOf(
+            binding.term1Checkbox,
+            binding.term2Checkbox,
+            binding.term3Checkbox,
+            binding.term4Checkbox
+        ).forEach {
+            it.setOnCheckedChangeListener { _, _ -> listener(it) }
+        }
     }
 
-    //체크박스 상태에 따른 다음으로 버튼 상태 변경
     private fun updateNextButtonState() {
-        val allChecked = binding.term1Checkbox.isChecked && binding.term2Checkbox.isChecked
-        binding.nextBtn.isEnabled = allChecked
-
-        // 배경색 변경
+        val enabled = binding.term1Checkbox.isChecked && binding.term2Checkbox.isChecked
+        binding.nextBtn.isEnabled = enabled
         binding.nextBtn.setBackgroundColor(
-            if (allChecked)
-                requireContext().getColor(R.color.black)
-            else
-                Color.parseColor("#F6F6F6")
+            if (enabled) requireContext().getColor(R.color.black) else Color.parseColor("#F6F6F6")
         )
-
-        // 글자색 변경
         binding.nextBtn.setTextColor(
-            if (allChecked)
-                requireContext().getColor(R.color.white)
-            else
-                requireContext().getColor(R.color.black)
+            if (enabled) requireContext().getColor(R.color.white) else requireContext().getColor(R.color.black)
         )
     }
 
-    //전체 동의 체크박스 리스너
     private fun setupSelectAllCheckbox() {
-        binding.allCheckbox.setOnCheckedChangeListener { checkBox: CompoundButton, isChecked ->
+        binding.allCheckbox.setOnCheckedChangeListener { checkBox, isChecked ->
             setAllAgreementChecked(isChecked)
             setCheckBoxTint(checkBox, isChecked)
         }
     }
 
-    //전체 동의 체크박스 활성화 검사
     private fun syncSelectAllCheckbox() {
-        val allChecked = binding.term1Checkbox.isChecked &&
-                binding.term2Checkbox.isChecked &&
-                binding.term3Checkbox.isChecked &&
-                binding.term4Checkbox.isChecked
+        val allChecked = listOf(
+            binding.term1Checkbox,
+            binding.term2Checkbox,
+            binding.term3Checkbox,
+            binding.term4Checkbox
+        ).all { it.isChecked }
 
         if (binding.allCheckbox.isChecked != allChecked) {
             binding.allCheckbox.setOnCheckedChangeListener(null)
@@ -156,24 +132,22 @@ class AgreementFragment : Fragment(), AgreementView {
         }
     }
 
-    //전체 동의 체크 시 모든 체크박스 활성화
     private fun setAllAgreementChecked(isChecked: Boolean) {
-        binding.term1Checkbox.isChecked = isChecked
-        binding.term2Checkbox.isChecked = isChecked
-        binding.term3Checkbox.isChecked = isChecked
-        binding.term4Checkbox.isChecked = isChecked
+        listOf(
+            binding.term1Checkbox,
+            binding.term2Checkbox,
+            binding.term3Checkbox,
+            binding.term4Checkbox
+        ).forEach { it.isChecked = isChecked }
     }
 
     private fun setCheckBoxTint(checkBox: CompoundButton, isChecked: Boolean) {
-        val color = if (isChecked) {
-            ContextCompat.getColor(requireContext(), R.color.black) // 선택 시 색상
-        } else {
-            ContextCompat.getColor(requireContext(), R.color.gray)
-        }
+        val color = ContextCompat.getColor(
+            requireContext(), if (isChecked) R.color.black else R.color.gray
+        )
         checkBox.buttonTintList = ColorStateList.valueOf(color)
     }
 
-    //약관 상세 페이지 이동
     private fun openTermsDetail(termKey: String, title: String) {
         val fragment = TermsDetailFragment().apply {
             arguments = Bundle().apply {
@@ -181,19 +155,51 @@ class AgreementFragment : Fragment(), AgreementView {
                 putString("term_title", title)
             }
         }
-
         parentFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)
             .addToBackStack(null)
             .commit()
     }
 
-    private fun getAgreementRequest(): AgreementRequest{
+    private fun getAgreementRequest(): AgreementRequest {
         return AgreementRequest(
             tosConsent = binding.term1Checkbox.isChecked,
             privacyConsent = binding.term2Checkbox.isChecked,
             thirdPartyConsent = binding.term3Checkbox.isChecked,
             marketingConsent = binding.term4Checkbox.isChecked
         )
+    }
+
+    private fun observeViewModel() {
+
+        viewModel.state.observe(viewLifecycleOwner) { state ->
+            when (state) {
+                is OnBoardingUiState.Loading -> binding.nextBtn.isEnabled = false
+                is OnBoardingUiState.Success -> navigateToNext()
+                is OnBoardingUiState.Error -> {
+                    if (state.code == "ONBOARDING4001") {
+                        Log.d("AgreementFragment", "ONBOARDING4001 - 강제 이동")
+                        navigateToNext()
+                    } else {
+                        Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
+                        binding.nextBtn.isEnabled = true
+                    }
+                }
+                else -> Unit
+            }
+        }
+    }
+
+    private fun navigateToNext() {
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, CompleteFragment())
+            .addToBackStack(null)
+            .commit()
+        viewModel.resetState()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

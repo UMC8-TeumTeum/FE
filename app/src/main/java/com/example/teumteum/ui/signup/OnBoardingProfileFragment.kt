@@ -16,7 +16,7 @@ import com.example.teumteum.data.remote.onboarding.OnBoardingService
 import com.example.teumteum.data.remote.onboarding.model.PresignedRequest
 import com.example.teumteum.databinding.FragmentOnBoardingProfileBinding
 import com.example.teumteum.ui.signup.view.ProfileImageView
-import com.example.teumteum.data.remote.onboarding.dto.PresignedFileInfo
+import com.example.teumteum.data.remote.onboarding.model.PresignedResponse
 import com.example.teumteum.data.remote.onboarding.model.ProfileImageRequest
 import dagger.hilt.android.AndroidEntryPoint
 import okhttp3.Callback
@@ -53,7 +53,7 @@ class OnBoardingProfileFragment : Fragment(), ProfileImageView {
         }
     }
 
-    override fun onPresignedSuccess(code: String, result: PresignedFileInfo) {
+    override fun onPresignedSuccess(code: String, result: PresignedResponse) {
         val msg = "프리사인드 URL 요청 성공 (code: $code)"
         Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
         Log.d("PROFILE_FRAGMENT", msg)

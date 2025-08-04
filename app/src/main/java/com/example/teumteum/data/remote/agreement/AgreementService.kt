@@ -1,6 +1,6 @@
 package com.example.teumteum.data.remote.agreement
 
-import com.example.teumteum.data.remote.agreement.dto.AgreementRequest
+import com.example.teumteum.data.remote.onboarding.model.AgreementRequest
 import com.example.teumteum.data.remote.agreement.dto.AgreementResponse
 import com.example.teumteum.ui.signup.view.AgreementView
 import retrofit2.Call
