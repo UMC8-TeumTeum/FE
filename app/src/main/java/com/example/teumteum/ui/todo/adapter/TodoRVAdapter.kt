@@ -67,7 +67,7 @@ class TodoRVAdapter(private val fragmentManager: FragmentManager, private var to
 
     private fun convertTo24HourFormat(time: String): String {
         return try {
-            val inputFormat = java.text.SimpleDateFormat("a h:mm", java.util.Locale.KOREAN)
+            val inputFormat = java.text.SimpleDateFormat("HH:mm:ss", java.util.Locale.KOREAN)
             val outputFormat = java.text.SimpleDateFormat("HH:mm", java.util.Locale.KOREAN)
             val date = inputFormat.parse(time)
             outputFormat.format(date!!)

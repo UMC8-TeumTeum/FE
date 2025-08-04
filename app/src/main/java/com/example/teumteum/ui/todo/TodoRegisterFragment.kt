@@ -519,6 +519,8 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
     private fun setupObservers() {
         todoViewModel.registerSuccess.observe(viewLifecycleOwner) {
             Toast.makeText(requireContext(), "투두가 성공적으로 등록되었습니다.", Toast.LENGTH_SHORT).show()
+            parentFragmentManager.setFragmentResult("todo_register", Bundle())
+
             dismiss() // 바텀시트 닫기
         }
 
