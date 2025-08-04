@@ -181,13 +181,16 @@ class WishRegisterFragment : BottomSheetDialogFragment() {
     }
 
     private fun setupObservers() {
-        wishViewModel.successMessage.observe(viewLifecycleOwner) {
-            Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
-            parentFragmentManager.setFragmentResult("wish_register", Bundle())
+        wishViewModel.registerSuccess.observe(viewLifecycleOwner) { isSuccess ->
+            if (isSuccess) {
+                Toast.makeText(requireContext(), "위시가 등록되었습니다.", Toast.LENGTH_SHORT).show()
+                parentFragmentManager.setFragmentResult("wish_register", Bundle())
 
-            (requireActivity().supportFragmentManager.fragments).forEach { fragment ->
-                if (fragment is BottomSheetDialogFragment) {
-                    fragment.dismissAllowingStateLoss()
+                // 모든 바텀시트 닫기
+                (requireActivity().supportFragmentManager.fragments).forEach { fragment ->
+                    if (fragment is BottomSheetDialogFragment) {
+                        fragment.dismissAllowingStateLoss()
+                    }
                 }
             }
         }

@@ -1,4 +1,4 @@
-package com.example.teumteum.data.remote.todo.dto
+package com.example.teumteum.data.remote.todo.model
 
 import com.example.teumteum.data.entities.enums.TodoType
 import com.google.gson.annotations.SerializedName
