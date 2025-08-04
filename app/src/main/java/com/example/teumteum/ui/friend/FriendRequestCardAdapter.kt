@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.teumteum.R
-import com.example.teumteum.data.remote.friend.dto.TeumReceivedItem
+import com.example.teumteum.data.remote.friend.model.TeumReceivedItem
 import com.example.teumteum.databinding.Friend02ItemTeumCardBinding
 
 class FriendRequestCardAdapter(private val teumList: List<TeumReceivedItem>) :

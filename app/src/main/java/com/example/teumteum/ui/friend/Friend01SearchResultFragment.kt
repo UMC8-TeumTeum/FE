@@ -7,27 +7,26 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.teumteum.R
-import com.example.teumteum.data.remote.friend.dto.FriendSearchResult
-import com.example.teumteum.data.remote.friend.dto.FriendSearchService
+import com.example.teumteum.data.remote.friend.model.FriendSearchResult
 import com.example.teumteum.databinding.FragmentFriend01SearchResultBinding
 import com.example.teumteum.ui.friend.adapter.SearchResultAdapter
-import com.example.teumteum.ui.friend.view.FriendSearchView
+import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.example.teumteum.ui.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
-class Friend01SearchResultFragment : Fragment(), FriendSearchView {
+class Friend01SearchResultFragment : Fragment() {
 
     private var _binding: FragmentFriend01SearchResultBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var adapter: SearchResultAdapter
+    private var toast: Toast? = null
 
-    @Inject
-    lateinit var service: FriendSearchService
+    private lateinit var adapter: SearchResultAdapter
+    private val viewModel: FriendViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,65 +40,53 @@ class Friend01SearchResultFragment : Fragment(), FriendSearchView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // 하단 바 숨기기
         (activity as? MainActivity)?.hideBottomBar()
 
+        // 전달받은 검색 키워드로 유저 검색 요청
         val keyword = arguments?.getString("searchKeyword") ?: return
+        viewModel.searchUser(keyword)
 
-        // RecyclerView 초기화
-        adapter = SearchResultAdapter(emptyList()) { userId ->
+        // 리사이클러뷰 초기화
+        adapter = SearchResultAdapter(emptyList()) { userId: Int ->
             navigateToProfile(userId)
         }
 
         binding.searchResultRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.searchResultRecyclerView.adapter = adapter
 
-        // 검색 서비스 실행
-        service.setFriendSearchView(this)
-        service.searchUser(keyword)
+        // 검색 결과 관찰
+        viewModel.searchResults.observe(viewLifecycleOwner) { results ->
+            adapter.updateData(results)
+        }
 
+        // 메시지 (성공/실패) 관찰
+        viewModel.successMessage.observe(viewLifecycleOwner) { msg ->
+            Log.d("SEARCH_RESULT_FRAGMENT", "성공: $msg")
+            toast?.cancel() // 이전 토스트 제거
+//            toast = Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT)
+            toast?.show()
+        }
+
+        viewModel.errorMessage.observe(viewLifecycleOwner) { msg: String? ->
+            msg?.let {
+//                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+                Log.e("SEARCH_RESULT_FRAGMENT", "오류: $it")
+            }
+        }
+
+        // 뒤로가기 버튼
         binding.backButton.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
     }
 
-    override fun onSearchSuccess(result: List<FriendSearchResult>) {
-        if (result.isEmpty()) {
-            val msg = "사용자 검색 실패 (code: USER4040, message: 존재하지 않는 사용자입니다.)"
-            Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
-            Log.e("SEARCH_RESULT_FRAGMENT", msg)
-            return
-        }
-
-        val msg = "사용자 조회 성공 (code: USER2001)"
-        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
-        Log.d("SEARCH_RESULT_FRAGMENT", msg)
-
-        adapter = SearchResultAdapter(result) { userId ->
-            navigateToProfile(userId)
-        }
-        binding.searchResultRecyclerView.adapter = adapter
-    }
-
-    override fun onSearchFailure(code: String, message: String) {
-        val errorMsg = when (code) {
-            "USER4040" -> "사용자 검색 실패 (code: $code, message: 존재하지 않는 사용자입니다.)"
-            "NETWORK_ERROR" -> "사용자 검색 실패 (code: $code, message: 네트워크 오류)"
-            else -> "사용자 검색 실패 (code: $code, message: $message)"
-        }
-
-        Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_SHORT).show()
-        Log.e("SEARCH_RESULT_FRAGMENT", errorMsg)
-    }
-
-
-    // 프로필 선택 시 FriendProfileFollowFragment로 이동
     private fun navigateToProfile(userId: Int) {
         val fragment = FriendProfileFollowFragment().apply {
             arguments = Bundle().apply {
                 putInt("userId", userId)
             }
         }
-
         parentFragmentManager.beginTransaction()
             .replace(R.id.main_frm, fragment)
             .addToBackStack(null)

@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
+import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentFriendProfileFollowingBinding
 import com.example.teumteum.ui.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -27,8 +29,21 @@ class FriendProfileFollowingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // bottomNav 숨기기
         (activity as? MainActivity)?.hideBottomBar()
+
+        // 전달받은 프로필 정보
+        val name = arguments?.getString("name") ?: ""
+        val field = arguments?.getString("field") ?: ""
+        val imageUrl = arguments?.getString("imageUrl") ?: ""
+
+        binding.profileNicknameTv.text = name
+        binding.profileFieldTv.text = field
+
+        Glide.with(requireContext())
+            .load(imageUrl)
+            .placeholder(R.drawable.gray_teum)
+            .error(R.drawable.gray_teum)
+            .into(binding.profileIv)
 
         // 뒤로가기 버튼 클릭 시
         binding.backBtn.setOnClickListener {
@@ -38,12 +53,7 @@ class FriendProfileFollowingFragment : Fragment() {
             (activity as? MainActivity)?.showBottomBar()
         }
 
-        // TODO: 이곳에 팔로잉 리스트나 기타 UI 초기화 로직을 추가하세요.
-        // 예:
-        // binding.followingRecyclerView.apply {
-        //   adapter = YourFollowingListAdapter(...)
-        //   layoutManager = LinearLayoutManager(requireContext())
-        // }
+        // TODO: 팔로잉 리스트 로직 추가
     }
 
     override fun onDestroyView() {
