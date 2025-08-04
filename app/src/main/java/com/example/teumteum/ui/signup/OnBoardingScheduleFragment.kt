@@ -16,7 +16,6 @@ import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentOnBoardingScheduleBinding
 import kotlin.collections.toList
 import com.example.teumteum.ui.signup.data.Schedule
-import com.example.teumteum.data.remote.onboarding.OnBoardingService
 import com.example.teumteum.data.remote.onboarding.model.ScheduleRequest
 import com.example.teumteum.data.remote.onboarding.model.Week
 import com.example.teumteum.ui.signup.view.ScheduleView

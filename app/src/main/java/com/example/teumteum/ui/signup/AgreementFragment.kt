@@ -13,14 +13,11 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
-import com.example.teumteum.data.remote.agreement.AgreementService
 import com.example.teumteum.data.remote.onboarding.model.AgreementRequest
 import com.example.teumteum.databinding.FragmentAgreementBinding
-import com.example.teumteum.ui.signup.view.AgreementView
 import com.example.teumteum.ui.signup.viewModel.OnBoardingUiState
 import com.example.teumteum.ui.signup.viewModel.OnBoardingViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class AgreementFragment : Fragment() {

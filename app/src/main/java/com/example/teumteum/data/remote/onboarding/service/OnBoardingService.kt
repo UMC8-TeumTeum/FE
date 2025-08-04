@@ -1,19 +1,13 @@
 package com.example.teumteum.data.remote.onboarding.service
 
-import com.example.teumteum.data.remote.agreement.dto.AgreementResponse
 import com.example.teumteum.data.remote.onboarding.model.AgreementRequest
 import com.example.teumteum.data.remote.onboarding.model.NicknameJobRequest
-import com.example.teumteum.data.remote.onboarding.model.NicknameJobResponse
 import com.example.teumteum.data.remote.onboarding.model.PresignedRequest
 import com.example.teumteum.data.remote.onboarding.model.PresignedResponse
 import com.example.teumteum.data.remote.onboarding.model.ProfileImageRequest
-import com.example.teumteum.data.remote.onboarding.model.ProfileImageResponse
 import com.example.teumteum.data.remote.onboarding.model.ScheduleRequest
-import com.example.teumteum.data.remote.onboarding.model.ScheduleResponse
 import com.example.teumteum.data.remote.onboarding.model.SleepPatternRequest
-import com.example.teumteum.data.remote.onboarding.model.SleepPatternResponse
 import com.example.teumteum.utils.ApiResponse
-import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST

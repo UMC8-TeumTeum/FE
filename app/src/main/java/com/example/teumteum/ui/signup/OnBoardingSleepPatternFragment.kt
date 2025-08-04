@@ -13,7 +13,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
-import com.example.teumteum.data.remote.onboarding.OnBoardingService
 import com.example.teumteum.data.remote.onboarding.model.SleepPatternRequest
 import com.example.teumteum.databinding.FragmentOnBoardingSleepPatternBinding
 import com.example.teumteum.ui.signup.view.SleepPatternView
