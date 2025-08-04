@@ -16,8 +16,8 @@ import com.example.teumteum.databinding.FragmentOnBoardingScheduleBinding
 import kotlin.collections.toList
 import com.example.teumteum.data.Schedule
 import com.example.teumteum.data.remote.onboarding.OnBoardingService
-import com.example.teumteum.data.remote.onboarding.dto.ScheduleRequest
-import com.example.teumteum.data.remote.onboarding.dto.Week
+import com.example.teumteum.data.remote.onboarding.model.ScheduleRequest
+import com.example.teumteum.data.remote.onboarding.model.Week
 import com.example.teumteum.ui.signup.view.ScheduleView
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalTime
@@ -198,7 +198,7 @@ class OnBoardingScheduleFragment : Fragment(), ScheduleView{
     }
 
     private fun getScheduleRequest(): ScheduleRequest {
-        val allSchedules = mutableListOf<com.example.teumteum.data.remote.onboarding.dto.Schedule>()
+        val allSchedules = mutableListOf<com.example.teumteum.data.remote.onboarding.model.Schedule>()
 
         val weekMap = mapOf(
             0 to Week.SUNDAY,
@@ -214,7 +214,7 @@ class OnBoardingScheduleFragment : Fragment(), ScheduleView{
             val weekdayEnum = weekMap[dayIndex] ?: Week.SUNDAY
             schedules.forEach { s ->
                 allSchedules.add(
-                    com.example.teumteum.data.remote.onboarding.dto.Schedule(
+                    com.example.teumteum.data.remote.onboarding.model.Schedule(
                         title = s.title,
                         description = s.description,
                         weekday = weekdayEnum,

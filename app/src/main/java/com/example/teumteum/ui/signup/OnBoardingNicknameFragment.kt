@@ -12,7 +12,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.onboarding.OnBoardingService
-import com.example.teumteum.data.remote.onboarding.dto.NicknameJobRequest
+import com.example.teumteum.data.remote.onboarding.model.NicknameJobRequest
 import com.example.teumteum.databinding.FragmentOnBoardingNicknameBinding
 import com.example.teumteum.ui.signup.view.NicknameJobFieldView
 import dagger.hilt.android.AndroidEntryPoint

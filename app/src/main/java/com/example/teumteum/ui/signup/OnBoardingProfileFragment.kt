@@ -2,9 +2,6 @@ package com.example.teumteum.ui.signup
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -16,12 +13,11 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.onboarding.OnBoardingService
-import com.example.teumteum.data.remote.onboarding.dto.PresignedRequest
+import com.example.teumteum.data.remote.onboarding.model.PresignedRequest
 import com.example.teumteum.databinding.FragmentOnBoardingProfileBinding
 import com.example.teumteum.ui.signup.view.ProfileImageView
-import androidx.core.graphics.drawable.toDrawable
 import com.example.teumteum.data.remote.onboarding.dto.PresignedFileInfo
-import com.example.teumteum.data.remote.onboarding.dto.ProfileImageRequest
+import com.example.teumteum.data.remote.onboarding.model.ProfileImageRequest
 import dagger.hilt.android.AndroidEntryPoint
 import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaTypeOrNull

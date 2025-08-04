@@ -1,4 +1,4 @@
-package com.example.teumteum.data.remote.onboarding.dto
+package com.example.teumteum.data.remote.onboarding.model
 
 import com.google.gson.annotations.SerializedName
 

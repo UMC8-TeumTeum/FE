@@ -1,16 +1,16 @@
 package com.example.teumteum.data.remote.onboarding
 
 import android.util.Log
-import com.example.teumteum.data.remote.onboarding.dto.NicknameJobRequest
-import com.example.teumteum.data.remote.onboarding.dto.NicknameJobResponse
-import com.example.teumteum.data.remote.onboarding.dto.PresignedRequest
-import com.example.teumteum.data.remote.onboarding.dto.PresignedResponse
-import com.example.teumteum.data.remote.onboarding.dto.ProfileImageRequest
-import com.example.teumteum.data.remote.onboarding.dto.ProfileImageResponse
-import com.example.teumteum.data.remote.onboarding.dto.SleepPatternRequest
-import com.example.teumteum.data.remote.onboarding.dto.SleepPatternResponse
-import com.example.teumteum.data.remote.onboarding.dto.ScheduleRequest
-import com.example.teumteum.data.remote.onboarding.dto.ScheduleResponse
+import com.example.teumteum.data.remote.onboarding.model.NicknameJobRequest
+import com.example.teumteum.data.remote.onboarding.model.NicknameJobResponse
+import com.example.teumteum.data.remote.onboarding.model.PresignedRequest
+import com.example.teumteum.data.remote.onboarding.model.PresignedResponse
+import com.example.teumteum.data.remote.onboarding.model.ProfileImageRequest
+import com.example.teumteum.data.remote.onboarding.model.ProfileImageResponse
+import com.example.teumteum.data.remote.onboarding.model.SleepPatternRequest
+import com.example.teumteum.data.remote.onboarding.model.SleepPatternResponse
+import com.example.teumteum.data.remote.onboarding.model.ScheduleRequest
+import com.example.teumteum.data.remote.onboarding.model.ScheduleResponse
 import com.example.teumteum.ui.signup.view.NicknameJobFieldView
 import com.example.teumteum.ui.signup.view.ProfileImageView
 import com.example.teumteum.ui.signup.view.SleepPatternView
@@ -19,7 +19,6 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import javax.inject.Inject
-import kotlin.jvm.java
 
 class OnBoardingService @Inject constructor(
     private val onBoardingApi: OnBoardingRetrofitInterface
