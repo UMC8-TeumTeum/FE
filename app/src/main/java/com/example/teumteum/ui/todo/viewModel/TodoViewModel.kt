@@ -9,6 +9,7 @@ import com.example.teumteum.data.remote.todo.model.EditTodoRequest
 import com.example.teumteum.data.remote.todo.model.GetTodoResult
 import com.example.teumteum.data.remote.todo.model.RegisterTodoRequest
 import com.example.teumteum.data.remote.todo.repository.TodoRepository
+import com.example.teumteum.data.remote.wish.model.DeleteWishesRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -32,6 +33,9 @@ class TodoViewModel @Inject constructor(
 
     private val _editSuccess = MutableLiveData<Boolean>()
     val editSuccess: LiveData<Boolean> get() = _editSuccess
+
+    private val _deleteSuccess = MutableLiveData<Boolean>()
+    val deleteSuccess: LiveData<Boolean> get() = _deleteSuccess
 
     // 투두 등록
     fun registerTodo(request: RegisterTodoRequest) {
@@ -81,6 +85,18 @@ class TodoViewModel @Inject constructor(
             }
             result.onFailure { e ->
                 _errorMessage.value = e.localizedMessage ?: "투두 등록에 실패했습니다."
+            }
+        }
+    }
+
+    // 투두 삭제
+    fun deleteTodo(todoId: Long) {
+        viewModelScope.launch {
+            val result = todoRepository.deleteTodo(todoId)
+            result.onSuccess {
+                _deleteSuccess.value = true
+            }.onFailure { e ->
+                _errorMessage.value = e.localizedMessage ?: "투두 삭제에 실패했습니다."
             }
         }
     }

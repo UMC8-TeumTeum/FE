@@ -93,7 +93,7 @@ class WishRepository @Inject constructor(
         }
     }
 
-    // 특정 위시 삭제
+    // 위시 삭제 (리스트 형태)
     suspend fun deleteWish(request: DeleteWishesRequest): Result<Unit> {
         return try {
             val response = wishService.deleteWishes(request)

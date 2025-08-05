@@ -25,16 +25,12 @@ import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentTodoEditBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-import com.example.teumteum.data.entities.TodoHomeItem
 import com.example.teumteum.data.remote.todo.model.EditTodoRequest
-import com.example.teumteum.data.remote.todo.model.GetTodoResult
-import com.example.teumteum.data.remote.todo.model.RegisterTodoRequest
 import com.example.teumteum.databinding.DialogConfirmTodoDeleteBinding
 import com.example.teumteum.databinding.DialogConfirmTodoEditBinding
 import com.example.teumteum.ui.calendar.IDateClickListener
 import com.example.teumteum.ui.calendar.MonthlyCalendarFragment
 import com.example.teumteum.ui.todo.viewModel.TodoViewModel
-import com.example.teumteum.ui.wish.WishEditFragment
 import com.example.teumteum.utils.combineDateTime
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -497,7 +493,7 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
             .create()
 
         dialogBinding.todoConfirmTv.setOnClickListener {
-            Toast.makeText(requireContext(), "삭제되었습니다. (더미)", Toast.LENGTH_SHORT).show()
+            todoViewModel.deleteTodo(todoId)
             dialog.dismiss()
             dismiss()
         }
@@ -720,6 +716,15 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
             if (it == true) {
                 Toast.makeText(requireContext(), "투두가 성공적으로 수정되었습니다.", Toast.LENGTH_SHORT).show()
                 parentFragmentManager.setFragmentResult("todo_edit", Bundle())
+                dismiss()  // 현재 바텀시트만 닫기
+            }
+        }
+
+        // 삭제 성공 시
+        todoViewModel.deleteSuccess.observe(viewLifecycleOwner) {
+            if (it == true) {
+                Toast.makeText(requireContext(), "투두가 성공적으로 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+                parentFragmentManager.setFragmentResult("todo_delete", Bundle())
                 dismiss()  // 현재 바텀시트만 닫기
             }
         }

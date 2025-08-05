@@ -173,6 +173,11 @@ class HomeFragment : Fragment(), IDateClickListener, HomeView {
             refreshTodolist()
         }
 
+        // 투두 삭제 성공 이벤트 수신
+        parentFragmentManager.setFragmentResultListener("todo_delete", viewLifecycleOwner) { _, _ ->
+            refreshTodolist()
+        }
+
         todoViewModel.getTodoList(date)
 
         setupObservers()

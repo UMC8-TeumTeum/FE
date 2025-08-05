@@ -1,16 +1,11 @@
 package com.example.teumteum.data.remote.todo.service
 
 import com.example.teumteum.data.entities.TodoList
-import com.example.teumteum.data.remote.todo.model.DeleteTodoResponse
 import com.example.teumteum.data.remote.todo.model.EditTodoRequest
-import com.example.teumteum.data.remote.todo.model.EditTodoResponse
-import com.example.teumteum.data.remote.todo.model.GetTodoResponse
 import com.example.teumteum.data.remote.todo.model.GetTodoResult
 import com.example.teumteum.data.remote.todo.model.RegisterTodoRequest
-import com.example.teumteum.data.remote.todo.model.TodoListResult
 import com.example.teumteum.data.remote.todo.model.TodoResult
 import com.example.teumteum.utils.ApiResponse
-import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -34,6 +29,6 @@ interface TodoService {
     suspend fun editTodo(@Path("todoId") todoId: Long, @Body request: EditTodoRequest): Response<ApiResponse<TodoResult>>
 
     @DELETE("/api/home/todo/{todoId}")
-    suspend fun deleteTodo(@Path("todoId") todoId: Long): Call<DeleteTodoResponse>
+    suspend fun deleteTodo(@Path("todoId") todoId: Long): Response<ApiResponse<Unit>>
 
 }
