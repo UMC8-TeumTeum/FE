@@ -1,11 +1,10 @@
 package com.example.teumteum.utils
 
-import com.example.teumteum.data.remote.agreement.AgreementRetrofitInterface
 import com.example.teumteum.data.remote.alarm.AlarmRetrofitInterface
 import com.example.teumteum.data.remote.calendar.CalendarRetrofitInterface
 import com.example.teumteum.data.remote.friend.service.FriendService
 import com.example.teumteum.data.remote.home.HomeRetrofitInterface
-import com.example.teumteum.data.remote.onboarding.OnBoardingRetrofitInterface
+import com.example.teumteum.data.remote.onboarding.service.OnBoardingService
 import com.example.teumteum.data.remote.wish.service.WishService
 import com.example.teumteum.data.remote.todo.service.TodoService
 import dagger.Module
@@ -14,6 +13,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import javax.inject.Singleton
+import kotlin.jvm.java
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -29,12 +29,6 @@ class ApiModule {
     @Singleton
     fun provideWishApi(retrofit: Retrofit): WishService {
         return retrofit.create(WishService::class.java)
-    }
-
-    @Provides
-    @Singleton
-    fun provideAgreementApi(retrofit: Retrofit): AgreementRetrofitInterface {
-        return retrofit.create(AgreementRetrofitInterface::class.java)
     }
 
     @Provides
@@ -63,7 +57,7 @@ class ApiModule {
 
     @Provides
     @Singleton
-    fun provideOnBoardingApi(retrofit: Retrofit): OnBoardingRetrofitInterface {
-        return retrofit.create(OnBoardingRetrofitInterface::class.java)
+    fun provideOnBoardingApi(retrofit: Retrofit): OnBoardingService {
+        return retrofit.create(OnBoardingService::class.java)
     }
 }

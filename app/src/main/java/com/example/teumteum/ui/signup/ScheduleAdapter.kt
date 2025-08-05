@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.teumteum.data.Schedule
+import com.example.teumteum.ui.signup.data.Schedule
 import com.example.teumteum.databinding.ItemScheduleBinding
 import java.time.format.DateTimeFormatter
 import java.util.Locale

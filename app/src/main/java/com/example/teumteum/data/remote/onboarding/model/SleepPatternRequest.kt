@@ -1,7 +1,6 @@
-package com.example.teumteum.data.remote.onboarding.dto
+package com.example.teumteum.data.remote.onboarding.model
 
 import com.google.gson.annotations.SerializedName
-import java.time.LocalTime
 
 data class SleepPatternRequest(
     @SerializedName("sleepTime") val sleepTime: String,
