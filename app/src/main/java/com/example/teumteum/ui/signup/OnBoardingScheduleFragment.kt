@@ -2,6 +2,7 @@ package com.example.teumteum.ui.signup
 
 import BottomSheetScheduleFragment
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -168,6 +169,7 @@ class OnBoardingScheduleFragment : Fragment() {
                 is OnBoardingUiState.Error -> {
                     Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
                     if (state.code == "ONBOARDING4001") {
+                        Log.d("ScheduleFragment", "ONBOARDING4001 - 강제 이동")
                         navigateToNext()
                     }
                 }
