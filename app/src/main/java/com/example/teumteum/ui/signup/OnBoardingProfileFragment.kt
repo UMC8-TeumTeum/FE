@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -82,9 +83,9 @@ class OnBoardingProfileFragment : Fragment() {
 
                 is OnBoardingUiState.Error -> {
                     binding.nextBtn.isEnabled = true
-                    Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
 
                     if (state.code.contains("ONBOARDING4001")) {
+                        Log.d("ProfileFragment", "ONBOARDING4001 - 강제 이동")
                         navigateToNext()
                     }
                 }

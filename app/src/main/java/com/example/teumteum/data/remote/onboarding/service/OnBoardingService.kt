@@ -7,6 +7,7 @@ import com.example.teumteum.data.remote.onboarding.model.PresignedResponse
 import com.example.teumteum.data.remote.onboarding.model.ProfileImageRequest
 import com.example.teumteum.data.remote.onboarding.model.ScheduleRequest
 import com.example.teumteum.data.remote.onboarding.model.SleepPatternRequest
+import com.example.teumteum.data.remote.onboarding.model.RemindRequest
 import com.example.teumteum.utils.ApiResponse
 import retrofit2.Response
 import retrofit2.http.Body
@@ -32,4 +33,6 @@ interface OnBoardingService {
     @POST("/api/users/onboarding/profile-image")
     suspend fun postProfileImage(@Body request: ProfileImageRequest) : Response<ApiResponse<Unit>>
 
+    @POST("/api/users/onboarding/reminders")
+    suspend fun postRemind(@Body request: RemindRequest): Response<ApiResponse<Unit>>
 }

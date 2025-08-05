@@ -11,6 +11,7 @@ import com.example.teumteum.data.remote.onboarding.model.AgreementRequest
 import com.example.teumteum.data.remote.onboarding.model.NicknameJobRequest
 import com.example.teumteum.data.remote.onboarding.model.PresignedRequest
 import com.example.teumteum.data.remote.onboarding.model.ProfileImageRequest
+import com.example.teumteum.data.remote.onboarding.model.RemindRequest
 import com.example.teumteum.data.remote.onboarding.model.ScheduleRequest
 import com.example.teumteum.data.remote.onboarding.model.SleepPatternRequest
 import com.example.teumteum.data.remote.onboarding.repository.OnBoardingRepository
@@ -58,6 +59,9 @@ class OnBoardingViewModel @Inject constructor(
     val profileImageUri: LiveData<Uri?> = _profileImageUri
 
     private val _profileImageFileName = MutableLiveData<String?>()
+
+    private val _remindList = MutableLiveData<List<Int>>(emptyList())
+    val remindList: LiveData<List<Int>> get() = _remindList
 
     /** 약관 동의  */
     fun postAgreements(request: AgreementRequest) {
@@ -184,17 +188,16 @@ class OnBoardingViewModel @Inject constructor(
 
 
     /** 리마인드 알림 등록 (선택적) */
-//    fun postReminder(request: ReminderRequest) {
-//        _state.value = OnBoardingUiState.Loading
-//        viewModelScope.launch {
-//            repository.postReminder(request)
-//                .onSuccess {
-//                    _state.value = OnBoardingUiState.Success
-//                    _step.value = OnBoardingStep.Complete
-//                }
-//                .onFailure { handleError(it) }
-//        }
-//    }
+    fun postRemind(request: RemindRequest) {
+        _state.value = OnBoardingUiState.Loading
+        viewModelScope.launch {
+            repository.postRemind(request)
+                .onSuccess {
+                    _state.value = OnBoardingUiState.Success
+                }
+                .onFailure { handleError(it) }
+        }
+    }
 
     /** 상태 초기화 */
     fun resetState() {
@@ -243,5 +246,14 @@ class OnBoardingViewModel @Inject constructor(
         _currentDayScheduleList.value = list
     }
 
+    fun toggleReminder(minute: Int, enabled: Boolean) {
+        val current = _remindList.value?.toMutableList() ?: mutableListOf()
+        if (enabled) {
+            if (!current.contains(minute)) current.add(minute)
+        } else {
+            current.remove(minute)
+        }
+        _remindList.value = current.sorted()
+    }
 }
 
