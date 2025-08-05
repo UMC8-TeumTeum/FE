@@ -8,6 +8,7 @@ import com.example.teumteum.data.remote.onboarding.model.PresignedResponse
 import com.example.teumteum.data.remote.onboarding.model.ProfileImageRequest
 import com.example.teumteum.data.remote.onboarding.model.ScheduleRequest
 import com.example.teumteum.data.remote.onboarding.model.SleepPatternRequest
+import com.example.teumteum.data.remote.onboarding.model.RemindRequest
 import com.example.teumteum.data.remote.onboarding.service.OnBoardingService
 import com.example.teumteum.utils.handleApiResponse
 import com.example.teumteum.utils.handleApiResponseUnit
@@ -58,6 +59,13 @@ class OnBoardingRepository @Inject constructor(
     suspend fun postProfileImage(request: ProfileImageRequest): Result<Unit> = runCatching {
         val response = onBoardingService.postProfileImage(request)
         Log.d("ProfileImage", "response = ${response.body()}")
+        handleApiResponseUnit(response)
+    }
+
+    //리마인드 알림 등록
+    suspend fun postRemind(request: RemindRequest): Result<Unit> = runCatching {
+        val response = onBoardingService.postRemind(request)
+        Log.d("Remind", "response = ${response.body()}")
         handleApiResponseUnit(response)
     }
 }

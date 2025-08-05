@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -109,8 +110,8 @@ class OnBoardingNicknameFragment : Fragment() {
                     val code = state.code
                     if (code.contains("ONBOARDING4091")) {
                         binding.nicknameErrorTv.visibility = View.VISIBLE
-                    } else if (message.contains("ONBOARDING4001")) {
-                        Toast.makeText(requireContext(), "온보딩 단계가 아닙니다.", Toast.LENGTH_SHORT).show()
+                    } else if (code.contains("ONBOARDING4001")) {
+                        Log.d("NicknameFragment", "ONBOARDING4001 - 강제 이동")
                         navigateToNext()
                     } else {
                         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
