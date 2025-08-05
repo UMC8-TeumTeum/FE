@@ -39,6 +39,9 @@ class OnBoardingViewModel @Inject constructor(
     private val _scheduleAdded = MutableLiveData<Unit>()
     val scheduleAdded: LiveData<Unit> get() = _scheduleAdded
 
+    private val _currentDayScheduleList = MutableLiveData<List<Schedule>>()
+    val currentDayScheduleList: LiveData<List<Schedule>> get() = _currentDayScheduleList
+
     private val _sleepStartTime = MutableLiveData<LocalTime?>()
     val sleepStartTime: LiveData<LocalTime?> = _sleepStartTime
 
@@ -167,6 +170,16 @@ class OnBoardingViewModel @Inject constructor(
         val list = scheduleMap.getOrPut(dayIndex) { mutableListOf() }
         list.add(schedule)
         _scheduleAdded.value = Unit
+
+        if (_currentDayScheduleList.value != null && dayIndexMatchesCurrentList(dayIndex)) {
+            _currentDayScheduleList.value = list.toList()
+        }
+    }
+
+    private fun dayIndexMatchesCurrentList(dayIndex: Int): Boolean {
+        val current = _currentDayScheduleList.value ?: return false
+        val target = scheduleMap[dayIndex]?.toList() ?: return false
+        return current.size != target.size || current != target
     }
 
 
@@ -224,5 +237,11 @@ class OnBoardingViewModel @Inject constructor(
     fun setProfileImage(uri: Uri) {
         _profileImageUri.value = uri
     }
+
+    fun updateCurrentDaySchedule(dayIndex: Int) {
+        val list = scheduleMap[dayIndex]?.toList() ?: emptyList()
+        _currentDayScheduleList.value = list
+    }
+
 }
 

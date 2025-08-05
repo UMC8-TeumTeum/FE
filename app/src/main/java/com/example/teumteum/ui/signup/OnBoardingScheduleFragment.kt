@@ -2,7 +2,6 @@ package com.example.teumteum.ui.signup
 
 import BottomSheetScheduleFragment
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -15,16 +14,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentOnBoardingScheduleBinding
 import kotlin.collections.toList
-import com.example.teumteum.ui.signup.data.Schedule
 import com.example.teumteum.data.remote.onboarding.model.ScheduleRequest
 import com.example.teumteum.data.remote.onboarding.model.Week
-import com.example.teumteum.ui.signup.view.ScheduleView
 import com.example.teumteum.ui.signup.viewModel.OnBoardingUiState
 import com.example.teumteum.ui.signup.viewModel.OnBoardingViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalTime
 import java.util.Calendar
-import javax.inject.Inject
 import kotlin.collections.forEachIndexed
 
 @AndroidEntryPoint
@@ -93,6 +89,7 @@ class OnBoardingScheduleFragment : Fragment() {
         )
         setupDaySelection()
         updateDayHighlight(selectedDayIndex)
+        viewModel.updateCurrentDaySchedule(selectedDayIndex)
 
         binding.scheduleRv.apply {
             layoutManager = LinearLayoutManager(requireContext())
@@ -103,11 +100,7 @@ class OnBoardingScheduleFragment : Fragment() {
             val list = viewModel.scheduleMap.getOrPut(selectedDayIndex) { mutableListOf() }
             val bottomSheet = BottomSheetScheduleFragment(
                 selectedDayIndex,
-                list.toList(),
-                onScheduleAdded = { schedule ->
-                    list.add(schedule)
-                    scheduleAdapter.submitList(list.toList())
-                }
+                list.toList()
             )
             bottomSheet.show(parentFragmentManager, "BottomSheetScheduleFragment")
         }
@@ -136,7 +129,9 @@ class OnBoardingScheduleFragment : Fragment() {
         dayTextViews[selectedIndex].setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
 
         selectedDayIndex = selectedIndex
-        scheduleAdapter.submitList(viewModel.scheduleMap[selectedDayIndex] ?: emptyList())
+//        scheduleAdapter.submitList(viewModel.scheduleMap[selectedDayIndex] ?: emptyList())
+
+        viewModel.updateCurrentDaySchedule(selectedDayIndex)
     }
 
     private fun getScheduleRequest(): ScheduleRequest {
@@ -178,6 +173,10 @@ class OnBoardingScheduleFragment : Fragment() {
                 }
                 else -> Unit
             }
+        }
+
+        viewModel.currentDayScheduleList.observe(viewLifecycleOwner) { list ->
+            scheduleAdapter.submitList(list)
         }
     }
 

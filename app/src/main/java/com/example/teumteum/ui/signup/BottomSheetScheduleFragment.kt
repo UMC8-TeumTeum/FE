@@ -25,7 +25,6 @@ import kotlin.getValue
 class BottomSheetScheduleFragment(
     private val selectedDayIndex: Int,
     private val existingSchedules: List<Schedule>,
-    private val onScheduleAdded: (Schedule) -> Unit,
 ) : BottomSheetDialogFragment() {
 
     private lateinit var binding: FragmentBottomSheetScheduleBinding
@@ -123,7 +122,7 @@ class BottomSheetScheduleFragment(
             )
 
             viewModel.addSchedule(selectedDayIndex, schedule)
-            onScheduleAdded(schedule)
+//            onScheduleAdded(schedule)
             dismiss()
         }
     }

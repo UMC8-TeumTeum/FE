@@ -2,7 +2,6 @@ package com.example.teumteum.ui.signup
 
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,20 +10,18 @@ import android.widget.Button
 import android.widget.NumberPicker
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.onboarding.model.SleepPatternRequest
 import com.example.teumteum.databinding.FragmentOnBoardingSleepPatternBinding
-import com.example.teumteum.ui.signup.view.SleepPatternView
 import com.example.teumteum.ui.signup.viewModel.OnBoardingUiState
 import com.example.teumteum.ui.signup.viewModel.OnBoardingViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
-import javax.inject.Inject
 
+@AndroidEntryPoint
 class OnBoardingSleepPatternFragment : Fragment() {
 
     private lateinit var binding: FragmentOnBoardingSleepPatternBinding
