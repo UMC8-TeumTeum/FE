@@ -3,7 +3,6 @@ package com.example.teumteum.data.remote.home.repository
 import android.util.Log
 import com.example.teumteum.data.remote.home.model.ScheduleResult
 import com.example.teumteum.data.remote.home.service.HomeService
-import com.example.teumteum.utils.ApiResponse
 import com.example.teumteum.utils.handleApiResponse
 import javax.inject.Inject
 import javax.inject.Singleton

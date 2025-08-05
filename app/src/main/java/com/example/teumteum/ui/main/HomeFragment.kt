@@ -50,17 +50,6 @@ class HomeFragment : Fragment(), IDateClickListener {
 
     private lateinit var adapter: TodoRVAdapter
 
-//    @Inject
-//    lateinit var homeService: HomeService
-
-//    private val fullDaySchedule = mutableListOf<TimeBlock>()
-////    private val fullDaySchedule = listOf(
-////    TimeBlock(startTime = 0, endTime = 60, type = TimeType.EMPTY),    // 00:00 ~ 01:00
-////    TimeBlock(startTime = 60, endTime = 540, type = TimeType.SLEEP),  // 01:00 ~ 09:00
-////    TimeBlock(startTime = 180, endTime = 600, type = TimeType.TODO),  // 03:00 ~ 10:00
-////    TimeBlock(startTime = 600, endTime = 1440, type = TimeType.EMPTY) // 10:00 ~ 24:00
-////)
-
     private var isAM: Boolean = true
 
     override fun onCreateView(
@@ -130,10 +119,7 @@ class HomeFragment : Fragment(), IDateClickListener {
 
 //        adapter = TodoRVAdapter(parentFragmentManager, todoDummyList)
 //        binding.todolistRv.adapter = adapter
-        val date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-//        homeService.setHomeView(this)
-//        homeService.getTodaySchedule(date)
-        viewModel.getTodaySchedule(date)
+        viewModel.getTodayScheduleIfNeeded()
 
         viewModel.scheduleList.observe(viewLifecycleOwner) {
             updateTimeChart(isAM)
