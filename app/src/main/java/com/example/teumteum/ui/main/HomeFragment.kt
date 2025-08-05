@@ -303,6 +303,10 @@ class HomeFragment : Fragment(), IDateClickListener, HomeView {
         selectedDate = date
         saveSelectedDate(date)
         binding.homeSelectedDateTv.text = dateFormat(date)
+
+        // 클릭된 날짜의 투두리스트 조회
+        val dateStr = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        todoViewModel.getTodoList(dateStr)
     }
 
 
