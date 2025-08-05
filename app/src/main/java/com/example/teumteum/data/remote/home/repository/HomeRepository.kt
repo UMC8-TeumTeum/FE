@@ -1,0 +1,20 @@
+package com.example.teumteum.data.remote.home.repository
+
+import android.util.Log
+import com.example.teumteum.data.remote.home.model.ScheduleResult
+import com.example.teumteum.data.remote.home.service.HomeService
+import com.example.teumteum.utils.ApiResponse
+import com.example.teumteum.utils.handleApiResponse
+import javax.inject.Inject
+import javax.inject.Singleton
+
+@Singleton
+class HomeRepository @Inject constructor(
+    private val homeService: HomeService
+){
+    suspend fun getTodaySchedule(date: String): Result<List<ScheduleResult>> = runCatching {
+        val response = homeService.getTodaySchedule(date)
+        Log.d("HomeSchedule", "response = ${response.body()}")
+        handleApiResponse(response)
+    }
+}
