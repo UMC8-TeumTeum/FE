@@ -10,21 +10,21 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
+import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
-import com.example.teumteum.data.Schedule
+import com.example.teumteum.ui.signup.data.Schedule
 import com.example.teumteum.databinding.FragmentBottomSheetScheduleBinding
+import com.example.teumteum.ui.signup.viewModel.OnBoardingViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import kotlin.getValue
 
 class BottomSheetScheduleFragment(
     private val selectedDayIndex: Int,
     private val existingSchedules: List<Schedule>,
-    private val onScheduleAdded: (Schedule) -> Unit,
-    private val sleepStart: LocalTime? = null,
-    private val sleepEnd: LocalTime? = null
 ) : BottomSheetDialogFragment() {
 
     private lateinit var binding: FragmentBottomSheetScheduleBinding
@@ -32,6 +32,11 @@ class BottomSheetScheduleFragment(
 
     private var startTime: LocalTime? = null
     private var endTime: LocalTime? = null
+
+    private var sleepStart: LocalTime? = null
+    private var sleepEnd: LocalTime? = null
+
+    private val viewModel: OnBoardingViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,6 +50,9 @@ class BottomSheetScheduleFragment(
         val dayText = "매주 ${dayNames[selectedDayIndex]}요일"
         binding.startDateTv.text = dayText
         binding.endDateTv.text = dayText
+
+        sleepStart = viewModel.sleepStartTime.value
+        sleepEnd = viewModel.sleepEndTime.value
 
         setupPickers()
 
@@ -65,6 +73,11 @@ class BottomSheetScheduleFragment(
         binding.registerBtn.setOnClickListener {
             val title = binding.scheduleTitleEt.text.toString().trim()
             val description = binding.descriptionTextEt.text.toString().trim()
+
+            if(title.isEmpty()){
+                Toast.makeText(requireContext(), "일정 이름을 입력하세요", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
             //시간 선택 확인
             if (startTime == null || endTime == null) {
@@ -107,7 +120,9 @@ class BottomSheetScheduleFragment(
                 endTime = endTime!!,
                 description = description
             )
-            onScheduleAdded(schedule)
+
+            viewModel.addSchedule(selectedDayIndex, schedule)
+//            onScheduleAdded(schedule)
             dismiss()
         }
     }

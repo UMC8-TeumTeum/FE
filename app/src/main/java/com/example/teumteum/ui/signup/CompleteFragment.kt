@@ -12,21 +12,21 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class CompleteFragment : Fragment() {
 
-    private lateinit var binding: FragmentCompleteBinding
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+    private var _binding: FragmentCompleteBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentCompleteBinding.inflate(inflater, container, false)
+    ): View {
+        _binding = FragmentCompleteBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // 프로그래스바 설정
         (activity as? SignUpActivity)?.setProgressBar(100)
 
         binding.completeBtn.setOnClickListener {
@@ -35,5 +35,10 @@ class CompleteFragment : Fragment() {
                 .addToBackStack(null)
                 .commit()
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

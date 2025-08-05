@@ -2,7 +2,6 @@ package com.example.teumteum.ui.signup
 
 import BottomSheetScheduleFragment
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,72 +9,32 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentOnBoardingScheduleBinding
 import kotlin.collections.toList
-import com.example.teumteum.data.Schedule
-import com.example.teumteum.data.remote.onboarding.OnBoardingService
-import com.example.teumteum.data.remote.onboarding.dto.ScheduleRequest
-import com.example.teumteum.data.remote.onboarding.dto.Week
-import com.example.teumteum.ui.signup.view.ScheduleView
+import com.example.teumteum.data.remote.onboarding.model.ScheduleRequest
+import com.example.teumteum.data.remote.onboarding.model.Week
+import com.example.teumteum.ui.signup.viewModel.OnBoardingUiState
+import com.example.teumteum.ui.signup.viewModel.OnBoardingViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalTime
 import java.util.Calendar
-import javax.inject.Inject
 import kotlin.collections.forEachIndexed
 
 @AndroidEntryPoint
-class OnBoardingScheduleFragment : Fragment(), ScheduleView{
+class OnBoardingScheduleFragment : Fragment() {
 
     private lateinit var binding: FragmentOnBoardingScheduleBinding
     private val scheduleAdapter by lazy { ScheduleAdapter() }
 
     private lateinit var dayTextViews: List<TextView>
-
     private var selectedDayIndex = 0
-
-    private val scheduleMap = mutableMapOf<Int, MutableList<Schedule>>()
-
     private var sleepStart: LocalTime? = null
     private var sleepEnd: LocalTime? = null
 
-    @Inject
-    lateinit var onBoardingService: OnBoardingService
-
-    override fun onScheduleSuccess(code: String) {
-        val msg = "반복 일정 등록 성공 (code: $code)"
-        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
-        Log.d("SCHEDULE_FRAGMENT", msg)
-
-        parentFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, OnBoardingRemindFragment())
-                .addToBackStack(null)
-                .commit()
-    }
-
-    override fun onScheduleFailure(code: String, message: String?) {
-        val msg = "반복 일정 등록 실패 (code: $code, message: ${message ?: "없음"})"
-        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
-        Log.e("SCHEDULE_FRAGMENT", msg)
-
-        //온보딩 단계가 아닐 경우 - 이후 테스트를 위해 화면 이동하도록 구현
-        if (message?.contains("ONBOARDING4001") == true) {
-            Toast.makeText(requireContext(), "온보딩 단계가 아닙니다.", Toast.LENGTH_SHORT).show()
-
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, OnBoardingRemindFragment())
-                .addToBackStack(null)
-                .commit()
-        }
-
-        //그 외 잘못된 입력
-        if (message?.contains("ONBOARDING4005") == true ||
-            message?.contains("ONBOARDING4006") == true ||
-            message?.contains("ONBOARDING4007") == true) {
-            Log.e("SCHEDULE_FRAGMENT", msg)
-        }
-    }
+    private val viewModel: OnBoardingViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -83,7 +42,6 @@ class OnBoardingScheduleFragment : Fragment(), ScheduleView{
         arguments?.let {
             val start = it.getString("sleepStart")
             val end = it.getString("sleepEnd")
-
             sleepStart = start?.let { LocalTime.parse(it) }
             sleepEnd = end?.let { LocalTime.parse(it) }
         }
@@ -91,7 +49,6 @@ class OnBoardingScheduleFragment : Fragment(), ScheduleView{
         if (savedInstanceState == null) {
             val calendar = Calendar.getInstance()
             val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
-
             selectedDayIndex = when (dayOfWeek) {
                 Calendar.SUNDAY -> 0
                 Calendar.MONDAY -> 1
@@ -115,7 +72,7 @@ class OnBoardingScheduleFragment : Fragment(), ScheduleView{
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentOnBoardingScheduleBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -124,67 +81,47 @@ class OnBoardingScheduleFragment : Fragment(), ScheduleView{
         super.onViewCreated(view, savedInstanceState)
         (activity as? SignUpActivity)?.setProgressBar(80)
 
-        binding.nextBtn.setOnClickListener {
-//            startActivity(Intent(requireContext(), MainActivity::class.java))
-//            parentFragmentManager.beginTransaction()
-//                .replace(R.id.fragment_container, OnBoardingRemindFragment())
-//                .addToBackStack(null)
-//                .commit()
-            if(scheduleMap.isNotEmpty()) {
-                val request = getScheduleRequest()
-                onBoardingService.setScheduleView(this)
-                onBoardingService.postSchedules(request)
-            }
-            else{
-                parentFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, OnBoardingRemindFragment())
-                .addToBackStack(null)
-                .commit()
-            }
-        }
-
-        // RecyclerView 세팅
-        binding.scheduleRv.adapter = scheduleAdapter
-        binding.scheduleRv.layoutManager = LinearLayoutManager(requireContext())
-
-        binding.fabAddIv.setOnClickListener {
-            val list = scheduleMap.getOrPut(selectedDayIndex) { mutableListOf() }
-
-            val bottomSheet = BottomSheetScheduleFragment(
-                selectedDayIndex,
-                list.toList(),
-                onScheduleAdded = { schedule ->
-                    list.add(schedule)
-                    scheduleAdapter.submitList(list.toList())
-                },
-                sleepStart = sleepStart,
-                sleepEnd = sleepEnd
-            )
-
-            bottomSheet.show(parentFragmentManager, "BottomSheetScheduleFragment")
-        }
+        observeViewModel()
 
         dayTextViews = listOf(
             binding.sunTv, binding.monTv, binding.tueTv,
             binding.wedTv, binding.thuTv, binding.friTv, binding.satTv
         )
-
         setupDaySelection()
         updateDayHighlight(selectedDayIndex)
+        viewModel.updateCurrentDaySchedule(selectedDayIndex)
 
-    }
+        binding.scheduleRv.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = scheduleAdapter
+        }
 
-    private fun setupDaySelection() {
-        dayTextViews.forEachIndexed { index, textView ->
-            textView.setOnClickListener {
-                updateDayHighlight(index)
+        binding.fabAddIv.setOnClickListener {
+            val list = viewModel.scheduleMap.getOrPut(selectedDayIndex) { mutableListOf() }
+            val bottomSheet = BottomSheetScheduleFragment(
+                selectedDayIndex,
+                list.toList()
+            )
+            bottomSheet.show(parentFragmentManager, "BottomSheetScheduleFragment")
+        }
+
+        binding.nextBtn.setOnClickListener {
+            if (viewModel.scheduleMap.isNotEmpty()) {
+                val request = getScheduleRequest()
+                viewModel.postSchedule(request)
+            } else {
+                navigateToNext()
             }
         }
     }
 
-    //요일 선택했을 때 하이라이팅, 해당 요일 일정 보여주기
-    private fun updateDayHighlight(selectedIndex: Int) {
+    private fun setupDaySelection() {
+        dayTextViews.forEachIndexed { index, textView ->
+            textView.setOnClickListener { updateDayHighlight(index) }
+        }
+    }
 
+    private fun updateDayHighlight(selectedIndex: Int) {
         dayTextViews[selectedDayIndex].background = null
         dayTextViews[selectedDayIndex].setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
 
@@ -192,29 +129,23 @@ class OnBoardingScheduleFragment : Fragment(), ScheduleView{
         dayTextViews[selectedIndex].setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
 
         selectedDayIndex = selectedIndex
+//        scheduleAdapter.submitList(viewModel.scheduleMap[selectedDayIndex] ?: emptyList())
 
-        // 해당 요일의 일정 보여주기
-        scheduleAdapter.submitList(scheduleMap[selectedDayIndex] ?: emptyList())
+        viewModel.updateCurrentDaySchedule(selectedDayIndex)
     }
 
     private fun getScheduleRequest(): ScheduleRequest {
-        val allSchedules = mutableListOf<com.example.teumteum.data.remote.onboarding.dto.Schedule>()
-
+        val allSchedules = mutableListOf<com.example.teumteum.data.remote.onboarding.model.Schedule>()
         val weekMap = mapOf(
-            0 to Week.SUNDAY,
-            1 to Week.MONDAY,
-            2 to Week.TUESDAY,
-            3 to Week.WEDNESDAY,
-            4 to Week.THURSDAY,
-            5 to Week.FRIDAY,
-            6 to Week.SATURDAY
+            0 to Week.SUNDAY, 1 to Week.MONDAY, 2 to Week.TUESDAY,
+            3 to Week.WEDNESDAY, 4 to Week.THURSDAY, 5 to Week.FRIDAY, 6 to Week.SATURDAY
         )
 
-        scheduleMap.forEach { (dayIndex, schedules) ->
+        viewModel.scheduleMap.forEach { (dayIndex, schedules) ->
             val weekdayEnum = weekMap[dayIndex] ?: Week.SUNDAY
             schedules.forEach { s ->
                 allSchedules.add(
-                    com.example.teumteum.data.remote.onboarding.dto.Schedule(
+                    com.example.teumteum.data.remote.onboarding.model.Schedule(
                         title = s.title,
                         description = s.description,
                         weekday = weekdayEnum,
@@ -226,5 +157,35 @@ class OnBoardingScheduleFragment : Fragment(), ScheduleView{
         }
 
         return ScheduleRequest(routine = allSchedules)
+    }
+
+    private fun observeViewModel() {
+        viewModel.state.observe(viewLifecycleOwner) { state ->
+            when (state) {
+                is OnBoardingUiState.Success -> {
+                    navigateToNext()
+                }
+                is OnBoardingUiState.Error -> {
+                    Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
+                    if (state.code == "ONBOARDING4001") {
+                        navigateToNext()
+                    }
+                }
+                else -> Unit
+            }
+        }
+
+        viewModel.currentDayScheduleList.observe(viewLifecycleOwner) { list ->
+            scheduleAdapter.submitList(list)
+        }
+    }
+
+    private fun navigateToNext() {
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, OnBoardingRemindFragment())
+            .addToBackStack(null)
+            .commit()
+
+        viewModel.resetState()
     }
 }
