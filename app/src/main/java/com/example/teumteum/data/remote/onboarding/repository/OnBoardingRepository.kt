@@ -66,6 +66,6 @@ class OnBoardingRepository @Inject constructor(
     suspend fun postRemind(request: RemindRequest): Result<Unit> = runCatching {
         val response = onBoardingService.postRemind(request)
         Log.d("Remind", "response = ${response.body()}")
-
+        handleApiResponseUnit(response)
     }
 }

@@ -109,8 +109,7 @@ class OnBoardingNicknameFragment : Fragment() {
                     val code = state.code
                     if (code.contains("ONBOARDING4091")) {
                         binding.nicknameErrorTv.visibility = View.VISIBLE
-                    } else if (message.contains("ONBOARDING4001")) {
-                        Toast.makeText(requireContext(), "온보딩 단계가 아닙니다.", Toast.LENGTH_SHORT).show()
+                    } else if (code.contains("ONBOARDING4001")) {
                         navigateToNext()
                     } else {
                         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
