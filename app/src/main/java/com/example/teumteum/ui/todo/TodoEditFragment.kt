@@ -172,49 +172,6 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
             toggleCalendarVisibility()
         }
 
-        if (todoId == 3L) {
-            val deactiveColor = ContextCompat.getColor(requireContext(), R.color.teumteum_deactive)
-
-            binding.todoTitleEt.setTextColor(deactiveColor)
-            binding.timerIconIv.setColorFilter(deactiveColor)
-            binding.startDateTv.setTextColor(deactiveColor)
-            binding.startTimeTv.setTextColor(deactiveColor)
-            binding.endDateTv.setTextColor(deactiveColor)
-            binding.endTimeTv.setTextColor(deactiveColor)
-            binding.alarmIconIv.setColorFilter(deactiveColor)
-            binding.alarmSet01Tv.setTextColor(deactiveColor)
-            binding.alarmSet02Tv.setTextColor(deactiveColor)
-            binding.addAlarmTv.setTextColor(deactiveColor)
-            binding.publicIconIv.setColorFilter(deactiveColor)
-            binding.publicSettingTv.setTextColor(deactiveColor)
-            binding.includeIconIv.setColorFilter(deactiveColor)
-            binding.includeReportTv.setTextColor(deactiveColor)
-            binding.detailTextIv.setColorFilter(deactiveColor)
-            binding.detailTextEt.setTextColor(deactiveColor)
-            binding.detailTextEt.setHintTextColor(deactiveColor)
-
-            binding.todoTitleEt.isEnabled = false
-            binding.startDateTv.isEnabled = false
-            binding.startTimeTv.isEnabled = false
-            binding.endDateTv.isEnabled = false
-            binding.endTimeTv.isEnabled = false
-            binding.alarmSet01Tv.isEnabled = false
-            binding.alarmSet02Tv.isEnabled = false
-            binding.addAlarmTv.isEnabled = false
-            binding.btnPlus.isEnabled = false
-            binding.detailTextEt.isEnabled = false
-
-            binding.alarmToggle01Iv.isEnabled = false
-            binding.alarmToggle02Iv.isEnabled = false
-            binding.publicToggle01Iv.isEnabled = false
-            binding.includeToggle01Iv.isEnabled = false
-
-            binding.btnTodoDelete.isEnabled = false
-            binding.btnTodoSave.isEnabled = false
-
-            Toast.makeText(requireContext(), "이 일정은 편집할 수 없습니다.", Toast.LENGTH_SHORT).show()
-        }
-
         if (todoId != -1L) {
             todoViewModel.getTodo(todoId)
         }
@@ -604,30 +561,6 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
         }
     }
 
-    private fun getSelectedRemindAlarms(): List<Int> {
-        val alarms = mutableListOf<Int>()
-
-        if (binding.alarmToggle01Iv.isChecked) {
-            alarms.add(30)
-        }
-        if (binding.alarmToggle02Iv.isChecked) {
-            alarms.add(10)
-        }
-
-        // 추가된 알림 항목들
-        for (i in 0 until binding.alarmLayoutContainer.childCount) {
-            val child = binding.alarmLayoutContainer.getChildAt(i)
-            val toggle = child.findViewById<SwitchCompat>(R.id.alarm_toggle_tv)
-            val labelText = child.findViewById<TextView>(R.id.alarm_set_tv).text.toString()
-
-            if (toggle.isChecked) { // 커스텀 토글이 실제로 체크 가능한 경우
-                alarmLabelToMinutes[labelText]?.let { alarms.add(it) }
-            }
-        }
-
-        return alarms
-    }
-
     private fun setupObservers() {
         todoViewModel.todo.observe(viewLifecycleOwner) { todo ->
 
@@ -678,8 +611,49 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
                 }
             }
 
+            if (todo.type.name == "ROUTINE") {
+                val deactiveColor = ContextCompat.getColor(requireContext(), R.color.teumteum_deactive)
 
-            Toast.makeText(requireContext(), "투두 정보가 성공적으로 조회되었습니다.", Toast.LENGTH_SHORT).show()
+                binding.todoTitleEt.setTextColor(deactiveColor)
+                binding.timerIconIv.setColorFilter(deactiveColor)
+                binding.startDateTv.setTextColor(deactiveColor)
+                binding.startTimeTv.setTextColor(deactiveColor)
+                binding.endDateTv.setTextColor(deactiveColor)
+                binding.endTimeTv.setTextColor(deactiveColor)
+                binding.alarmIconIv.setColorFilter(deactiveColor)
+                binding.alarmSet01Tv.setTextColor(deactiveColor)
+                binding.alarmSet02Tv.setTextColor(deactiveColor)
+                binding.addAlarmTv.setTextColor(deactiveColor)
+                binding.publicIconIv.setColorFilter(deactiveColor)
+                binding.publicSettingTv.setTextColor(deactiveColor)
+                binding.includeIconIv.setColorFilter(deactiveColor)
+                binding.includeReportTv.setTextColor(deactiveColor)
+                binding.detailTextIv.setColorFilter(deactiveColor)
+                binding.detailTextEt.setTextColor(deactiveColor)
+                binding.detailTextEt.setHintTextColor(deactiveColor)
+
+                binding.todoTitleEt.isEnabled = false
+                binding.startDateTv.isEnabled = false
+                binding.startTimeTv.isEnabled = false
+                binding.endDateTv.isEnabled = false
+                binding.endTimeTv.isEnabled = false
+                binding.alarmSet01Tv.isEnabled = false
+                binding.alarmSet02Tv.isEnabled = false
+                binding.addAlarmTv.isEnabled = false
+                binding.btnPlus.isEnabled = false
+                binding.detailTextEt.isEnabled = false
+
+                binding.alarmToggle01Iv.isEnabled = false
+                binding.alarmToggle02Iv.isEnabled = false
+                binding.publicToggle01Iv.isEnabled = false
+                binding.includeToggle01Iv.isEnabled = false
+
+                binding.btnTodoDelete.isEnabled = false
+                binding.btnTodoSave.isEnabled = false
+
+                Toast.makeText(requireContext(), "반복일정은 편집할 수 없습니다.", Toast.LENGTH_SHORT).show()
+            }
+
             parentFragmentManager.setFragmentResult("todo_get", Bundle())
         }
 
