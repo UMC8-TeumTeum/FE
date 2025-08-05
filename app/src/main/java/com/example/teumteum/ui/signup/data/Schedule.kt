@@ -1,4 +1,4 @@
-package com.example.teumteum.data
+package com.example.teumteum.ui.signup.data
 
 import java.time.LocalTime
 
