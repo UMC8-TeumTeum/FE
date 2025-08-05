@@ -651,7 +651,33 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
 
             binding.includeToggle01Iv.isChecked = todo.includeTeum
 
-            getSelectedRemindAlarms()
+            todo.remindAlarm?.forEach { minutes ->
+                val label = alarmLabelToMinutes.entries.firstOrNull { it.value == minutes }?.key
+                label?.let {
+                    if (!selectedItems.contains(it)) {
+                        selectedItems.add(it)
+                        addAlarmItem(it)
+                    }
+
+                    when (it) {
+                        "30분 전" -> binding.alarmToggle01Iv.isChecked = true
+                        "10분 전" -> binding.alarmToggle02Iv.isChecked = true
+                        else -> {
+
+                            for (i in 0 until binding.alarmLayoutContainer.childCount) {
+                                val child = binding.alarmLayoutContainer.getChildAt(i)
+                                val labelText = child.findViewById<TextView>(R.id.alarm_set_tv).text.toString()
+                                if (labelText == it) {
+                                    val toggle = child.findViewById<SwitchCompat>(R.id.alarm_toggle_tv)
+                                    toggle.isChecked = true
+                                    break
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
 
             Toast.makeText(requireContext(), "투두 정보가 성공적으로 조회되었습니다.", Toast.LENGTH_SHORT).show()
             parentFragmentManager.setFragmentResult("todo_get", Bundle())
