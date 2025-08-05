@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.teumteum.R
+import com.example.teumteum.data.remote.friend.model.TeumReceivedItem
 import com.example.teumteum.databinding.FragmentFriend02PossibleTimeBinding
 import com.example.teumteum.ui.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -18,8 +19,8 @@ class Friend02PossibleTimeFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var adapter: FriendRequestCardAdapter
-
-
+    private var teumList: List<TeumReceivedItem> = emptyList()
+    private var responseId: Int = -1
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -31,7 +32,18 @@ class Friend02PossibleTimeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //  뒤로가기 버튼 처리
+        //  전달받은 데이터 받기
+        teumList = arguments?.getParcelableArrayList("teumList") ?: emptyList()
+        responseId = arguments?.getInt("responseId") ?: -1
+
+        //  어댑터 연결
+        adapter = FriendRequestCardAdapter(teumList)
+        binding.requestViewPager.adapter = adapter
+
+        //  바텀 네비게이션 숨기기
+        (activity as? MainActivity)?.hideBottomBar()
+
+        //  뒤로가기
         binding.backButton.setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.main_frm, Friend02RequestFragment())
@@ -39,50 +51,37 @@ class Friend02PossibleTimeFragment : Fragment() {
                 .commit()
         }
 
-        //  바텀 네비게이션 숨기기
-        (activity as? MainActivity)?.hideBottomBar()
-
-//        // 1. ViewPager2 + Adapter 연결
-//        adapter = FriendRequestCardAdapter(getDummyList())
-//        binding.requestViewPager.adapter = adapter
-
-        // 함께할래요 버튼 클릭 시 바텀시트 띄우기 + Toast 메시지
+        //  "찾기" 버튼 클릭 시 → Suggest로 넘어갈 때도 teumList, responseId 넘기기
         binding.btnFind.setOnClickListener {
+            val fragment = Friend02SuggestFragment().apply {
+                arguments = Bundle().apply {
+                    putParcelableArrayList("teumList", ArrayList(teumList))
+                    putInt("responseId", responseId)
+                }
+            }
+
             parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, Friend02SuggestFragment())
-                .addToBackStack(null)      // 뒤로 가기 가능하게
+                .replace(R.id.main_frm, fragment)
+                .addToBackStack(null)
                 .commit()
 
-            Toast.makeText(requireContext(),
-                "함께할래요 화면으로 이동합니다.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "함께할래요 화면으로 이동합니다.", Toast.LENGTH_SHORT).show()
         }
-
-
     }
-
-
-    private fun getDummyList(): List<FriendRequestData> {
-        return listOf(
-            FriendRequestData(
-                name = "이름",
-                date = "25.05.02",
-                time = "15:20 ~ 16:10",
-                title = "강아지 산책 가자",
-                desc = "모모랑 초코랑 종합천 한바퀴 쓰윽 돌고\n돌아오는 길에 호떡 먹자!"
-            ),
-            FriendRequestData(
-                name = "보보",
-                date = "25.05.03",
-                time = "11:00 ~ 12:00",
-                title = "산책 좋아하는 보보",
-                desc = "동물병원 들렀다가 간식도 먹고 돌아오자!"
-            )
-        )
-    }
-
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object {
+        fun newInstance(teumList: ArrayList<TeumReceivedItem>, responseId: Int): Friend02PossibleTimeFragment {
+            return Friend02PossibleTimeFragment().apply {
+                arguments = Bundle().apply {
+                    putParcelableArrayList("teumList", teumList)
+                    putInt("responseId", responseId)
+                }
+            }
+        }
     }
 }

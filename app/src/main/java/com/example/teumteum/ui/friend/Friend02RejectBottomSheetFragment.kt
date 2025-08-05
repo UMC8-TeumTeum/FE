@@ -71,9 +71,16 @@ class Friend02RejectBottomSheetFragment : BottomSheetDialogFragment() {
             val responseId = arguments?.getInt("responseId") ?: return@setOnClickListener
 
             if (selectedOption == SelectedOption.SUGGEST) {
+                // Friend02RequestFragment에서 받아온 teumList 전달 필요
+                val parentFragment = parentFragmentManager.fragments.firstOrNull { it is Friend02RequestFragment } as? Friend02RequestFragment
+                val teumList = parentFragment?.teumList ?: emptyList()
+
                 //  시간 제안 화면 이동
                 parentFragmentManager.beginTransaction()
-                    .replace(R.id.main_frm, Friend02PossibleTimeFragment())
+                    .replace(
+                        R.id.main_frm,
+                        Friend02PossibleTimeFragment.newInstance(ArrayList(teumList), responseId)
+                    )
                     .addToBackStack(null)
                     .commit()
                 dismiss()
