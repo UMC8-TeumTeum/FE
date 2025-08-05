@@ -2,6 +2,7 @@ package com.example.teumteum.ui.signup
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -110,8 +111,10 @@ class OnBoardingSleepPatternFragment : Fragment() {
 
                 is OnBoardingUiState.Error -> {
                     binding.nextBtn.isEnabled = true
-                    Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
-                    if (state.code.contains("ONBOARDING4001")) navigateToNext()
+                    if (state.code.contains("ONBOARDING4001")) {
+                        Log.d("SleepPatternFragment", "ONBOARDING4001 - 강제 이동")
+                        navigateToNext()
+                    }
                 }
 
                 else -> Unit

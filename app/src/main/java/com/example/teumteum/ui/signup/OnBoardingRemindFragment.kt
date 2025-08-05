@@ -2,6 +2,7 @@ package com.example.teumteum.ui.signup
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -74,9 +75,9 @@ class OnBoardingRemindFragment : Fragment() {
                 }
                 is OnBoardingUiState.Error -> {
                     if (state.code.contains("ONBOARDING4001")) {
+                        Log.d("RemindFragment", "ONBOARDING4001 - 강제 이동")
                         navigateToMain()
                     }
-                    Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
                 }
                 else -> Unit
             }
