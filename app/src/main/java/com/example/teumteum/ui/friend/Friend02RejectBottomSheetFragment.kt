@@ -4,23 +4,28 @@ import android.app.Dialog
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
-import android.text.Spannable
 import android.text.SpannableString
+import android.text.Spannable
 import android.text.style.ForegroundColorSpan
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
 import com.example.teumteum.databinding.BottomSheetFriend02RejectBinding
+import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class Friend02RejectBottomSheetFragment : BottomSheetDialogFragment() {
+
     private var _binding: BottomSheetFriend02RejectBinding? = null
     private val binding get() = _binding!!
+    private val viewModel: FriendViewModel by activityViewModels()
 
     private var selectedOption: SelectedOption = SelectedOption.REJECT
 
@@ -28,16 +33,13 @@ class Friend02RejectBottomSheetFragment : BottomSheetDialogFragment() {
         REJECT, SUGGEST
     }
 
-    /** ↓ BottomSheetDialog 배경 커스텀 */
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
-
         dialog.setOnShowListener { dialogInterface ->
             val bottomSheet = (dialogInterface as BottomSheetDialog)
                 .findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
             bottomSheet?.setBackgroundResource(R.drawable.calendar_background)
         }
-
         return dialog
     }
 
@@ -51,14 +53,10 @@ class Friend02RejectBottomSheetFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 초기 텍스트 설정
         binding.btnRejectMent.text = getColoredText("이때는 시간이 안돼요", " 멘트 보내기")
         binding.btnSuggestTime.text = getColoredText("가능한 다른 시간대", " 제안하기")
-
-        // 기본 선택
         updateSelection(SelectedOption.REJECT)
 
-        // 클릭 리스너
         binding.btnRejectMent.setOnClickListener {
             updateSelection(SelectedOption.REJECT)
         }
@@ -70,16 +68,33 @@ class Friend02RejectBottomSheetFragment : BottomSheetDialogFragment() {
         binding.btnCancel.setOnClickListener { dismiss() }
 
         binding.btnSend.setOnClickListener {
+            val responseId = arguments?.getInt("responseId") ?: return@setOnClickListener
+
             if (selectedOption == SelectedOption.SUGGEST) {
-                // 화면 전환 (가능한 시간 제안)
+                // Friend02RequestFragment에서 받아온 teumList 전달 필요
+                val parentFragment = parentFragmentManager.fragments.firstOrNull { it is Friend02RequestFragment } as? Friend02RequestFragment
+                val teumList = parentFragment?.teumList ?: emptyList()
+
+                //  시간 제안 화면 이동
                 parentFragmentManager.beginTransaction()
-                    .replace(R.id.main_frm, Friend02PossibleTimeFragment())
+                    .replace(
+                        R.id.main_frm,
+                        Friend02PossibleTimeFragment.newInstance(ArrayList(teumList), responseId)
+                    )
                     .addToBackStack(null)
                     .commit()
                 dismiss()
             } else {
-                // 단순 거절 멘트 전송
-                Toast.makeText(requireContext(), "멘트가 전송되었습니다.", Toast.LENGTH_SHORT).show()
+                val status = "rejected"
+
+                //  로그 & 토스트
+                Log.d("REJECT_BOTTOM_SHEET", "responseId: $responseId, status: $status")
+                Toast.makeText(requireContext(), "응답: 시간이 안돼요 (id: $responseId)", Toast.LENGTH_SHORT).show()
+
+                //  응답 처리
+                viewModel.respondToTeum(responseId, status)
+
+                //  바텀시트 닫기
                 dismiss()
             }
         }
@@ -110,34 +125,29 @@ class Friend02RejectBottomSheetFragment : BottomSheetDialogFragment() {
     private fun getColoredText(purplePart: String, blackPart: String): SpannableString {
         val fullText = purplePart + blackPart
         return SpannableString(fullText).apply {
-            setSpan(
-                ForegroundColorSpan(Color.parseColor("#7770FE")),
-                0,
-                purplePart.length,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
-            setSpan(
-                ForegroundColorSpan(Color.parseColor("#0F0F0F")),
-                purplePart.length,
-                fullText.length,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
+            setSpan(ForegroundColorSpan(Color.parseColor("#7770FE")), 0, purplePart.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            setSpan(ForegroundColorSpan(Color.parseColor("#0F0F0F")), purplePart.length, fullText.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         }
     }
 
     private fun getGrayText(fullText: String): SpannableString {
         return SpannableString(fullText).apply {
-            setSpan(
-                ForegroundColorSpan(Color.parseColor("#D3D3D3")),
-                0,
-                fullText.length,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
+            setSpan(ForegroundColorSpan(Color.parseColor("#D3D3D3")), 0, fullText.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object {
+        fun newInstance(responseId: Int): Friend02RejectBottomSheetFragment {
+            return Friend02RejectBottomSheetFragment().apply {
+                arguments = Bundle().apply {
+                    putInt("responseId", responseId)
+                }
+            }
+        }
     }
 }
