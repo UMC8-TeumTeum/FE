@@ -48,4 +48,15 @@ class FriendRepository @Inject constructor(
         }
     }
 
+    suspend fun respondToTeum(responseId: Int, status: String): Result<TeumStatusResult> = runCatching {
+        val request = TeumStatusRequest(status)
+        val response = api.patchTeumStatus(responseId, request)
+        val body = response.body()
+        if (response.isSuccessful && body?.isSuccess == true && body.result != null) {
+            body.result
+        } else {
+            throw Exception("${body?.code ?: "HTTP${response.code()}"} - ${body?.message ?: "오류"}")
+        }
+    }
+
 }
