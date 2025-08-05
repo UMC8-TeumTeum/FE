@@ -5,12 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.ImageButton
 import android.widget.NumberPicker
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import com.example.teumteum.R
+import com.example.teumteum.data.remote.friend.model.TeumReceivedItem
 import com.example.teumteum.databinding.FragmentFriend02SuggestBinding
 import com.example.teumteum.ui.main.MainActivity
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -23,6 +22,8 @@ class Friend02SuggestFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var adapter: FriendRequestCardAdapter
+    private var teumList: List<TeumReceivedItem> = emptyList()
+    private var responseId: Int = -1
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,20 +37,24 @@ class Friend02SuggestFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //  뒤로가기 버튼 처리
-        binding.backButton.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, Friend02PossibleTimeFragment())
-                .addToBackStack(null)
-                .commit()
-        }
+        //  전달받은 데이터 꺼내기
+        teumList = arguments?.getParcelableArrayList("teumList") ?: emptyList()
+        responseId = arguments?.getInt("responseId") ?: -1
+
+        //  어댑터 연결
+        adapter = FriendRequestCardAdapter(teumList)
+        binding.requestViewPager.adapter = adapter
 
         // 바텀 네비게이션 숨기기
         (activity as? MainActivity)?.hideBottomBar()
 
-//        // ViewPager2 + Adapter 연결
-//        adapter = FriendRequestCardAdapter(getDummyList())
-//        binding.requestViewPager.adapter = adapter
+        //  뒤로가기 버튼 처리
+        binding.backButton.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, Friend02PossibleTimeFragment.newInstance(ArrayList(teumList), responseId))
+                .addToBackStack(null)
+                .commit()
+        }
 
         // 시간 카드 1 클릭 시
         binding.startTime1.setOnClickListener {
@@ -71,7 +76,7 @@ class Friend02SuggestFragment : Fragment() {
             highlightSelectedCard(isFirst = false)
         }
 
-        // 전송 버튼 클릭 시 이동
+        //  전송 버튼 클릭 시 → FriendSendFragment 이동
         binding.btnSend.setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.main_frm, FriendSendFragment())
@@ -87,10 +92,8 @@ class Friend02SuggestFragment : Fragment() {
         val ampmPicker = dialogView.findViewById<NumberPicker>(R.id.ampmPicker01Np)
         val hourPicker = dialogView.findViewById<NumberPicker>(R.id.hourPicker01Np)
         val minutePicker = dialogView.findViewById<NumberPicker>(R.id.minutePicker01Np)
-
         val minuteValues = arrayOf("00", "10", "20", "30", "40", "50")
 
-        // Picker 초기화
         ampmPicker.minValue = 0
         ampmPicker.maxValue = 1
         ampmPicker.displayedValues = arrayOf("AM", "PM")
@@ -107,28 +110,29 @@ class Friend02SuggestFragment : Fragment() {
         val dialog = BottomSheetDialog(requireContext())
         dialog.setContentView(dialogView)
 
-        // ✅ 배경 적용
         dialog.setOnShowListener { dialogInterface ->
-            val bottomSheet = (dialogInterface as BottomSheetDialog)
-                .findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
-            bottomSheet?.setBackgroundResource(R.drawable.calendar_background)
+            (dialogInterface as? BottomSheetDialog)?.let { bottomSheetDialog ->
+                bottomSheetDialog.behavior.addBottomSheetCallback(object :
+                    com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback() {
+                    override fun onStateChanged(bottomSheet: View, newState: Int) {
+                        // 상태 변경 시
+                    }
+
+                    override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                        // 배경 변경
+                        bottomSheet.setBackgroundResource(R.drawable.calendar_background)
+                    }
+                })
+            }
         }
 
-        // 취소 버튼
-        dialogView.findViewById<Button>(R.id.btnCancel).setOnClickListener {
-            dialog.dismiss()
-        }
-
-        // 확인 버튼
+        dialogView.findViewById<Button>(R.id.btnCancel).setOnClickListener { dialog.dismiss() }
         dialogView.findViewById<Button>(R.id.btnOk).setOnClickListener {
             val isAm = ampmPicker.value == 0
             var hour = hourPicker.value % 12
             if (!isAm) hour += 12
-            if (hour == 0) hour = 0 // 12AM → 0시로
-
             val minute = minuteValues[minutePicker.value]
             val timeText = String.format("%02d:%s", hour, minute)
-
             targetTextView.text = timeText
             dialog.dismiss()
         }
@@ -147,26 +151,19 @@ class Friend02SuggestFragment : Fragment() {
         }
     }
 
-    /** 예시 데이터 */
-    private fun getDummyList(): List<FriendRequestData> = listOf(
-        FriendRequestData(
-            name = "이름",
-            date = "25.05.02",
-            time = "15:20 ~ 16:10",
-            title = "강아지 산책 가자",
-            desc = "모모랑 초코랑 종합천 한바퀴 쓰윽 돌고\n돌아오는 길에 호떡 먹자!"
-        ),
-        FriendRequestData(
-            name = "보보",
-            date = "25.05.03",
-            time = "11:00 ~ 12:00",
-            title = "산책 좋아하는 보보",
-            desc = "동물병원 들렀다가 간식도 먹고 돌아오자!"
-        )
-    )
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object {
+        fun newInstance(responseId: Int, teumList: ArrayList<TeumReceivedItem>): Friend02SuggestFragment {
+            return Friend02SuggestFragment().apply {
+                arguments = Bundle().apply {
+                    putInt("responseId", responseId)
+                    putParcelableArrayList("teumList", teumList)
+                }
+            }
+        }
     }
 }

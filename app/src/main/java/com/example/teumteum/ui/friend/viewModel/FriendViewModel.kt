@@ -133,4 +133,29 @@ class FriendViewModel @Inject constructor(
                 }
         }
     }
+
+    // 5. 틈 응답 상태 변경
+    fun respondToTeum(responseId: Int, status: String) {
+        viewModelScope.launch {
+            repository.respondToTeum(responseId, status)
+                .onSuccess { result: TeumStatusResult ->
+                    _successMessage.value = when (result.status) {
+                        "ACCEPTED" -> "틈 요청을 수락했어요!"
+                        "REJECTED" -> "틈 요청을 거절했어요."
+                        else -> "응답 상태가 처리되었습니다."
+                    }
+                }
+                .onFailure { e ->
+                    val msg = when {
+                        e.message?.contains("TEUM4002") == true -> "이미 마감된 요청입니다."
+                        e.message?.contains("TEUM4030") == true -> "요청 또는 응답에 대한 권한이 없습니다."
+                        e.message?.contains("TEUM4041") == true -> "존재하지 않는 틈 응답입니다."
+                        e.message?.contains("TEUM4006") == true -> "응답 status 값은 accepted 또는 rejected 이어야 합니다."
+                        else -> "틈 응답 실패 (${e.message})"
+                    }
+                    _errorMessage.value = msg
+                }
+        }
+    }
+
 }
