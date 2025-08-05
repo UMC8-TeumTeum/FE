@@ -26,13 +26,16 @@ import com.example.teumteum.databinding.FragmentTodoEditBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 import com.example.teumteum.data.entities.TodoHomeItem
+import com.example.teumteum.data.remote.todo.model.EditTodoRequest
 import com.example.teumteum.data.remote.todo.model.GetTodoResult
+import com.example.teumteum.data.remote.todo.model.RegisterTodoRequest
 import com.example.teumteum.databinding.DialogConfirmTodoDeleteBinding
 import com.example.teumteum.databinding.DialogConfirmTodoEditBinding
 import com.example.teumteum.ui.calendar.IDateClickListener
 import com.example.teumteum.ui.calendar.MonthlyCalendarFragment
 import com.example.teumteum.ui.todo.viewModel.TodoViewModel
 import com.example.teumteum.ui.wish.WishEditFragment
+import com.example.teumteum.utils.combineDateTime
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
@@ -146,16 +149,7 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
         }
 
         binding.btnTodoSave.setOnClickListener {
-            val titleText = binding.todoTitleEt.text.toString().trim()
-
-            if (titleText.isEmpty()) {
-                Toast.makeText(requireContext(), "제목을 입력해주세요.", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            // 더미 처리
-            Toast.makeText(requireContext(), "수정되었습니다. (더미)", Toast.LENGTH_SHORT).show()
-            dismiss()
+            edit()
         }
 
         binding.btnTodoDelete.setOnClickListener {
@@ -177,6 +171,70 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
         }
 
         setupObservers()
+    }
+
+    private fun getTodoRequest(): EditTodoRequest {
+        val title = binding.todoTitleEt.text.toString()
+        val startTime = combineDateTime(binding.startDateTv, binding.startTimeTv)
+        val endTime = combineDateTime(binding.endDateTv, binding.endTimeTv)
+
+        val description = binding.detailTextEt.text.toString()
+        val isPublic = binding.publicToggle01Iv.isChecked
+        val includeTeum = binding.includeToggle01Iv.isChecked
+        val remindAlarm = getSelectedRemindAlarms()
+
+        return EditTodoRequest(
+            title = title,
+            startTime = startTime,
+            endTime = endTime,
+            description = description,
+            isPublic = isPublic,
+            includeTeum = includeTeum,
+            remindAlarm = remindAlarm
+        )
+    }
+
+    private fun edit() {
+        val title = binding.todoTitleEt.text.toString()
+        val startTimeText = binding.startTimeTv.text.toString()
+        val endTimeText = binding.endTimeTv.text.toString()
+
+        if (title.isEmpty()) {
+            Toast.makeText(requireContext(), "제목을 입력해주세요.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (startTimeText == "시작 시간" || endTimeText == "종료 시간") {
+            Toast.makeText(requireContext(), "시작/종료 시간을 설정해주세요.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val request = getTodoRequest()
+        todoViewModel.editTodo(todoId, request)
+    }
+
+    private fun getSelectedRemindAlarms(): List<Int> {
+        val alarms = mutableListOf<Int>()
+
+        if (binding.alarmToggle01Iv.isChecked) {
+            alarms.add(30)
+        }
+        if (binding.alarmToggle02Iv.isChecked) {
+            alarms.add(10)
+        }
+
+        // 추가된 알림 항목들
+        for (i in 0 until binding.alarmLayoutContainer.childCount) {
+            val child = binding.alarmLayoutContainer.getChildAt(i)
+            val toggle = child.findViewById<SwitchCompat>(R.id.alarm_toggle_tv)
+            val labelText = child.findViewById<TextView>(R.id.alarm_set_tv).text.toString()
+
+            if (toggle.isChecked) { // 커스텀 토글이 실제로 체크 가능한 경우
+                alarmLabelToMinutes[labelText]?.let { alarms.add(it) }
+            }
+        }
+
+        return alarms
     }
 
     override fun onStart() {
@@ -563,6 +621,7 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
 
     private fun setupObservers() {
         todoViewModel.todo.observe(viewLifecycleOwner) { todo ->
+            if (todo == null) return@observe
 
             binding.todoTitleEt.setText(todo.title)
 
@@ -655,6 +714,14 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
             }
 
             parentFragmentManager.setFragmentResult("todo_get", Bundle())
+        }
+
+        todoViewModel.editSuccess.observe(viewLifecycleOwner) {
+            if (it == true) {
+                Toast.makeText(requireContext(), "투두가 성공적으로 수정되었습니다.", Toast.LENGTH_SHORT).show()
+                parentFragmentManager.setFragmentResult("todo_edit", Bundle())
+                dismiss()  // 현재 바텀시트만 닫기
+            }
         }
 
         todoViewModel.errorMessage.observe(viewLifecycleOwner) { errorMsg ->

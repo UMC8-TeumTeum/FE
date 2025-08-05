@@ -31,7 +31,7 @@ interface TodoService {
     suspend fun getTodo(@Path("todoId") todoId: Long): Response<ApiResponse<GetTodoResult>>
 
     @PUT("/api/home/todo/{todoId}")
-    suspend fun editTodo(@Path("todoId") todoId: Long, @Body request: EditTodoRequest): Call<EditTodoResponse>
+    suspend fun editTodo(@Path("todoId") todoId: Long, @Body request: EditTodoRequest): Response<ApiResponse<TodoResult>>
 
     @DELETE("/api/home/todo/{todoId}")
     suspend fun deleteTodo(@Path("todoId") todoId: Long): Call<DeleteTodoResponse>

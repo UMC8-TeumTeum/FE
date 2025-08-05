@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.teumteum.data.entities.TodoList
+import com.example.teumteum.data.remote.todo.model.EditTodoRequest
 import com.example.teumteum.data.remote.todo.model.GetTodoResult
 import com.example.teumteum.data.remote.todo.model.RegisterTodoRequest
 import com.example.teumteum.data.remote.todo.repository.TodoRepository
@@ -28,6 +29,9 @@ class TodoViewModel @Inject constructor(
 
     private val _registerSuccess = MutableLiveData<Boolean>()
     val registerSuccess: LiveData<Boolean> get() = _registerSuccess
+
+    private val _editSuccess = MutableLiveData<Boolean>()
+    val editSuccess: LiveData<Boolean> get() = _editSuccess
 
     // 투두 등록
     fun registerTodo(request: RegisterTodoRequest) {
@@ -64,6 +68,19 @@ class TodoViewModel @Inject constructor(
                 _todo.value = it
             }.onFailure { e ->
                 _errorMessage.value = e.localizedMessage ?: "투두리스트 조회에 실패했습니다."
+            }
+        }
+    }
+
+    // 투두 편집
+    fun editTodo(todoId: Long, request: EditTodoRequest) {
+        viewModelScope.launch {
+            val result = todoRepository.editTodo(todoId, request)
+            result.onSuccess {
+                _editSuccess.value = true
+            }
+            result.onFailure { e ->
+                _errorMessage.value = e.localizedMessage ?: "투두 등록에 실패했습니다."
             }
         }
     }

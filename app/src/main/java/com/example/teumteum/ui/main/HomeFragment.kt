@@ -168,14 +168,14 @@ class HomeFragment : Fragment(), IDateClickListener, HomeView {
             refreshTodolist()
         }
 
+        // 투두 수정 성공 이벤트 수신
+        parentFragmentManager.setFragmentResultListener("todo_edit", viewLifecycleOwner) { _, _ ->
+            refreshTodolist()
+        }
+
         todoViewModel.getTodoList(date)
 
         setupObservers()
-
-        // 투두 등록 성공 이벤트 수신
-        parentFragmentManager.setFragmentResultListener("todo_register", viewLifecycleOwner) { _, _ ->
-            refreshTodolist()
-        }
     }
 
     override fun onResume() {

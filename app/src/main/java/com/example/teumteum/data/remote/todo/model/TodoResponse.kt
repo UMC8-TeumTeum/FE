@@ -15,9 +15,6 @@ data class GetTodoResponse(
 )
 
 data class EditTodoResponse(
-    @SerializedName("isSuccess") val isSuccess: Boolean,
-    @SerializedName("code") val code: String,
-    @SerializedName("message") val message: String,
     @SerializedName("result") val result: TodoResult?
 )
 
