@@ -11,6 +11,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.viewpager2.widget.ViewPager2
 import com.example.teumteum.ui.calendar.IDateClickListener
 import com.example.teumteum.R
@@ -27,36 +29,26 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-import com.example.teumteum.data.TimeBlock
-import com.example.teumteum.data.remote.home.HomeService
-import com.example.teumteum.data.remote.home.dto.ScheduleResult
+import com.example.teumteum.ui.main.data.TimeBlock
+import com.example.teumteum.data.remote.home.model.ScheduleResult
 import com.example.teumteum.ui.clock.ChartUtils
 import com.example.teumteum.ui.clock.IconPieChartRenderer
-import com.example.teumteum.ui.main.view.HomeView
+import com.example.teumteum.ui.main.viewModel.HomeViewModel
 import com.example.teumteum.utils.applyBlurShadow
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class HomeFragment : Fragment(), IDateClickListener, HomeView {
+class HomeFragment : Fragment(), IDateClickListener {
 
     lateinit var binding: FragmentHomeBinding
+
+    private val viewModel: HomeViewModel by activityViewModels()
 
     private val today: LocalDate = LocalDate.now()
     private lateinit var selectedDate: LocalDate
 
     private lateinit var adapter: TodoRVAdapter
-
-    @Inject
-    lateinit var homeService: HomeService
-
-    private val fullDaySchedule = mutableListOf<TimeBlock>()
-//    private val fullDaySchedule = listOf(
-//    TimeBlock(startTime = 0, endTime = 60, type = TimeType.EMPTY),    // 00:00 ~ 01:00
-//    TimeBlock(startTime = 60, endTime = 540, type = TimeType.SLEEP),  // 01:00 ~ 09:00
-//    TimeBlock(startTime = 180, endTime = 600, type = TimeType.TODO),  // 03:00 ~ 10:00
-//    TimeBlock(startTime = 600, endTime = 1440, type = TimeType.EMPTY) // 10:00 ~ 24:00
-//)
 
     private var isAM: Boolean = true
 
@@ -127,9 +119,12 @@ class HomeFragment : Fragment(), IDateClickListener, HomeView {
 
 //        adapter = TodoRVAdapter(parentFragmentManager, todoDummyList)
 //        binding.todolistRv.adapter = adapter
-        val date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-        homeService.setHomeView(this)
-        homeService.getTodaySchedule(date)
+        viewModel.getTodayScheduleIfNeeded()
+
+        viewModel.scheduleList.observe(viewLifecycleOwner) {
+            updateTimeChart(isAM)
+            updateIndicator(isAM)
+        }
 
         binding.fabAddIv.post {
             applyBlurShadow(
@@ -293,8 +288,8 @@ class HomeFragment : Fragment(), IDateClickListener, HomeView {
 
 
     private fun updateTimeChart(isAM: Boolean) {
-        val halfDayBlocks = ChartUtils.splitAndFillTimeBlocks(fullDaySchedule, isAM)
-        Log.d("HOME_FRAGMENT", "AM=${isAM} -> 차트에 들어가는 블록: $halfDayBlocks")
+        val blocks = viewModel.scheduleList.value ?: return
+        val halfDayBlocks = ChartUtils.splitAndFillTimeBlocks(blocks, isAM)
         ChartUtils.setTimePieChartData(requireContext(), binding.clockChart, halfDayBlocks)
     }
 
@@ -338,31 +333,6 @@ class HomeFragment : Fragment(), IDateClickListener, HomeView {
 
     companion object {
         private const val DATE_PATTERN = "yyyy년 M월"
-    }
-
-    override fun onScheduleSuccess(code: String, result: List<ScheduleResult>) {
-        fullDaySchedule.clear()
-        fullDaySchedule.addAll(result.map {
-            val start = timeToMinutes(it.startTime)
-            val end = timeToMinutes(it.endTime)
-            TimeBlock(start, end, it.type)
-        })
-
-        updateTimeChart(isAM)
-        Log.d("HOME_FRAGMENT", "오늘 스케줄: $fullDaySchedule")
-    }
-
-    private fun timeToMinutes(time: String): Int {
-        val parts = time.split(":")
-        val hour = parts[0].toInt()
-        val minute = parts[1].toInt()
-        return hour * 60 + minute
-    }
-
-    override fun onScheduleFailure(code: String, message: String?) {
-        val msg = "약관 동의 실패 (code: $code, message: ${message ?: "없음"})"
-        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
-        Log.e("HOME_FRAGMENT", msg)
     }
 
 }

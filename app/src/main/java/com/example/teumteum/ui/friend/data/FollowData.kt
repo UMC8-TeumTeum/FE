@@ -6,5 +6,5 @@ data class FollowData(
     val profileImageUrl: String,
     val field: String,
     val following: Boolean,
-    var favorite: Boolean
+    var favorite: Boolean = false // 기본값
 )

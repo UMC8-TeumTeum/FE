@@ -10,76 +10,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
-import com.example.teumteum.data.remote.onboarding.OnBoardingService
-import com.example.teumteum.data.remote.onboarding.dto.NicknameJobRequest
 import com.example.teumteum.databinding.FragmentOnBoardingNicknameBinding
-import com.example.teumteum.ui.signup.view.NicknameJobFieldView
+import com.example.teumteum.ui.signup.viewModel.OnBoardingUiState
+import com.example.teumteum.ui.signup.viewModel.OnBoardingViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
-class OnBoardingNicknameFragment : Fragment(), NicknameJobFieldView {
+class OnBoardingNicknameFragment : Fragment() {
 
     private lateinit var binding: FragmentOnBoardingNicknameBinding
 
-    @Inject
-    lateinit var onBoardingService: OnBoardingService
-
-    override fun onNicknameJobSuccess(code: String) {
-        val msg = "닉네임, 직종 입력 성공 (code: $code)"
-        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
-        Log.d("NICKNAME_FRAGMENT", msg)
-
-        binding.nicknameErrorTv.visibility = View.INVISIBLE
-
-        val fragment = OnBoardingProfileFragment().apply {
-            arguments = Bundle().apply {
-                putString("nickname", binding.nicknameEt.text.toString())
-            }
-        }
-
-        parentFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, fragment)
-                .addToBackStack(null)
-                .commit()
-    }
-
-    override fun onNicknameJobFailure(code: String, message: String?) {
-        val msg = "닉네임 직종 입력 실패 (code: $code, message: ${message ?: "없음"})"
-        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
-        Log.e("NICKNAME_FRAGMENT", msg)
-
-        //닉네임 중복
-        if (message?.contains("ONBOARDING4091") == true) {
-            binding.nicknameErrorTv.visibility = View.VISIBLE
-        }
-
-        //온보딩 단계가 아닐 경우 - 이후 테스트를 위해 화면 이동하도록 구현
-        if (message?.contains("ONBOARDING4001") == true) {
-            Toast.makeText(requireContext(), "온보딩 단계가 아닙니다.", Toast.LENGTH_SHORT).show()
-
-            val fragment = OnBoardingProfileFragment().apply {
-                arguments = Bundle().apply {
-                    putString("nickname", binding.nicknameEt.text.toString())
-                }
-            }
-
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, fragment)
-                .addToBackStack(null)
-                .commit()
-        }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+    private val viewModel: OnBoardingViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentOnBoardingNicknameBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -88,114 +36,100 @@ class OnBoardingNicknameFragment : Fragment(), NicknameJobFieldView {
         super.onViewCreated(view, savedInstanceState)
         (activity as? SignUpActivity)?.setProgressBar(20)
 
+        observeViewModel()
+        setupUI()
+    }
+
+    private fun setupUI() {
+        // 텍스트 입력 ViewModel 업데이트
+        binding.nicknameEt.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                viewModel.setNickname(s.toString())
+                updateNextButtonState()
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+
+        binding.fieldEt.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                viewModel.setField(s.toString())
+                updateNextButtonState()
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+
         binding.nextBtn.setOnClickListener {
-//            val fragment = OnBoardingProfileFragment().apply {
-//                arguments = Bundle().apply {
-//                    putString("nickname", binding.nicknameEt.text.toString())
-//                }
-//            }
-
-            val request = getNicknameJobRequest()
-            onBoardingService.setNicknameJobFieldView(this)
-            onBoardingService.postNicknameAndJobField(request)
-
-//            parentFragmentManager.beginTransaction()
-//                .replace(R.id.fragment_container, fragment)
-//                .addToBackStack(null)
-//                .commit()
+            viewModel.postNicknameAndJob()
         }
 
         binding.nicknameClearBtn.setOnClickListener {
             binding.nicknameEt.setText("")
         }
-        binding.fieldClearBtn.setOnClickListener {
-            binding.fieldEt.setText("")
+        binding.fieldClearBtn.setOnClickListener { binding.fieldEt.setText("") }
+
+        binding.nicknameEt.addTextChangedListener(textWatcher)
+        binding.fieldEt.addTextChangedListener(textWatcher)
+
+        binding.nicknameEt.setText(viewModel.nickname.value)
+        binding.fieldEt.setText(viewModel.field.value)
+    }
+
+    private val textWatcher = object : TextWatcher {
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            updateNextButtonState()
         }
-
-//        binding.nicknameEt.addTextChangedListener(object: TextWatcher{
-//            //텍스트 변경 전 호출
-//            override fun beforeTextChanged(
-//                s: CharSequence?,
-//                start: Int,
-//                count: Int,
-//                after: Int
-//            ) {
-//                //Todo: 닉네임 중복 검사
-//            }
-//
-//            override fun onTextChanged(
-//                s: CharSequence?,
-//                start: Int,
-//                before: Int,
-//                count: Int
-//            ) {
-//                //Todo: 닉네임 중복 검사
-//                updateNextButtonState()
-//            }
-//
-//            override fun afterTextChanged(s: Editable?) {
-//
-//                //Todo: 닉네임 중복 검사
-//                updateNextButtonState()
-//            }
-//
-//        })
-
-        binding.fieldEt.addTextChangedListener(object: TextWatcher{
-            //텍스트 변경 전 호출
-            override fun beforeTextChanged(
-                s: CharSequence?,
-                start: Int,
-                count: Int,
-                after: Int
-            ) {
-                //Todo: 닉네임 중복 검사
-            }
-
-            override fun onTextChanged(
-                s: CharSequence?,
-                start: Int,
-                before: Int,
-                count: Int
-            ) {
-                //Todo: 닉네임 중복 검사
-                updateNextButtonState()
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-
-                //Todo: 닉네임 중복 검사
-                updateNextButtonState()
-            }
-
-        })
+        override fun afterTextChanged(s: Editable?) {}
     }
 
     private fun updateNextButtonState() {
-        val allChecked = binding.nicknameEt.text.isNotEmpty() && binding.fieldEt.text.isNotEmpty()
-        binding.nextBtn.isEnabled = allChecked
+        val enabled = viewModel.nickname.value?.isNotEmpty() == true &&
+                viewModel.field.value?.isNotEmpty() == true
 
-        // 배경색 변경
+        binding.nextBtn.isEnabled = enabled
         binding.nextBtn.setBackgroundColor(
-            if (allChecked)
-                requireContext().getColor(R.color.black)
-            else
-                Color.parseColor("#F6F6F6")
+            if (enabled) requireContext().getColor(R.color.black)
+            else Color.parseColor("#F6F6F6")
         )
-
-        // 글자색 변경
         binding.nextBtn.setTextColor(
-            if (allChecked)
-                requireContext().getColor(R.color.white)
-            else
-                requireContext().getColor(R.color.black)
+            if (enabled) requireContext().getColor(R.color.white)
+            else requireContext().getColor(R.color.black)
         )
     }
 
-    private fun getNicknameJobRequest(): NicknameJobRequest{
-        return NicknameJobRequest(
-            nickname = binding.nicknameEt.text.toString(),
-            jobField = binding.fieldEt.text.toString()
-        )
+    private fun observeViewModel() {
+        viewModel.state.observe(viewLifecycleOwner) { state ->
+            when (state) {
+                is OnBoardingUiState.Loading -> binding.nextBtn.isEnabled = false
+                is OnBoardingUiState.Success -> navigateToNext()
+                is OnBoardingUiState.Error -> {
+                    binding.nextBtn.isEnabled = true
+                    val message = state.message
+                    val code = state.code
+                    if (code.contains("ONBOARDING4091")) {
+                        binding.nicknameErrorTv.visibility = View.VISIBLE
+                    } else if (code.contains("ONBOARDING4001")) {
+                        Log.d("NicknameFragment", "ONBOARDING4001 - 강제 이동")
+                        navigateToNext()
+                    } else {
+                        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+                    }
+                }
+                else -> Unit
+            }
+        }
+    }
+
+    private fun navigateToNext() {
+        val fragment = OnBoardingProfileFragment()
+
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .addToBackStack(null)
+            .commit()
+
+        viewModel.resetState()
     }
 }

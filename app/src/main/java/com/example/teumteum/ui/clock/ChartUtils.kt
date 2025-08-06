@@ -4,11 +4,10 @@ import android.graphics.Color
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import androidx.core.content.ContentProviderCompat.requireContext
 import com.example.teumteum.R
 import androidx.core.content.ContextCompat
-import com.example.teumteum.data.TimeBlock
-import com.example.teumteum.data.TimeType
+import com.example.teumteum.ui.main.data.TimeBlock
+import com.example.teumteum.ui.main.data.TimeType
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet

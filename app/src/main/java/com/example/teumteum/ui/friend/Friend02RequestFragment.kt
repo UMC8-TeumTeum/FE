@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.teumteum.R
-import com.example.teumteum.data.remote.friend.dto.TeumReceivedItem
+import com.example.teumteum.data.remote.friend.model.TeumReceivedItem
 import com.example.teumteum.databinding.FragmentFriend02RequestBinding
 import com.example.teumteum.ui.main.MainActivity
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
@@ -67,17 +67,26 @@ class Friend02RequestFragment : Fragment() {
         binding.dotsIndicator.setViewPager2(binding.requestViewPager)
 
         // 7. 버튼 이벤트
-        binding.btnReject.setOnClickListener {
-            val bottomSheet = Friend02RejectBottomSheetFragment()
+        binding.btnAccept.setOnClickListener {
+            val currentItem = binding.requestViewPager.currentItem
+            val responseId = teumList.getOrNull(currentItem)?.responseId ?: return@setOnClickListener
+
+            val bottomSheet = Friend02AcceptBottomSheetFragment.newInstance(responseId)
             bottomSheet.show(parentFragmentManager, bottomSheet.tag)
-            Toast.makeText(requireContext(), "거절 버튼이 눌렸습니다.", Toast.LENGTH_SHORT).show()
+
+//            Toast.makeText(requireContext(), "함께할래요 버튼이 눌렸습니다.", Toast.LENGTH_SHORT).show()
         }
 
-        binding.btnAccept.setOnClickListener {
-            val bottomSheet = Friend02AcceptBottomSheetFragment()
+        binding.btnReject.setOnClickListener {
+            val currentItem = binding.requestViewPager.currentItem
+            val responseId = teumList.getOrNull(currentItem)?.responseId ?: return@setOnClickListener
+
+            val bottomSheet = Friend02RejectBottomSheetFragment.newInstance(responseId)
             bottomSheet.show(parentFragmentManager, bottomSheet.tag)
-            Toast.makeText(requireContext(), "함께할래요 버튼이 눌렸습니다.", Toast.LENGTH_SHORT).show()
+
+//            Toast.makeText(requireContext(), "거절 버튼이 눌렸습니다.", Toast.LENGTH_SHORT).show()
         }
+
 
         // 8. 뒤로가기
         binding.backButton.setOnClickListener {

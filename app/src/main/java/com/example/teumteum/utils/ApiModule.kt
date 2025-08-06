@@ -1,21 +1,19 @@
 package com.example.teumteum.utils
 
-import com.example.teumteum.data.remote.activity.service.ActivityService
-import com.example.teumteum.data.remote.agreement.AgreementRetrofitInterface
 import com.example.teumteum.data.remote.alarm.AlarmRetrofitInterface
 import com.example.teumteum.data.remote.calendar.CalendarRetrofitInterface
-import com.example.teumteum.data.remote.friend.profile.FriendProfileRetrofitInterface
-import com.example.teumteum.data.remote.friend.search.FriendSearchRetrofitInterface
-import com.example.teumteum.data.remote.home.HomeRetrofitInterface
-import com.example.teumteum.data.remote.onboarding.OnBoardingRetrofitInterface
-import com.example.teumteum.data.remote.todo.service.TodoService
+import com.example.teumteum.data.remote.friend.service.FriendService
+import com.example.teumteum.data.remote.home.service.HomeService
+import com.example.teumteum.data.remote.onboarding.service.OnBoardingService
 import com.example.teumteum.data.remote.wish.service.WishService
+import com.example.teumteum.data.remote.todo.service.TodoService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import javax.inject.Singleton
+import kotlin.jvm.java
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -35,12 +33,6 @@ class ApiModule {
 
     @Provides
     @Singleton
-    fun provideAgreementApi(retrofit: Retrofit): AgreementRetrofitInterface {
-        return retrofit.create(AgreementRetrofitInterface::class.java)
-    }
-
-    @Provides
-    @Singleton
     fun provideAlarmApi(retrofit: Retrofit): AlarmRetrofitInterface {
         return retrofit.create(AlarmRetrofitInterface::class.java)
     }
@@ -53,31 +45,19 @@ class ApiModule {
 
     @Provides
     @Singleton
-    fun provideFriendProfileApi(retrofit: Retrofit): FriendProfileRetrofitInterface {
-        return retrofit.create(FriendProfileRetrofitInterface::class.java)
+    fun provideFriendApi(retrofit: Retrofit): FriendService {
+        return retrofit.create(FriendService::class.java)
     }
 
     @Provides
     @Singleton
-    fun provideFriendSearchApi(retrofit: Retrofit): FriendSearchRetrofitInterface {
-        return retrofit.create(FriendSearchRetrofitInterface::class.java)
+    fun provideHomeApi(retrofit: Retrofit): HomeService {
+        return retrofit.create(HomeService::class.java)
     }
 
     @Provides
     @Singleton
-    fun provideHomeApi(retrofit: Retrofit): HomeRetrofitInterface {
-        return retrofit.create(HomeRetrofitInterface::class.java)
-    }
-
-    @Provides
-    @Singleton
-    fun provideOnBoardingApi(retrofit: Retrofit): OnBoardingRetrofitInterface {
-        return retrofit.create(OnBoardingRetrofitInterface::class.java)
-    }
-
-    @Provides
-    @Singleton
-    fun provideActivityApi(retrofit: Retrofit): ActivityService {
-        return retrofit.create(ActivityService::class.java)
+    fun provideOnBoardingApi(retrofit: Retrofit): OnBoardingService {
+        return retrofit.create(OnBoardingService::class.java)
     }
 }
