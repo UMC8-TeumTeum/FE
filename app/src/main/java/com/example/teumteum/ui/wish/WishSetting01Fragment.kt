@@ -4,16 +4,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
-import com.example.teumteum.data.TimeBlock
-import com.example.teumteum.data.TimeType
+import com.example.teumteum.ui.main.data.TimeBlock
+import com.example.teumteum.ui.main.data.TimeType
 import com.example.teumteum.databinding.FragmentWishSetting01Binding
 import com.example.teumteum.ui.clock.ChartUtils
 import com.example.teumteum.ui.clock.IconPieChartRenderer
+import com.example.teumteum.ui.main.viewModel.HomeViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
+import kotlin.getValue
 
 @AndroidEntryPoint
 class WishSetting01Fragment : Fragment() {
@@ -26,16 +30,7 @@ class WishSetting01Fragment : Fragment() {
     private var selectedStartTime: String? = null
     private var selectedEndTime: String? = null
 
-    private val fullDaySchedule = listOf(
-        TimeBlock(0, 360, TimeType.SLEEP),   // 00:00 ~ 06:00
-        TimeBlock(360, 580, TimeType.TODO),  // 06:00 ~ 09:40
-        TimeBlock(720, 860, TimeType.TODO),  // 12:00 ~ 14:20
-        TimeBlock(870, 930, TimeType.EMPTY), // 14:30 ~ 15:30
-        TimeBlock(930, 1050, TimeType.TODO), // 15:30 ~ 17:30
-        TimeBlock(1110, 1200, TimeType.TODO),// 18:30 ~ 20:00
-        TimeBlock(1200, 1320, TimeType.EMPTY),// 20:00 ~ 22:00
-        TimeBlock(1320, 1440, TimeType.SLEEP)// 22:00 ~ 24:00
-    )
+    private val homeViewModel: HomeViewModel by activityViewModels()
 
     private var isAM: Boolean = true
 
@@ -64,6 +59,8 @@ class WishSetting01Fragment : Fragment() {
         // 바텀 내비게이션 숨기기
         val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
         bottomNav?.visibility = View.GONE
+
+        homeViewModel
 
         fun resetButtons() {
             listOf(
@@ -218,7 +215,8 @@ class WishSetting01Fragment : Fragment() {
     }
 
     private fun updateTimeChart(isAM: Boolean) {
-        val halfDayBlocks = ChartUtils.splitAndFillTimeBlocks(fullDaySchedule, isAM)
+        val blocks = homeViewModel.scheduleList.value ?: return
+        val halfDayBlocks = ChartUtils.splitAndFillTimeBlocks(blocks, isAM)
         ChartUtils.setTimePieChartData(requireContext(), binding.clockChart, halfDayBlocks)
     }
 

@@ -1,4 +1,4 @@
-package com.example.teumteum.data
+package com.example.teumteum.ui.main.data
 
 data class TimeBlock(
     val startTime: Int,
