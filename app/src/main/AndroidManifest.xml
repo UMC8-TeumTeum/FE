@@ -50,6 +50,21 @@
             </intent-filter>
         </receiver>
 
+        <activity
+            android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:scheme= "kakao11ec0bb5c4ff91521f28be0e538a603d"
+                    android:host="oauth" />
+            </intent-filter>
+        </activity>
+
     </application>
 
 </manifest>

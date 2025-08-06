@@ -1,9 +1,11 @@
 package com.example.teumteum.utils
 
+import android.content.Context
 import com.example.teumteum.BuildConfig
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -20,13 +22,31 @@ class NetworkModule {
     @Singleton
     fun provideBaseUrl(): String = BuildConfig.BASE_URL
 
+//    @Provides
+//    @Singleton
+//    fun provideAuthInterceptor(): Interceptor {
+//        return Interceptor { chain ->
+//            val newRequest = chain.request().newBuilder()
+//                .addHeader("Authorization", "Bearer ${BuildConfig.TEMP_ACCESS_TOKEN}")
+//                .build()
+//            chain.proceed(newRequest)
+//        }
+//    }
     @Provides
     @Singleton
-    fun provideAuthInterceptor(): Interceptor {
+    fun provideAuthInterceptor(
+        @ApplicationContext context: Context
+    ): Interceptor {
         return Interceptor { chain ->
-            val newRequest = chain.request().newBuilder()
-                .addHeader("Authorization", "Bearer ${BuildConfig.TEMP_ACCESS_TOKEN}")
-                .build()
+            val prefs = context.getSharedPreferences("auth", Context.MODE_PRIVATE)
+            val token = prefs.getString("accessToken", null)
+
+            val newRequest = chain.request().newBuilder().apply {
+                if (!token.isNullOrEmpty()) {
+                    addHeader("Authorization", "Bearer $token")
+                }
+            }.build()
+
             chain.proceed(newRequest)
         }
     }
