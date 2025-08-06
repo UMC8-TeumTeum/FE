@@ -10,6 +10,7 @@ import com.bumptech.glide.Glide
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentMyProfileBinding
 import com.example.teumteum.ui.main.MainActivity
+import com.example.teumteum.ui.main.viewModel.HomeViewModel
 import com.example.teumteum.ui.myhome.viewModel.MyHomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -19,6 +20,7 @@ class MyProfileFragment : Fragment() {
     private lateinit var binding: FragmentMyProfileBinding
 
     private val viewModel: MyHomeViewModel by activityViewModels()
+    private val homeViewModel: HomeViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,6 +46,10 @@ class MyProfileFragment : Fragment() {
                 .commit()
         }
 
+        homeViewModel.teumTimeDays.observe(viewLifecycleOwner) { updateTeumTime() }
+        homeViewModel.teumTimeHours.observe(viewLifecycleOwner) { updateTeumTime() }
+        homeViewModel.teumTimeMinutes.observe(viewLifecycleOwner) { updateTeumTime() }
+
         viewModel.nickname.observe(viewLifecycleOwner) { nickname ->
             binding.nicknameTv.text = (nickname + "님의") ?: "닉네임님의"
             binding.profileNicknameTv.text = nickname ?: "닉네임"
@@ -64,5 +70,12 @@ class MyProfileFragment : Fragment() {
                 binding.profileIv.setImageResource(R.drawable.gray_teum)
             }
         }
+    }
+
+    private fun updateTeumTime() {
+        val days = homeViewModel.teumTimeDays.value ?: 0
+        val hours = homeViewModel.teumTimeHours.value ?: 0
+        val minutes = homeViewModel.teumTimeMinutes.value ?: 0
+        binding.profileTimerTv.text = "${days}일 ${hours}시간 ${minutes}분"
     }
 }

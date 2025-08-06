@@ -1,18 +1,16 @@
 package com.example.teumteum.ui.main
 
+import android.R.attr.text
 import android.content.res.ColorStateList
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.viewpager2.widget.ViewPager2
 import com.example.teumteum.ui.calendar.IDateClickListener
 import com.example.teumteum.R
@@ -29,14 +27,11 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-import com.example.teumteum.ui.main.data.TimeBlock
-import com.example.teumteum.data.remote.home.model.ScheduleResult
 import com.example.teumteum.ui.clock.ChartUtils
 import com.example.teumteum.ui.clock.IconPieChartRenderer
 import com.example.teumteum.ui.main.viewModel.HomeViewModel
 import com.example.teumteum.utils.applyBlurShadow
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeFragment : Fragment(), IDateClickListener {
@@ -120,6 +115,11 @@ class HomeFragment : Fragment(), IDateClickListener {
 //        adapter = TodoRVAdapter(parentFragmentManager, todoDummyList)
 //        binding.todolistRv.adapter = adapter
         viewModel.getTodayScheduleIfNeeded()
+        viewModel.getTeumTime()
+
+        viewModel.teumTimeDays.observe(viewLifecycleOwner) { updateTeumTime() }
+        viewModel.teumTimeHours.observe(viewLifecycleOwner) { updateTeumTime() }
+        viewModel.teumTimeMinutes.observe(viewLifecycleOwner) { updateTeumTime() }
 
         viewModel.scheduleList.observe(viewLifecycleOwner) {
             updateTimeChart(isAM)
@@ -329,6 +329,13 @@ class HomeFragment : Fragment(), IDateClickListener {
 
     private fun dpToPx(dp: Int): Int {
         return (dp * resources.displayMetrics.density).toInt()
+    }
+
+    private fun updateTeumTime() {
+        val days = viewModel.teumTimeDays.value ?: 0
+        val hours = viewModel.teumTimeHours.value ?: 0
+        val minutes = viewModel.teumTimeMinutes.value ?: 0
+        binding.homeContentTimeTv.text = "${days}일 ${hours}시간 ${minutes}분"
     }
 
     companion object {
