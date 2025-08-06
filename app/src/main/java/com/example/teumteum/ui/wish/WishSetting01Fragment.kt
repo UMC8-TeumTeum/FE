@@ -18,7 +18,8 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class WishSetting01Fragment : Fragment() {
 
-    private lateinit var binding: FragmentWishSetting01Binding
+    private var _binding: FragmentWishSetting01Binding? = null
+    private val binding get() = _binding!!
 
     private var selectedButtonId: Int? = null
 
@@ -44,7 +45,7 @@ class WishSetting01Fragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentWishSetting01Binding.inflate(inflater, container, false)
+        _binding = FragmentWishSetting01Binding.inflate(inflater, container, false)
         return binding.root
     }
 

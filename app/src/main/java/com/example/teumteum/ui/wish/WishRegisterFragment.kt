@@ -25,7 +25,8 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class WishRegisterFragment : BottomSheetDialogFragment() {
 
-    private lateinit var binding: FragmentWishRegisterBinding
+    private var _binding: FragmentWishRegisterBinding? = null
+    private val binding get() = _binding!!
 
     private var selectedTimeButton: View? = null
     private val selectedCategoryButtons = mutableListOf<MaterialButton>()
@@ -40,7 +41,7 @@ class WishRegisterFragment : BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentWishRegisterBinding.inflate(inflater, container, false)
+        _binding = FragmentWishRegisterBinding.inflate(inflater, container, false)
         return binding.root
     }
 

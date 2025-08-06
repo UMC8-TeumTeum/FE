@@ -24,6 +24,7 @@ import com.example.teumteum.R
 import com.example.teumteum.data.TimeBlock
 
 import com.example.teumteum.data.remote.todo.model.RegisterTodoRequest
+import com.example.teumteum.databinding.FragmentTodoEditBinding
 
 import com.example.teumteum.ui.wish.WishRegisterFragment
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -44,7 +45,8 @@ import java.util.Locale
 @AndroidEntryPoint
 class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
 
-    private lateinit var binding: FragmentTodoRegisterBinding
+    private var _binding: FragmentTodoRegisterBinding? = null
+    private val binding get() = _binding!!
 
     private var currentTargetTextView: TextView? = null
     private var popupWindow: PopupWindow? = null
@@ -79,7 +81,7 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentTodoRegisterBinding.inflate(inflater, container, false)
+        _binding = FragmentTodoRegisterBinding.inflate(inflater, container, false)
         return binding.root
     }
 

@@ -21,7 +21,9 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class WishlistFragment() : Fragment() {
 
-    private lateinit var binding: FragmentWishlistBinding
+    private var _binding: FragmentWishlistBinding? = null
+    private val binding get() = _binding!!
+
     private lateinit var adapter: WishlistRVAdapter
 
     private var wishlistItems: List<WishlistItem> = emptyList()
@@ -33,7 +35,7 @@ class WishlistFragment() : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentWishlistBinding.inflate(inflater, container, false)
+        _binding = FragmentWishlistBinding.inflate(inflater, container, false)
 
         binding.editTv.setOnClickListener {
             val currentList = wishViewModel.wishlistItems.value ?: emptyList()

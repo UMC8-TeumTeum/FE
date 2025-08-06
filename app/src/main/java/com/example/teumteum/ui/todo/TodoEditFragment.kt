@@ -43,7 +43,8 @@ import java.util.Locale
 @AndroidEntryPoint
 class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
 
-    private lateinit var binding: FragmentTodoEditBinding
+    private var _binding: FragmentTodoEditBinding? = null
+    private val binding get() = _binding!!
 
     private var currentTargetTextView: TextView? = null
 
@@ -76,7 +77,7 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        binding = FragmentTodoEditBinding.inflate(inflater, container, false)
+        _binding = FragmentTodoEditBinding.inflate(inflater, container, false)
         return binding.root
     }
 

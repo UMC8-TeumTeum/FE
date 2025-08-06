@@ -44,7 +44,8 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class HomeFragment : Fragment(), IDateClickListener, HomeView {
 
-    lateinit var binding: FragmentHomeBinding
+    private var _binding: FragmentHomeBinding? = null
+    private val binding get() = _binding!!
 
     private val today: LocalDate = LocalDate.now()
     private lateinit var selectedDate: LocalDate
@@ -71,7 +72,7 @@ class HomeFragment : Fragment(), IDateClickListener, HomeView {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentHomeBinding.inflate(inflater, container, false)
+        _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
         selectedDate = today
 

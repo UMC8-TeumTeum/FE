@@ -19,7 +19,8 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class WishlistEditFragment() : Fragment() {
 
-    private lateinit var binding: FragmentWishlistEditBinding
+    private var _binding: FragmentWishlistEditBinding? = null
+    private val binding get() = _binding!!
 
     private lateinit var adapter: WishlistEditRVAdapter
     private lateinit var editedWishlist: MutableList<WishlistItem>
@@ -31,7 +32,7 @@ class WishlistEditFragment() : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentWishlistEditBinding.inflate(inflater, container, false)
+        _binding = FragmentWishlistEditBinding.inflate(inflater, container, false)
 
         // ViewModel에서 데이터 복사
         editedWishlist = wishViewModel.wishlistItems.value?.map { it.copy() }?.toMutableList() ?: mutableListOf()

@@ -29,7 +29,9 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class WishEditFragment : BottomSheetDialogFragment() {
 
-    private lateinit var binding: FragmentWishEditBinding
+    private var _binding: FragmentWishEditBinding? = null
+    private val binding get() = _binding!!
+
     private var wishId: Long = -1L
 
     private var selectedTimeButton: View? = null
@@ -47,7 +49,7 @@ class WishEditFragment : BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentWishEditBinding.inflate(inflater, container, false)
+        _binding = FragmentWishEditBinding.inflate(inflater, container, false)
         return binding.root
     }
 
