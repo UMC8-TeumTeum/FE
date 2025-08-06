@@ -7,8 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.teumteum.data.remote.activity.model.ActivityWishRequest
 import com.example.teumteum.data.remote.activity.model.ActivityWishResult
 import com.example.teumteum.data.remote.activity.repository.ActivityRepository
-import com.example.teumteum.data.remote.todo.model.RegisterTodoRequest
-import com.example.teumteum.data.remote.todo.repository.TodoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -34,7 +32,7 @@ class ActivityViewModel @Inject constructor(
             result.onSuccess { response ->
                 _activityWishSuccess.value = true
                 _activityWishes.value = response.result?.wishes
-                    ?.filter { it.content.isNotBlank() }
+                    ?.filter { it.title.isNotBlank() }
                     .orEmpty()
             }
             result.onFailure { e ->

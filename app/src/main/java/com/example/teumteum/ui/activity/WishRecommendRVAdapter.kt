@@ -22,7 +22,7 @@ class WishRecommendRVAdapter(private var wishList: List<ActivityWishResult>, pri
         val item = wishList[position]
         val binding = holder.binding
 
-        binding.wishTitleTv.text = item.content
+        binding.wishTitleTv.text = item.title
         binding.wishTimeTv.text = item.estimatedDuration
 
         binding.fillButton.setOnClickListener {

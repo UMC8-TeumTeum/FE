@@ -93,10 +93,10 @@ class FillingActivity02Fragment : Fragment() {
     private fun setupObservers() {
 
         activityViewModel.activityWishes.observe(viewLifecycleOwner) { wishes ->
-            val filtered = wishes.filter { it.content.isNotBlank() }
+            val filtered = wishes.filter { it.title.isNotBlank() }
             Log.d("위시확인", "받은 위시 개수: ${filtered.size}")
             filtered.forEach {
-                Log.d("위시", "id=${it.id}, content='${it.content}'")
+                Log.d("위시", "id=${it.id}, title='${it.title}'")
             }
 
             wishList.clear()
