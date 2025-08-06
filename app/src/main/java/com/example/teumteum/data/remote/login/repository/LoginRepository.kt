@@ -1,5 +1,6 @@
 package com.example.teumteum.data.remote.login.repository
 
+import android.util.Log
 import com.example.teumteum.data.remote.login.model.JwtTokenResponse
 import com.example.teumteum.data.remote.login.model.KakaoLoginRequest
 import com.example.teumteum.data.remote.login.service.AuthService
@@ -13,6 +14,7 @@ class LoginRepository @Inject constructor(
 ) {
     suspend fun loginWithKakaoAccessToken(token: String): Result<JwtTokenResponse> = runCatching {
         val response = authService.loginWithKakao(KakaoLoginRequest(token))
+        Log.d("KakaoLogin", "response = ${response.body()}")
         handleApiResponse(response)
     }
 }

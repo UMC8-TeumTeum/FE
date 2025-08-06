@@ -46,6 +46,7 @@ class LoginViewModel @Inject constructor(
 
     private fun getJwtFromServer(kakaoAccessToken: String) {
         viewModelScope.launch {
+            Log.d("requestKakaoToken", kakaoAccessToken)
             repository.loginWithKakaoAccessToken(kakaoAccessToken)
                 .onSuccess { jwt ->
                     Log.d("JwtToken", "AccessToken ${jwt.accessToken}, RefreshToken ${jwt.refreshToken}")
