@@ -29,6 +29,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 import com.example.teumteum.data.TimeBlock
+import com.example.teumteum.data.TimeType
 import com.example.teumteum.data.entities.TodoList
 import com.example.teumteum.data.remote.home.HomeService
 import com.example.teumteum.data.remote.home.dto.ScheduleResult
@@ -95,7 +96,13 @@ class HomeFragment : Fragment(), IDateClickListener, HomeView {
         }
 
         binding.fabAddIv.setOnClickListener {
-            val bottomSheet = TodoRegisterFragment()
+            val sleepBlocks = fullDaySchedule.filter { it.type == TimeType.SLEEP }
+
+            val bottomSheet = TodoRegisterFragment().apply {
+                arguments = Bundle().apply {
+                    putParcelableArrayList("sleepBlocks", ArrayList(sleepBlocks))
+                }
+            }
             bottomSheet.show(parentFragmentManager, bottomSheet.tag)
         }
 

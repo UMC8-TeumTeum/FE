@@ -3,13 +3,9 @@ package com.example.teumteum.data.remote.wish.repository
 import android.util.Log
 import com.example.teumteum.data.entities.Wish
 import com.example.teumteum.data.remote.wish.model.DeleteWishesRequest
-import com.example.teumteum.data.remote.wish.model.DeleteWishesResponse
 import com.example.teumteum.data.remote.wish.model.EditWishRequest
-import com.example.teumteum.data.remote.wish.model.EditWishResponse
-import com.example.teumteum.data.remote.wish.model.GetWishResponse
-import com.example.teumteum.data.remote.wish.model.GetWishlistResponse
 import com.example.teumteum.data.remote.wish.model.RegisterWishRequest
-import com.example.teumteum.data.remote.wish.model.RegisterWishResponse
+import com.example.teumteum.data.remote.wish.model.WishCategories
 import com.example.teumteum.data.remote.wish.model.WishlistResult
 import com.example.teumteum.data.remote.wish.service.WishService
 import java.io.IOException
@@ -122,6 +118,30 @@ class WishRepository @Inject constructor(
         return try {
             val response = wishService.getWishlist(duration, page)
             Log.d("WishlistGet", "response = ${response.body()}")
+
+            if (response.isSuccessful) {
+                val apiResponse = response.body()
+                    ?: return Result.failure(Exception("서버 응답이 비어 있습니다."))
+
+                if (apiResponse.isSuccess && apiResponse.result != null) {
+                    Result.success(apiResponse.result)
+                } else {
+                    Result.failure(Exception(apiResponse.message))
+                }
+            } else {
+                Result.failure(Exception("서버 오류 발생"))
+            }
+        } catch (e: IOException) {
+            Result.failure(Exception("네트워크 연결에 실패했습니다. 인터넷을 확인하세요."))
+        } catch (e: Exception) {
+            Result.failure(Exception("알 수 없는 오류 발생: ${e.localizedMessage}"))
+        }
+    }
+
+    // 위시 카테고리 조회
+    suspend fun getWishCategories(): Result<List<WishCategories>> {
+        return try {
+            val response = wishService.getWishCategories()
 
             if (response.isSuccessful) {
                 val apiResponse = response.body()

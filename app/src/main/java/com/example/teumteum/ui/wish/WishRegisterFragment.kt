@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.wish.model.RegisterWishRequest
+import com.example.teumteum.data.remote.wish.model.WishCategories
 import com.example.teumteum.databinding.FragmentWishRegisterBinding
 import com.example.teumteum.ui.todo.TodoRegisterFragment
 import com.example.teumteum.ui.wish.viewModel.WishViewModel
@@ -48,6 +49,7 @@ class WishRegisterFragment : BottomSheetDialogFragment() {
 
         isFromWish = arguments?.getBoolean("isFromWish") ?: false
 
+        wishViewModel.getWishCategories()
         setupUI()
         setupObservers()
     }
@@ -58,11 +60,31 @@ class WishRegisterFragment : BottomSheetDialogFragment() {
         binding.btnTodo.setOnClickListener {
             if (isWishSelected) {
 
-                binding.btnWish.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.teumteum_bg))
-                binding.btnWish.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
+                binding.btnWish.setBackgroundColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.teumteum_bg
+                    )
+                )
+                binding.btnWish.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.text_primary
+                    )
+                )
 
-                binding.btnTodo.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
-                binding.btnTodo.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+                binding.btnTodo.setBackgroundColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.text_primary
+                    )
+                )
+                binding.btnTodo.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.white
+                    )
+                )
 
                 isWishSelected = false
                 childFragmentManager.beginTransaction()
@@ -78,14 +100,14 @@ class WishRegisterFragment : BottomSheetDialogFragment() {
         }
 
         setupTimeButtons()
-        setupCategoryButtons()
     }
 
     override fun onStart() {
         super.onStart()
 
         dialog?.let { dialog ->
-            val bottomSheet = dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+            val bottomSheet =
+                dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
             bottomSheet?.let {
                 val screenHeight = resources.displayMetrics.heightPixels
                 val desiredHeight = (screenHeight * 0.84).toInt()
@@ -145,7 +167,7 @@ class WishRegisterFragment : BottomSheetDialogFragment() {
         }
     }
 
-    private fun setupCategoryButtons() {
+    private fun setupCategoryButtons(categoryList: List<WishCategories>) {
         val categoryButtons = listOf(
             binding.btnWishCategory01,
             binding.btnWishCategory02,
@@ -155,32 +177,42 @@ class WishRegisterFragment : BottomSheetDialogFragment() {
             binding.btnWishCategory06
         )
 
-        val categoryIds = listOf(1L, 2L, 3L, 4L, 5L, 6L)
         categoryButtons.forEachIndexed { index, button ->
-            button.tag = categoryIds[index]
+            if (index < categoryList.size) {
+                val category = categoryList[index]
+                button.visibility = View.VISIBLE
+                button.text = category.categoryName
+                button.tag = category.categoryId
 
-            button.setOnClickListener {
+                button.setOnClickListener {
 
-                if (selectedCategoryButtons.contains(button)) {
-                    // 이미 선택된 경우 → 선택 해제
-                    selectedCategoryButtons.remove(button)
-                    button.backgroundTintList = ColorStateList.valueOf(
-                        resources.getColor(R.color.main_2, null)
-                    )
-                    button.setTextColor(resources.getColor(R.color.text_primary, null))
-                } else {
-                    // 선택 안 된 경우 → 추가
-                    selectedCategoryButtons.add(button)
-                    button.backgroundTintList = ColorStateList.valueOf(
-                        resources.getColor(R.color.main_1, null)
-                    )
-                    button.setTextColor(resources.getColor(R.color.white, null))
+                    if (selectedCategoryButtons.contains(button)) {
+                        // 이미 선택된 경우 → 선택 해제
+                        selectedCategoryButtons.remove(button)
+                        button.backgroundTintList = ColorStateList.valueOf(
+                            resources.getColor(R.color.main_2, null)
+                        )
+                        button.setTextColor(resources.getColor(R.color.text_primary, null))
+                    } else {
+                        // 선택 안 된 경우 → 추가
+                        selectedCategoryButtons.add(button)
+                        button.backgroundTintList = ColorStateList.valueOf(
+                            resources.getColor(R.color.main_1, null)
+                        )
+                        button.setTextColor(resources.getColor(R.color.white, null))
+                    }
                 }
+            } else {
+                button.visibility = View.GONE
             }
         }
     }
 
     private fun setupObservers() {
+        wishViewModel.wishCategories.observe(viewLifecycleOwner) { categoryList ->
+            setupCategoryButtons(categoryList)
+        }
+
         wishViewModel.registerSuccess.observe(viewLifecycleOwner) { isSuccess ->
             if (isSuccess) {
                 Toast.makeText(requireContext(), "위시가 등록되었습니다.", Toast.LENGTH_SHORT).show()

@@ -8,6 +8,7 @@ import com.example.teumteum.data.entities.Wish
 import com.example.teumteum.data.remote.wish.model.DeleteWishesRequest
 import com.example.teumteum.data.remote.wish.model.EditWishRequest
 import com.example.teumteum.data.remote.wish.model.RegisterWishRequest
+import com.example.teumteum.data.remote.wish.model.WishCategories
 import com.example.teumteum.data.remote.wish.model.WishlistItem
 import com.example.teumteum.data.remote.wish.repository.WishRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,6 +28,9 @@ class WishViewModel @Inject constructor(
 
     private val _wishlistItems = MutableLiveData<List<WishlistItem>>()
     val wishlistItems: LiveData<List<WishlistItem>> get() = _wishlistItems
+
+    private val _wishCategories = MutableLiveData<List<WishCategories>>()
+    val wishCategories: LiveData<List<WishCategories>> = _wishCategories
 
     private val _registerSuccess = MutableLiveData<Boolean>()
     val registerSuccess: LiveData<Boolean> get() = _registerSuccess
@@ -100,6 +104,19 @@ class WishViewModel @Inject constructor(
                 _deleteSuccess.value = true
             }.onFailure { e ->
                 _errorMessage.value = e.localizedMessage ?: "위시 삭제에 실패했습니다."
+            }
+        }
+    }
+
+    // 위시 카테고리 조회
+    fun getWishCategories() {
+        viewModelScope.launch {
+            val result = wishRepository.getWishCategories()
+
+            result.onSuccess {
+                _wishCategories.value = it
+            }.onFailure { e ->
+                _errorMessage.value = e.localizedMessage ?: "위시 카테고리 조회에 실패했습니다."
             }
         }
     }

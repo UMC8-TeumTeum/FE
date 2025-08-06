@@ -6,10 +6,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.teumteum.data.entities.TodoList
 import com.example.teumteum.data.remote.todo.model.EditTodoRequest
+import com.example.teumteum.data.remote.todo.model.GetOnboardingReminders
 import com.example.teumteum.data.remote.todo.model.GetTodoResult
 import com.example.teumteum.data.remote.todo.model.RegisterTodoRequest
 import com.example.teumteum.data.remote.todo.repository.TodoRepository
-import com.example.teumteum.data.remote.wish.model.DeleteWishesRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -27,6 +27,9 @@ class TodoViewModel @Inject constructor(
 
     private val _todolistItems = MutableLiveData<List<TodoList>>()
     val todolistItems: LiveData<List<TodoList>> get() = _todolistItems
+
+    private val _reminders = MutableLiveData<GetOnboardingReminders>()
+    val reminders: LiveData<GetOnboardingReminders> = _reminders
 
     private val _registerSuccess = MutableLiveData<Boolean>()
     val registerSuccess: LiveData<Boolean> get() = _registerSuccess
@@ -97,6 +100,19 @@ class TodoViewModel @Inject constructor(
                 _deleteSuccess.value = true
             }.onFailure { e ->
                 _errorMessage.value = e.localizedMessage ?: "투두 삭제에 실패했습니다."
+            }
+        }
+    }
+
+    // 온보딩의 리마인드 알림 조회
+    fun getOnboardingReminders() {
+        viewModelScope.launch {
+            val result = todoRepository.getOnboardingReminders()
+
+            result.onSuccess {
+                _reminders.value = it
+            }.onFailure { e ->
+                _errorMessage.value = e.localizedMessage ?: "리마인드 알림 조회에 실패했습니다."
             }
         }
     }

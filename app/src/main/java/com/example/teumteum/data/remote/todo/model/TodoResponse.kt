@@ -18,3 +18,7 @@ data class GetTodoResult(
     @SerializedName("remindAlarm") val remindAlarm: List<Int>? = null,
     @SerializedName("profileUrl") val profileUrl: List<String>? = null
 )
+
+data class GetOnboardingReminders(
+    @SerializedName("reminders") val reminders: List<Int>
+)

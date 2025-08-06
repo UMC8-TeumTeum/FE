@@ -2,6 +2,7 @@ package com.example.teumteum.data.remote.todo.service
 
 import com.example.teumteum.data.entities.TodoList
 import com.example.teumteum.data.remote.todo.model.EditTodoRequest
+import com.example.teumteum.data.remote.todo.model.GetOnboardingReminders
 import com.example.teumteum.data.remote.todo.model.GetTodoResult
 import com.example.teumteum.data.remote.todo.model.RegisterTodoRequest
 import com.example.teumteum.data.remote.todo.model.TodoResult
@@ -30,5 +31,8 @@ interface TodoService {
 
     @DELETE("/api/home/todo/{todoId}")
     suspend fun deleteTodo(@Path("todoId") todoId: Long): Response<ApiResponse<Unit>>
+
+    @GET("/api/home/todo/user-reminds")
+    suspend fun getOnboardingReminders(): Response<ApiResponse<GetOnboardingReminders>>
 
 }

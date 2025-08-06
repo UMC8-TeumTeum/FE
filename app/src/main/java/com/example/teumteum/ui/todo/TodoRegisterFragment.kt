@@ -21,6 +21,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.example.teumteum.databinding.FragmentTodoRegisterBinding
 import com.example.teumteum.R
+import com.example.teumteum.data.TimeBlock
 
 import com.example.teumteum.data.remote.todo.model.RegisterTodoRequest
 
@@ -36,6 +37,7 @@ import com.example.teumteum.utils.combineDateTime
 import dagger.hilt.android.AndroidEntryPoint
 
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -67,6 +69,11 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
 
     private val todoViewModel: TodoViewModel by viewModels()
 
+    private var sleepStart: LocalTime? = null
+    private var sleepEnd: LocalTime? = null
+
+    private var sleepBlocks: List<TimeBlock> = emptyList()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -76,8 +83,24 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
         return binding.root
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let {
+            sleepBlocks = it.getParcelableArrayList("sleepBlocks") ?: emptyList()
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        todoViewModel.getOnboardingReminders()
+
+        arguments?.let {
+            val start = it.getString("sleepStart")
+            val end = it.getString("sleepEnd")
+            sleepStart = start?.let { LocalTime.parse(it) }
+            sleepEnd = end?.let { LocalTime.parse(it) }
+        }
 
         val today = getTodayFormatted()
 
@@ -497,6 +520,24 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
         )
     }
 
+    private fun parseTimeTextToLocalTime(timeText: String): LocalTime {
+        val parts = timeText.split(" ")
+        val ampm = parts[0]  // 오전 or 오후
+        val timePart = parts[1]  // 8:00
+
+        val (hourStr, minuteStr) = timePart.split(":")
+        var hour = hourStr.toInt()
+        val minute = minuteStr.toInt()
+
+        if (ampm == "오전") {
+            if (hour == 12) hour = 0
+        } else if (ampm == "오후") {
+            if (hour != 12) hour += 12
+        }
+
+        return LocalTime.of(hour, minute)
+    }
+
     private fun register() {
         val title = binding.todoTitleEt.text.toString()
         val startTimeText = binding.startTimeTv.text.toString()
@@ -512,12 +553,45 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
             return
         }
 
+        val startTime = combineDateTime(binding.startDateTv, binding.startTimeTv)
+        val endTime = combineDateTime(binding.endDateTv, binding.endTimeTv)
+        val startLocalTime = LocalTime.parse(startTime.substring(11)) // HH:mm
+        val endLocalTime = LocalTime.parse(endTime.substring(11))
+
+        val startMin = startLocalTime.hour * 60 + startLocalTime.minute
+        val endMin = endLocalTime.hour * 60 + endLocalTime.minute
+
+        if (isOverlappingWithSleep(startMin, endMin)) {
+            Toast.makeText(requireContext(), "해당 시간에는 수면 패턴이 존재합니다.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         val request = getTodoRequest()
         todoViewModel.registerTodo(request)
     }
 
+    private fun isOverlappingWithSleep(startMin: Int, endMin: Int): Boolean {
+        return sleepBlocks.any { sleep ->
+            val sleepStart = sleep.startTime
+            val sleepEnd = sleep.endTime
+            // 겹치는 경우
+            startMin < sleepEnd && endMin > sleepStart
+        }
+    }
+
     private fun setupObservers() {
+
+        todoViewModel.reminders.observe(viewLifecycleOwner) { reminderWrapper ->
+            reminderWrapper.reminders.forEach { minutes ->
+                val label = alarmLabelToMinutes.entries.find { it.value == minutes }?.key
+                if (label != null && selectedItems.add(label)) {
+                    addAlarmItem(label)
+                }
+            }
+        }
+
         todoViewModel.registerSuccess.observe(viewLifecycleOwner) {
+
             Toast.makeText(requireContext(), "투두가 성공적으로 등록되었습니다.", Toast.LENGTH_SHORT).show()
             parentFragmentManager.setFragmentResult("todo_register", Bundle())
 
