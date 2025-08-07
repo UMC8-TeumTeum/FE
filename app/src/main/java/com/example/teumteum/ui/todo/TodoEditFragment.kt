@@ -3,6 +3,7 @@ package com.example.teumteum.ui.todo
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -37,6 +38,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -68,6 +70,14 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
         "3분 전" to 3,
         "1분 전" to 1
     )
+
+    private var originalTitle: String = ""
+    private var originalStartTime: String = ""
+    private var originalEndTime: String = ""
+    private var originalDescription: String = ""
+    private var originalIsPublic: Boolean = false
+    private var originalIncludeTeum: Boolean = false
+    private var originalRemindAlarm: List<Int> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -265,7 +275,11 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
 
         dialog.setOnKeyListener { _, keyCode, event ->
             if (keyCode == android.view.KeyEvent.KEYCODE_BACK && event.action == android.view.KeyEvent.ACTION_UP) {
-                showTodoCancelEditDialog()
+                if (isModified()) {
+                    showTodoCancelEditDialog()
+                } else {
+                    dismiss() // 수정 없으면 바로 닫기
+                }
                 true
             } else {
                 false
@@ -273,6 +287,24 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
         }
 
         return dialog
+    }
+
+    private fun isModified(): Boolean {
+        val currentTitle = binding.todoTitleEt.text.toString().trim()
+        val currentStartTime = combineDateTime(binding.startDateTv, binding.startTimeTv)
+        val currentEndTime = combineDateTime(binding.endDateTv, binding.endTimeTv)
+        val currentDescription = binding.detailTextEt.text.toString().trim()
+        val currentIsPublic = binding.publicToggle01Iv.isChecked
+        val currentIncludeTeum = binding.includeToggle01Iv.isChecked
+        val currentRemindAlarm = getSelectedRemindAlarms()
+
+        return currentTitle != originalTitle ||
+                currentStartTime == originalStartTime ||
+                currentEndTime == originalEndTime ||
+                currentDescription != originalDescription ||
+                currentIsPublic != originalIsPublic ||
+                currentIncludeTeum != originalIncludeTeum ||
+                currentRemindAlarm != originalRemindAlarm
     }
 
     private fun showAlarmPopupWindow(anchor: View) {
@@ -666,6 +698,15 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
                     }
                 }
             }
+
+            // 선택 여부 확인용 원본 저장
+            originalTitle = todo.title
+            originalStartTime = todo.startTime
+            originalEndTime = todo.endTime
+            originalDescription = todo.description
+            originalIsPublic = todo.isPublic
+            originalIncludeTeum = todo.includeTeum
+            originalRemindAlarm = todo.remindAlarm ?: emptyList()
 
             if (todo.type.name == "ROUTINE") {
                 val deactiveColor = ContextCompat.getColor(requireContext(), R.color.teumteum_deactive)
