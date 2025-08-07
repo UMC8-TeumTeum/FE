@@ -1,5 +1,6 @@
 package com.example.teumteum.ui.friend
 
+import android.app.Dialog
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -15,6 +16,7 @@ import com.example.teumteum.R
 import com.example.teumteum.data.remote.friend.model.TeumScheduleDetailResult
 import com.example.teumteum.databinding.Friend03PromiseDetailBottomSheetBinding
 import com.example.teumteum.ui.friend.viewModel.FriendViewModel
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import java.time.LocalDate
 import java.time.LocalTime
@@ -23,6 +25,7 @@ import java.util.*
 
 class PromiseDetailBottomSheet(
     private val detail: TeumScheduleDetailResult,
+    private val scheduleId: Int,
     private val isPast: Boolean
 ) : BottomSheetDialogFragment() {
 
@@ -30,6 +33,19 @@ class PromiseDetailBottomSheet(
     private val binding get() = _binding!!
 
     private val viewModel: FriendViewModel by activityViewModels()
+
+    // 바텀 시트 배경
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
+
+        dialog.setOnShowListener { dialogInterface ->
+            val bottomSheet = (dialogInterface as BottomSheetDialog)
+                .findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+            bottomSheet?.setBackgroundResource(R.drawable.calendar_background)
+        }
+
+        return dialog
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -57,19 +73,20 @@ class PromiseDetailBottomSheet(
         // 과거 시간이면 버튼 숨기기
         binding.btnCancelPromise.visibility = if (isPast) View.GONE else View.VISIBLE
 
-        // ✅ 클릭 시 취소 요청만 호출
+        //  클릭 시 취소 요청만 호출
         binding.btnCancelPromise.setOnClickListener {
-            Log.d("CANCEL_DEBUG", "teumId: ${detail.teumId}")
-            viewModel.cancelTeumSchedule(detail.teumId)
+            Log.d("CANCEL_DEBUG", "취소 요청할 스케줄 ID: $scheduleId")
+            viewModel.cancelTeumSchedule(scheduleId)  //  이게 진짜 스케줄 ID
         }
 
-        // ✅ 성공 메시지 옵저버
+
+        //  성공 메시지
         viewModel.successMessage.observe(viewLifecycleOwner) { message ->
             Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
             dismiss()
         }
 
-        // ✅ 에러 메시지 옵저버
+        //  에러 메시지
         viewModel.errorMessage.observe(viewLifecycleOwner) { error ->
             error?.let {
                 Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
@@ -85,6 +102,8 @@ class PromiseDetailBottomSheet(
         val marginDp = 8
         val sizePx = (sizeDp * resources.displayMetrics.density).toInt()
         val marginPx = (marginDp * resources.displayMetrics.density).toInt()
+
+        Log.d("PromiseDetailBottomSheet", "참가자 수: ${detail.participants.size}")
 
         detail.participants.forEach { participant ->
             val imageView = ImageView(requireContext()).apply {

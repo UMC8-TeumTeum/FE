@@ -262,7 +262,7 @@ class FriendViewModel @Inject constructor(
             repository.cancelTeumSchedule(teumId)
                 .onSuccess { result ->
                     _successMessage.value = "약속된 틈이 성공적으로 취소되었습니다."
-                    Log.d("TEUM_CANCEL", " 취소된 유저 ID: ${result.cancelledUserIds}")
+                    Log.d("SCHEDULED_CANCEL", " 취소된 유저 ID: ${result.cancelledUserIds}")
                 }
                 .onFailure { e ->
                     val msg = when {
@@ -271,7 +271,7 @@ class FriendViewModel @Inject constructor(
                         else -> "약속된 틈 취소 실패 (${e.message})"
                     }
                     _errorMessage.value = msg
-                    Log.e("TEUM_CANCEL", " 취소 실패: ${e.message}", e)
+                    Log.e("SCHEDULED_CANCEL", " 취소 실패: ${e.message}", e)
                 }
         }
     }

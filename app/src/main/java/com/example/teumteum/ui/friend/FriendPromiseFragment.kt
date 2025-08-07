@@ -2,9 +2,9 @@ package com.example.teumteum.ui.friend
 
 import android.os.Bundle
 import android.view.*
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.example.teumteum.R
 import com.example.teumteum.data.remote.friend.model.TeumScheduleDetailResult
 import com.example.teumteum.databinding.FragmentFriendPromiseBinding
 import com.example.teumteum.ui.calendar.IDateClickListener
@@ -32,16 +32,7 @@ class FriendPromiseFragment : Fragment() {
 
     private lateinit var eventAdapter: TeumEventAdapter
     private var selectedDate: LocalDate? = null
-
-    // 바텀 시트
-    private fun showPromiseDetailBottomSheet(
-        detail: TeumScheduleDetailResult,
-        isPast: Boolean
-    ) {
-        val bottomSheet = PromiseDetailBottomSheet(detail, isPast)
-        bottomSheet.show(childFragmentManager, "PromiseDetailBottomSheet")
-    }
-
+    private var lastClickedScheduleId: Int = -1 //  클릭한 스케줄 ID 저장
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -56,30 +47,29 @@ class FriendPromiseFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         (activity as? MainActivity)?.hideBottomBar()
 
+        setupHeader()
+        setupRecyclerView()
+        setupCalendarNavigation()
+        setupCalendarFragment()
+        fetchDotDates()
+
+        binding.btnBack.setOnClickListener {
+            requireActivity().onBackPressed()
+        }
+
         viewModel.scheduledDotDates.observe(viewLifecycleOwner) {
-            setupCalendarFragment()  // dotDates가 변경되면 프래그먼트 다시 붙이기
+            setupCalendarFragment() // dot 위치 업데이트
         }
 
         viewModel.scheduledTeumList.observe(viewLifecycleOwner) { list ->
             eventAdapter.updateData(list)
         }
 
-        //  바텀시트 띄우는 옵저버 추가
         viewModel.teumScheduleDetail.observe(viewLifecycleOwner) { detail ->
             detail?.let {
                 val isPast = viewModel.isPastSchedule.value ?: false
-                showPromiseDetailBottomSheet(it, isPast)
+                showPromiseDetailBottomSheet(it, lastClickedScheduleId, isPast) //  스케줄 ID 함께 전달
             }
-        }
-
-        setupHeader()
-        setupRecyclerView()
-        setupCalendarNavigation()
-        setupCalendarFragment()  //  MonthlyCalendarFragment 적용
-        fetchDotDates()          //  pink_dot 날짜 요청
-
-        binding.btnBack.setOnClickListener {
-            requireActivity().onBackPressed()
         }
     }
 
@@ -90,12 +80,11 @@ class FriendPromiseFragment : Fragment() {
 
     private fun setupRecyclerView() {
         eventAdapter = TeumEventAdapter(emptyList()) { scheduleId ->
+            lastClickedScheduleId = scheduleId //  클릭한 ID 저장
             viewModel.fetchTeumScheduleDetail(scheduleId)
         }
-
         binding.rvEventList.adapter = eventAdapter
     }
-
 
     private fun setupCalendarNavigation() {
         binding.homeCalendarPreviousDateIv.setOnClickListener {
@@ -113,23 +102,19 @@ class FriendPromiseFragment : Fragment() {
         }
     }
 
-    //  MonthlyCalendarFragment를 달력으로 붙이기
     private fun setupCalendarFragment() {
         val displayDate = baseDate.plusMonths(currentMonthOffset.toLong())
-
         val calendarFragment = MonthlyCalendarFragment.newInstance(
             position = Int.MAX_VALUE / 2 + currentMonthOffset,
             onClickListener = object : IDateClickListener {
-                // 날짜 선택 시
                 override fun onClickDate(date: LocalDate) {
                     selectedDate = date
-
                     val dateStr = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
                     viewModel.fetchScheduledTeumList(dateStr)
                 }
             },
             showDot = true,
-            dotDates = viewModel.scheduledDotDates.value ?: emptyList() //  약속된 날짜 전달
+            dotDates = viewModel.scheduledDotDates.value ?: emptyList()
         ).apply {
             arguments = Bundle().apply {
                 putSerializable("displayDate", displayDate)
@@ -143,12 +128,24 @@ class FriendPromiseFragment : Fragment() {
             .commit()
     }
 
-    //  해당 월의 pink_dot용 날짜 받아오기 (ViewModel 연결)
     private fun fetchDotDates() {
         val displayDate = baseDate.plusMonths(currentMonthOffset.toLong())
         val monthStr = displayDate.format(DateTimeFormatter.ofPattern("yyyy-MM", Locale.KOREA))
-
         viewModel.fetchScheduledTeumDates(monthStr)
+    }
+
+    //  바텀시트에 detail + scheduleId 넘기기
+    private fun showPromiseDetailBottomSheet(
+        detail: TeumScheduleDetailResult,
+        scheduleId: Int,
+        isPast: Boolean
+    ) {
+        val bottomSheet = PromiseDetailBottomSheet(
+            detail = detail,
+            scheduleId = scheduleId,
+            isPast = isPast
+        )
+        bottomSheet.show(childFragmentManager, bottomSheet.tag)
     }
 
     override fun onDestroyView() {

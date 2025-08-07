@@ -1,6 +1,7 @@
 package com.example.teumteum.data.remote.friend.repository
 
 import android.util.Log
+import com.example.teumteum.data.AppUserManager
 import com.example.teumteum.data.remote.friend.model.*
 import com.example.teumteum.data.remote.friend.service.FriendService
 import javax.inject.Inject
@@ -97,6 +98,7 @@ class FriendRepository @Inject constructor(
         val body = response.body()
 
         Log.d("TEUM_CANCEL_TEST", "취소 요청한 teumId: $teumId")
+
 
         if (response.isSuccessful && body?.isSuccess == true && body.result != null) {
             body.result
