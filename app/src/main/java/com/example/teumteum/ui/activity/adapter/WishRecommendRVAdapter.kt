@@ -1,4 +1,4 @@
-package com.example.teumteum.ui.activity
+package com.example.teumteum.ui.activity.adapter
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.activity.model.ActivityWishResult
 import com.example.teumteum.databinding.ItemWishlistBinding
+import com.example.teumteum.ui.activity.FillingSetting01Fragment
 
 class WishRecommendRVAdapter(private var wishList: List<ActivityWishResult>, private val fragmentManager: FragmentManager) : RecyclerView.Adapter<WishRecommendRVAdapter.ViewHolder>() {
 
@@ -18,7 +19,7 @@ class WishRecommendRVAdapter(private var wishList: List<ActivityWishResult>, pri
         return ViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: WishRecommendRVAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = wishList[position]
         val binding = holder.binding
 

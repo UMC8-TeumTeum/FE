@@ -5,13 +5,15 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
 import com.example.teumteum.data.entities.AiRecommend
+import com.example.teumteum.data.remote.activity.model.ActivityWishRequest
 import com.example.teumteum.data.remote.activity.model.ActivityWishResult
 import com.example.teumteum.databinding.FragmentFillingActivity02Binding
+import com.example.teumteum.ui.activity.adapter.AiRecommendRVAdapter
+import com.example.teumteum.ui.activity.adapter.WishRecommendRVAdapter
 import com.example.teumteum.ui.activity.viewModel.ActivityViewModel
 import com.example.teumteum.ui.friend.FriendFragment
 import com.example.teumteum.utils.applyBlurShadow
@@ -68,15 +70,27 @@ class FillingActivity02Fragment : Fragment() {
         }
 
         binding.fabRefreshIv.setOnClickListener {
+            val estimatedDuration = arguments?.getString("selectedTime") ?: ""
+            val customCategory = arguments?.getString("customCategory") ?: ""
+            val selectedCategoryText = arguments?.getString("selectedCategory")
 
-            // 새로고침 되는지 테스트
-            aiRecommendDummyList = mutableListOf(
-                AiRecommend(5, "캠퍼스 풍경 사진 찍기", "20m", "취미"),
-                AiRecommend(6, "음악 감상하면서 산책하기", "30m", "취미"),
-                AiRecommend(6, "계단 오르기 운동 해보기", "20m", "취미")
+            val categoryNameToId = mapOf(
+                "자기계발" to 1L,
+                "운동" to 2L,
+                "취미" to 3L,
+                "문화생활" to 4L,
+                "일상" to 5L,
+                "휴식" to 6L
             )
+            val categoryId = categoryNameToId[selectedCategoryText]
 
-            aiAdapter.updateList(aiRecommendDummyList)
+            val request = ActivityWishRequest(
+                estimatedDuration = estimatedDuration,
+                categoryId = categoryId,
+                customCategory = customCategory
+            )
+            activityViewModel.activityWish(request)
+
         }
 
         binding.fabRefreshIv.post {

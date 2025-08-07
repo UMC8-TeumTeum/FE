@@ -137,20 +137,12 @@ class FillingActivity01Fragment : Fragment() {
         }
 
         binding.searchBtn.setOnClickListener {
-            val estimatedDuration = selectedTimeTag ?: ""
-            val categoryId = selectedCategoryButton?.tag as? Long
-            val customCategory = binding.fillingActivityCategoryEt.text.toString()
 
             val request = ActivityWishRequest(
                 estimatedDuration = selectedTimeTag ?: "",
                 categoryId = selectedCategoryButton?.tag as? Long,
                 customCategory = binding.fillingActivityCategoryEt.text.toString()
             )
-
-            // 🔵 요청 파라미터 로그 출력
-            Log.d("FillingActivity01Fragment", "⏱ estimatedDuration = $estimatedDuration")
-            Log.d("FillingActivity01Fragment", "📂 categoryId = $categoryId")
-            Log.d("FillingActivity01Fragment", "✍ customCategory = $customCategory")
 
             activityViewModel.activityWish(request)
 
