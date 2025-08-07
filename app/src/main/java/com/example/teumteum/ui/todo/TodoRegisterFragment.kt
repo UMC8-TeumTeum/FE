@@ -95,7 +95,7 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        todoViewModel.getOnboardingReminders()
+//        todoViewModel.getOnboardingReminders()
 
         arguments?.let {
             val start = it.getString("sleepStart")
@@ -583,21 +583,16 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
 
     private fun setupObservers() {
 
-        todoViewModel.reminders.observe(viewLifecycleOwner) { reminderWrapper ->
-            reminderWrapper.reminders.forEach { minutes ->
-                val label = alarmLabelToMinutes.entries.find { it.value == minutes }?.key
-                if (label != null && selectedItems.add(label)) {
-                    addAlarmItem(label)
-                }
-            }
-        }
-
         todoViewModel.registerSuccess.observe(viewLifecycleOwner) {
-
             Toast.makeText(requireContext(), "투두가 성공적으로 등록되었습니다.", Toast.LENGTH_SHORT).show()
             parentFragmentManager.setFragmentResult("todo_register", Bundle())
 
-            dismiss() // 바텀시트 닫기
+            // 모든 바텀시트 닫기
+            (requireActivity().supportFragmentManager.fragments).forEach { fragment ->
+                if (fragment is BottomSheetDialogFragment) {
+                    fragment.dismissAllowingStateLoss()
+                }
+            }
         }
 
         todoViewModel.errorMessage.observe(viewLifecycleOwner) { errorMsg ->

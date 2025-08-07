@@ -50,7 +50,7 @@ class WishRegisterFragment : BottomSheetDialogFragment() {
 
         isFromWish = arguments?.getBoolean("isFromWish") ?: false
 
-        wishViewModel.getWishCategories()
+//        wishViewModel.getWishCategories()
         setupUI()
         setupObservers()
     }
@@ -101,6 +101,7 @@ class WishRegisterFragment : BottomSheetDialogFragment() {
         }
 
         setupTimeButtons()
+        setupCategoryButtons()
     }
 
     override fun onStart() {
@@ -168,7 +169,7 @@ class WishRegisterFragment : BottomSheetDialogFragment() {
         }
     }
 
-    private fun setupCategoryButtons(categoryList: List<WishCategories>) {
+    private fun setupCategoryButtons() {
         val categoryButtons = listOf(
             binding.btnWishCategory01,
             binding.btnWishCategory02,
@@ -178,41 +179,35 @@ class WishRegisterFragment : BottomSheetDialogFragment() {
             binding.btnWishCategory06
         )
 
+        val categoryIds = listOf(1L, 2L, 3L, 4L, 5L, 6L)
         categoryButtons.forEachIndexed { index, button ->
-            if (index < categoryList.size) {
-                val category = categoryList[index]
-                button.visibility = View.VISIBLE
-                button.text = category.categoryName
-                button.tag = category.categoryId
+            button.tag = categoryIds[index]
 
-                button.setOnClickListener {
+            button.setOnClickListener {
 
-                    if (selectedCategoryButtons.contains(button)) {
-                        // 이미 선택된 경우 → 선택 해제
-                        selectedCategoryButtons.remove(button)
-                        button.backgroundTintList = ColorStateList.valueOf(
-                            resources.getColor(R.color.main_2, null)
-                        )
-                        button.setTextColor(resources.getColor(R.color.text_primary, null))
-                    } else {
-                        // 선택 안 된 경우 → 추가
-                        selectedCategoryButtons.add(button)
-                        button.backgroundTintList = ColorStateList.valueOf(
-                            resources.getColor(R.color.main_1, null)
-                        )
-                        button.setTextColor(resources.getColor(R.color.white, null))
-                    }
+                if (selectedCategoryButtons.contains(button)) {
+                    // 이미 선택된 경우 → 선택 해제
+                    selectedCategoryButtons.remove(button)
+                    button.backgroundTintList = ColorStateList.valueOf(
+                        resources.getColor(R.color.main_2, null)
+                    )
+                    button.setTextColor(resources.getColor(R.color.text_primary, null))
+                } else {
+                    // 선택 안 된 경우 → 추가
+                    selectedCategoryButtons.add(button)
+                    button.backgroundTintList = ColorStateList.valueOf(
+                        resources.getColor(R.color.main_1, null)
+                    )
+                    button.setTextColor(resources.getColor(R.color.white, null))
                 }
-            } else {
-                button.visibility = View.GONE
             }
         }
     }
 
     private fun setupObservers() {
-        wishViewModel.wishCategories.observe(viewLifecycleOwner) { categoryList ->
-            setupCategoryButtons(categoryList)
-        }
+//        wishViewModel.wishCategories.observe(viewLifecycleOwner) { categoryList ->
+//            setupCategoryButtons(categoryList)
+//        }
 
         wishViewModel.registerSuccess.observe(viewLifecycleOwner) { isSuccess ->
             if (isSuccess) {

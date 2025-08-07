@@ -197,7 +197,7 @@ class HomeFragment : Fragment(), IDateClickListener, HomeView {
         bottomNav?.visibility = View.VISIBLE
     }
 
-    /** 주간 달력 연결 */
+    // 주간 달력 연결
     private fun setWeeklyCalendarViewPager() {
         saveSelectedDate(today)
         val calendarAdapter = CalendarVPAdapter(requireActivity(), CalendarMode.WEEKLY,this)
@@ -229,7 +229,7 @@ class HomeFragment : Fragment(), IDateClickListener, HomeView {
     }
 
 
-    /** 월간 달력 연결 */
+    // 월간 달력 연결
     private fun setMonthlyCalendarViewPager() {
         saveSelectedDate(today)
         val calendarAdapter = CalendarVPAdapter(requireActivity(), CalendarMode.MONTHLY, this)
@@ -248,7 +248,7 @@ class HomeFragment : Fragment(), IDateClickListener, HomeView {
         })
     }
 
-    /** 주간/월간 토글 버튼 클릭 이벤트 설정 */
+    // 주간/월간 토글 버튼 클릭 이벤트 설정
     private fun setCalendarModeToggleListeners() {
         binding.btnHomeWeeklyCalendar.setOnClickListener {
             updateCalendarToggle(true)
@@ -261,7 +261,7 @@ class HomeFragment : Fragment(), IDateClickListener, HomeView {
         }
     }
 
-    /** 주간/월간 버튼 이미지 변경 */
+    // 주간/월간 버튼 이미지 변경
     private fun updateCalendarToggle(isWeekly: Boolean) {
         if (isWeekly) {
             binding.btnHomeWeeklyCalendar.apply {
@@ -290,13 +290,13 @@ class HomeFragment : Fragment(), IDateClickListener, HomeView {
         }
     }
 
-    /** 주간 달력 표시 */
+    // 주간 달력 표시
     private fun showWeeklyCalendar() {
         binding.homeWeeklyCalendarWeekVp.visibility = View.VISIBLE
         binding.homeMonthlyCalendarMonthVp.visibility = View.GONE
     }
 
-    /** 월간 달력 표시 */
+    // 월간 달력 표시
     private fun showMonthlyCalendar() {
         binding.homeWeeklyCalendarWeekVp.visibility = View.GONE
         binding.homeMonthlyCalendarMonthVp.visibility = View.VISIBLE
