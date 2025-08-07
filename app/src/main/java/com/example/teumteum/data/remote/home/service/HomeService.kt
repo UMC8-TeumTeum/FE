@@ -1,6 +1,7 @@
 package com.example.teumteum.data.remote.home.service
 
 import com.example.teumteum.data.remote.home.model.ScheduleResult
+import com.example.teumteum.data.remote.home.model.TeumTimeResponse
 import com.example.teumteum.utils.ApiResponse
 import retrofit2.Response
 import retrofit2.http.GET
@@ -10,5 +11,8 @@ interface HomeService {
 
     @GET("/api/home/teum")
     suspend fun getTodaySchedule( @Query("date") date: String ): Response<ApiResponse<List<ScheduleResult>>>
+
+    @GET("/api/home/teum-time")
+    suspend fun getTeumTime(): Response<ApiResponse<TeumTimeResponse>>
 
 }
