@@ -1,5 +1,6 @@
 package com.example.teumteum.utils
 
+import com.example.teumteum.data.remote.activity.service.ActivityService
 import com.example.teumteum.data.remote.alarm.AlarmRetrofitInterface
 import com.example.teumteum.data.remote.calendar.CalendarRetrofitInterface
 import com.example.teumteum.data.remote.friend.service.FriendService
@@ -59,5 +60,11 @@ class ApiModule {
     @Singleton
     fun provideOnBoardingApi(retrofit: Retrofit): OnBoardingService {
         return retrofit.create(OnBoardingService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideActivityApi(retrofit: Retrofit): ActivityService {
+        return retrofit.create(ActivityService::class.java)
     }
 }
