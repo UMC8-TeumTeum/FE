@@ -78,8 +78,8 @@ class FillingActivity02Fragment : Fragment() {
                 "자기계발" to 1L,
                 "운동" to 2L,
                 "취미" to 3L,
-                "문화생활" to 4L,
-                "일상" to 5L,
+                "일상" to 4L,
+                "문화생활" to 5L,
                 "휴식" to 6L
             )
             val categoryId = categoryNameToId[selectedCategoryText]
