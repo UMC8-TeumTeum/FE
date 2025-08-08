@@ -35,6 +35,9 @@ android {
 
         buildConfigField("String", "BASE_URL", "\"${properties["BASE_URL"]}\"")
         manifestPlaceholders["BASE_URL"] = properties["BASE_URL"] ?: ""
+
+        buildConfigField("String", "NATIVE_APP_KEY", "\"${properties["NATIVE_APP_KEY"]}\"")
+        manifestPlaceholders["NATIVE_APP_KEY"] = properties["NATIVE_APP_KEY"] ?: ""
     }
 
     buildTypes {
@@ -124,4 +127,7 @@ dependencies {
     // Hilt
     implementation("com.google.dagger:hilt-android:2.51")
     kapt("com.google.dagger:hilt-android-compiler:2.51")
+
+    //kakao
+    implementation("com.kakao.sdk:v2-user:2.19.0")
 }
