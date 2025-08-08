@@ -29,6 +29,9 @@ class FriendFragment : Fragment() {
     private val viewModel: FriendViewModel by viewModels()
     private lateinit var recommendAdapter: RecommendAdapter
 
+    private lateinit var followingAdapter: FollowingAdapter
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -54,6 +57,37 @@ class FriendFragment : Fragment() {
                     .commit()
             }
         )
+
+        // 팔로잉 화면 보이게
+        binding.tabFollowing.performClick()
+
+
+        // onViewCreated 내부에서 초기화
+        followingAdapter = FollowingAdapter(
+            data = emptyList(),
+            onProfileClick = { user ->
+                val fragment = FriendProfileFollowFragment().apply {
+                    arguments = Bundle().apply {
+                        putInt("userId", user.userId)
+                    }
+                }
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.main_frm, fragment)
+                    .addToBackStack(null)
+                    .commit()
+            },
+            onSendClick = { user ->
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.main_frm, FriendRoommateDateFragment())
+                    .addToBackStack(null)
+                    .commit()
+            }
+        )
+        binding.followingRecyclerView.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = followingAdapter
+        }
+
 
         binding.recommendRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
@@ -112,6 +146,8 @@ class FriendFragment : Fragment() {
             binding.tabFollower.setTextColor(Color.parseColor("#B1B2B3"))
             binding.followingRecyclerView.visibility = View.VISIBLE
             binding.followerRecyclerView.visibility = View.GONE
+
+            viewModel.getFollowingUsers()
         }
 
         binding.tabFollower.setOnClickListener {
@@ -127,6 +163,12 @@ class FriendFragment : Fragment() {
                 .addToBackStack(null)
                 .commit()
         }
+
+        // 팔로잉 목록 결과 반영
+        viewModel.followingUsers.observe(viewLifecycleOwner) { list ->
+            followingAdapter.updateData(list)
+        }
+
         viewModel.successMessage.observe(viewLifecycleOwner) { msg ->
             Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
         }
@@ -157,6 +199,7 @@ class FriendFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         (activity as? MainActivity)?.showBottomBar()
+        binding.tabFollowing.performClick()   //  복귀 시에도 팔로잉 탭 유지
     }
 
     override fun onDestroyView() {

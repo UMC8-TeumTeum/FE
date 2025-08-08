@@ -2,6 +2,7 @@ package com.example.teumteum.data.remote.friend.repository
 
 import com.example.teumteum.data.remote.friend.model.*
 import com.example.teumteum.data.remote.friend.service.FriendService
+import com.example.teumteum.utils.ApiResponse
 import javax.inject.Inject
 
 class FriendRepository @Inject constructor(
@@ -56,6 +57,27 @@ class FriendRepository @Inject constructor(
             body.result
         } else {
             throw Exception("${body?.code ?: "HTTP${response.code()}"} - ${body?.message ?: "오류"}")
+        }
+    }
+
+    suspend fun followUser(userId: Int): Result<ApiResponse<Unit>> = runCatching {
+        val response = api.followUser(userId)
+        val body = response.body()
+
+        if (response.isSuccessful && body != null) {
+            body
+        } else {
+            throw Exception("${body?.code ?: "HTTP ${response.code()}"} - ${body?.message ?: response.message()}")
+        }
+    }
+
+    suspend fun getFollowings(page: Int, size: Int): Result<List<FollowingResult>> = runCatching {
+        val response = api.getFollowings(page, size)
+        val body = response.body()
+        if (response.isSuccessful && body?.isSuccess == true) {
+            body.result?.content ?: emptyList()
+        } else {
+            throw Exception("${body?.code ?: "HTTP ${response.code()}"} - ${body?.message ?: response.message()}")
         }
     }
 

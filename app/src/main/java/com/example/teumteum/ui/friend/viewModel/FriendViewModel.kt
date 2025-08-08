@@ -10,6 +10,8 @@ import com.example.teumteum.data.remote.friend.model.*
 import com.example.teumteum.data.remote.friend.repository.FriendRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.text.Collator
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -81,7 +83,9 @@ class FriendViewModel @Inject constructor(
             repository.getReceivedTeums()
                 .onSuccess { result ->
                     _receivedTeums.value = result
-                    _successMessage.value = "틈 요청 조회 성공 (총 ${result.size}개)"
+
+                    // 토스트 내용
+//                    _successMessage.value = "틈 요청 조회 성공 (총 ${result.size}개)"
                 }
                 .onFailure { e ->
                     val msg = when {
@@ -157,5 +161,64 @@ class FriendViewModel @Inject constructor(
                 }
         }
     }
+
+    // 10. 특정 유저를 팔로우
+    private val _followMessage = MutableLiveData<String>()
+    val followMessage: LiveData<String> get() = _followMessage
+
+    fun followUser(userId: Int) {
+        viewModelScope.launch {
+            repository.followUser(userId)
+                .onSuccess { response ->
+                    Log.d("FOLLOW_FRAGMENT", "${response.code} | ${response.message}")
+                    if (response.isSuccess) {
+                        _followMessage.value = response.message
+                    } else {
+                        val msg = when (response.code) {
+                            "FRIEND4002" -> "자기 자신은 팔로우할 수 없습니다."
+                            "FRIEND4040" -> "존재하지 않는 유저입니다."
+                            "FRIEND4001" -> "이미 팔로우한 유저입니다."
+                            else -> "팔로우 실패: ${response.message}"
+                        }
+                        Log.e("FOLLOW_FRAGMENT", msg)
+                        _followMessage.value = msg
+                    }
+                }
+                .onFailure { e ->
+                    Log.e("FOLLOW_FRAGMENT", "팔로우 요청 실패: ${e.message}")
+                    _followMessage.value = "팔로우 요청 실패 (${e.message})"
+                }
+        }
+    }
+
+    // 11. 팔로잉 목록 조회
+    private val _followingUsers = MutableLiveData<List<FollowingResult>>()
+    val followingUsers: LiveData<List<FollowingResult>> get() = _followingUsers
+
+    fun getFollowingUsers(page: Int = 1, size: Int = 10) {
+        viewModelScope.launch {
+            repository.getFollowings(page, size)
+                .onSuccess { list ->
+                    val collator = Collator.getInstance(Locale.KOREAN).apply {
+                        strength = Collator.PRIMARY
+                    }
+                    val sorted = list.sortedWith { a, b ->
+                        // 즐겨찾기 true 먼저
+                        if (a.isFavorite != b.isFavorite) return@sortedWith if (a.isFavorite) -1 else 1
+                        // 닉네임 가나다순
+                        collator.compare(a.nickname, b.nickname)
+                    }
+                    _followingUsers.value = sorted
+                    // 토스트 내용
+//                    _successMessage.value = "친구 목록 조회에 성공하였습니다."
+                    Log.d("FOLLOWING_LIST", "FRIEND2002 친구 목록 조회에 성공하였습니다.")
+                }
+                .onFailure { e ->
+                    _errorMessage.value = "팔로잉 목록 조회 실패 (${e.message})"
+                    Log.e("FOLLOWING_LIST", "팔로잉 목록 조회 실패: ${e.message}")
+                }
+        }
+    }
+
 
 }

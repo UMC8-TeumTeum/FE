@@ -34,4 +34,10 @@ interface FriendService {
         @Body request: TeumStatusRequest
     ): Response<ApiResponse<TeumStatusResult>>
 
+    @POST("/api/friends/{userId}/follow")
+    suspend fun followUser(@Path("userId") userId: Int): Response<ApiResponse<Unit>>
+
+    @GET("/api/friends/followings")
+    suspend fun getFollowings(@Query("page") page: Int, @Query("size") size: Int): Response<ApiResponse<FollowingPageResult>>
+
 }
