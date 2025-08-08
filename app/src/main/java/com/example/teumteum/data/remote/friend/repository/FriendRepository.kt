@@ -131,4 +131,29 @@ class FriendRepository @Inject constructor(
             throw Exception("${body?.code ?: "HTTP ${response.code()}"} - ${body?.message ?: response.message()}")
         }
     }
+
+    // 12) 언팔로우
+    suspend fun unfollowUser(userId: Int): Result<ApiResponse<String>> = runCatching {
+        val response = api.unfollow(userId.toLong()) // Long으로 변환
+        val body = response.body()
+        Log.d("UNFOLLOW_TEST", "언팔로우 요청한 userId: $userId")
+        if (response.isSuccessful && body != null) {
+            body
+        } else {
+            throw Exception("${body?.code ?: "HTTP ${response.code()}"} - ${body?.message ?: response.message()}")
+        }
+    }
+    // 13) 친구 즐겨찾기 설정/해제
+    suspend fun setFavorite(userId: Int, isFavorite: Boolean): Result<FavoriteResult> = runCatching {
+        val response = api.setFavorite(userId, FavoriteRequest(isFavorite))
+        val body = response.body()
+        if (response.isSuccessful && body?.isSuccess == true && body.result != null) {
+            body.result
+        } else {
+            throw Exception("${body?.code ?: "HTTP ${response.code()}"} - ${body?.message ?: response.message()}")
+        }
+    }
+
+
+
 }

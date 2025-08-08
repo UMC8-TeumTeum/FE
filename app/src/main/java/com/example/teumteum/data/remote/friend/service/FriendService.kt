@@ -4,6 +4,7 @@ import com.example.teumteum.utils.ApiResponse
 import com.example.teumteum.data.remote.friend.model.*
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
@@ -66,4 +67,10 @@ interface FriendService {
     suspend fun cancelTeumSchedule(
         @Path("scheduleId") scheduleId: Int
     ): Response<ApiResponse<CancelTeumResult>>
+
+    @DELETE("/api/friends/{userId}/follow")
+    suspend fun unfollow(@Path("userId") userId: Long): Response<ApiResponse<String>>
+
+    @PATCH("/api/friends/{userId}/favorite")
+    suspend fun setFavorite(@Path("userId") userId: Int, @Body body: FavoriteRequest): Response<ApiResponse<FavoriteResult>>
 }

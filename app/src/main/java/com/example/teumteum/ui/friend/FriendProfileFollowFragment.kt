@@ -80,6 +80,7 @@ class FriendProfileFollowFragment : Fragment() {
                 val result = viewModel.friendProfile.value
                 if (result != null) {
                     val bundle = Bundle().apply {
+                        putInt("userId", userId)
                         putString("name", result.name)
                         putString("field", result.field)
                         putString("imageUrl", result.profileImageUrl)
@@ -143,6 +144,7 @@ class FriendProfileFollowFragment : Fragment() {
     private fun navigateToFollowing(result: FriendProfileResult?) {
         if (result != null) {
             val bundle = Bundle().apply {
+                putInt("userId", result.userId)
                 putString("name", result.name)
                 putString("field", result.field)
                 putString("imageUrl", result.profileImageUrl)

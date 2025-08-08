@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.teumteum.data.AppUserManager
 import com.example.teumteum.data.remote.friend.model.*
 import com.example.teumteum.data.remote.friend.repository.FriendRepository
+import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.text.Collator
@@ -28,6 +29,10 @@ class FriendViewModel @Inject constructor(
 
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> get() = _errorMessage
+
+    //    상단 프로필의 star_btn 과 리스트 아이템의 starIv 가 함께 관찰하는 공통 상태
+    private val _favoriteMap = MutableLiveData<Map<Int, Boolean>>(emptyMap())
+    val favoriteMap: LiveData<Map<Int, Boolean>> get() = _favoriteMap
 
     // 1. 사용자 검색
     private val _searchResults = MutableLiveData<List<FriendSearchResult>>()
@@ -316,4 +321,84 @@ class FriendViewModel @Inject constructor(
                 }
         }
     }
+
+    // 12. 특정 유저 언팔로우
+    private val _unfollowMessage = MutableLiveData<String>()
+    val unfollowMessage: LiveData<String> get() = _unfollowMessage
+
+    fun unfollowUser(userId: Int) {
+        viewModelScope.launch {
+            repository.unfollowUser(userId)
+                .onSuccess { response ->
+                    if (response.isSuccess && response.code == "FRIEND2001") {
+                        _unfollowMessage.value = response.message
+                        Log.d("UNFOLLOW_FRAGMENT", "언팔로우가 성공적으로 완료되었습니다.")
+                    } else {
+                        val msg = when (response.code) {
+                            "FRIEND4002" -> "자기 자신에 대한 요청은 처리할 수 없습니다."
+                            "FRIEND4040" -> "존재하지 않는 유저입니다."
+                            "FRIEND4005" -> "팔로우하지 않은 유저입니다."
+                            else -> "언팔로우 실패: ${response.message}"
+                        }
+                        _unfollowMessage.value = msg
+                        Log.e("UNFOLLOW_FRAGMENT", msg)
+                    }
+                }
+                .onFailure { e ->
+                    Log.e("UNFOLLOW_FRAGMENT", "언팔로우 요청 실패: ${e.message}", e)
+                    _unfollowMessage.value = "언팔로우 요청 실패 (${e.message})"
+                }
+        }
+    }
+
+    // 13. 특정 유저 즐겨찾기 설정/해제
+    private val _favoriteMessage = MutableLiveData<String>()
+    val favoriteMessage: LiveData<String> get() = _favoriteMessage
+
+    fun toggleFavorite(userId: Int) {
+        val before = _favoriteMap.value?.get(userId) ?: false
+        val after = !before
+
+        // UI 즉시 반영
+        _favoriteMap.value = _favoriteMap.value.orEmpty().toMutableMap().apply {
+            put(userId, after)
+        }
+        _followingUsers.value = _followingUsers.value?.map { item ->
+            if (item.userId == userId) item.copy(isFavorite = after) else item
+        }
+
+        viewModelScope.launch {
+            repository.setFavorite(userId, after)
+                .onSuccess { resp ->
+                    if (resp.userId == userId && resp.isFavorite == after) {
+                        _favoriteMessage.value =
+                            if (after) "즐겨찾기에 추가했습니다." else "즐겨찾기를 해제했습니다."
+                        Log.d("FAVORITE_FRAGMENT", _favoriteMessage.value ?: "")
+                    } else {
+                        // 서버 응답이 기대와 다르면 롤백
+                        _favoriteMap.value = _favoriteMap.value.orEmpty().toMutableMap().apply {
+                            put(userId, before)
+                        }
+                        _followingUsers.value = _followingUsers.value?.map { item ->
+                            if (item.userId == userId) item.copy(isFavorite = before) else item
+                        }
+                        _favoriteMessage.value = "즐겨찾기 변경 실패(비정상 응답)"
+                        Log.e("FAVORITE_FRAGMENT", _favoriteMessage.value ?: "")
+                    }
+                }
+                .onFailure { e ->
+                    // 실패 시 롤백
+                    _favoriteMap.value = _favoriteMap.value.orEmpty().toMutableMap().apply {
+                        put(userId, before)
+                    }
+                    _followingUsers.value = _followingUsers.value?.map { item ->
+                        if (item.userId == userId) item.copy(isFavorite = before) else item
+                    }
+                    _favoriteMessage.value = "즐겨찾기 변경 실패 (${e.message})"
+                    Log.e("FAVORITE_FRAGMENT", _favoriteMessage.value ?: "", e)
+                }
+        }
+    }
+
+
 }

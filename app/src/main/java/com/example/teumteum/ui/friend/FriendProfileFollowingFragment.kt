@@ -4,10 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentFriendProfileFollowingBinding
+import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.example.teumteum.ui.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -16,6 +20,10 @@ class FriendProfileFollowingFragment : Fragment() {
 
     private var _binding: FragmentFriendProfileFollowingBinding? = null
     private val binding get() = _binding!!
+
+    private val viewModel: FriendViewModel by activityViewModels()
+
+    private var targetUserId: Int = -1
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,6 +43,7 @@ class FriendProfileFollowingFragment : Fragment() {
         val name = arguments?.getString("name") ?: ""
         val field = arguments?.getString("field") ?: ""
         val imageUrl = arguments?.getString("imageUrl") ?: ""
+        targetUserId = arguments?.getInt("userId") ?: -1
 
         binding.profileNicknameTv.text = name
         binding.profileFieldTv.text = field
@@ -53,7 +62,64 @@ class FriendProfileFollowingFragment : Fragment() {
             (activity as? MainActivity)?.showBottomBar()
         }
 
-        // TODO: 팔로잉 리스트 로직 추가
+        // 팔로잉 버튼 → 언팔로우
+        binding.modifyProfileBtn.setOnClickListener {
+            if (targetUserId != -1) {
+                viewModel.unfollowUser(targetUserId)
+            }
+        }
+
+        // star_btn 클릭 처리
+        binding.starBtn.setOnClickListener {
+            if (targetUserId != -1) {
+                viewModel.toggleFavorite(targetUserId)
+            }
+        }
+
+        observeViewModel()
+    }
+
+    private fun observeViewModel() {
+        // 언팔로우 결과 메시지
+        viewModel.unfollowMessage.observe(viewLifecycleOwner) { msg ->
+            if (msg != null) {
+
+                // 성공 시 토스트
+//                Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+
+                // 언팔로우 성공 시 팔로우 화면으로 이동
+                if (msg.contains("성공적으로 완료")) {
+                    // 현재 프래그먼트를 종료하고 팔로우 프로필 화면으로 이동
+                    val followFragment = FriendProfileFollowFragment().apply {
+                        arguments = Bundle().apply {
+                            putInt("userId", targetUserId)
+                            putString("name", binding.profileNicknameTv.text.toString())
+                            putString("field", binding.profileFieldTv.text.toString())
+                            putString("imageUrl", arguments?.getString("imageUrl") ?: "")
+                        }
+                    }
+                    parentFragmentManager.beginTransaction()
+                        .replace(R.id.main_frm, followFragment)
+                        .addToBackStack(null)
+                        .commit()
+                }
+            }
+        }
+
+        // favoriteMap 관찰해서 버튼 아이콘 바꾸기
+        viewModel.favoriteMap.observe(viewLifecycleOwner) { map ->
+            val isFav = map[targetUserId] ?: false
+            binding.starBtn.setImageResource(
+                if (isFav) R.drawable.friend01_fill_star else R.drawable.friend_profile_star
+            )
+        }
+
+        // 에러 메시지
+        viewModel.errorMessage.observe(viewLifecycleOwner) { msg ->
+            msg?.let {
+                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     override fun onDestroyView() {

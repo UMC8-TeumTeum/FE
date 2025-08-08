@@ -14,8 +14,11 @@ import com.example.teumteum.databinding.Friend01ItemFollowingBinding
 class FollowingAdapter(
     private var data: List<FollowingResult>,
     private val onProfileClick: (FollowingResult) -> Unit,
-    private val onSendClick: (FollowingResult) -> Unit
+    private val onSendClick: (FollowingResult) -> Unit,
+    private val onStarClick: (Int) -> Unit
 ) : RecyclerView.Adapter<FollowingAdapter.ViewHolder>() {
+
+    private var favoriteMap: Map<Int, Boolean> = emptyMap()
 
     inner class ViewHolder(val binding: Friend01ItemFollowingBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: FollowingResult) {
@@ -31,6 +34,16 @@ class FollowingAdapter(
 
             binding.profileIv.setOnClickListener { onProfileClick(item) }
             binding.sendBtn.setOnClickListener { onSendClick(item) }
+
+            // 즐겨찾기 상태에 따른 아이콘 변경
+            val isFav = favoriteMap[item.userId] ?: item.isFavorite
+            binding.starIv.setImageResource(
+                if (isFav) R.drawable.friend01_fill_star else R.drawable.friend01_star
+            )
+
+            binding.starIv.setOnClickListener {
+                onStarClick(item.userId)
+            }
         }
     }
 
@@ -43,13 +56,19 @@ class FollowingAdapter(
 
     override fun getItemCount(): Int = data.size
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(data[position])
-    }
-
     fun updateData(newData: List<FollowingResult>) {
         data = newData
         notifyDataSetChanged()
     }
+
+    fun setFavoriteMap(map: Map<Int, Boolean>) {
+        favoriteMap = map
+        notifyDataSetChanged()
+    }
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.bind(data[position])
+    }
 }
+
 
