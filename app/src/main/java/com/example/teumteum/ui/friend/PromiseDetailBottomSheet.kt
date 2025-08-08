@@ -2,22 +2,39 @@ package com.example.teumteum.ui.friend
 
 import android.app.Dialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.MarginLayoutParams
+import android.widget.ImageView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.activityViewModels
+import com.bumptech.glide.Glide
 import com.example.teumteum.R
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.example.teumteum.data.remote.friend.model.TeumScheduleDetailResult
 import com.example.teumteum.databinding.Friend03PromiseDetailBottomSheetBinding
+import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.format.TextStyle
 import java.util.*
 
-class PromiseDetailBottomSheet : BottomSheetDialogFragment() {
+class PromiseDetailBottomSheet(
+    private val detail: TeumScheduleDetailResult,
+    private val scheduleId: Int,
+    private val isPast: Boolean
+) : BottomSheetDialogFragment() {
 
     private var _binding: Friend03PromiseDetailBottomSheetBinding? = null
     private val binding get() = _binding!!
 
-    /** ↓ BottomSheetDialog 배경 커스텀 */
+    private val viewModel: FriendViewModel by activityViewModels()
+
+    // 바텀 시트 배경
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
 
@@ -30,25 +47,9 @@ class PromiseDetailBottomSheet : BottomSheetDialogFragment() {
         return dialog
     }
 
-    companion object {
-        const val TAG       = "PromiseDetailBottomSheet"
-        private const val ARG_YEAR  = "year"
-        private const val ARG_MONTH = "month"
-        private const val ARG_DAY   = "day"
-
-        fun newInstance(year: Int, month: Int, day: Int): PromiseDetailBottomSheet {
-            val bs = PromiseDetailBottomSheet()
-            bs.arguments = Bundle().apply {
-                putInt(ARG_YEAR,  year)
-                putInt(ARG_MONTH, month)
-                putInt(ARG_DAY,   day)
-            }
-            return bs
-        }
-    }
-
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         _binding = Friend03PromiseDetailBottomSheetBinding.inflate(inflater, container, false)
         return binding.root
@@ -57,58 +58,91 @@ class PromiseDetailBottomSheet : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 버튼 클릭 처리
+        Log.d("PromiseDetailBottomSheet", "바텀시트 표시됨 - title: ${detail.title}")
+
+        // UI 설정
+        binding.tvTitle.text = detail.title
+        binding.tvDate1.text = formatDate(detail.date)
+        binding.tvTime1.text = formatTime(detail.startTime)
+        binding.tvDate2.text = formatDate(detail.date)
+        binding.tvTime2.text = formatTime(detail.endTime)
+
+        // 참여자 프로필 동적 추가
+        showParticipantProfiles(detail)
+
+        // 과거 시간이면 버튼 숨기기
+        binding.btnCancelPromise.visibility = if (isPast) View.GONE else View.VISIBLE
+
+        //  클릭 시 취소 요청만 호출
         binding.btnCancelPromise.setOnClickListener {
-            Toast.makeText(requireContext(), "약속이 취소되었습니다", Toast.LENGTH_SHORT).show()
-            dismiss()  // 다이얼로그 닫기
-        }
-
-        // 전달된 인자 꺼내기
-        val year  = requireArguments().getInt(ARG_YEAR)
-        val month = requireArguments().getInt(ARG_MONTH)
-        val day   = requireArguments().getInt(ARG_DAY)
-
-        // 요일 계산
-        val cal = Calendar.getInstance().apply { set(year, month, day) }
-        val dow = when (cal.get(Calendar.DAY_OF_WEEK)) {
-            Calendar.SUNDAY    -> "일"
-            Calendar.MONDAY    -> "월"
-            Calendar.TUESDAY   -> "화"
-            Calendar.WEDNESDAY -> "수"
-            Calendar.THURSDAY  -> "목"
-            Calendar.FRIDAY    -> "금"
-            Calendar.SATURDAY  -> "토"
-            else               -> ""
-        }
-
-        // 날짜 텍스트 생성
-        val dateText = "${month + 1}월 ${day}일 ($dow)"
-        binding.tvDate1.text = dateText
-        binding.tvDate2.text = dateText
-
-        // ← 여기서 “과거인지” 체크
-        val today = Calendar.getInstance().apply {
-            // 0시로 초기화해서 “오늘” 기준만 비교하고 싶다면
-            set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-        }
-        val selectedDate = Calendar.getInstance().apply {
-            set(year, month, day, 0, 0, 0)
-            set(Calendar.MILLISECOND, 0)
-        }
-
-        if (selectedDate.before(today)) {
-            // 과거 날짜면 버튼 숨기기
-            binding.btnCancelPromise.visibility = View.INVISIBLE
-        } else {
-            // 오늘 이후(오늘 포함)면 버튼 보이기
-            binding.btnCancelPromise.visibility = View.VISIBLE
+            Log.d("CANCEL_DEBUG", "취소 요청할 스케줄 ID: $scheduleId")
+            viewModel.cancelTeumSchedule(scheduleId)  //  이게 진짜 스케줄 ID
         }
 
 
-        // TODO: 필요하다면 시작/종료 시간, 설명도 Bundle 로 받아와 세팅
+        //  성공 메시지
+        viewModel.successMessage.observe(viewLifecycleOwner) { message ->
+            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+            dismiss()
+        }
+
+        //  에러 메시지
+        viewModel.errorMessage.observe(viewLifecycleOwner) { error ->
+            error?.let {
+                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun showParticipantProfiles(detail: TeumScheduleDetailResult) {
+        val container = binding.profileContainer
+        container.removeAllViews()
+
+        val sizeDp = 40
+        val marginDp = 8
+        val sizePx = (sizeDp * resources.displayMetrics.density).toInt()
+        val marginPx = (marginDp * resources.displayMetrics.density).toInt()
+
+        Log.d("PromiseDetailBottomSheet", "참가자 수: ${detail.participants.size}")
+
+        detail.participants.forEach { participant ->
+            val imageView = ImageView(requireContext()).apply {
+                layoutParams = MarginLayoutParams(sizePx, sizePx).apply {
+                    rightMargin = marginPx
+                }
+                scaleType = ImageView.ScaleType.CENTER_CROP
+                background = ContextCompat.getDrawable(context, R.drawable.freind01_circle_profile)
+                clipToOutline = true
+            }
+
+            Glide.with(this)
+                .load(participant.profileImageUrl)
+                .placeholder(R.drawable.gray_teum)
+                .into(imageView)
+
+            container.addView(imageView)
+        }
+    }
+
+    private fun formatDate(date: String): String {
+        return try {
+            val parsed = LocalDate.parse(date)
+            val dayOfWeek = parsed.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.KOREAN)
+            "${parsed.monthValue}월 ${parsed.dayOfMonth}일 ($dayOfWeek)"
+        } catch (e: Exception) {
+            date
+        }
+    }
+
+    private fun formatTime(time: String): String {
+        return try {
+            val parsed = LocalTime.parse(time)
+            val hour = if (parsed.hour % 12 == 0) 12 else parsed.hour % 12
+            val ampm = if (parsed.hour < 12) "오전" else "오후"
+            "$ampm $hour:${parsed.minute.toString().padStart(2, '0')}"
+        } catch (e: Exception) {
+            time
+        }
     }
 
     override fun onDestroyView() {

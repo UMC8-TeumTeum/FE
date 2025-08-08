@@ -156,12 +156,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
-            android:layout_marginTop="0dp"
+            android:layout_marginTop="44dp"
             android:fontFamily="@font/pretendard_medium"
             android:text="2025년 6월"
             android:textColor="@color/text_primary"
             android:textSize="20sp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

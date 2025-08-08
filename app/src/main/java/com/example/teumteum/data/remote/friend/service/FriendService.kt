@@ -34,6 +34,20 @@ interface FriendService {
         @Body request: TeumStatusRequest
     ): Response<ApiResponse<TeumStatusResult>>
 
+    @GET("/api/teums/scheduled/calendar")
+    suspend fun getScheduledTeumCalendar(
+        @Query("month") month: String): Response<ApiResponse<List<String>>>
+
+    @GET("/api/teums/scheduled")
+    suspend fun getScheduledTeums(@Query("date") date: String): Response<ApiResponse<List<TeumScheduledResult>>>
+
+    @GET("/api/teums/scheduled/{scheduleId}")
+    suspend fun getScheduleDetail(@Path("scheduleId") scheduleId: Int): Response<ApiResponse<TeumScheduleDetailResult>>
+
+    @PATCH("/api/teums/scheduled/{scheduleId}/cancel")
+    suspend fun cancelTeumSchedule(@Path("scheduleId") scheduleId: Int): Response<ApiResponse<CancelTeumResult>>
+
+
     @PATCH("/api/teums/request/{responseId}/read")
     suspend fun readTeumRequest( @Path("responseId") responseId: Int ): Response<ApiResponse<Int>>
 }

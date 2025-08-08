@@ -20,6 +20,8 @@ class MonthlyCalendarFragment : Fragment() {
     private lateinit var binding: FragmentMonthlyCalendarBinding
     private lateinit var dateList: List<LocalDate?>
     private lateinit var selectedDate: LocalDate
+    private var dotDates: List<LocalDate> = emptyList()
+
 
     private var position: Int = 0
     private lateinit var onClickListener: IDateClickListener
@@ -103,7 +105,9 @@ class MonthlyCalendarFragment : Fragment() {
                     dayText.setTextColor(requireContext().getColor(R.color.teumteum_deactive))
                 }
 
-                dotView.visibility = if (date.isEqual(today) && showDot) View.VISIBLE else View.INVISIBLE
+                dotView.visibility =
+                    if (showDot && dotDates.any { it.isEqual(date) }) View.VISIBLE else View.INVISIBLE
+
 
                 dayText.setOnClickListener {
                     selectedDate = date
@@ -127,14 +131,18 @@ class MonthlyCalendarFragment : Fragment() {
     }
 
     companion object {
-        fun newInstance(position: Int, onClickListener: IDateClickListener, showDot: Boolean = true): MonthlyCalendarFragment {
+        fun newInstance(position: Int, onClickListener: IDateClickListener, showDot: Boolean = true, dotDates: List<LocalDate> = emptyList()
+        ): MonthlyCalendarFragment {
             val fragment = MonthlyCalendarFragment()
             fragment.position = position
             fragment.onClickListener = onClickListener
+            fragment.dotDates = dotDates
             fragment.arguments = Bundle().apply {
                 putBoolean("showDot", showDot)
             }
             return fragment
         }
     }
+
+
 }
