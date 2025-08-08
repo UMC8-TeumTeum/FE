@@ -141,44 +141,19 @@
         app:layout_constraintTop_toBottomOf="@+id/tvTime1" />
 
     <!-- 프로필 썸네일 리스트 -->
-    <ImageView
-        android:id="@+id/imgProfile"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+    <LinearLayout
+        android:id="@+id/profileContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:layout_marginTop="23dp"
         android:layout_marginStart="20dp"
         android:layout_marginBottom="48dp"
-        android:background="@drawable/freind01_circle_profile"
-        android:scaleType="centerCrop"
-        app:layout_constraintBottom_toTopOf="@+id/btnCancelPromise"
+        app:layout_constraintTop_toBottomOf="@id/divider2"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider2" />
+        app:layout_constraintBottom_toTopOf="@id/btnCancelPromise">
+    </LinearLayout>
 
-    <ImageView
-        android:id="@+id/imgProfile2"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="23dp"
-        android:layout_marginStart="68dp"
-        android:layout_marginBottom="48dp"
-        android:background="@drawable/freind01_circle_profile"
-        android:scaleType="centerCrop"
-        app:layout_constraintBottom_toTopOf="@+id/btnCancelPromise"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider2" />
-
-    <ImageView
-        android:id="@+id/imgProfile3"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="23dp"
-        android:layout_marginStart="116dp"
-        android:layout_marginBottom="48dp"
-        android:background="@drawable/freind01_circle_profile"
-        android:scaleType="centerCrop"
-        app:layout_constraintBottom_toTopOf="@+id/btnCancelPromise"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider2" />
 
     <!-- 버튼: 약속된 틈 취소하기 -->
     <com.google.android.material.button.MaterialButton
