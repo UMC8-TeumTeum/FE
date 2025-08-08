@@ -2,7 +2,7 @@ package com.example.teumteum.data.remote.friend.service
 
 import com.example.teumteum.utils.ApiResponse
 import com.example.teumteum.data.remote.friend.model.*
-import retrofit2.Response  //  이거 추가!
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.PATCH
@@ -26,7 +26,9 @@ interface FriendService {
     suspend fun getReceivedTeumRequests(): Response<ApiResponse<TeumReceivedResult>>
 
     @POST("/api/teums/requests")
-    suspend fun sendTeumRequest(@Body body: TeumRequest): Response<ApiResponse<TeumRequestResult>>
+    suspend fun sendTeumRequest(
+        @Body body: TeumRequest
+    ): Response<ApiResponse<TeumRequestResult>>
 
     @PATCH("/api/teums/response/{responseId}/status")
     suspend fun patchTeumStatus(
@@ -35,9 +37,33 @@ interface FriendService {
     ): Response<ApiResponse<TeumStatusResult>>
 
     @POST("/api/friends/{userId}/follow")
-    suspend fun followUser(@Path("userId") userId: Int): Response<ApiResponse<Unit>>
+    suspend fun followUser(
+        @Path("userId") userId: Int
+    ): Response<ApiResponse<Unit>>
 
     @GET("/api/friends/followings")
-    suspend fun getFollowings(@Query("page") page: Int, @Query("size") size: Int): Response<ApiResponse<FollowingPageResult>>
+    suspend fun getFollowings(
+        @Query("page") page: Int,
+        @Query("size") size: Int
+    ): Response<ApiResponse<FollowingPageResult>>
 
+    @GET("/api/teums/scheduled/calendar")
+    suspend fun getScheduledTeumCalendar(
+        @Query("month") month: String
+    ): Response<ApiResponse<List<String>>>
+
+    @GET("/api/teums/scheduled")
+    suspend fun getScheduledTeums(
+        @Query("date") date: String
+    ): Response<ApiResponse<List<TeumScheduledResult>>>
+
+    @GET("/api/teums/scheduled/{scheduleId}")
+    suspend fun getScheduleDetail(
+        @Path("scheduleId") scheduleId: Int
+    ): Response<ApiResponse<TeumScheduleDetailResult>>
+
+    @PATCH("/api/teums/scheduled/{scheduleId}/cancel")
+    suspend fun cancelTeumSchedule(
+        @Path("scheduleId") scheduleId: Int
+    ): Response<ApiResponse<CancelTeumResult>>
 }

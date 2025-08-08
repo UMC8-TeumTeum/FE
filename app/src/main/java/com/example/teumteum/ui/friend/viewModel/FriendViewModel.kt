@@ -11,6 +11,9 @@ import com.example.teumteum.data.remote.friend.repository.FriendRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.text.Collator
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.Locale
 import javax.inject.Inject
 
@@ -19,14 +22,14 @@ class FriendViewModel @Inject constructor(
     private val repository: FriendRepository
 ) : ViewModel() {
 
-    //  공통 메시지
+    // 공통 메시지
     private val _successMessage = MutableLiveData<String>()
     val successMessage: LiveData<String> get() = _successMessage
 
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> get() = _errorMessage
 
-    //  1. 사용자 검색
+    // 1. 사용자 검색
     private val _searchResults = MutableLiveData<List<FriendSearchResult>>()
     val searchResults: LiveData<List<FriendSearchResult>> get() = _searchResults
 
@@ -63,7 +66,6 @@ class FriendViewModel @Inject constructor(
         }
     }
 
-
     fun addRecentKeyword(keyword: String) {
         val updated = _recentKeywords.value.orEmpty() + keyword
         _recentKeywords.value = updated
@@ -74,7 +76,7 @@ class FriendViewModel @Inject constructor(
         _recentKeywords.value = current.dropLast(1)
     }
 
-    //  2. 틈 요청 조회
+    // 2. 틈 요청 조회(받은 목록)
     private val _receivedTeums = MutableLiveData<List<TeumReceivedItem>>()
     val receivedTeums: LiveData<List<TeumReceivedItem>> get() = _receivedTeums
 
@@ -83,9 +85,6 @@ class FriendViewModel @Inject constructor(
             repository.getReceivedTeums()
                 .onSuccess { result ->
                     _receivedTeums.value = result
-
-                    // 토스트 내용
-//                    _successMessage.value = "틈 요청 조회 성공 (총 ${result.size}개)"
                 }
                 .onFailure { e ->
                     val msg = when {
@@ -97,7 +96,7 @@ class FriendViewModel @Inject constructor(
         }
     }
 
-    //  3. 친구 프로필
+    // 3. 친구 프로필
     private val _friendProfile = MutableLiveData<FriendProfileResult>()
     val friendProfile: LiveData<FriendProfileResult> get() = _friendProfile
 
@@ -119,7 +118,7 @@ class FriendViewModel @Inject constructor(
         }
     }
 
-    //  4. 틈 요청 보내기
+    // 4. 틈 요청 보내기
     fun sendTeumRequest(request: TeumRequest) {
         viewModelScope.launch {
             repository.sendTeumRequest(request)
@@ -162,7 +161,107 @@ class FriendViewModel @Inject constructor(
         }
     }
 
-    // 10. 특정 유저를 팔로우
+    // 6. 약속된 틈 날짜 리스트 (달력 점)
+    private val _scheduledDotDates = MutableLiveData<List<LocalDate>>()
+    val scheduledDotDates: LiveData<List<LocalDate>> get() = _scheduledDotDates
+
+    fun fetchScheduledTeumDates(month: String) {
+        viewModelScope.launch {
+            repository.getScheduledTeumCalendar(month)
+                .onSuccess { resultList ->
+                    _scheduledDotDates.value = resultList.mapNotNull {
+                        runCatching { LocalDate.parse(it) }.getOrNull()
+                    }
+                    Log.d("CALENDAR_INFO", "약속된 틈 달력 정보 조회 성공")
+                }
+                .onFailure { e ->
+                    Log.e("CALENDAR_INFO", "약속된 틈 달력 조회 실패: ${e.message}")
+                }
+        }
+    }
+
+    // 7. 특정 날짜의 약속된 틈 리스트
+    private val _scheduledTeumList = MutableLiveData<List<TeumScheduledResult>>()
+    val scheduledTeumList: LiveData<List<TeumScheduledResult>> get() = _scheduledTeumList
+
+    fun fetchScheduledTeumList(date: String) {
+        viewModelScope.launch {
+            repository.getScheduledTeums(date)
+                .onSuccess { result ->
+                    _scheduledTeumList.value = result
+                    _successMessage.value = "$date 약속된 틈 조회 성공 (총 ${result.size}개)"
+                    Log.d("CALENDAR_SCHEDULED", "약속된 틈 $date 조회 결과: $result")
+                }
+                .onFailure { e ->
+                    val msg = when {
+                        e.message?.contains("TEUM4042") == true -> "약속된 틈이 존재하지 않습니다."
+                        else -> "약속된 틈 조회 실패 (${e.message})"
+                    }
+                    _scheduledTeumList.value = emptyList()
+                    _errorMessage.value = msg
+                    Log.e("CALENDAR_SCHEDULED", "$date 조회 실패: ${e.message}", e)
+                }
+        }
+    }
+
+    // 8. 약속된 틈 상세 / 과거 여부
+    private val _teumScheduleDetail = MutableLiveData<TeumScheduleDetailResult?>()
+    val teumScheduleDetail: LiveData<TeumScheduleDetailResult?> get() = _teumScheduleDetail
+
+    private val _isPastSchedule = MutableLiveData<Boolean?>()
+    val isPastSchedule: LiveData<Boolean?> get() = _isPastSchedule
+
+    fun fetchTeumScheduleDetail(teumId: Int) {
+        viewModelScope.launch {
+            repository.getTeumScheduleDetail(teumId)
+                .onSuccess { result ->
+                    _teumScheduleDetail.value = result
+                    _successMessage.value = "약속된 틈 상세 정보가 조회되었습니다."
+
+                    val now = LocalDateTime.now()
+                    val dateTimeStr = "${result.date}T${result.startTime}" // yyyy-MM-dd'T'HH:mm
+                    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")
+                    val scheduleDateTime = runCatching {
+                        LocalDateTime.parse(dateTimeStr, formatter)
+                    }.getOrNull()
+
+                    _isPastSchedule.value = scheduleDateTime?.isBefore(now) == true
+                }
+                .onFailure { e ->
+                    val msg = when {
+                        e.message?.contains("TEUM4042") == true -> "약속된 틈이 존재하지 않습니다."
+                        e.message?.contains("TEUM4030") == true -> "권한이 없습니다."
+                        else -> "약속된 틈 상세 조회 실패 (${e.message})"
+                    }
+                    _errorMessage.value = msg
+                    _teumScheduleDetail.value = null
+                    _isPastSchedule.value = null
+                    Log.e("TEUM_DETAIL", "상세 조회 실패: ${e.message}")
+                }
+        }
+    }
+
+    // 9. 약속된 틈 취소
+    fun cancelTeumSchedule(teumId: Int) {
+        viewModelScope.launch {
+            repository.cancelTeumSchedule(teumId)
+                .onSuccess { result ->
+                    _successMessage.value = "약속된 틈이 성공적으로 취소되었습니다."
+                    Log.d("SCHEDULED_CANCEL", "취소된 유저 ID: ${result.cancelledUserIds}")
+                }
+                .onFailure { e ->
+                    val msg = when {
+                        e.message?.contains("TEUM4030") == true -> "정보에 대한 권한이 없습니다."
+                        e.message?.contains("TEUM4042") == true -> "약속된 틈이 존재하지 않습니다."
+                        else -> "약속된 틈 취소 실패 (${e.message})"
+                    }
+                    _errorMessage.value = msg
+                    Log.e("SCHEDULED_CANCEL", "취소 실패: ${e.message}", e)
+                }
+        }
+    }
+
+    // 10. 특정 유저 팔로우
     private val _followMessage = MutableLiveData<String>()
     val followMessage: LiveData<String> get() = _followMessage
 
@@ -191,7 +290,7 @@ class FriendViewModel @Inject constructor(
         }
     }
 
-    // 11. 팔로잉 목록 조회
+    // 11. 팔로잉 목록 조회(즐겨찾기 우선 + 닉네임 가나다 정렬)
     private val _followingUsers = MutableLiveData<List<FollowingResult>>()
     val followingUsers: LiveData<List<FollowingResult>> get() = _followingUsers
 
@@ -209,9 +308,7 @@ class FriendViewModel @Inject constructor(
                         collator.compare(a.nickname, b.nickname)
                     }
                     _followingUsers.value = sorted
-                    // 토스트 내용
-//                    _successMessage.value = "친구 목록 조회에 성공하였습니다."
-                    Log.d("FOLLOWING_LIST", "FRIEND2002 친구 목록 조회에 성공하였습니다.")
+                    Log.d("FOLLOWING_LIST", "FRIEND2002 친구 목록 조회 성공")
                 }
                 .onFailure { e ->
                     _errorMessage.value = "팔로잉 목록 조회 실패 (${e.message})"
@@ -219,6 +316,4 @@ class FriendViewModel @Inject constructor(
                 }
         }
     }
-
-
 }
