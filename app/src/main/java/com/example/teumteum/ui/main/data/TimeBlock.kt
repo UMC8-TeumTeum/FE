@@ -1,4 +1,4 @@
-package com.example.teumteum.data
+package com.example.teumteum.ui.main.data
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

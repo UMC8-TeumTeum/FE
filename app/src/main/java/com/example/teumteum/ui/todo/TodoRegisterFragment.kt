@@ -21,7 +21,6 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.example.teumteum.databinding.FragmentTodoRegisterBinding
 import com.example.teumteum.R
-import com.example.teumteum.data.TimeBlock
 
 import com.example.teumteum.data.remote.todo.model.RegisterTodoRequest
 import com.example.teumteum.ui.wish.WishRegisterFragment
@@ -31,6 +30,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 import com.example.teumteum.ui.calendar.IDateClickListener
 import com.example.teumteum.ui.calendar.MonthlyCalendarFragment
+import com.example.teumteum.ui.main.data.TimeBlock
 import com.example.teumteum.ui.todo.viewModel.TodoViewModel
 import com.example.teumteum.utils.combineDateTime
 import dagger.hilt.android.AndroidEntryPoint

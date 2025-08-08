@@ -1,16 +1,15 @@
-package com.example.teumteum.data.remote.activity.dto
+package com.example.teumteum.data.remote.activity.model
 
-import com.example.teumteum.data.remote.wish.model.enums.EstimatedDurationType
 import com.google.gson.annotations.SerializedName
 
 data class ActivityWishRequest(
-    @SerializedName("estimatedDuration") val estimatedDuration: EstimatedDurationType,
+    @SerializedName("estimatedDuration") val estimatedDuration: String,
     @SerializedName("categoryId") val categoryId: Long? = null,
     @SerializedName("customCategory") val customCategory: String? = null
 )
 
 data class ActivityAiRequest(
-    @SerializedName("estimatedDuration") val estimatedDuration: EstimatedDurationType,
+    @SerializedName("estimatedDuration") val estimatedDuration: String,
     @SerializedName("location") val location: String? = null,
     @SerializedName("categoryId") val categoryId: Long? = null
 )
