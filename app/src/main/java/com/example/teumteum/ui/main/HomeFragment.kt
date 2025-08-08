@@ -10,7 +10,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.fragment.app.activityViewModels
 import androidx.viewpager2.widget.ViewPager2
 import com.example.teumteum.ui.calendar.IDateClickListener
@@ -32,9 +31,9 @@ import com.example.teumteum.data.remote.todo.model.TodoListResult
 import com.example.teumteum.ui.todo.viewModel.TodoViewModel
 import com.example.teumteum.ui.clock.ChartUtils
 import com.example.teumteum.ui.clock.IconPieChartRenderer
-import com.example.teumteum.ui.main.data.TimeBlock
 import com.example.teumteum.ui.main.data.TimeType
 import com.example.teumteum.ui.main.viewModel.HomeViewModel
+import com.example.teumteum.ui.myhome.viewModel.MyHomeViewModel
 import com.example.teumteum.utils.applyBlurShadow
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -51,7 +50,8 @@ class HomeFragment : Fragment(), IDateClickListener {
 
     private lateinit var adapter: TodoListRVAdapter
     private var todolistItems: List<TodoListResult> = emptyList()
-    private val todoViewModel: TodoViewModel by viewModels()
+    private val todoViewModel: TodoViewModel by activityViewModels()
+    private val myHomeViewModel: MyHomeViewModel by activityViewModels()
 
     private var isAM: Boolean = true
 
@@ -187,6 +187,7 @@ class HomeFragment : Fragment(), IDateClickListener {
         }
 
         todoViewModel.getTodoList(date)
+        myHomeViewModel.getMyInfo()
 
         setupObservers()
     }

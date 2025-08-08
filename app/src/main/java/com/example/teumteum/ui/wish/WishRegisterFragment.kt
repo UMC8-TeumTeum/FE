@@ -9,10 +9,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.wish.model.RegisterWishRequest
-import com.example.teumteum.data.remote.wish.model.WishCategories
 import com.example.teumteum.databinding.FragmentWishRegisterBinding
 import com.example.teumteum.ui.todo.TodoRegisterFragment
 import com.example.teumteum.ui.wish.viewModel.WishViewModel
@@ -34,7 +33,7 @@ class WishRegisterFragment : BottomSheetDialogFragment() {
     private var isWishSelected = true
     private var isFromWish: Boolean = false
 
-    private val wishViewModel: WishViewModel by viewModels()
+    private val wishViewModel: WishViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,

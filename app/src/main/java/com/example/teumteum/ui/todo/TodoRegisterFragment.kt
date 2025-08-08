@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,7 +19,8 @@ import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
+import com.bumptech.glide.Glide
 import com.example.teumteum.databinding.FragmentTodoRegisterBinding
 import com.example.teumteum.R
 
@@ -31,6 +33,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.example.teumteum.ui.calendar.IDateClickListener
 import com.example.teumteum.ui.calendar.MonthlyCalendarFragment
 import com.example.teumteum.ui.main.data.TimeBlock
+import com.example.teumteum.ui.myhome.viewModel.MyHomeViewModel
 import com.example.teumteum.ui.todo.viewModel.TodoViewModel
 import com.example.teumteum.utils.combineDateTime
 import dagger.hilt.android.AndroidEntryPoint
@@ -67,7 +70,8 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
     private var calendarFragmentEnd: MonthlyCalendarFragment? = null
     private var isStartDateSelected = true
 
-    private val todoViewModel: TodoViewModel by viewModels()
+    private val todoViewModel: TodoViewModel by activityViewModels()
+    private val myHomeViewModel: MyHomeViewModel by activityViewModels()
 
     private var sleepStart: LocalTime? = null
     private var sleepEnd: LocalTime? = null
@@ -174,6 +178,19 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
         binding.endDateTv.setOnClickListener {
             isStartDateSelected = false
             toggleCalendarVisibility()
+        }
+
+        myHomeViewModel.profileImageUrl.observe(viewLifecycleOwner) { imageUrl ->
+            Log.d("ProfileImageCheck", "Image URL: $imageUrl")
+            if (!imageUrl.isNullOrBlank()) {
+                Glide.with(this)
+                    .load(imageUrl)
+                    .placeholder(R.drawable.gray_teum) // 기본 이미지 리소스
+                    .error(R.drawable.gray_teum)       // 에러 시 이미지
+                    .into(binding.profileIv)
+            } else {
+                binding.profileIv.setImageResource(R.drawable.gray_teum)
+            }
         }
 
         setupObservers()

@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.wish.model.DeleteWishesRequest
@@ -42,7 +43,7 @@ class WishEditFragment : BottomSheetDialogFragment() {
     private var originalTime: String = ""
     private var originalCategoryIds: List<Long> = emptyList()
 
-    private val wishViewModel: WishViewModel by viewModels()
+    private val wishViewModel: WishViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,

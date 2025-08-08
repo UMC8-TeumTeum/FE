@@ -11,10 +11,10 @@
 
     <ImageView
         android:id="@+id/profile_iv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="38dp"
+        android:layout_height="38dp"
         android:layout_marginTop="2dp"
-        android:src="@drawable/ic_sample_profile"
+        android:src="@drawable/dot_circle_gray"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/alarm_name_tv" />
 
