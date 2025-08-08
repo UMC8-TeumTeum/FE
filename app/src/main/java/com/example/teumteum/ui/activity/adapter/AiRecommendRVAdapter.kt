@@ -1,4 +1,4 @@
-package com.example.teumteum.ui.activity
+package com.example.teumteum.ui.activity.adapter
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,10 +6,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.teumteum.R
-import com.example.teumteum.data.entities.WishRecommend
+import com.example.teumteum.data.entities.AiRecommend
 import com.example.teumteum.databinding.ItemWishlistBinding
+import com.example.teumteum.ui.activity.FillingSetting01Fragment
 
-class WishRecommendRVAdapter(private var wishList: List<WishRecommend>, private val fragmentManager: FragmentManager) : RecyclerView.Adapter<WishRecommendRVAdapter.ViewHolder>() {
+class AiRecommendRVAdapter( private var aiList: List<AiRecommend>, private val fragmentManager: FragmentManager) : RecyclerView.Adapter<AiRecommendRVAdapter.ViewHolder>() {
 
     inner class ViewHolder(val binding: ItemWishlistBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -18,8 +19,8 @@ class WishRecommendRVAdapter(private var wishList: List<WishRecommend>, private 
         return ViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: WishRecommendRVAdapter.ViewHolder, position: Int) {
-        val item = wishList[position]
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val item = aiList[position]
         val binding = holder.binding
         binding.wishTitleTv.text = item.title
         binding.wishTimeTv.text = item.time
@@ -39,10 +40,10 @@ class WishRecommendRVAdapter(private var wishList: List<WishRecommend>, private 
         }
     }
 
-    override fun getItemCount(): Int = minOf(wishList.size, 3)
+    override fun getItemCount(): Int = 3
 
-    fun updateList(newList: List<WishRecommend>) {
-        wishList = newList
+    fun updateList(newList: List<AiRecommend>) {
+        aiList = newList
         notifyDataSetChanged()
     }
 }

@@ -1,4 +1,4 @@
-package com.example.teumteum.ui.activity
+package com.example.teumteum.ui.activity.adapter
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,10 +6,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.teumteum.R
-import com.example.teumteum.data.entities.AiRecommend
+import com.example.teumteum.data.remote.activity.model.ActivityWishResult
 import com.example.teumteum.databinding.ItemWishlistBinding
+import com.example.teumteum.ui.activity.FillingSetting01Fragment
 
-class AiRecommendRVAdapter( private var aiList: List<AiRecommend>, private val fragmentManager: FragmentManager) : RecyclerView.Adapter<AiRecommendRVAdapter.ViewHolder>() {
+class WishRecommendRVAdapter(private var wishList: List<ActivityWishResult>, private val fragmentManager: FragmentManager) : RecyclerView.Adapter<WishRecommendRVAdapter.ViewHolder>() {
 
     inner class ViewHolder(val binding: ItemWishlistBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -19,10 +20,11 @@ class AiRecommendRVAdapter( private var aiList: List<AiRecommend>, private val f
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = aiList[position]
+        val item = wishList[position]
         val binding = holder.binding
+
         binding.wishTitleTv.text = item.title
-        binding.wishTimeTv.text = item.time
+        binding.wishTimeTv.text = item.estimatedDuration
 
         binding.fillButton.setOnClickListener {
             val fragment = FillingSetting01Fragment().apply {
@@ -39,10 +41,10 @@ class AiRecommendRVAdapter( private var aiList: List<AiRecommend>, private val f
         }
     }
 
-    override fun getItemCount(): Int = 3
+    override fun getItemCount(): Int = minOf(wishList.size, 3)
 
-    fun updateList(newList: List<AiRecommend>) {
-        aiList = newList
+    fun updateList(newList: List<ActivityWishResult>) {
+        wishList = newList
         notifyDataSetChanged()
     }
 }
