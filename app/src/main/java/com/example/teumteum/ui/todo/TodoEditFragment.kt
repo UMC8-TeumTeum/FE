@@ -758,6 +758,8 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
                             (child as? TextView)?.setTextColor(deactiveColor)
                             (child as? SwitchCompat)?.apply {
                                 isEnabled = false
+                                trackDrawable = ContextCompat.getDrawable(context, R.drawable.style_toggle_disabled_btn)
+                                thumbDrawable = ContextCompat.getDrawable(context, R.drawable.style_toggle_disabled_thumb)
                             }
                         }
                     }
