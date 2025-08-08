@@ -54,7 +54,7 @@ class TodoRVAdapter(private val fragmentManager: FragmentManager, private var to
             )
 
             binding.ivAlarm.setOnClickListener {
-//                item.hasAlarm = !(item.hasAlarm ?: false)
+                item.hasAlarm = !(item.hasAlarm ?: false)
                 binding.ivAlarm.setImageResource(
                     if (item.hasAlarm == true) R.drawable.ic_alarm_on_sv
                     else R.drawable.ic_alarm_off_sv
