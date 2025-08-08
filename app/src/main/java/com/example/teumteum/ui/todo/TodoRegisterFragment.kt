@@ -24,8 +24,6 @@ import com.example.teumteum.R
 import com.example.teumteum.data.TimeBlock
 
 import com.example.teumteum.data.remote.todo.model.RegisterTodoRequest
-import com.example.teumteum.databinding.FragmentTodoEditBinding
-
 import com.example.teumteum.ui.wish.WishRegisterFragment
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -520,24 +518,6 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
             includeTeum = includeTeum,
             remindAlarm = remindAlarm
         )
-    }
-
-    private fun parseTimeTextToLocalTime(timeText: String): LocalTime {
-        val parts = timeText.split(" ")
-        val ampm = parts[0]  // 오전 or 오후
-        val timePart = parts[1]  // 8:00
-
-        val (hourStr, minuteStr) = timePart.split(":")
-        var hour = hourStr.toInt()
-        val minute = minuteStr.toInt()
-
-        if (ampm == "오전") {
-            if (hour == 12) hour = 0
-        } else if (ampm == "오후") {
-            if (hour != 12) hour += 12
-        }
-
-        return LocalTime.of(hour, minute)
     }
 
     private fun register() {

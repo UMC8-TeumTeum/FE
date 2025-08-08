@@ -11,7 +11,7 @@ import com.example.teumteum.data.remote.todo.model.TodoListResult
 import com.example.teumteum.databinding.ItemTodolistBinding
 import com.example.teumteum.ui.todo.TodoEditFragment
 
-class TodoRVAdapter(private val fragmentManager: FragmentManager, private var todoList: List<TodoListResult>) : RecyclerView.Adapter<TodoRVAdapter.ViewHolder>() {
+class TodoListRVAdapter(private val fragmentManager: FragmentManager, private var todoList: List<TodoListResult>) : RecyclerView.Adapter<TodoListRVAdapter.ViewHolder>() {
 
     inner class ViewHolder(val binding: ItemTodolistBinding) : RecyclerView.ViewHolder(binding.root)
 

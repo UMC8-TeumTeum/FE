@@ -1,11 +1,11 @@
 package com.example.teumteum.data.remote.wish.repository
 
 import android.util.Log
-import com.example.teumteum.data.entities.Wish
 import com.example.teumteum.data.remote.wish.model.DeleteWishesRequest
 import com.example.teumteum.data.remote.wish.model.EditWishRequest
 import com.example.teumteum.data.remote.wish.model.RegisterWishRequest
 import com.example.teumteum.data.remote.wish.model.WishCategories
+import com.example.teumteum.data.remote.wish.model.WishResult
 import com.example.teumteum.data.remote.wish.model.WishlistResult
 import com.example.teumteum.data.remote.wish.service.WishService
 import java.io.IOException
@@ -42,7 +42,7 @@ class WishRepository @Inject constructor(
     }
 
     // 특정 위시 조회
-    suspend fun getWish(wishId: Long): Result<Wish> {
+    suspend fun getWish(wishId: Long): Result<WishResult> {
         return try {
             val response = wishService.getWish(wishId)
 

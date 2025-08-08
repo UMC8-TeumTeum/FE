@@ -1,14 +1,13 @@
 package com.example.teumteum.data.remote.todo.repository
 
 import android.util.Log
-import com.example.teumteum.data.entities.TodoList
 import com.example.teumteum.data.remote.todo.model.EditTodoRequest
 import com.example.teumteum.data.remote.todo.model.GetOnboardingReminders
 import com.example.teumteum.data.remote.todo.model.GetTodoResult
 import com.example.teumteum.data.remote.todo.model.RegisterTodoRequest
+import com.example.teumteum.data.remote.todo.model.TodoListResult
 import com.example.teumteum.data.remote.todo.model.TodoResult
 import com.example.teumteum.data.remote.todo.service.TodoService
-import com.example.teumteum.data.remote.wish.model.DeleteWishesRequest
 import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -44,7 +43,7 @@ class TodoRepository @Inject constructor(
     }
 
     // 투두리스트 조회
-    suspend fun getTodoList(date: String): Result<List<TodoList>> {
+    suspend fun getTodoList(date: String): Result<List<TodoListResult>> {
         return try {
             val response = todoService.getTodoList(date)
             Log.d("TodolistGet", "response = ${response.body()}")

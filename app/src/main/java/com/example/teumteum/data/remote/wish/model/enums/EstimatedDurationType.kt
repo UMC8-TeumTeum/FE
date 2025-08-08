@@ -1,4 +1,4 @@
-package com.example.teumteum.data.entities.enums
+package com.example.teumteum.data.remote.wish.model.enums
 
 import com.google.gson.annotations.SerializedName
 

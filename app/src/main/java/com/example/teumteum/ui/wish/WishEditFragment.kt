@@ -13,9 +13,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
 import com.example.teumteum.R
-import com.example.teumteum.data.entities.Wish
 import com.example.teumteum.data.remote.wish.model.DeleteWishesRequest
 import com.example.teumteum.data.remote.wish.model.EditWishRequest
+import com.example.teumteum.data.remote.wish.model.WishResult
 import com.example.teumteum.databinding.DialogConfirmWishDeleteBinding
 import com.example.teumteum.databinding.DialogConfirmWishEditBinding
 import com.example.teumteum.databinding.FragmentWishEditBinding
@@ -295,7 +295,7 @@ class WishEditFragment : BottomSheetDialogFragment() {
         }
     }
 
-    private fun setupCategoryButtons(wish: Wish) {
+    private fun setupCategoryButtons(wish: WishResult) {
         val categoryButtons = listOf(
             binding.btnWishCategory01,
             binding.btnWishCategory02,

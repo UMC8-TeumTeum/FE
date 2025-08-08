@@ -4,11 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.teumteum.data.entities.TodoList
 import com.example.teumteum.data.remote.todo.model.EditTodoRequest
 import com.example.teumteum.data.remote.todo.model.GetOnboardingReminders
 import com.example.teumteum.data.remote.todo.model.GetTodoResult
 import com.example.teumteum.data.remote.todo.model.RegisterTodoRequest
+import com.example.teumteum.data.remote.todo.model.TodoListResult
 import com.example.teumteum.data.remote.todo.repository.TodoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -25,8 +25,8 @@ class TodoViewModel @Inject constructor(
     private val _todo = MutableLiveData<GetTodoResult>()
     val todo: LiveData<GetTodoResult> = _todo
 
-    private val _todolistItems = MutableLiveData<List<TodoList>>()
-    val todolistItems: LiveData<List<TodoList>> get() = _todolistItems
+    private val _todolistItems = MutableLiveData<List<TodoListResult>>()
+    val todolistItems: LiveData<List<TodoListResult>> get() = _todolistItems
 
     private val _reminders = MutableLiveData<GetOnboardingReminders>()
     val reminders: LiveData<GetOnboardingReminders> = _reminders

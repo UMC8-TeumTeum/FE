@@ -4,11 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.teumteum.data.entities.Wish
 import com.example.teumteum.data.remote.wish.model.DeleteWishesRequest
 import com.example.teumteum.data.remote.wish.model.EditWishRequest
 import com.example.teumteum.data.remote.wish.model.RegisterWishRequest
 import com.example.teumteum.data.remote.wish.model.WishCategories
+import com.example.teumteum.data.remote.wish.model.WishResult
 import com.example.teumteum.data.remote.wish.model.WishlistItem
 import com.example.teumteum.data.remote.wish.repository.WishRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,8 +23,8 @@ class WishViewModel @Inject constructor(
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> get() = _errorMessage
 
-    private val _wish = MutableLiveData<Wish>()
-    val wish: LiveData<Wish> = _wish
+    private val _wish = MutableLiveData<WishResult>()
+    val wish: LiveData<WishResult> = _wish
 
     private val _wishlistItems = MutableLiveData<List<WishlistItem>>()
     val wishlistItems: LiveData<List<WishlistItem>> get() = _wishlistItems

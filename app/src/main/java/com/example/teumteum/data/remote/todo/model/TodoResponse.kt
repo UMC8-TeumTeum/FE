@@ -1,10 +1,20 @@
 package com.example.teumteum.data.remote.todo.model
 
-import com.example.teumteum.data.entities.enums.TodoType
+import com.example.teumteum.data.remote.todo.model.enums.TodoType
 import com.google.gson.annotations.SerializedName
 
 data class TodoResult(
     @SerializedName("todoId") val todoId: Long
+)
+
+data class TodoListResult(
+    @SerializedName("id") val id: Long,
+    @SerializedName("title") val title: String,
+    @SerializedName("startTime") val startTime: String,
+    @SerializedName("endTime") val endTime: String,
+    @SerializedName("isPublic") val isPublic: Boolean,
+    @SerializedName("hasAlarm") var hasAlarm: Boolean? = null,
+    @SerializedName("type") val type: TodoType
 )
 
 data class GetTodoResult(

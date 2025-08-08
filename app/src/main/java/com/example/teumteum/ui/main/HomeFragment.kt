@@ -21,7 +21,7 @@ import com.example.teumteum.ui.calendar.CalendarMode
 import com.example.teumteum.ui.alarm.AlarmFragment
 import com.example.teumteum.ui.calendar.CalendarVPAdapter
 import com.example.teumteum.ui.activity.FillingActivity01Fragment
-import com.example.teumteum.ui.todo.adapter.TodoRVAdapter
+import com.example.teumteum.ui.todo.adapter.TodoListRVAdapter
 import com.example.teumteum.ui.todo.TodoRegisterFragment
 import com.example.teumteum.ui.wish.WishlistFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -30,9 +30,9 @@ import java.time.format.DateTimeFormatter
 
 import com.example.teumteum.data.TimeBlock
 import com.example.teumteum.data.TimeType
-import com.example.teumteum.data.entities.TodoList
 import com.example.teumteum.data.remote.home.HomeService
 import com.example.teumteum.data.remote.home.dto.ScheduleResult
+import com.example.teumteum.data.remote.todo.model.TodoListResult
 import com.example.teumteum.ui.clock.ChartUtils
 import com.example.teumteum.ui.clock.IconPieChartRenderer
 import com.example.teumteum.ui.main.view.HomeView
@@ -50,8 +50,8 @@ class HomeFragment : Fragment(), IDateClickListener, HomeView {
     private val today: LocalDate = LocalDate.now()
     private lateinit var selectedDate: LocalDate
 
-    private lateinit var adapter: TodoRVAdapter
-    private var todolistItems: List<TodoList> = emptyList()
+    private lateinit var adapter: TodoListRVAdapter
+    private var todolistItems: List<TodoListResult> = emptyList()
     private val todoViewModel: TodoViewModel by viewModels()
 
     @Inject
@@ -138,7 +138,7 @@ class HomeFragment : Fragment(), IDateClickListener, HomeView {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        adapter = TodoRVAdapter(parentFragmentManager, todolistItems)
+        adapter = TodoListRVAdapter(parentFragmentManager, todolistItems)
         binding.todolistRv.adapter = adapter
         val date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
         homeService.setHomeView(this)
