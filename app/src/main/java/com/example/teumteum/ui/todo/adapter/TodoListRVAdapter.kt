@@ -7,12 +7,11 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.teumteum.R
-import com.example.teumteum.data.entities.TodoList
-import com.example.teumteum.data.remote.wish.model.WishlistItem
+import com.example.teumteum.data.remote.todo.model.TodoListResult
 import com.example.teumteum.databinding.ItemTodolistBinding
 import com.example.teumteum.ui.todo.TodoEditFragment
 
-class TodoRVAdapter(private val fragmentManager: FragmentManager, private var todoList: List<TodoList>) : RecyclerView.Adapter<TodoRVAdapter.ViewHolder>() {
+class TodoRVAdapter(private val fragmentManager: FragmentManager, private var todoList: List<TodoListResult>) : RecyclerView.Adapter<TodoRVAdapter.ViewHolder>() {
 
     inner class ViewHolder(val binding: ItemTodolistBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -76,7 +75,7 @@ class TodoRVAdapter(private val fragmentManager: FragmentManager, private var to
         }
     }
 
-    fun updateList(newList: List<TodoList>) {
+    fun updateList(newList: List<TodoListResult>) {
         todoList = newList
         notifyDataSetChanged()
     }
