@@ -172,6 +172,7 @@ class HomeFragment : Fragment(), IDateClickListener {
 
         // 투두 등록 성공 이벤트 수신
         parentFragmentManager.setFragmentResultListener("todo_register", viewLifecycleOwner) { _, _ ->
+            viewModel.refreshTodaySchedule()
             refreshTodolist()
         }
 
