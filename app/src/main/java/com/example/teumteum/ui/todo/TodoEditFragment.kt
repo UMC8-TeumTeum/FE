@@ -748,6 +748,21 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
                 binding.btnTodoDelete.isEnabled = false
                 binding.btnTodoSave.isEnabled = false
 
+                for (i in 0 until binding.alarmLayoutContainer.childCount) {
+                    val alarmView = binding.alarmLayoutContainer.getChildAt(i)
+
+                    if (alarmView is ViewGroup) {
+                        for (j in 0 until alarmView.childCount) {
+                            val child = alarmView.getChildAt(j)
+
+                            (child as? TextView)?.setTextColor(deactiveColor)
+                            (child as? SwitchCompat)?.apply {
+                                isEnabled = false
+                            }
+                        }
+                    }
+                }
+
                 Toast.makeText(requireContext(), "반복일정은 편집할 수 없습니다.", Toast.LENGTH_SHORT).show()
             }
 

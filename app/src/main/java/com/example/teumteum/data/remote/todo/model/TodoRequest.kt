@@ -21,7 +21,3 @@ data class EditTodoRequest(
     @SerializedName("includeTeum") val includeTeum: Boolean,
     @SerializedName("remindAlarm") val remindAlarm: List<Int>? = null
 )
-
-data class DeleteTodoRequest(
-    @SerializedName("todoId") val todoId: Long
-)

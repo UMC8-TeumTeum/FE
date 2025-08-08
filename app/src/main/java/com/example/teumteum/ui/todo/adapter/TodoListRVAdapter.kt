@@ -42,7 +42,7 @@ class TodoListRVAdapter(private val fragmentManager: FragmentManager, private va
             bottomSheet.show(fragmentManager, bottomSheet.tag)
         }
 
-        if (item.hasAlarm == null) {
+        if (item.hasAlarm != true) {
             binding.ivAlarm.visibility = View.GONE
             binding.ivAlarm.setOnClickListener(null)
         } else {
