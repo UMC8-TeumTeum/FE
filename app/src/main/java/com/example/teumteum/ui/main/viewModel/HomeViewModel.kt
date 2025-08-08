@@ -26,6 +26,16 @@ class HomeViewModel @Inject constructor(
     private val _error = MutableLiveData<String?>()
     val error: LiveData<String?> = _error
 
+    private val _teumTimeDays = MutableLiveData<Int>()
+    val teumTimeDays: LiveData<Int> = _teumTimeDays
+
+    private val _teumTimeHours = MutableLiveData<Int>()
+    val teumTimeHours: LiveData<Int> = _teumTimeHours
+
+    private val _teumTimeMinutes = MutableLiveData<Int>()
+    val teumTimeMinutes: LiveData<Int> = _teumTimeMinutes
+
+
     fun getTodayScheduleIfNeeded() {
         val currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 
@@ -35,6 +45,7 @@ class HomeViewModel @Inject constructor(
         getTodaySchedule(currentDate)
     }
 
+    /** 오늘의 스케줄 가져오기 */
     private fun getTodaySchedule(date: String) {
         viewModelScope.launch {
             repository.getTodaySchedule(date)
@@ -49,6 +60,22 @@ class HomeViewModel @Inject constructor(
                 .onFailure {
                     _error.value = "스케줄 조회 실패: ${it.message}"
                     Log.d("TodaySchedule", _error.value.toString() )
+                }
+        }
+    }
+
+    /** 지금까지 채운 빈틈 */
+    fun getTeumTime(){
+        viewModelScope.launch {
+            repository.getTeumTime()
+                .onSuccess { result ->
+                    _teumTimeDays.value = result.days
+                    _teumTimeHours.value = result.hours
+                    _teumTimeMinutes.value = result.minutes
+                }
+                .onFailure {
+                    _error.value = "지금까지 채운 빈틈 조회 실패: ${it.message}"
+                    Log.d("TeumTime", _error.value.toString() )
                 }
         }
     }
