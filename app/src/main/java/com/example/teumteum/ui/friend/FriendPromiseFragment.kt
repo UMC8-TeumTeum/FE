@@ -1,20 +1,38 @@
 package com.example.teumteum.ui.friend
 
 import android.os.Bundle
-import android.view.View
-import android.view.LayoutInflater
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import com.example.teumteum.data.remote.friend.model.TeumScheduleDetailResult
 import com.example.teumteum.databinding.FragmentFriendPromiseBinding
+import com.example.teumteum.ui.calendar.IDateClickListener
+import com.example.teumteum.ui.calendar.MonthlyCalendarFragment
+import com.example.teumteum.ui.friend.adapter.TeumEventAdapter
+import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.example.teumteum.ui.main.MainActivity
+import com.example.teumteum.utils.getSavedDateOrToday
 import dagger.hilt.android.AndroidEntryPoint
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.*
 
 @AndroidEntryPoint
 class FriendPromiseFragment : Fragment() {
 
     private var _binding: FragmentFriendPromiseBinding? = null
     private val binding get() = _binding!!
+
+    private val viewModel: FriendViewModel by viewModels()
+
+    private val baseDate: LocalDate by lazy { getSavedDateOrToday(requireContext()) }
+    private var currentMonthOffset = 0
+    private val today = LocalDate.now()
+
+    private lateinit var eventAdapter: TeumEventAdapter
+    private var selectedDate: LocalDate? = null
+    private var lastClickedScheduleId: Int = -1 //  클릭한 스케줄 ID 저장
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -27,48 +45,111 @@ class FriendPromiseFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        // bottomNav 숨기기
         (activity as? MainActivity)?.hideBottomBar()
 
-        with(binding) {
-            // 뒤로가기
-            btnBack.setOnClickListener {
-                requireActivity().onBackPressed()
-            }
+        setupHeader()
+        setupRecyclerView()
+        setupCalendarNavigation()
+        setupCalendarFragment()
+        fetchDotDates()
 
-            // TODO: llMonthNav에 이전/다음 달 버튼 추가 & 리스너 연결
+        binding.btnBack.setOnClickListener {
+            requireActivity().onBackPressed()
+        }
 
-            // 초기 이벤트 카드 세팅 (예시)
-            cardEvent.visibility  = View.VISIBLE
-            btnEventStartTime.text      = "17:30"
-            btnEventEndTime.text   = "18:30"
-            tvEventDesc.text      = "홍대 소품샵 투어"
+        viewModel.scheduledDotDates.observe(viewLifecycleOwner) {
+            setupCalendarFragment() // dot 위치 업데이트
+        }
 
-            // 날짜 선택 리스너
-            calendarView1.setOnDateChangeListener { _, year, month, dayOfMonth ->
-                Toast
-                    .makeText(
-                        requireContext(),
-                        "${year}년 ${month + 1}월 ${dayOfMonth}일 선택됨",
-                        Toast.LENGTH_SHORT
-                    )
-                    .show()
+        viewModel.scheduledTeumList.observe(viewLifecycleOwner) { list ->
+            eventAdapter.updateData(list)
+        }
 
-                // BottomSheet 띄우기
-                PromiseDetailBottomSheet.newInstance(year, month, dayOfMonth)
-                    .show(parentFragmentManager, PromiseDetailBottomSheet.TAG)
-
-                // TODO: 선택된 날짜에 맞는 약속 데이터를 로드해서
-                //       tvEventTime / tvEventEndTime / tvEventDesc 에 반영
+        viewModel.teumScheduleDetail.observe(viewLifecycleOwner) { detail ->
+            detail?.let {
+                val isPast = viewModel.isPastSchedule.value ?: false
+                showPromiseDetailBottomSheet(it, lastClickedScheduleId, isPast) //  스케줄 ID 함께 전달
             }
         }
     }
 
+    private fun setupHeader() {
+        val displayDate = baseDate.plusMonths(currentMonthOffset.toLong())
+        binding.homeSelectedDateTv.text = "${displayDate.year}년 ${displayDate.monthValue}월"
+    }
+
+    private fun setupRecyclerView() {
+        eventAdapter = TeumEventAdapter(emptyList()) { scheduleId ->
+            lastClickedScheduleId = scheduleId //  클릭한 ID 저장
+            viewModel.fetchTeumScheduleDetail(scheduleId)
+        }
+        binding.rvEventList.adapter = eventAdapter
+    }
+
+    private fun setupCalendarNavigation() {
+        binding.homeCalendarPreviousDateIv.setOnClickListener {
+            currentMonthOffset--
+            setupHeader()
+            setupCalendarFragment()
+            fetchDotDates()
+        }
+
+        binding.homeCalendarNextDateIv.setOnClickListener {
+            currentMonthOffset++
+            setupHeader()
+            setupCalendarFragment()
+            fetchDotDates()
+        }
+    }
+
+    private fun setupCalendarFragment() {
+        val displayDate = baseDate.plusMonths(currentMonthOffset.toLong())
+        val calendarFragment = MonthlyCalendarFragment.newInstance(
+            position = Int.MAX_VALUE / 2 + currentMonthOffset,
+            onClickListener = object : IDateClickListener {
+                override fun onClickDate(date: LocalDate) {
+                    selectedDate = date
+                    val dateStr = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                    viewModel.fetchScheduledTeumList(dateStr)
+                }
+            },
+            showDot = true,
+            dotDates = viewModel.scheduledDotDates.value ?: emptyList()
+        ).apply {
+            arguments = Bundle().apply {
+                putSerializable("displayDate", displayDate)
+                putSerializable("selectedDate", selectedDate)
+                putSerializable("today", today)
+            }
+        }
+
+        childFragmentManager.beginTransaction()
+            .replace(binding.calendarContainer.id, calendarFragment)
+            .commit()
+    }
+
+    private fun fetchDotDates() {
+        val displayDate = baseDate.plusMonths(currentMonthOffset.toLong())
+        val monthStr = displayDate.format(DateTimeFormatter.ofPattern("yyyy-MM", Locale.KOREA))
+        viewModel.fetchScheduledTeumDates(monthStr)
+    }
+
+    //  바텀시트에 detail + scheduleId 넘기기
+    private fun showPromiseDetailBottomSheet(
+        detail: TeumScheduleDetailResult,
+        scheduleId: Int,
+        isPast: Boolean
+    ) {
+        val bottomSheet = PromiseDetailBottomSheet(
+            detail = detail,
+            scheduleId = scheduleId,
+            isPast = isPast
+        )
+        bottomSheet.show(childFragmentManager, bottomSheet.tag)
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
-        //  프래그먼트 종료 시 바텀네비 다시 보이기
-        (activity as? MainActivity)?.showBottomBar()
         _binding = null
     }
 }

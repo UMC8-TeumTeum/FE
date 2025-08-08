@@ -1,5 +1,7 @@
 package com.example.teumteum.data.remote.friend.repository
 
+import android.util.Log
+import com.example.teumteum.data.AppUserManager
 import com.example.teumteum.data.remote.friend.model.*
 import com.example.teumteum.data.remote.friend.service.FriendService
 import javax.inject.Inject
@@ -56,6 +58,52 @@ class FriendRepository @Inject constructor(
             body.result
         } else {
             throw Exception("${body?.code ?: "HTTP${response.code()}"} - ${body?.message ?: "오류"}")
+        }
+    }
+
+    suspend fun getScheduledTeumCalendar(month: String): Result<List<String>> = runCatching {
+        val response = api.getScheduledTeumCalendar(month)
+        val body = response.body()
+        if (response.isSuccessful && body?.isSuccess == true) {
+            body.result ?: emptyList()
+        } else {
+            throw Exception("${body?.code ?: "HTTP ${response.code()}"} - ${body?.message ?: response.message()}")
+        }
+    }
+
+    suspend fun getScheduledTeums(date: String): Result<List<TeumScheduledResult>> = runCatching {
+        val response = api.getScheduledTeums(date)
+        val body = response.body()
+
+        if (response.isSuccessful && body?.isSuccess == true && body.result != null) {
+            body.result
+        } else {
+            throw Exception("${body?.code ?: "HTTP ${response.code()}"} - ${body?.message ?: response.message()}")
+        }
+    }
+
+    suspend fun getTeumScheduleDetail(teumId: Int): Result<TeumScheduleDetailResult> = runCatching {
+        val response = api.getScheduleDetail(teumId)
+        val body = response.body()
+
+        if (response.isSuccessful && body?.isSuccess == true && body.result != null) {
+            body.result
+        } else {
+            throw Exception("${body?.code ?: "HTTP ${response.code()}"} - ${body?.message ?: response.message()}")
+        }
+    }
+
+    suspend fun cancelTeumSchedule(teumId: Int): Result<CancelTeumResult> = runCatching {
+        val response = api.cancelTeumSchedule(teumId)
+        val body = response.body()
+
+        Log.d("TEUM_CANCEL_TEST", "취소 요청한 teumId: $teumId")
+
+
+        if (response.isSuccessful && body?.isSuccess == true && body.result != null) {
+            body.result
+        } else {
+            throw Exception("${body?.code ?: "HTTP ${response.code()}"} - ${body?.message ?: response.message()}")
         }
     }
 
