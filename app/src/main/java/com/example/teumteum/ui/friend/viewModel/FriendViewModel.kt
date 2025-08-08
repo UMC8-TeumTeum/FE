@@ -10,6 +10,9 @@ import com.example.teumteum.data.remote.friend.model.*
 import com.example.teumteum.data.remote.friend.repository.FriendRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -154,6 +157,121 @@ class FriendViewModel @Inject constructor(
                         else -> "틈 응답 실패 (${e.message})"
                     }
                     _errorMessage.value = msg
+                }
+        }
+    }
+
+    // class FriendViewModel 내부
+
+    // 6. 약속된 틈 날짜 리스트 (달력 회색 점용)
+    private val _scheduledDotDates = MutableLiveData<List<LocalDate>>()
+    val scheduledDotDates: LiveData<List<LocalDate>> get() = _scheduledDotDates
+
+    fun fetchScheduledTeumDates(month: String) {
+        viewModelScope.launch {
+            repository.getScheduledTeumCalendar(month)
+                .onSuccess { resultList ->
+                    _scheduledDotDates.value = resultList.mapNotNull {
+                        try {
+                            LocalDate.parse(it)
+                        } catch (e: Exception) {
+                            null
+                        }
+                    }
+                    Log.d("CALENDER_INFO", "약속된 틈 달력 정보가 조회되었습니다.")
+                }
+                .onFailure { e ->
+                    Log.e("CALENDER_INFO", "약속된 틈 조회 실패: ${e.message}")
+                }
+        }
+    }
+
+    // 7. 특정 날짜의 약속된 틈 리스트 조회
+    private val _scheduledTeumList = MutableLiveData<List<TeumScheduledResult>>()
+    val scheduledTeumList: LiveData<List<TeumScheduledResult>> get() = _scheduledTeumList
+
+    fun fetchScheduledTeumList(date: String) {
+        viewModelScope.launch {
+            repository.getScheduledTeums(date)
+                .onSuccess { result ->
+                    _scheduledTeumList.value = result
+                    _successMessage.value = "${date} 약속된 틈 조회 성공 (총 ${result.size}개)"
+                    Log.d("CALENDER_SCHEDULED", "약속된 틈 ${date} 조회 결과: $result")
+
+                }
+                .onFailure { e ->
+                    val msg = when {
+                        e.message?.contains("TEUM4042") == true -> "약속된 틈이 존재하지 않습니다."
+//                        e.message?.contains("TEUM4030") == true -> "해당 일정을 조회할 권한이 없습니다."
+                        else -> "약속된 틈 조회 실패 (${e.message})"
+
+                    }
+                    _scheduledTeumList.value = emptyList() // 조회 실패 시 비워줌
+                    _errorMessage.value = msg
+                    Log.e("CALENDER_SCHEDULED", " ${date} 조회 실패: ${e.message}", e)
+                }
+        }
+    }
+
+    // 8. 특정 scheduleId의 약속된 틈 상세 정보
+    private val _teumScheduleDetail = MutableLiveData<TeumScheduleDetailResult?>()
+    val teumScheduleDetail: LiveData<TeumScheduleDetailResult?> get() = _teumScheduleDetail
+
+    // 과거 여부 판단 (버튼 노출 판단용)
+    private val _isPastSchedule = MutableLiveData<Boolean?>()
+    val isPastSchedule: LiveData<Boolean?> get() = _isPastSchedule
+
+    fun fetchTeumScheduleDetail(teumId: Int) {
+        viewModelScope.launch {
+            repository.getTeumScheduleDetail(teumId)
+                .onSuccess { result ->
+
+                    _teumScheduleDetail.value = result
+                    _successMessage.value = "약속된 틈 상세 정보가 조회되었습니다."
+
+                    // 현재 시간과 비교하여 과거 여부 판단
+                    val now = java.time.LocalDateTime.now()
+                    val dateTimeStr = "${result.date}T${result.startTime}"
+                    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")
+                    val scheduleDateTime = try {
+                        java.time.LocalDateTime.parse(dateTimeStr, formatter)
+                    } catch (e: Exception) {
+                        null
+                    }
+
+                    _isPastSchedule.value = scheduleDateTime?.isBefore(now) == true
+
+                }
+                .onFailure { e ->
+                    val msg = when {
+                        e.message?.contains("TEUM4042") == true -> "약속된 틈이 존재하지 않습니다."
+                        e.message?.contains("TEUM4030") == true -> "권한이 없습니다."
+                        else -> "약속된 틈 상세 조회 실패 (${e.message})"
+                    }
+                    _errorMessage.value = msg
+                    _teumScheduleDetail.value = null
+                    _isPastSchedule.value = null
+                    Log.e("TEUM_DETAIL", "상세 조회 실패: ${e.message}")
+                }
+        }
+    }
+
+    // 9. 약속된 틈 취소하기
+    fun cancelTeumSchedule(teumId: Int) {
+        viewModelScope.launch {
+            repository.cancelTeumSchedule(teumId)
+                .onSuccess { result ->
+                    _successMessage.value = "약속된 틈이 성공적으로 취소되었습니다."
+                    Log.d("SCHEDULED_CANCEL", " 취소된 유저 ID: ${result.cancelledUserIds}")
+                }
+                .onFailure { e ->
+                    val msg = when {
+                        e.message?.contains("TEUM4030") == true -> "정보에 대한 권한이 없습니다."
+                        e.message?.contains("TEUM4042") == true -> "약속된 틈이 존재하지 않습니다."
+                        else -> "약속된 틈 취소 실패 (${e.message})"
+                    }
+                    _errorMessage.value = msg
+                    Log.e("SCHEDULED_CANCEL", " 취소 실패: ${e.message}", e)
                 }
         }
     }
