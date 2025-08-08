@@ -82,6 +82,7 @@ class FriendViewModel @Inject constructor(
                 .onSuccess { result ->
                     _receivedTeums.value = result
                     _successMessage.value = "틈 요청 조회 성공 (총 ${result.size}개)"
+                    Log.d("ReceivedTeum", result.toString())
                 }
                 .onFailure { e ->
                     val msg = when {
@@ -154,6 +155,26 @@ class FriendViewModel @Inject constructor(
                         else -> "틈 응답 실패 (${e.message})"
                     }
                     _errorMessage.value = msg
+                }
+        }
+    }
+
+    fun readTeumRequest(responseId: Int) {
+        viewModelScope.launch {
+            repository.readTeumRequest(responseId)
+                .onSuccess { result ->
+                    _receivedTeums.value = _receivedTeums.value?.map { item ->
+                        if (item.responseId == responseId) {
+                            item.copy(read = true)
+                        } else {
+                            item
+                        }
+                    }
+                    _successMessage.value = "틈 요청 읽음 처리 성공"
+                }
+                .onFailure { e ->
+                    _errorMessage.value = "틈 요청 읽음 처리 실패 (${e.message})"
+                    Log.d("ReadTeumRequest", _errorMessage.value.toString())
                 }
         }
     }

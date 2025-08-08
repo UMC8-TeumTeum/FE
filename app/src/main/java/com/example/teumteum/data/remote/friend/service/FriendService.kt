@@ -34,4 +34,6 @@ interface FriendService {
         @Body request: TeumStatusRequest
     ): Response<ApiResponse<TeumStatusResult>>
 
+    @PATCH("/api/teums/request/{responseId}/read")
+    suspend fun readTeumRequest( @Path("responseId") responseId: Int ): Response<ApiResponse<Int>>
 }
