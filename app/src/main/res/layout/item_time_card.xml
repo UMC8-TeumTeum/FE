@@ -5,7 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="80dp"
     android:orientation="horizontal"
-    android:padding="10dp"
+    android:paddingStart="14dp"
+    android:paddingEnd="18dp"
+    android:paddingTop="14dp"
+    android:paddingBottom="9dp"
     android:background="@drawable/friend_time_card_bg_selected"
     android:gravity="center_vertical"
     android:layout_marginBottom="12dp"
@@ -28,7 +31,6 @@
             android:lineSpacingExtra="0dp"
             android:text="시작"
             android:textSize="12sp"
-            android:layout_marginTop="4dp"
             android:textColor="#5C6569"
             android:fontFamily="@font/noto_sans_kr_regular" />
 
@@ -89,7 +91,6 @@
             android:text="종료"
             android:includeFontPadding="false"
             android:lineSpacingExtra="0dp"
-            android:layout_marginTop="4dp"
             android:textSize="12sp"
             android:textColor="#5C6569"
             android:fontFamily="@font/noto_sans_kr_regular" />
