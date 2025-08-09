@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -160,6 +161,12 @@ class FillingActivity01Fragment : Fragment() {
         }
 
         binding.searchBtn.setOnClickListener {
+
+            // 카테고리 선택 + 직접 입력 시 예외 처리
+            if (binding.fillingActivityCategoryEt.text.toString().isNotBlank()) {
+                Toast.makeText(requireContext(), "카테고리와 직접 입력은 둘 중 하나만 선택해야 합니다.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
             val wishRequest = ActivityWishRequest(
                 estimatedDuration = selectedTimeTag ?: "",
