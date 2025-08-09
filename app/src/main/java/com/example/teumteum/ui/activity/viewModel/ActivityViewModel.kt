@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.teumteum.data.remote.activity.model.ActivityAiRequest
+import com.example.teumteum.data.remote.activity.model.ActivityAiResult
 import com.example.teumteum.data.remote.activity.model.ActivityWishRequest
 import com.example.teumteum.data.remote.activity.model.ActivityWishResult
 import com.example.teumteum.data.remote.activity.repository.ActivityRepository
@@ -25,6 +27,12 @@ class ActivityViewModel @Inject constructor(
     private val _activityWishes = MutableLiveData<List<ActivityWishResult>>()
     val activityWishes: LiveData<List<ActivityWishResult>> get() = _activityWishes
 
+    private val _activityAiSuccess = MutableLiveData<Boolean>()
+    val activityAiSuccess: LiveData<Boolean> get() = _activityAiSuccess
+
+    private val _activityAiContents = MutableLiveData<List<ActivityAiResult>>()
+    val activityAiContents: LiveData<List<ActivityAiResult>> get() = _activityAiContents
+
     // 채움활동 위시리스트 불러오기
     fun activityWish(request: ActivityWishRequest) {
         viewModelScope.launch {
@@ -37,6 +45,22 @@ class ActivityViewModel @Inject constructor(
             }
             result.onFailure { e ->
                 _errorMessage.value = e.localizedMessage ?: "채움활동 위시 조회에 실패했습니다."
+            }
+        }
+    }
+
+    // 채움활동 ai컨텐츠 불러오기
+    fun activityAi(request: ActivityAiRequest) {
+        viewModelScope.launch {
+            val result = activityRepository.activityAi(request)
+            result.onSuccess { response ->
+                _activityAiSuccess.value = true
+                _activityAiContents.value = response.result?.aiContents
+                    ?.filter { it.title.isNotBlank() }
+                    .orEmpty()
+            }
+            result.onFailure { e ->
+                _errorMessage.value = e.localizedMessage ?: "채움활동 ai컨텐츠 조회에 실패했습니다."
             }
         }
     }

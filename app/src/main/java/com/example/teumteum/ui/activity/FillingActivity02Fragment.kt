@@ -8,7 +8,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
-import com.example.teumteum.data.entities.AiRecommend
+import com.example.teumteum.data.remote.activity.model.ActivityAiRequest
+import com.example.teumteum.data.remote.activity.model.ActivityAiResult
 import com.example.teumteum.data.remote.activity.model.ActivityWishRequest
 import com.example.teumteum.data.remote.activity.model.ActivityWishResult
 import com.example.teumteum.databinding.FragmentFillingActivity02Binding
@@ -28,12 +29,7 @@ class FillingActivity02Fragment : Fragment() {
     private lateinit var aiAdapter: AiRecommendRVAdapter
     private lateinit var wishAdapter: WishRecommendRVAdapter
     private var wishList: MutableList<ActivityWishResult> = mutableListOf()
-
-    private var aiRecommendDummyList = mutableListOf(
-        AiRecommend(1, "공모전 탐색", "10m", "자기계발"),
-        AiRecommend(2, "영단어 10개 외우기", "20m", "자기계발"),
-        AiRecommend(3, "독서하기", "30m", "자기계발")
-    )
+    private var aiList: MutableList<ActivityAiResult> = mutableListOf()
 
     private val activityViewModel: ActivityViewModel by activityViewModels()
 
@@ -51,7 +47,7 @@ class FillingActivity02Fragment : Fragment() {
         wishAdapter = WishRecommendRVAdapter(wishList, parentFragmentManager)
         binding.wishRecommendRv.adapter = wishAdapter
 
-        aiAdapter = AiRecommendRVAdapter(aiRecommendDummyList, parentFragmentManager)
+        aiAdapter = AiRecommendRVAdapter(aiList, parentFragmentManager)
         binding.aiRecommendRv.adapter = aiAdapter
 
         // 바텀 내비게이션 숨기기
@@ -71,6 +67,7 @@ class FillingActivity02Fragment : Fragment() {
 
         binding.fabRefreshIv.setOnClickListener {
             val estimatedDuration = arguments?.getString("selectedTime") ?: ""
+            val location = arguments?.getString("location") ?: ""
             val customCategory = arguments?.getString("customCategory") ?: ""
             val selectedCategoryText = arguments?.getString("selectedCategory")
 
@@ -84,12 +81,20 @@ class FillingActivity02Fragment : Fragment() {
             )
             val categoryId = categoryNameToId[selectedCategoryText]
 
-            val request = ActivityWishRequest(
+            val wishRequest = ActivityWishRequest(
                 estimatedDuration = estimatedDuration,
                 categoryId = categoryId,
                 customCategory = customCategory
             )
-            activityViewModel.activityWish(request)
+            activityViewModel.activityWish(wishRequest)
+
+            val aiRequest = ActivityAiRequest(
+                estimatedDuration = estimatedDuration,
+                location = location,
+                categoryId = categoryId,
+                customCategory = customCategory
+            )
+            activityViewModel.activityAi(aiRequest)
 
         }
 
@@ -125,6 +130,19 @@ class FillingActivity02Fragment : Fragment() {
             }
 
             wishAdapter.notifyDataSetChanged()
+        }
+
+        activityViewModel.activityAiContents.observe(viewLifecycleOwner) { aiContents ->
+            val filtered = aiContents.filter { it.title.isNotBlank() }
+            Log.d("ai컨텐츠확인", "받은 ai컨텐츠 개수: ${filtered.size}")
+            filtered.forEach {
+                Log.d("ai컨텐츠", "id=${it.id}, title='${it.title}'")
+            }
+
+            aiList.clear()
+            aiList.addAll(aiContents)
+
+            aiAdapter.notifyDataSetChanged()
         }
 
         activityViewModel.errorMessage.observe(viewLifecycleOwner) { errorMsg ->

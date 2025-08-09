@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
+import com.example.teumteum.data.remote.activity.model.ActivityAiRequest
 import com.example.teumteum.data.remote.activity.model.ActivityWishRequest
 import com.example.teumteum.databinding.FragmentFillingActivity01Binding
 import com.example.teumteum.ui.activity.viewModel.ActivityViewModel
@@ -138,16 +139,26 @@ class FillingActivity01Fragment : Fragment() {
 
         binding.searchBtn.setOnClickListener {
 
-            val request = ActivityWishRequest(
+            val wishRequest = ActivityWishRequest(
                 estimatedDuration = selectedTimeTag ?: "",
                 categoryId = selectedCategoryButton?.tag as? Long,
                 customCategory = binding.fillingActivityCategoryEt.text.toString()
             )
 
-            activityViewModel.activityWish(request)
+            activityViewModel.activityWish(wishRequest)
+
+            val aiRequest = ActivityAiRequest(
+                estimatedDuration = selectedTimeTag ?: "",
+                location = binding.fillingActivityLocationEt.text.toString(),
+                categoryId = selectedCategoryButton?.tag as? Long,
+                customCategory = binding.fillingActivityCategoryEt.text.toString()
+            )
+
+            activityViewModel.activityAi(aiRequest)
 
             val bundle = Bundle().apply {
                 putString("selectedTime", selectedTimeTag)
+                putString("location", binding.fillingActivityLocationEt.text.toString())
                 putString("selectedCategory", selectedCategoryText)
                 putString("customCategory", binding.fillingActivityCategoryEt.text.toString())
             }
