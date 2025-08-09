@@ -25,6 +25,7 @@ class FillingActivity01Fragment : Fragment() {
     private var selectedTimeButton: View? = null
 
     private var selectedLocation: String? = null
+    private var selectedLocationButton: View? = null
 
     private var selectedCategoryText: String? = null
     private var selectedCategoryButton: View? = null
@@ -94,14 +95,25 @@ class FillingActivity01Fragment : Fragment() {
 
         locationButtons.forEach { locationBtn ->
             locationBtn.setOnClickListener {
+                // 이미 선택된 같은 버튼이면 해제
+                if (selectedLocationButton === locationBtn) {
+                    locationBtn.setBackgroundColor(defaultBg)
+                    locationBtn.setTextColor(defaultText)
+                    selectedLocation = null
+                    selectedLocationButton = null
+                    updateNextButtonState()
+                    return@setOnClickListener
+                }
+
+                // 기존 선택 초기화 + 새 선택
                 locationButtons.forEach {
                     it.setBackgroundColor(defaultBg)
                     it.setTextColor(defaultText)
                 }
-
                 locationBtn.setBackgroundColor(selectedBg)
                 locationBtn.setTextColor(selectedText)
                 selectedLocation = locationBtn.text.toString()
+                selectedLocationButton = locationBtn
                 updateNextButtonState()
             }
         }
@@ -120,11 +132,21 @@ class FillingActivity01Fragment : Fragment() {
         categoryButtons.forEachIndexed { index, categoryBtn ->
             categoryBtn.tag = categoryIds[index]
             categoryBtn.setOnClickListener {
+                // 이미 선택된 같은 버튼이면 해제
+                if (selectedCategoryButton === categoryBtn) {
+                    categoryBtn.setBackgroundColor(defaultBg)
+                    categoryBtn.setTextColor(defaultText)
+                    selectedCategoryButton = null
+                    selectedCategoryText = null
+                    updateNextButtonState()
+                    return@setOnClickListener
+                }
+
+                // 기존 선택 초기화 + 새 선택
                 categoryButtons.forEach {
                     it.setBackgroundColor(defaultBg)
                     it.setTextColor(defaultText)
                 }
-
                 categoryBtn.setBackgroundColor(selectedBg)
                 categoryBtn.setTextColor(selectedText)
                 selectedCategoryButton = categoryBtn
