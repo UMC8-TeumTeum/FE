@@ -50,4 +50,7 @@ interface FriendService {
 
     @PATCH("/api/teums/request/{responseId}/read")
     suspend fun readTeumRequest( @Path("responseId") responseId: Int ): Response<ApiResponse<Int>>
+
+    @POST("/api/teums/available-time")
+    suspend fun getPossibleTime( @Body request: PossibleTimeRequest ): Response<ApiResponse<PossibleTimeResult>>
 }
