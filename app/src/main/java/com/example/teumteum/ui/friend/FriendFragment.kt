@@ -47,6 +47,10 @@ class FriendFragment : Fragment() {
 
         recommendAdapter = RecommendAdapter(
             onCardClick = { item: TeumReceivedItem, position: Int ->
+                //틈 읽음 처리
+                Log.d("CARD_CLICK", "카드 클릭됨, responseId=${item.responseId}")
+                viewModel.readTeumRequest(item.responseId)
+
                 val fragment = Friend02RequestFragment().apply {
                     arguments = Bundle().apply {
                         putParcelableArrayList("teumList", ArrayList(viewModel.receivedTeums.value ?: emptyList()))

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item>
+        <vector
+            android:width="145dp"
+            android:height="146dp"
+            android:viewportWidth="145"
+            android:viewportHeight="146">
+
+            <path
+                android:fillColor="#FFFFFF"
+                android:pathData="M33,0
+                          L130,0
+                          Q145,0 145,15
+                          L145,131
+                          Q145,146 130,146
+                          L15,146
+                          Q0,146 0,131
+                          L0,30
+                          L33,0 Z" />
+
+            <path
+                android:strokeColor="@color/teumteum_line"
+                android:strokeWidth="1"
+                android:pathData="M33,0 L33,30" />
+
+            <path
+                android:strokeColor="@color/teumteum_line"
+                android:strokeWidth="1"
+                android:pathData="M0,30 L33,30" />
+
+        </vector>
+    </item>
+
+</layer-list>

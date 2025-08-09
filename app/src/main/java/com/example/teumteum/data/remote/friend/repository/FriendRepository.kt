@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.teumteum.data.remote.friend.model.*
 import com.example.teumteum.data.remote.friend.service.FriendService
 import com.example.teumteum.utils.ApiResponse
+import com.example.teumteum.utils.handleApiResponse
 import javax.inject.Inject
 
 class FriendRepository @Inject constructor(
@@ -134,7 +135,7 @@ class FriendRepository @Inject constructor(
 
     // 12) 언팔로우
     suspend fun unfollowUser(userId: Int): Result<ApiResponse<String>> = runCatching {
-        val response = api.unfollow(userId.toLong()) // Long으로 변환
+        val response = api.unfollow(userId.toLong())
         val body = response.body()
         Log.d("UNFOLLOW_TEST", "언팔로우 요청한 userId: $userId")
         if (response.isSuccessful && body != null) {
@@ -143,6 +144,7 @@ class FriendRepository @Inject constructor(
             throw Exception("${body?.code ?: "HTTP ${response.code()}"} - ${body?.message ?: response.message()}")
         }
     }
+
     // 13) 친구 즐겨찾기 설정/해제
     suspend fun setFavorite(userId: Int, isFavorite: Boolean): Result<FavoriteResult> = runCatching {
         val response = api.setFavorite(userId, FavoriteRequest(isFavorite))
@@ -158,24 +160,19 @@ class FriendRepository @Inject constructor(
     suspend fun getFollowers(page: Int, size: Int): Result<List<FollowerResult>> = runCatching {
         val response = api.getFollowers(page, size)
         val body = response.body()
-
         if (response.isSuccessful && body?.isSuccess == true) {
-            //  성공 로그
             Log.d("FOLLOWER_FRAGMENT", "친구 목록 조회에 성공하였습니다. message=${body.message}")
-            // 서버가 이미 정렬해서 내려주지 않는다면 ViewModel에서 Collator로 가나다 정렬 권장
             body.result?.content ?: emptyList()
         } else {
             throw Exception("${body?.code ?: "HTTP ${response.code()}"} - ${body?.message ?: response.message()}")
         }
     }
 
-    // 14-1) 팔로워 목록
+    // 14-1) 팔로워 목록 (페이지 전체)
     suspend fun getFollowersPage(page: Int, size: Int): Result<FollowerPageResult> = runCatching {
         val response = api.getFollowers(page, size)
         val body = response.body()
-
         if (response.isSuccessful && body?.isSuccess == true && body.result != null) {
-            //  성공 로그
             Log.d("FOLLOWER_FRAGMENT", "친구 목록 조회에 성공하였습니다. message=${body.message}")
             body.result
         } else {
@@ -183,4 +180,11 @@ class FriendRepository @Inject constructor(
         }
     }
 
+    // 15) 틈 요청 읽음 처리
+    suspend fun readTeumRequest(responseId: Int): Result<Int> = runCatching {
+        val response = api.readTeumRequest(responseId)
+        Log.d("ReadTeumRequest", "response = ${response.body()}")
+        // handleApiResponse는 Response<ApiResponse<T>> -> T 를 반환해야 함
+        handleApiResponse(response)
+    }
 }

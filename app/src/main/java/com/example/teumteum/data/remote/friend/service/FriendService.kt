@@ -69,11 +69,27 @@ interface FriendService {
     ): Response<ApiResponse<CancelTeumResult>>
 
     @DELETE("/api/friends/{userId}/follow")
-    suspend fun unfollow(@Path("userId") userId: Long): Response<ApiResponse<String>>
+    suspend fun unfollow(
+        @Path("userId") userId: Long
+    ): Response<ApiResponse<String>>
 
+    // 즐겨찾기 설정/해제
     @PATCH("/api/friends/{userId}/favorite")
-    suspend fun setFavorite(@Path("userId") userId: Int, @Body body: FavoriteRequest): Response<ApiResponse<FavoriteResult>>
+    suspend fun setFavorite(
+        @Path("userId") userId: Int,
+        @Body body: FavoriteRequest
+    ): Response<ApiResponse<FavoriteResult>>
 
+    // 팔로워 목록 (페이지)
     @GET("/api/friends/followers")
-    suspend fun getFollowers(@Query("page") page: Int, @Query("size") size: Int): Response<ApiResponse<FollowerPageResult>>
+    suspend fun getFollowers(
+        @Query("page") page: Int,
+        @Query("size") size: Int
+    ): Response<ApiResponse<FollowerPageResult>>
+
+    // 틈 요청 읽음 처리
+    @PATCH("/api/teums/request/{responseId}/read")
+    suspend fun readTeumRequest(
+        @Path("responseId") responseId: Int
+    ): Response<ApiResponse<Int>>
 }
