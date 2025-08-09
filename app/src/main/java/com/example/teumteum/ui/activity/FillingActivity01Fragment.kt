@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
@@ -25,7 +26,7 @@ class FillingActivity01Fragment : Fragment() {
     private var selectedTimeTag: String? = null
     private var selectedTimeButton: View? = null
 
-    private var selectedLocation: String? = null
+    private var selectedLocationText: String? = null
     private var selectedLocationButton: View? = null
 
     private var selectedCategoryText: String? = null
@@ -100,7 +101,6 @@ class FillingActivity01Fragment : Fragment() {
                 if (selectedLocationButton === locationBtn) {
                     locationBtn.setBackgroundColor(defaultBg)
                     locationBtn.setTextColor(defaultText)
-                    selectedLocation = null
                     selectedLocationButton = null
                     updateNextButtonState()
                     return@setOnClickListener
@@ -113,10 +113,19 @@ class FillingActivity01Fragment : Fragment() {
                 }
                 locationBtn.setBackgroundColor(selectedBg)
                 locationBtn.setTextColor(selectedText)
-                selectedLocation = locationBtn.text.toString()
                 selectedLocationButton = locationBtn
                 updateNextButtonState()
             }
+        }
+
+        binding.fillingActivityLocationEt.doOnTextChanged { text, _, _, _ ->
+            val categoryText = text?.toString()?.trim()
+
+            // 직접 입력이 있으면 selectedCategoryText에 반영
+            selectedLocationText = if (!categoryText.isNullOrEmpty()) categoryText else null
+
+            // 버튼 상태 갱신
+            updateNextButtonState()
         }
 
         // 카테고리 선택
@@ -151,9 +160,18 @@ class FillingActivity01Fragment : Fragment() {
                 categoryBtn.setBackgroundColor(selectedBg)
                 categoryBtn.setTextColor(selectedText)
                 selectedCategoryButton = categoryBtn
-                selectedCategoryText = categoryBtn.text.toString()
                 updateNextButtonState()
             }
+        }
+
+        binding.fillingActivityCategoryEt.doOnTextChanged { text, _, _, _ ->
+            val categoryText = text?.toString()?.trim()
+
+            // 직접 입력이 있으면 selectedCategoryText에 반영
+            selectedCategoryText = if (!categoryText.isNullOrEmpty()) categoryText else null
+
+            // 버튼 상태 갱신
+            updateNextButtonState()
         }
 
         binding.backArrowIv.setOnClickListener {
@@ -162,8 +180,14 @@ class FillingActivity01Fragment : Fragment() {
 
         binding.searchBtn.setOnClickListener {
 
+            // 위치 선택 + 직접 입력 시 예외 처리
+            if (selectedLocationButton != null && selectedLocationText.toString().isNotBlank()) {
+                Toast.makeText(requireContext(), "위치와 직접 입력은 둘 중 하나만 선택해야 합니다.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             // 카테고리 선택 + 직접 입력 시 예외 처리
-            if (binding.fillingActivityCategoryEt.text.toString().isNotBlank()) {
+            if (selectedCategoryButton != null && selectedCategoryText.toString().isNotBlank()) {
                 Toast.makeText(requireContext(), "카테고리와 직접 입력은 둘 중 하나만 선택해야 합니다.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
@@ -206,7 +230,9 @@ class FillingActivity01Fragment : Fragment() {
     }
 
     private fun updateNextButtonState() {
-        val isAllSelected = selectedTimeTag != null && selectedLocation != null && selectedCategoryText != null
+        val isAllSelected = selectedTimeTag != null &&
+                (selectedLocationButton != null || !selectedLocationText.isNullOrBlank()) &&
+                (selectedCategoryButton != null || !selectedCategoryText.isNullOrBlank())
 
         binding.searchBtn.isEnabled = isAllSelected
         binding.searchBtn.setBackgroundColor(
