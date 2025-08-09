@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.teumteum.data.AppUserManager
 import com.example.teumteum.data.remote.friend.model.*
 import com.example.teumteum.data.remote.friend.repository.FriendRepository
+import com.example.teumteum.ui.friend.data.TimeCardItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -274,6 +275,19 @@ class FriendViewModel @Inject constructor(
                     Log.e("SCHEDULED_CANCEL", " 취소 실패: ${e.message}", e)
                 }
         }
+    }
+
+    // 친구와 함께 가능한 빈틈 리스트
+    private val _possibleTimeList = MutableLiveData<List<TimeCardItem?>>()
+    val possibleTimeList: LiveData<List<TimeCardItem?>> get() = _possibleTimeList
+
+    fun getPossibleTimeWithFriend(){
+        val list = listOf(
+            TimeCardItem("09:00", "10:00"),
+            TimeCardItem("11:00", "12:00"),
+            TimeCardItem("14:00", "15:00")
+        )
+        _possibleTimeList.value = list
     }
 
 }

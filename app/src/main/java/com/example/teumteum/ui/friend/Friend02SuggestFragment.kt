@@ -1,19 +1,26 @@
 package com.example.teumteum.ui.friend
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.NumberPicker
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.friend.model.TeumReceivedItem
 import com.example.teumteum.databinding.FragmentFriend02SuggestBinding
+import com.example.teumteum.ui.friend.adapter.TimeCardAdapter
+import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.example.teumteum.ui.main.MainActivity
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
+import kotlin.getValue
 
 @AndroidEntryPoint
 class Friend02SuggestFragment : Fragment() {
@@ -22,8 +29,11 @@ class Friend02SuggestFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var adapter: FriendRequestCardAdapter
+    private lateinit var timeCardAdapter: TimeCardAdapter
     private var teumList: List<TeumReceivedItem> = emptyList()
     private var responseId: Int = -1
+
+    private val viewModel: FriendViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,6 +47,9 @@ class Friend02SuggestFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // 바텀 네비게이션 숨기기
+        (activity as? MainActivity)?.hideBottomBar()
+
         //  전달받은 데이터 꺼내기
         teumList = arguments?.getParcelableArrayList("teumList") ?: emptyList()
         responseId = arguments?.getInt("responseId") ?: -1
@@ -44,9 +57,6 @@ class Friend02SuggestFragment : Fragment() {
         //  어댑터 연결
         adapter = FriendRequestCardAdapter(teumList)
         binding.requestViewPager.adapter = adapter
-
-        // 바텀 네비게이션 숨기기
-        (activity as? MainActivity)?.hideBottomBar()
 
         //  뒤로가기 버튼 처리
         binding.backButton.setOnClickListener {
@@ -56,25 +66,26 @@ class Friend02SuggestFragment : Fragment() {
                 .commit()
         }
 
-        // 시간 카드 1 클릭 시
-        binding.startTime1.setOnClickListener {
-            showCustomTimePicker(binding.startTime1)
-            highlightSelectedCard(isFirst = true)
-        }
-        binding.endTime1.setOnClickListener {
-            showCustomTimePicker(binding.endTime1)
-            highlightSelectedCard(isFirst = true)
-        }
 
-        // 시간 카드 2 클릭 시
-        binding.startTime2.setOnClickListener {
-            showCustomTimePicker(binding.startTime2)
-            highlightSelectedCard(isFirst = false)
-        }
-        binding.endTime2.setOnClickListener {
-            showCustomTimePicker(binding.endTime2)
-            highlightSelectedCard(isFirst = false)
-        }
+        // 시간 카드 1 클릭 시
+//        binding.startTime1.setOnClickListener {
+//            showCustomTimePicker(binding.startTime1)
+//            highlightSelectedCard(isFirst = true)
+//        }
+//        binding.endTime1.setOnClickListener {
+//            showCustomTimePicker(binding.endTime1)
+//            highlightSelectedCard(isFirst = true)
+//        }
+//
+//        // 시간 카드 2 클릭 시
+//        binding.startTime2.setOnClickListener {
+//            showCustomTimePicker(binding.startTime2)
+//            highlightSelectedCard(isFirst = false)
+//        }
+//        binding.endTime2.setOnClickListener {
+//            showCustomTimePicker(binding.endTime2)
+//            highlightSelectedCard(isFirst = false)
+//        }
 
         //  전송 버튼 클릭 시 → FriendSendFragment 이동
         binding.btnSend.setOnClickListener {
@@ -83,6 +94,10 @@ class Friend02SuggestFragment : Fragment() {
                 .addToBackStack(null)
                 .commit()
         }
+
+        setupTimeCardRecyclerView()
+        observeViewModel()
+        viewModel.getPossibleTimeWithFriend()
     }
 
     /** 커스텀 TimePicker 다이얼로그 표시 */
@@ -141,19 +156,38 @@ class Friend02SuggestFragment : Fragment() {
     }
 
     /** 시간 카드 선택 강조 */
-    private fun highlightSelectedCard(isFirst: Boolean) {
-        if (isFirst) {
-            binding.timeCard1.setBackgroundResource(R.drawable.friend_time_card_bg_selected)
-            binding.timeCard2.setBackgroundResource(R.drawable.friend_time_card_bg_default)
-        } else {
-            binding.timeCard1.setBackgroundResource(R.drawable.friend_time_card_bg_default)
-            binding.timeCard2.setBackgroundResource(R.drawable.friend_time_card_bg_selected)
+//    private fun highlightSelectedCard() {
+//        if (isFirst) {
+//            binding.timeCard1.setBackgroundResource(R.drawable.friend_time_card_bg_selected)
+//            binding.timeCard2.setBackgroundResource(R.drawable.friend_time_card_bg_default)
+//        } else {
+//            binding.timeCard1.setBackgroundResource(R.drawable.friend_time_card_bg_default)
+//            binding.timeCard2.setBackgroundResource(R.drawable.friend_time_card_bg_selected)
+//        }
+//    }
+
+    private fun setupTimeCardRecyclerView() {
+        timeCardAdapter = TimeCardAdapter { selectedItem ->
         }
+
+        binding.possibleTimeRc.adapter = timeCardAdapter
+        binding.possibleTimeRc.layoutManager = LinearLayoutManager(requireContext())
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun observeViewModel() {
+        viewModel.possibleTimeList.observe(viewLifecycleOwner) { list ->
+            Log.d("DEBUG", "observeViewModel triggered: ${list.size}개")
+
+            val nonNullList = list.filterNotNull()
+            Log.d("DEBUG", "after filterNotNull: ${nonNullList.size}개")
+
+            timeCardAdapter.setData(nonNullList)
+        }
     }
 
     companion object {
