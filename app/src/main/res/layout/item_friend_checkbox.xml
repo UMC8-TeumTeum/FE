@@ -43,7 +43,7 @@
         android:layout_marginBottom="9dp"
         android:layout_gravity="center"
         android:background="@drawable/uncheck_box"
-        android:contentDescription="@string/checkbox_desc"
+        android:contentDescription="체크박스"
         android:scaleType="centerInside"
         android:minWidth="0dp"
         android:minHeight="0dp"

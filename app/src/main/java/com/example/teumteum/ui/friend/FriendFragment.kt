@@ -72,8 +72,15 @@ class FriendFragment : Fragment() {
                     .commit()
             },
             onSendClick = { user ->
+                val f = FriendRoommateDateFragment().apply {
+                    arguments = Bundle().apply {
+                        putInt("targetUserId", user.userId)
+                        putString("targetNickname", user.nickname)
+                        putString("targetProfileUrl", user.profileImageUrl)
+                    }
+                }
                 parentFragmentManager.beginTransaction()
-                    .replace(R.id.main_frm, FriendRoommateDateFragment())
+                    .replace(R.id.main_frm, f)
                     .addToBackStack(null)
                     .commit()
             },

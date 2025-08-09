@@ -37,6 +37,7 @@ class FriendViewModel @Inject constructor(
     private val _errorMessage = MutableLiveData<Event<String>>()
     val errorMessage: LiveData<Event<String>> get() = _errorMessage
 
+
     //    상단 프로필의 star_btn 과 리스트 아이템의 starIv 가 함께 관찰하는 공통 상태
     private val _favoriteMap = MutableLiveData<Map<Int, Boolean>>(emptyMap())
     val favoriteMap: LiveData<Map<Int, Boolean>> get() = _favoriteMap
