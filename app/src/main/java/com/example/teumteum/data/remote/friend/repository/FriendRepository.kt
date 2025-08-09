@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.teumteum.data.AppUserManager
 import com.example.teumteum.data.remote.friend.model.*
 import com.example.teumteum.data.remote.friend.service.FriendService
+import com.example.teumteum.utils.handleApiResponse
 import javax.inject.Inject
 
 class FriendRepository @Inject constructor(
@@ -105,6 +106,12 @@ class FriendRepository @Inject constructor(
         } else {
             throw Exception("${body?.code ?: "HTTP ${response.code()}"} - ${body?.message ?: response.message()}")
         }
+    }
+
+    suspend fun readTeumRequest(responseId: Int): Result<Int> = runCatching {
+        val response = api.readTeumRequest(responseId)
+        Log.d("ReadTeumRequest", "response = ${response.body()}")
+        handleApiResponse(response)
     }
 
 }
