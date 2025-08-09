@@ -53,4 +53,11 @@ interface FriendService {
 
     @POST("/api/teums/available-time")
     suspend fun getPossibleTime( @Body request: PossibleTimeRequest ): Response<ApiResponse<PossibleTimeResult>>
+
+    @POST("/api/teums/request/{parentRequestId}/resend")
+    suspend fun resendTeumRequest(
+        @Path("parentRequestId") parentRequestId: Int,
+        @Body request: ResendTeumRequest
+    ): Response<ApiResponse<ResendTeumResult>>
+
 }

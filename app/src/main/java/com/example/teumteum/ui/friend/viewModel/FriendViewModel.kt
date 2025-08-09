@@ -325,4 +325,18 @@ class FriendViewModel @Inject constructor(
         }
     }
 
+    fun resendTeumRequest(parentRequestId: Int, request: ResendTeumRequest){
+        viewModelScope.launch {
+            repository.resendTeumRequest(parentRequestId, request)
+                .onSuccess { result ->
+                    Log.d("RESEND_TEUM_REQUEST", result.toString())
+                }
+                .onFailure { e ->
+                    _possibleTimeList.value = emptyList()
+                    _errorMessage.value = "실패 (${e.message})"
+                    Log.e("RESEND_TEUM_REQUEST", "실패: ${e.message}", e)
+                }
+        }
+    }
+
 }

@@ -115,10 +115,15 @@ class FriendRepository @Inject constructor(
         handleApiResponse(response)
     }
 
-    suspend fun getPossibleTime(@Body request: PossibleTimeRequest ): Result<PossibleTimeResult> = runCatching {
+    suspend fun getPossibleTime(@Body request: PossibleTimeRequest): Result<PossibleTimeResult> = runCatching {
         val response = api.getPossibleTime(request)
         Log.d("GetPossibleTime", "response = ${response.body()}")
         handleApiResponse(response)
     }
 
+    suspend fun resendTeumRequest(parentRequestId: Int, @Body request: ResendTeumRequest): Result<ResendTeumResult> = runCatching {
+        val response = api.resendTeumRequest(parentRequestId, request)
+        Log.d("ResendTeumRequest", "response = ${response.body()}")
+        handleApiResponse(response)
+    }
 }

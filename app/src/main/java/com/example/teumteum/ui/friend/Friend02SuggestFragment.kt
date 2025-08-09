@@ -14,6 +14,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.friend.model.PossibleTimeRequest
+import com.example.teumteum.data.remote.friend.model.ResendTeumRequest
 import com.example.teumteum.data.remote.friend.model.TeumReceivedItem
 import com.example.teumteum.databinding.FragmentFriend02SuggestBinding
 import com.example.teumteum.ui.friend.viewModel.FriendViewModel
@@ -68,29 +69,30 @@ class Friend02SuggestFragment : Fragment() {
                 .commit()
         }
 
-
-        // 시간 카드 1 클릭 시
-//        binding.startTime1.setOnClickListener {
-//            showCustomTimePicker(binding.startTime1)
-//            highlightSelectedCard(isFirst = true)
-//        }
-//        binding.endTime1.setOnClickListener {
-//            showCustomTimePicker(binding.endTime1)
-//            highlightSelectedCard(isFirst = true)
-//        }
-//
-//        // 시간 카드 2 클릭 시
-//        binding.startTime2.setOnClickListener {
-//            showCustomTimePicker(binding.startTime2)
-//            highlightSelectedCard(isFirst = false)
-//        }
-//        binding.endTime2.setOnClickListener {
-//            showCustomTimePicker(binding.endTime2)
-//            highlightSelectedCard(isFirst = false)
-//        }
-
-        //  전송 버튼 클릭 시 → FriendSendFragment 이동
+        //  전송 버튼 클릭 시 → 재요청 및 FriendSendFragment 이동
         binding.btnSend.setOnClickListener {
+            val selected = timeCardAdapter.getSelectedItem()
+            Log.d("SELECTED_TIME_CARD", selected.toString())
+            if (selected == null) {
+                Toast.makeText(requireContext(), "시간을 먼저 선택해주세요.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // 현재 보여주는 요청(카드) 기준 정보
+            val currentItem = teumList.firstOrNull { it.responseId == responseId } ?: teumList.firstOrNull()
+            if (currentItem == null) {
+                Toast.makeText(requireContext(), "요청 정보를 찾지 못했습니다.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            viewModel.resendTeumRequest(
+                currentItem.requestId,
+                ResendTeumRequest(
+                    startTime = selected.startTime,
+                    endTime = selected.endTime
+                )
+            )
+
             parentFragmentManager.beginTransaction()
                 .replace(R.id.main_frm, FriendSendFragment())
                 .addToBackStack(null)
@@ -110,12 +112,11 @@ class Friend02SuggestFragment : Fragment() {
         // 2) 날짜 받기
         val selectedDate = arguments?.getString("selectedDate")
             ?: LocalDate.now().toString() // "yyyy-MM-dd" 형태
-        val date = "2025-08-10"
 
         // 3) Request 생성 (내 아이디 + 요청자 아이디)
         val request = PossibleTimeRequest(
             userIds = listOfNotNull(requesterId),
-            date = date
+            date = selectedDate
         )
 
         // 4) API 호출

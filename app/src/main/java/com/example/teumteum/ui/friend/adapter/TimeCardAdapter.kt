@@ -99,5 +99,8 @@ class TimeCardAdapter(
         holder.bind(items[position], position == selectedPosition)
     }
 
+    fun getSelectedItem(): TimeCardItem? =
+        if (selectedPosition in items.indices) items[selectedPosition] else null
+
     override fun getItemCount(): Int = items.size
 }
