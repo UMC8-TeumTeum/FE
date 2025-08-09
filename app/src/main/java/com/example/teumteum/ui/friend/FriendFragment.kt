@@ -147,12 +147,16 @@ class FriendFragment : Fragment() {
             followingAdapter.setFavoriteMap(favMap)
         }
 
-        viewModel.successMessage.observe(viewLifecycleOwner) { msg ->
-            Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+        viewModel.successMessage.observe(viewLifecycleOwner) { event ->
+            event.getContentIfNotHandled()?.let { msg ->
+                Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+            }
         }
 
-        viewModel.errorMessage.observe(viewLifecycleOwner) { msg ->
-            msg?.let { Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show() }
+        viewModel.errorMessage.observe(viewLifecycleOwner) { event ->
+            event.getContentIfNotHandled()?.let { msg ->
+                Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+            }
         }
 
         viewModel.receivedTeums.observe(viewLifecycleOwner) { teumList ->

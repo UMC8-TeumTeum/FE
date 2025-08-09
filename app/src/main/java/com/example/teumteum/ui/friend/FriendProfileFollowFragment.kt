@@ -23,6 +23,7 @@ class FriendProfileFollowFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: FriendViewModel by viewModels()
+    private var navigatedToFollowing = false // 자동 이동 중복 방지
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,7 +40,7 @@ class FriendProfileFollowFragment : Fragment() {
 
         val userId = arguments?.getInt("userId") ?: -1
         if (userId == -1) {
-            Toast.makeText(requireContext(), "존재하지 않는 유저입니다.", Toast.LENGTH_SHORT).show()
+//            Toast.makeText(requireContext(), "존재하지 않는 유저입니다.", Toast.LENGTH_SHORT).show()
             Log.e("FRIEND_PROFILE_FRAGMENT", "userId가 유효하지 않음")
             parentFragmentManager.popBackStack()
             return
@@ -63,48 +64,34 @@ class FriendProfileFollowFragment : Fragment() {
 
             binding.modifyProfileBtn.text = if (result.following) "팔로잉" else "팔로우"
 
-            //  이미 팔로우 상태면 자동 이동
             if (result.following) {
+                //  옵저버 해제 후 한 번만 실행
+                viewModel.friendProfile.removeObservers(viewLifecycleOwner)
                 navigateToFollowing(result)
             }
         }
 
+
         // 팔로우 결과 처리
-        viewModel.followMessage.observe(viewLifecycleOwner) { message ->
-//            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-//            Log.d("FOLLOW_RESULT", message)
-
-            if (message.contains("성공") || message.contains("완료")) {
-                binding.modifyProfileBtn.text = "팔로잉"
-
-                val result = viewModel.friendProfile.value
-                if (result != null) {
-                    val bundle = Bundle().apply {
-                        putInt("userId", userId)
-                        putString("name", result.name)
-                        putString("field", result.field)
-                        putString("imageUrl", result.profileImageUrl)
-                    }
-
-                    val followingFragment = FriendProfileFollowingFragment().apply {
-                        arguments = bundle
-                    }
-
-                    parentFragmentManager.beginTransaction()
-                        .replace(R.id.main_frm, followingFragment)
-                        .addToBackStack(null)
-                        .commit()
+        viewModel.followMessage.observe(viewLifecycleOwner) { event ->
+            event.getContentIfNotHandled()?.let { msg ->
+                if (msg.contains("성공") || msg.contains("완료")) {
+                    // 팔로우 성공 시 전환
+                    navigateToFollowing(viewModel.friendProfile.value!!)
+                } else {
+                    Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
                 }
             }
         }
 
-        // 실패 메시지 처리
-        viewModel.errorMessage.observe(viewLifecycleOwner) { message ->
-            message?.let {
-                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
-                Log.e("FRIEND_PROFILE_FRAGMENT", it)
 
-                if (it.contains("자기 자신의 프로필") || it.contains("존재하지 않는 유저")) {
+        // 실패 메시지 처리
+        viewModel.errorMessage.observe(viewLifecycleOwner) { event ->
+            event.getContentIfNotHandled()?.let { msg ->
+                Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+                Log.e("FRIEND_PROFILE_FRAGMENT", msg)
+
+                if (msg.contains("자기 자신의 프로필") || msg.contains("존재하지 않는 유저")) {
                     parentFragmentManager.popBackStack()
                     (activity as? MainActivity)?.showBottomBar()
                 }

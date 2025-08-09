@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+
 import com.bumptech.glide.Glide
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentFriendProfileFollowingBinding
@@ -24,6 +25,7 @@ class FriendProfileFollowingFragment : Fragment() {
     private val viewModel: FriendViewModel by activityViewModels()
 
     private var targetUserId: Int = -1
+    private var navigatedToFollow = false // 언팔로우 후 전환 중복 방지
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -81,15 +83,11 @@ class FriendProfileFollowingFragment : Fragment() {
 
     private fun observeViewModel() {
         // 언팔로우 결과 메시지
-        viewModel.unfollowMessage.observe(viewLifecycleOwner) { msg ->
-            if (msg != null) {
+        viewModel.unfollowMessage.observe(viewLifecycleOwner) { event ->
+            event.getContentIfNotHandled()?.let { msg ->
+                if (!navigatedToFollow && msg.contains("성공적으로 완료")) {
+                    navigatedToFollow = true
 
-                // 성공 시 토스트
-//                Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
-
-                // 언팔로우 성공 시 팔로우 화면으로 이동
-                if (msg.contains("성공적으로 완료")) {
-                    // 현재 프래그먼트를 종료하고 팔로우 프로필 화면으로 이동
                     val followFragment = FriendProfileFollowFragment().apply {
                         arguments = Bundle().apply {
                             putInt("userId", targetUserId)
@@ -100,7 +98,6 @@ class FriendProfileFollowingFragment : Fragment() {
                     }
                     parentFragmentManager.beginTransaction()
                         .replace(R.id.main_frm, followFragment)
-                        .addToBackStack(null)
                         .commit()
                 }
             }
@@ -115,9 +112,9 @@ class FriendProfileFollowingFragment : Fragment() {
         }
 
         // 에러 메시지
-        viewModel.errorMessage.observe(viewLifecycleOwner) { msg ->
-            msg?.let {
-                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+        viewModel.errorMessage.observe(viewLifecycleOwner) { event ->
+            event.getContentIfNotHandled()?.let { msg ->
+                Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
             }
         }
     }
