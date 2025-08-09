@@ -48,4 +48,6 @@ interface FriendService {
     suspend fun cancelTeumSchedule(@Path("scheduleId") scheduleId: Int): Response<ApiResponse<CancelTeumResult>>
 
 
+    @PATCH("/api/teums/request/{responseId}/read")
+    suspend fun readTeumRequest( @Path("responseId") responseId: Int ): Response<ApiResponse<Int>>
 }
