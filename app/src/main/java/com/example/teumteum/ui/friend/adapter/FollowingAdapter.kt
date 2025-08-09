@@ -23,7 +23,15 @@ class FollowingAdapter(
     inner class ViewHolder(val binding: Friend01ItemFollowingBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: FollowingResult) {
             binding.nameTv.text = item.nickname
-            binding.jobTv.text = item.job
+
+            // 직업(없으면 GONE)
+            val job = item.job.trim()
+            if (job.isNotEmpty()) {
+                binding.jobTv.visibility = View.VISIBLE
+                binding.jobTv.text = " · $job"
+            } else {
+                binding.jobTv.visibility = View.GONE
+            }
 
             Glide.with(binding.profileIv)
                 .load(item.profileImageUrl)

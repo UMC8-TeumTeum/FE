@@ -154,6 +154,33 @@ class FriendRepository @Inject constructor(
         }
     }
 
+    // 14) 팔로워 목록 (리스트만 반환)
+    suspend fun getFollowers(page: Int, size: Int): Result<List<FollowerResult>> = runCatching {
+        val response = api.getFollowers(page, size)
+        val body = response.body()
 
+        if (response.isSuccessful && body?.isSuccess == true) {
+            //  성공 로그
+            Log.d("FOLLOWER_FRAGMENT", "친구 목록 조회에 성공하였습니다. message=${body.message}")
+            // 서버가 이미 정렬해서 내려주지 않는다면 ViewModel에서 Collator로 가나다 정렬 권장
+            body.result?.content ?: emptyList()
+        } else {
+            throw Exception("${body?.code ?: "HTTP ${response.code()}"} - ${body?.message ?: response.message()}")
+        }
+    }
+
+    // 14-1) 팔로워 목록
+    suspend fun getFollowersPage(page: Int, size: Int): Result<FollowerPageResult> = runCatching {
+        val response = api.getFollowers(page, size)
+        val body = response.body()
+
+        if (response.isSuccessful && body?.isSuccess == true && body.result != null) {
+            //  성공 로그
+            Log.d("FOLLOWER_FRAGMENT", "친구 목록 조회에 성공하였습니다. message=${body.message}")
+            body.result
+        } else {
+            throw Exception("${body?.code ?: "HTTP ${response.code()}"} - ${body?.message ?: response.message()}")
+        }
+    }
 
 }

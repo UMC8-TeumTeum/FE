@@ -73,4 +73,7 @@ interface FriendService {
 
     @PATCH("/api/friends/{userId}/favorite")
     suspend fun setFavorite(@Path("userId") userId: Int, @Body body: FavoriteRequest): Response<ApiResponse<FavoriteResult>>
+
+    @GET("/api/friends/followers")
+    suspend fun getFollowers(@Query("page") page: Int, @Query("size") size: Int): Response<ApiResponse<FollowerPageResult>>
 }

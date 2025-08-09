@@ -107,6 +107,7 @@ class FriendFragment : Fragment() {
             binding.followingRecyclerView.visibility = View.VISIBLE
             binding.followerRecyclerView.visibility = View.GONE
 
+            // 팔로잉 목록 조회
             viewModel.getFollowingUsers()
         }
 
@@ -115,6 +116,9 @@ class FriendFragment : Fragment() {
             binding.tabFollower.setTextColor(Color.parseColor("#0F0F0F"))
             binding.followingRecyclerView.visibility = View.GONE
             binding.followerRecyclerView.visibility = View.VISIBLE
+
+            // 팔로워 목록 조회
+            viewModel.getFollowerUsers()
         }
 
         binding.btnAlarm.setOnClickListener {
@@ -145,6 +149,11 @@ class FriendFragment : Fragment() {
 
         viewModel.favoriteMap.observe(viewLifecycleOwner) { favMap ->
             followingAdapter.setFavoriteMap(favMap)
+        }
+
+        //  추가: 팔로워 목록 옵저버
+        viewModel.followerUsers.observe(viewLifecycleOwner) { list ->
+            followerAdapter.updateData(list)
         }
 
         viewModel.successMessage.observe(viewLifecycleOwner) { event ->

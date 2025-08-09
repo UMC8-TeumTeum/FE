@@ -65,8 +65,8 @@ class FriendViewModel @Inject constructor(
                         _errorMessage.value = Event("존재하지 않는 사용자입니다.")
                     } else {
                         _searchResults.value = filtered
-                        _successMessage.value = Event("사용자 조회 성공")
-                        Log.d("VIEWMODEL", "성공 메시지 emit됨")
+//                        _successMessage.value = Event("사용자 조회 성공")  // 확인용 토스트
+//                        Log.d("VIEWMODEL", "성공 메시지 emit됨") // 확인용 로그
                     }
                 }
                 .onFailure { e ->
@@ -326,7 +326,7 @@ class FriendViewModel @Inject constructor(
                     })
 
                     _followingUsers.value = sorted
-                    Log.d("FOLLOWING_LIST", "FRIEND2002 친구 목록 조회 성공 (정렬 반영)")
+                    Log.d("FOLLOWING_LIST", "FRIEND2002 친구 목록 조회 성공")
                 }
                 .onFailure { e ->
                     _errorMessage.value = Event("팔로잉 목록 조회 실패 (${e.message})")
@@ -343,21 +343,37 @@ class FriendViewModel @Inject constructor(
         viewModelScope.launch {
             repository.unfollowUser(userId)
                 .onSuccess { response ->
-                    val msg = if (response.isSuccess && response.code == "FRIEND2001") {
-                        response.message
+                    if (response.isSuccess && response.code == "FRIEND2001") {
+                        // 1) 언팔로우 메시지
+                        _unfollowMessage.value = Event(response.message)
+
+                        // 2) 팔로잉 목록에서 해당 유저 제거
+                        _followingUsers.value = _followingUsers.value
+                            ?.filter { it.userId != userId }
+
+                        // 3) 즐겨찾기 상태도 해제(또는 제거)
+                        _favoriteMap.value = _favoriteMap.value.orEmpty()
+                            .toMutableMap().apply {
+                                // put(userId, false) 로 해제하거나,
+                                // remove(userId) 로 키 자체를 없애도 됨. 여기선 해제로 유지.
+                                put(userId, false)
+                            }
+
+                        Log.d("UNFOLLOW_FRAGMENT", "언팔로우 성공")
                     } else {
-                        when (response.code) {
+                        val msg = when (response.code) {
                             "FRIEND4002" -> "자기 자신에 대한 요청은 처리할 수 없습니다."
                             "FRIEND4040" -> "존재하지 않는 유저입니다."
                             "FRIEND4005" -> "팔로우하지 않은 유저입니다."
                             else -> "언팔로우 실패: ${response.message}"
                         }
+                        _unfollowMessage.value = Event(msg)
+                        Log.e("UNFOLLOW_FRAGMENT", msg)
                     }
-                    _unfollowMessage.value = Event(msg)
                 }
                 .onFailure { e ->
                     val msg = "언팔로우 요청 실패 (${e.message})"
-                    Log.e("UNFOLLOW_FRAGMENT", msg)
+                    Log.e("UNFOLLOW_FRAGMENT", msg, e)
                     _unfollowMessage.value = Event(msg)
                 }
         }
@@ -401,7 +417,7 @@ class FriendViewModel @Inject constructor(
                         }
                     } else {
                         rollbackFavorite(userId, before)
-                        _favoriteMessage.value = "즐겨찾기 변경 실패(비정상 응답)"
+                        _favoriteMessage.value = "즐겨찾기 변경 실패"
                         Log.e("FAVORITE_FRAGMENT", "비정상 응답 → userId=$userId")
                     }
                 }
@@ -428,6 +444,41 @@ class FriendViewModel @Inject constructor(
                     collator.compare(a.nickname, b.nickname)
                 }
             })
+    }
+
+    // 14. 팔로워 목록 조회
+    private val _followerUsers = MutableLiveData<List<FollowerResult>>()
+    val followerUsers: LiveData<List<FollowerResult>> get() = _followerUsers
+
+    // 다음 페이지 여부
+    private val _followersHasNext = MutableLiveData<Boolean>()
+    val followersHasNext: LiveData<Boolean> get() = _followersHasNext
+
+    /** 팔로워 목록 조회 (가나다 정렬 + 성공 로그/토스트) */
+    fun getFollowerUsers(page: Int = 1, size: Int = 10) {
+        viewModelScope.launch {
+            // repository에 getFollowersPage(...) 추가해둔 버전 사용
+            repository.getFollowersPage(page, size)
+                .onSuccess { pageResult ->
+                    Log.d("FOLLOWER_FRAGMENT", "친구 목록 조회에 성공하였습니다.")
+
+                    // 가나다 정렬
+                    val collator = Collator.getInstance(Locale.KOREAN).apply { strength = Collator.PRIMARY }
+                    val sorted = pageResult.content.sortedWith { a, b ->
+                        collator.compare(a.nickname, b.nickname)
+                    }
+
+                    _followerUsers.value = sorted
+                    _followersHasNext.value = pageResult.hasNext
+
+//                    _successMessage.value = Event("친구 목록 조회에 성공하였습니다.")
+                }
+                .onFailure { e ->
+                    val msg = "팔로워 목록 조회 실패 (${e.message ?: "알 수 없는 오류"})"
+                    _errorMessage.value = Event(msg)
+                    Log.e("FOLLOWER_FRAGMENT", msg, e)
+                }
+        }
     }
 
 }

@@ -107,7 +107,7 @@ class FriendProfileFollowingFragment : Fragment() {
         viewModel.favoriteMap.observe(viewLifecycleOwner) { map ->
             val isFav = map[targetUserId] ?: false
             binding.starBtn.setImageResource(
-                if (isFav) R.drawable.friend01_fill_star else R.drawable.friend_profile_star
+                if (isFav) R.drawable.friend_profile_fill_star else R.drawable.friend_profile_star
             )
         }
 
