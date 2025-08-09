@@ -1,5 +1,6 @@
 package com.example.teumteum.ui.friend
 
+import com.example.teumteum.ui.friend.adapter.TimeCardAdapter
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -7,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.NumberPicker
-import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -16,12 +16,12 @@ import com.example.teumteum.R
 import com.example.teumteum.data.remote.friend.model.PossibleTimeRequest
 import com.example.teumteum.data.remote.friend.model.TeumReceivedItem
 import com.example.teumteum.databinding.FragmentFriend02SuggestBinding
-import com.example.teumteum.ui.friend.adapter.TimeCardAdapter
 import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.example.teumteum.ui.main.MainActivity
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
-import org.threeten.bp.LocalDate
+import java.time.LocalDate
+import java.time.LocalTime
 import kotlin.getValue
 
 @AndroidEntryPoint
@@ -123,57 +123,95 @@ class Friend02SuggestFragment : Fragment() {
     }
 
     /** 커스텀 TimePicker 다이얼로그 표시 */
-    private fun showCustomTimePicker(targetTextView: TextView) {
+//    private fun showCustomTimePicker(targetTextView: TextView) {
+//        val dialogView = layoutInflater.inflate(R.layout.dialog_time_picker, null, false)
+//
+//        val ampmPicker = dialogView.findViewById<NumberPicker>(R.id.ampmPicker01Np)
+//        val hourPicker = dialogView.findViewById<NumberPicker>(R.id.hourPicker01Np)
+//        val minutePicker = dialogView.findViewById<NumberPicker>(R.id.minutePicker01Np)
+//        val minuteValues = arrayOf("00", "10", "20", "30", "40", "50")
+//
+//        ampmPicker.minValue = 0
+//        ampmPicker.maxValue = 1
+//        ampmPicker.displayedValues = arrayOf("AM", "PM")
+//
+//        hourPicker.minValue = 1
+//        hourPicker.maxValue = 12
+//        hourPicker.wrapSelectorWheel = true
+//
+//        minutePicker.minValue = 0
+//        minutePicker.maxValue = minuteValues.size - 1
+//        minutePicker.displayedValues = minuteValues
+//        minutePicker.wrapSelectorWheel = true
+//
+//        val dialog = BottomSheetDialog(requireContext())
+//        dialog.setContentView(dialogView)
+//
+//        dialog.setOnShowListener { dialogInterface ->
+//            (dialogInterface as? BottomSheetDialog)?.let { bottomSheetDialog ->
+//                bottomSheetDialog.behavior.addBottomSheetCallback(object :
+//                    com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback() {
+//                    override fun onStateChanged(bottomSheet: View, newState: Int) {
+//                        // 상태 변경 시
+//                    }
+//
+//                    override fun onSlide(bottomSheet: View, slideOffset: Float) {
+//                        // 배경 변경
+//                        bottomSheet.setBackgroundResource(R.drawable.calendar_background)
+//                    }
+//                })
+//            }
+//        }
+//
+//        dialogView.findViewById<Button>(R.id.btnCancel).setOnClickListener { dialog.dismiss() }
+//        dialogView.findViewById<Button>(R.id.btnOk).setOnClickListener {
+//            val isAm = ampmPicker.value == 0
+//            var hour = hourPicker.value % 12
+//            if (!isAm) hour += 12
+//            val minute = minuteValues[minutePicker.value]
+//            val timeText = String.format("%02d:%s", hour, minute)
+//            targetTextView.text = timeText
+//            dialog.dismiss()
+//        }
+//
+//        dialog.show()
+//    }
+    private fun showCustomTimePicker(
+        initial: String,
+        onPicked: (String) -> Unit
+    ) {
         val dialogView = layoutInflater.inflate(R.layout.dialog_time_picker, null, false)
+        val am = dialogView.findViewById<NumberPicker>(R.id.ampmPicker01Np)
+        val h = dialogView.findViewById<NumberPicker>(R.id.hourPicker01Np)
+        val m = dialogView.findViewById<NumberPicker>(R.id.minutePicker01Np)
+        val mins = arrayOf("00","10","20","30","40","50")
 
-        val ampmPicker = dialogView.findViewById<NumberPicker>(R.id.ampmPicker01Np)
-        val hourPicker = dialogView.findViewById<NumberPicker>(R.id.hourPicker01Np)
-        val minutePicker = dialogView.findViewById<NumberPicker>(R.id.minutePicker01Np)
-        val minuteValues = arrayOf("00", "10", "20", "30", "40", "50")
+        am.minValue = 0; am.maxValue = 1; am.displayedValues = arrayOf("AM","PM")
+        h.minValue = 1; h.maxValue = 12; h.wrapSelectorWheel = true
+        m.minValue = 0; m.maxValue = mins.size-1; m.displayedValues = mins; m.wrapSelectorWheel = true
 
-        ampmPicker.minValue = 0
-        ampmPicker.maxValue = 1
-        ampmPicker.displayedValues = arrayOf("AM", "PM")
-
-        hourPicker.minValue = 1
-        hourPicker.maxValue = 12
-        hourPicker.wrapSelectorWheel = true
-
-        minutePicker.minValue = 0
-        minutePicker.maxValue = minuteValues.size - 1
-        minutePicker.displayedValues = minuteValues
-        minutePicker.wrapSelectorWheel = true
+        // 초기값 세팅
+        runCatching {
+            val (ih, im) = initial.split(":").map { it.toInt() }
+            val isAm = ih < 12
+            am.value = if (isAm) 0 else 1
+            val th = if (ih % 12 == 0) 12 else ih % 12
+            h.value = th
+            m.value = mins.indexOf(String.format("%02d", im)).coerceAtLeast(0)
+        }
 
         val dialog = BottomSheetDialog(requireContext())
         dialog.setContentView(dialogView)
-
-        dialog.setOnShowListener { dialogInterface ->
-            (dialogInterface as? BottomSheetDialog)?.let { bottomSheetDialog ->
-                bottomSheetDialog.behavior.addBottomSheetCallback(object :
-                    com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback() {
-                    override fun onStateChanged(bottomSheet: View, newState: Int) {
-                        // 상태 변경 시
-                    }
-
-                    override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                        // 배경 변경
-                        bottomSheet.setBackgroundResource(R.drawable.calendar_background)
-                    }
-                })
-            }
-        }
-
         dialogView.findViewById<Button>(R.id.btnCancel).setOnClickListener { dialog.dismiss() }
         dialogView.findViewById<Button>(R.id.btnOk).setOnClickListener {
-            val isAm = ampmPicker.value == 0
-            var hour = hourPicker.value % 12
-            if (!isAm) hour += 12
-            val minute = minuteValues[minutePicker.value]
-            val timeText = String.format("%02d:%s", hour, minute)
-            targetTextView.text = timeText
+            val isAm = am.value == 0
+            var hour24 = h.value % 12
+            if (!isAm) hour24 += 12
+            val mm = mins[m.value]
+            val picked = String.format("%02d:%s", hour24, mm)
+            onPicked(picked)
             dialog.dismiss()
         }
-
         dialog.show()
     }
 
@@ -188,12 +226,30 @@ class Friend02SuggestFragment : Fragment() {
 //        }
 //    }
 
-    private fun setupTimeCardRecyclerView() {
-        timeCardAdapter = TimeCardAdapter { selectedItem ->
-        }
+//    private fun setupTimeCardRecyclerView() {
+//        timeCardAdapter = TimeCardAdapter { selectedItem ->
+//        }
+//
+//        binding.possibleTimeRc.adapter = timeCardAdapter
+//        binding.possibleTimeRc.layoutManager = LinearLayoutManager(requireContext())
+//    }
 
-        binding.possibleTimeRc.adapter = timeCardAdapter
-        binding.possibleTimeRc.layoutManager = LinearLayoutManager(requireContext())
+    private fun setupTimeCardRecyclerView() {
+        timeCardAdapter = TimeCardAdapter { position, isStart, startBound, endBound, current ->
+            showCustomTimePicker(initial = current) { picked ->
+                // 카드의 허용 범위 [startBound, endBound] 검사
+                if (!isWithinRange(picked, startBound, endBound)) {
+                    Toast.makeText(requireContext(), "잘못된 시간입니다.", Toast.LENGTH_SHORT).show()
+                    return@showCustomTimePicker
+                }
+
+                timeCardAdapter.updateTime(position, isStart, picked)
+            }
+        }
+        binding.possibleTimeRc.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = timeCardAdapter
+        }
     }
 
     override fun onDestroyView() {
@@ -210,6 +266,15 @@ class Friend02SuggestFragment : Fragment() {
 
             timeCardAdapter.setData(nonNullList)
         }
+    }
+
+    //정해진 시간 범위의 시간으로 선택했는지 확인
+    private fun isWithinRange(picked: String, min: String, max: String): Boolean {
+        val normMax = if (max == "24:00") "23:59" else max
+        val t = LocalTime.parse(picked)
+        val tMin = LocalTime.parse(min)
+        val tMax = LocalTime.parse(normMax)
+        return !t.isBefore(tMin) && !t.isAfter(tMax)
     }
 
     companion object {

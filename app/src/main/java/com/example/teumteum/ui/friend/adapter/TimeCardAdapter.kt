@@ -1,6 +1,5 @@
 package com.example.teumteum.ui.friend.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,18 +9,31 @@ import com.example.teumteum.R
 import com.example.teumteum.ui.friend.data.TimeCardItem
 
 class TimeCardAdapter(
-    private val onItemClick: (TimeCardItem) -> Unit
+    private val onTimeClick: (
+        position: Int,
+        isStart: Boolean,
+        startBound: String,
+        endBound: String,
+        current: String
+    ) -> Unit
 ) : RecyclerView.Adapter<TimeCardAdapter.TimeCardViewHolder>() {
 
     private val items = mutableListOf<TimeCardItem>()
     private var selectedPosition = RecyclerView.NO_POSITION
 
     fun setData(newList: List<TimeCardItem>) {
-        Log.d("ADAPTER", "setData() called with ${newList.size} items")
         items.clear()
         items.addAll(newList)
         selectedPosition = RecyclerView.NO_POSITION
         notifyDataSetChanged()
+    }
+
+    fun updateTime(position: Int, isStart: Boolean, newTime: String) {
+        if (position == RecyclerView.NO_POSITION || position !in items.indices) return
+        val old = items[position]
+        val updated = if (isStart) old.copy(startTime = newTime) else old.copy(endTime = newTime)
+        items[position] = updated
+        notifyItemChanged(position)
     }
 
     inner class TimeCardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -33,25 +45,46 @@ class TimeCardAdapter(
             startTimeText.text = item.startTime
             endTimeText.text = item.endTime
 
-            // 배경 설정
             timeCard.setBackgroundResource(
                 if (isSelected) R.drawable.friend_time_card_bg_selected
                 else R.drawable.friend_time_card_bg_default
             )
 
-            // 클릭 리스너
+            // 카드 영역 클릭: 선택 하이라이트 갱신
             timeCard.setOnClickListener {
-                val previousPosition = selectedPosition
-                selectedPosition = adapterPosition
+                val pos = adapterPosition
+                if (pos == RecyclerView.NO_POSITION) return@setOnClickListener
 
-                // 이전 선택 아이템 갱신
-                if (previousPosition != RecyclerView.NO_POSITION) {
-                    notifyItemChanged(previousPosition)
-                }
-                // 현재 선택 아이템 갱신
+                val prev = selectedPosition
+                selectedPosition = pos
+                if (prev != RecyclerView.NO_POSITION) notifyItemChanged(prev)
                 notifyItemChanged(selectedPosition)
+            }
 
-                onItemClick(item)
+            // 시작 클릭
+            startTimeText.setOnClickListener {
+                val pos = adapterPosition
+                if (pos == RecyclerView.NO_POSITION) return@setOnClickListener
+                onTimeClick(
+                    pos,
+                    true,
+                    item.initialStartTime,   // startBound
+                    item.initialEndTime,     // endBound
+                    item.startTime    // current
+                )
+            }
+
+            // 종료 클릭
+            endTimeText.setOnClickListener {
+                val pos = adapterPosition
+                if (pos == RecyclerView.NO_POSITION) return@setOnClickListener
+                onTimeClick(
+                    pos,
+                    false,
+                    item.initialStartTime,   // startBound
+                    item.initialEndTime,     // endBound
+                    item.endTime      // current
+                )
             }
         }
     }
@@ -63,12 +96,8 @@ class TimeCardAdapter(
     }
 
     override fun onBindViewHolder(holder: TimeCardViewHolder, position: Int) {
-        Log.d("ADAPTER", "onBindViewHolder: position=$position, item=${items[position]}")
-        val isSelected = (position == selectedPosition)
-        holder.bind(items[position], isSelected)
+        holder.bind(items[position], position == selectedPosition)
     }
-
 
     override fun getItemCount(): Int = items.size
 }
-
