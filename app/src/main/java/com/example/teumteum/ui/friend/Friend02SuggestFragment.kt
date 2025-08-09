@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.teumteum.R
+import com.example.teumteum.data.remote.friend.model.PossibleTimeRequest
 import com.example.teumteum.data.remote.friend.model.TeumReceivedItem
 import com.example.teumteum.databinding.FragmentFriend02SuggestBinding
 import com.example.teumteum.ui.friend.adapter.TimeCardAdapter
@@ -20,6 +21,7 @@ import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.example.teumteum.ui.main.MainActivity
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
+import org.threeten.bp.LocalDate
 import kotlin.getValue
 
 @AndroidEntryPoint
@@ -97,7 +99,27 @@ class Friend02SuggestFragment : Fragment() {
 
         setupTimeCardRecyclerView()
         observeViewModel()
-        viewModel.getPossibleTimeWithFriend()
+
+        val currentItem = teumList.firstOrNull { it.responseId == responseId } ?: teumList.firstOrNull()
+        val requesterId = currentItem?.senderUser?.userId
+        if (requesterId == null) {
+            Toast.makeText(requireContext(), "요청자 정보를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // 2) 날짜 받기
+        val selectedDate = arguments?.getString("selectedDate")
+            ?: LocalDate.now().toString() // "yyyy-MM-dd" 형태
+        val date = "2025-08-10"
+
+        // 3) Request 생성 (내 아이디 + 요청자 아이디)
+        val request = PossibleTimeRequest(
+            userIds = listOfNotNull(requesterId),
+            date = date
+        )
+
+        // 4) API 호출
+        viewModel.getPossibleTimeWithFriend(request)
     }
 
     /** 커스텀 TimePicker 다이얼로그 표시 */

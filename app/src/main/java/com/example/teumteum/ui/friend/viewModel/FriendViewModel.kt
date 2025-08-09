@@ -297,17 +297,32 @@ class FriendViewModel @Inject constructor(
         }
     }
 
-    // 친구와 함께 가능한 빈틈 리스트
+    // 틈 요청자와 함께 가능한 빈틈(시간) 리스트
     private val _possibleTimeList = MutableLiveData<List<TimeCardItem?>>()
     val possibleTimeList: LiveData<List<TimeCardItem?>> get() = _possibleTimeList
 
-    fun getPossibleTimeWithFriend(){
-        val list = listOf(
-            TimeCardItem("09:00", "10:00"),
-            TimeCardItem("11:00", "12:00"),
-            TimeCardItem("14:00", "15:00")
-        )
-        _possibleTimeList.value = list
+    fun getPossibleTimeWithFriend(request: PossibleTimeRequest) {
+        viewModelScope.launch {
+            repository.getPossibleTime(request)
+                .onSuccess { result ->
+
+                    val mappedList = result.availableTime.map { available ->
+                        TimeCardItem(
+                            startTime = available.startTime,
+                            endTime = available.endTime
+                        )
+                    }
+
+                    _possibleTimeList.value = mappedList
+                    _successMessage.value = "가능한 시간 조회 성공 (${mappedList.size}개)"
+                    Log.d("POSSIBLE_TIME", "조회 결과: $mappedList")
+                }
+                .onFailure { e ->
+                    _possibleTimeList.value = emptyList()
+                    _errorMessage.value = "가능한 시간 조회 실패 (${e.message})"
+                    Log.e("POSSIBLE_TIME", "조회 실패: ${e.message}", e)
+                }
+        }
     }
 
 }
