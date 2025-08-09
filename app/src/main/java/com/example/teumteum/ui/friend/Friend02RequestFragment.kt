@@ -124,9 +124,9 @@ class Friend02RequestFragment : Fragment() {
                 val endDateTime = LocalDateTime.parse(dateTimeStr, formatter)
 
                 val isFuture = endDateTime.isAfter(now)
-                val isUnread = !item.read
-
-                isFuture && isUnread
+//                val isUnread = !item.read
+                //read 여부 검사 제거
+                isFuture
             } catch (e: Exception) {
                 false // 날짜 파싱 실패한 항목 제외
             }
