@@ -277,6 +277,26 @@ class FriendViewModel @Inject constructor(
         }
     }
 
+    fun readTeumRequest(responseId: Int) {
+        viewModelScope.launch {
+            repository.readTeumRequest(responseId)
+                .onSuccess { result ->
+                    _receivedTeums.value = _receivedTeums.value?.map { item ->
+                        if (item.responseId == responseId) {
+                            item.copy(read = true)
+                        } else {
+                            item
+                        }
+                    }
+                    _successMessage.value = "틈 요청 읽음 처리 성공"
+                }
+                .onFailure { e ->
+                    _errorMessage.value = "틈 요청 읽음 처리 실패 (${e.message})"
+                    Log.d("ReadTeumRequest", _errorMessage.value.toString())
+                }
+        }
+    }
+
     // 친구와 함께 가능한 빈틈 리스트
     private val _possibleTimeList = MutableLiveData<List<TimeCardItem?>>()
     val possibleTimeList: LiveData<List<TimeCardItem?>> get() = _possibleTimeList
