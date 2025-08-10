@@ -1,5 +1,6 @@
 package com.example.teumteum.data.remote.todo.model
 
+import com.example.teumteum.data.remote.todo.model.enums.AlarmStatus
 import com.example.teumteum.data.remote.todo.model.enums.ScheduleType
 import com.google.gson.annotations.SerializedName
 
@@ -14,6 +15,7 @@ data class TodoListResult(
     @SerializedName("endTime") val endTime: String,
     @SerializedName("isPublic") val isPublic: Boolean,
     @SerializedName("hasAlarm") var hasAlarm: Boolean? = null,
+    @SerializedName("alarmStatus") var alarmStatus: AlarmStatus,
     @SerializedName("type") val type: ScheduleType
 )
 

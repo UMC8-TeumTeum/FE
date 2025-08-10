@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.todo.model.TodoListResult
+import com.example.teumteum.data.remote.todo.model.enums.AlarmStatus
 import com.example.teumteum.databinding.ItemTodolistBinding
 import com.example.teumteum.ui.todo.TodoEditFragment
 
@@ -42,20 +43,19 @@ class TodoListRVAdapter(private val fragmentManager: FragmentManager, private va
             bottomSheet.show(fragmentManager, bottomSheet.tag)
         }
 
-        if (item.hasAlarm != true) {
+        if (item.alarmStatus == AlarmStatus.NONE) {
             binding.ivAlarm.visibility = View.GONE
             binding.ivAlarm.setOnClickListener(null)
         } else {
             binding.ivAlarm.visibility = View.VISIBLE
             binding.ivAlarm.setImageResource(
-                if (item.hasAlarm == true) R.drawable.ic_alarm_on_sv
+                if (item.alarmStatus == AlarmStatus.ACTIVE) R.drawable.ic_alarm_on_sv
                 else R.drawable.ic_alarm_off_sv
             )
 
             binding.ivAlarm.setOnClickListener {
-                item.hasAlarm = !(item.hasAlarm ?: false)
                 binding.ivAlarm.setImageResource(
-                    if (item.hasAlarm == true) R.drawable.ic_alarm_on_sv
+                    if (item.alarmStatus == AlarmStatus.INACTIVE) R.drawable.ic_alarm_on_sv
                     else R.drawable.ic_alarm_off_sv
                 )
             }
