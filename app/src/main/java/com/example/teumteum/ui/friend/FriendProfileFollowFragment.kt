@@ -112,18 +112,14 @@ class FriendProfileFollowFragment : Fragment() {
 
         // 뒤로가기 버튼
         binding.backBtn.setOnClickListener {
-            val fromTab = arguments?.getString("fromTab", "follower") // 기본값 follower
-            val friendFragment = FriendFragment().apply {
-                arguments = Bundle().apply {
-                    putString("defaultTab", fromTab)
-                }
-            }
+            // FriendFragment로 이동
             parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, friendFragment)
+                .replace(R.id.main_frm, FriendFragment())
                 .commit()
 
             (activity as? MainActivity)?.showBottomBar()
         }
+
 
         // 설정 버튼
         binding.settingBtn.setOnClickListener {

@@ -59,16 +59,9 @@ class FriendProfileFollowingFragment : Fragment() {
 
         // 뒤로가기 버튼 클릭 시
         binding.backBtn.setOnClickListener {
-            val fromTab = arguments?.getString("fromTab", "following")
-            val friendFragment = FriendFragment().apply {
-                arguments = Bundle().apply {
-                    putString("defaultTab", fromTab)
-                }
-            }
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, friendFragment)
-                .commit()
-
+            // 이전 프래그먼트로 돌아가기
+            parentFragmentManager.popBackStack()
+            // bottomNav 다시 보여주기
             (activity as? MainActivity)?.showBottomBar()
         }
 
