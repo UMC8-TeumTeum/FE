@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.teumteum.data.AppUserManager
 import com.example.teumteum.data.remote.friend.model.*
 import com.example.teumteum.data.remote.friend.repository.FriendRepository
+import com.example.teumteum.ui.friend.data.TimeCardItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -293,6 +294,56 @@ class FriendViewModel @Inject constructor(
                     _errorMessage.value = "틈 요청 읽음 처리 실패 (${e.message})"
                     Log.d("ReadTeumRequest", _errorMessage.value.toString())
                 }
+        }
+    }
+
+    // 틈 요청자와 함께 가능한 빈틈(시간) 리스트
+    private val _possibleTimeList = MutableLiveData<List<TimeCardItem?>>()
+    val possibleTimeList: LiveData<List<TimeCardItem?>> get() = _possibleTimeList
+
+    fun getPossibleTimeWithFriend(request: PossibleTimeRequest) {
+        viewModelScope.launch {
+            repository.getPossibleTime(request)
+                .onSuccess { result ->
+
+                    val mappedList = result.availableTime.map { available ->
+                        TimeCardItem(
+                            startTime = available.startTime,
+                            endTime = available.endTime
+                        )
+                    }
+
+                    _possibleTimeList.value = mappedList
+                    _successMessage.value = "가능한 시간 조회 성공 (${mappedList.size}개)"
+                    Log.d("POSSIBLE_TIME", "조회 결과: $mappedList")
+                }
+                .onFailure { e ->
+                    _possibleTimeList.value = emptyList()
+                    _errorMessage.value = "가능한 시간 조회 실패 (${e.message})"
+                    Log.e("POSSIBLE_TIME", "조회 실패: ${e.message}", e)
+                }
+        }
+    }
+
+    fun resendTeumRequest(
+        requestId: Int,
+        body: ResendTeumRequest,
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit
+    ) {
+        viewModelScope.launch {
+            try {
+                val result = repository.resendTeumRequest(requestId, body)
+
+                result.onSuccess {
+                    onSuccess()
+                }.onFailure { e ->
+                    onError(e.message ?: "재요청 실패")
+                }
+
+            } catch (e: Exception) {
+                onError(e.message ?: "재요청 실패")
+            }
         }
     }
 
