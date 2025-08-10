@@ -248,7 +248,7 @@ class Friend02SuggestFragment : Fragment() {
             showCustomTimePicker(initial = current) { picked ->
                 // 카드의 허용 범위 [startBound, endBound] 검사
                 if (!isWithinRange(picked, startBound, endBound)) {
-                    Toast.makeText(requireContext(), "잘못된 시간입니다.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "가능한 시간대에서 벗어났어요!", Toast.LENGTH_SHORT).show()
                     return@showCustomTimePicker
                 }
 
