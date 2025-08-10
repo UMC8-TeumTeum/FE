@@ -55,17 +55,16 @@ class FriendRepository @Inject constructor(
     }
 
     // 5) 틈 응답(수락/거절)
-    suspend fun respondToTeum(responseId: Int, status: String): Result<TeumStatusResult> =
-        runCatching {
-            val request = TeumStatusRequest(status)
-            val response = api.patchTeumStatus(responseId, request)
-            val body = response.body()
-            if (response.isSuccessful && body?.isSuccess == true && body.result != null) {
-                body.result
-            } else {
-                throw Exception("${body?.code ?: "HTTP ${response.code()}"} - ${body?.message ?: "오류"}")
-            }
+    suspend fun respondToTeum(responseId: Int, status: String): Result<TeumStatusResult> = runCatching {
+        val req = TeumStatusRequest(status)
+        val response = api.patchTeumStatus(responseId, req)
+        val body = response.body()
+        if (response.isSuccessful && body?.isSuccess == true && body.result != null) {
+            body.result
+        } else {
+            throw Exception("${body?.code ?: "HTTP ${response.code()}"} - ${body?.message ?: "오류"}")
         }
+    }
 
     // 6) 팔로우
     suspend fun followUser(userId: Int): Result<ApiResponse<Unit>> = runCatching {
@@ -147,16 +146,15 @@ class FriendRepository @Inject constructor(
     }
 
     // 13) 친구 즐겨찾기 설정/해제
-    suspend fun setFavorite(userId: Int, isFavorite: Boolean): Result<FavoriteResult> =
-        runCatching {
-            val response = api.setFavorite(userId, FavoriteRequest(isFavorite))
-            val body = response.body()
-            if (response.isSuccessful && body?.isSuccess == true && body.result != null) {
-                body.result
-            } else {
-                throw Exception("${body?.code ?: "HTTP ${response.code()}"} - ${body?.message ?: response.message()}")
-            }
+    suspend fun setFavorite(userId: Int, isFavorite: Boolean): Result<FavoriteResult> = runCatching {
+        val response = api.setFavorite(userId, FavoriteRequest(isFavorite))
+        val body = response.body()
+        if (response.isSuccessful && body?.isSuccess == true && body.result != null) {
+            body.result
+        } else {
+            throw Exception("${body?.code ?: "HTTP ${response.code()}"} - ${body?.message ?: response.message()}")
         }
+    }
 
     // 14) 팔로워 목록 (리스트만 반환)
     suspend fun getFollowers(page: Int, size: Int): Result<List<FollowerResult>> = runCatching {
@@ -186,7 +184,6 @@ class FriendRepository @Inject constructor(
     suspend fun readTeumRequest(responseId: Int): Result<Int> = runCatching {
         val response = api.readTeumRequest(responseId)
         Log.d("ReadTeumRequest", "response = ${response.body()}")
-        // handleApiResponse는 Response<ApiResponse<T>> -> T 를 반환해야 함
         handleApiResponse(response)
     }
 
@@ -198,13 +195,28 @@ class FriendRepository @Inject constructor(
     ): Result<List<MutualFriendItem>> = runCatching {
         val response = api.getMutualFriends(page, size, excludeUserId)
         val body = response.body()
-
         if (response.isSuccessful && body?.isSuccess == true) {
             body.result?.content ?: emptyList()
         } else {
-            val err = response.errorBody()?.string()
-            throw Exception("${body?.code ?: "HTTP ${response.code()}"} - ${body?.message ?: err ?: response.message()}")
+            val errText = response.errorBody()?.string()
+            throw Exception("${body?.code ?: "HTTP ${response.code()}"} - ${body?.message ?: errText ?: response.message()}")
         }
     }
 
+    // 17) 가능한 시간 조회
+    suspend fun getPossibleTime(request: PossibleTimeRequest): Result<PossibleTimeResult> = runCatching {
+        val response = api.getPossibleTime(request)
+        Log.d("GetPossibleTime", "response = ${response.body()}")
+        handleApiResponse(response)
+    }
+
+    // 18) 틈 요청 재전송
+    suspend fun resendTeumRequest(
+        parentRequestId: Int,
+        request: ResendTeumRequest
+    ): Result<ResendTeumResult> = runCatching {
+        val response = api.resendTeumRequest(parentRequestId, request)
+        Log.d("ResendTeumRequest", "response = ${response.body()}")
+        handleApiResponse(response)
+    }
 }

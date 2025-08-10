@@ -198,8 +198,8 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="35dp"
                     android:layout_marginStart="25dp"
+                    android:layout_marginTop="35dp"
                     android:layout_marginEnd="25dp">
 
                     <TextView
@@ -229,31 +229,31 @@
                             android:id="@+id/btn_home_weekly_calendar"
                             android:layout_width="50dp"
                             android:layout_height="35dp"
-                            android:text="주별"
-                            android:textSize="12sp"
                             android:layout_marginEnd="8dp"
                             android:fontFamily="@font/noto_sans_kr_medium"
-                            android:textColor="@color/white"
-                            android:padding="0dp"
                             android:includeFontPadding="false"
-                            app:cornerRadius="6dp"
-                            app:backgroundTint="@color/text_primary" />
+                            android:padding="0dp"
+                            android:text="주별"
+                            android:textColor="@color/white"
+                            android:textSize="12sp"
+                            app:backgroundTint="@color/text_primary"
+                            app:cornerRadius="6dp" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_home_monthly_calendar"
                             android:layout_width="50dp"
                             android:layout_height="35dp"
-                            android:text="월별"
-                            android:textSize="12sp"
                             android:layout_marginEnd="10dp"
                             android:fontFamily="@font/noto_sans_kr_medium"
-                            android:textColor="@color/teumteum_deactive"
-                            android:padding="0dp"
-                            app:strokeWidth="1dp"
-                            app:strokeColor="@color/teumteum_line"
                             android:includeFontPadding="false"
+                            android:padding="0dp"
+                            android:text="월별"
+                            android:textColor="@color/teumteum_deactive"
+                            android:textSize="12sp"
+                            app:backgroundTint="@color/white"
                             app:cornerRadius="6dp"
-                            app:backgroundTint="@color/white" />
+                            app:strokeColor="@color/teumteum_line"
+                            app:strokeWidth="1dp" />
                     </LinearLayout>
 
                     <ImageView
@@ -359,8 +359,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
                         android:layout_marginTop="23dp"
-                        android:includeFontPadding="false"
                         android:fontFamily="@font/noto_sans_kr_medium"
+                        android:includeFontPadding="false"
                         android:text="투두리스트"
                         android:textColor="@color/text_primary"
                         android:textSize="20sp"
@@ -388,11 +388,11 @@
                         android:layout_width="match_parent"
                         android:layout_height="58dp"
                         android:layout_marginTop="20dp"
+                        android:fontFamily="@font/noto_sans_kr_medium"
                         android:padding="0dp"
                         android:text="위시리스트 불러오기"
                         android:textColor="@color/white"
                         android:textSize="16sp"
-                        android:fontFamily="@font/noto_sans_kr_medium"
                         app:backgroundTint="@color/text_primary"
                         app:cornerRadius="12dp"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -468,7 +468,7 @@
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:layout_marginTop="-4dp"
-        android:layout_marginBottom="120dp"
+        android:layout_marginBottom="15dp"
         android:layout_marginEnd="20dp"
         android:scaleType="centerInside"
         android:layout_gravity="center"
@@ -480,7 +480,7 @@
             android:id="@+id/fab_add_iv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="120dp"
+            android:layout_marginBottom="15dp"
             android:layout_marginEnd="20dp"
             android:src="@drawable/ic_fab_add_sv"
             app:layout_constraintBottom_toBottomOf="parent"

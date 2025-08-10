@@ -93,6 +93,7 @@ interface FriendService {
         @Path("responseId") responseId: Int
     ): Response<ApiResponse<Int>>
 
+    // 맞팔로우 목록 조회
     @GET("/api/friends/mutuals")
     suspend fun getMutualFriends(
         @Query("page") page: Int,
@@ -100,4 +101,16 @@ interface FriendService {
         @Query("excludeUserId") excludeUserId: Int? = null
     ): Response<ApiResponse<MutualFriendResult>>
 
+    // 가능한 시간 조회
+    @POST("/api/teums/available-time")
+    suspend fun getPossibleTime(
+        @Body request: PossibleTimeRequest
+    ): Response<ApiResponse<PossibleTimeResult>>
+
+    // 틈 요청 재전송
+    @POST("/api/teums/request/{parentRequestId}/resend")
+    suspend fun resendTeumRequest(
+        @Path("parentRequestId") parentRequestId: Int,
+        @Body request: ResendTeumRequest
+    ): Response<ApiResponse<ResendTeumResult>>
 }

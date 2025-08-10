@@ -8,10 +8,14 @@ import androidx.lifecycle.viewModelScope
 import com.example.teumteum.data.AppUserManager
 import com.example.teumteum.data.remote.friend.model.*
 import com.example.teumteum.data.remote.friend.repository.FriendRepository
+
 import com.example.teumteum.utils.Event
 import com.google.gson.Gson
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+
+import com.example.teumteum.ui.friend.data.TimeCardItem
+
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.text.Collator
@@ -50,7 +54,8 @@ class FriendViewModel @Inject constructor(
     val myProfileUrl: LiveData<String> get() = _myProfileUrl
 
     // 선택된 친구 목록 저장용
-    private val _selectedFriends = MutableLiveData<MutableList<FriendProfileResult>>(mutableListOf())
+    private val _selectedFriends =
+        MutableLiveData<MutableList<FriendProfileResult>>(mutableListOf())
     val selectedFriends: LiveData<MutableList<FriendProfileResult>> get() = _selectedFriends
 
     // 선택된 친구 추가
@@ -353,7 +358,8 @@ class FriendViewModel @Inject constructor(
                         item.copy(isFavorite = fav)
                     }
 
-                    val collator = Collator.getInstance(Locale.KOREAN).apply { strength = Collator.PRIMARY }
+                    val collator =
+                        Collator.getInstance(Locale.KOREAN).apply { strength = Collator.PRIMARY }
                     val sorted = merged.sortedWith(Comparator { a, b ->
                         if (a.isFavorite != b.isFavorite) {
                             if (a.isFavorite) -1 else 1
@@ -466,7 +472,7 @@ class FriendViewModel @Inject constructor(
         }
     }
 
-        private fun rollbackFavorite(userId: Int, before: Boolean) {
+    private fun rollbackFavorite(userId: Int, before: Boolean) {
         _favoriteMap.value = _favoriteMap.value.orEmpty().toMutableMap().apply {
             put(userId, before)
         }
@@ -500,7 +506,8 @@ class FriendViewModel @Inject constructor(
                     Log.d("FOLLOWER_FRAGMENT", "친구 목록 조회에 성공하였습니다.")
 
                     // 가나다 정렬
-                    val collator = Collator.getInstance(Locale.KOREAN).apply { strength = Collator.PRIMARY }
+                    val collator =
+                        Collator.getInstance(Locale.KOREAN).apply { strength = Collator.PRIMARY }
                     val sorted = pageResult.content.sortedWith { a, b ->
                         collator.compare(a.nickname, b.nickname)
                     }
@@ -517,7 +524,8 @@ class FriendViewModel @Inject constructor(
                 }
         }
     }
-  // 틈 읽기
+
+    // 틈 읽기
     fun readTeumRequest(responseId: Int) {
         viewModelScope.launch {
             repository.readTeumRequest(responseId)
@@ -546,31 +554,24 @@ class FriendViewModel @Inject constructor(
         viewModelScope.launch {
             val myUserId = AppUserManager.userId
 
-            // 1. 자기 자신 제외 방지
+            // 자기 자신 제외 방지
             if (excludeUserId != null && excludeUserId == myUserId) {
                 _errorMessage.value = Event("자기 자신은 제외할 수 없습니다.")
                 return@launch
             }
 
-            // 2. excludeUserId 값에 따라 API 호출 분기
-            if (excludeUserId == null || excludeUserId == -1) {
-                repository.getMutualFriends(null) // 전체 조회
-            } else {
-                repository.getMutualFriends(excludeUserId) // 특정 ID 제외 조회
-            }
-                // 3. API 성공 시
+            repository.getMutualFriends(
+                if (excludeUserId == null || excludeUserId == -1) null else excludeUserId
+            )
                 .onSuccess { list ->
                     _mutualFriends.value = list
                     _successMessage.value = Event("친구 목록 조회에 성공하였습니다.")
-                   Log.d("MUTUAL_FRAGMENT", "친구 목록 조회에 성공하였습니다")
+                    Log.d("MUTUAL_FRAGMENT", "친구 목록 조회 성공")
                 }
-                // 4. API 실패 시
                 .onFailure { e ->
                     val msg = when {
-                        e.message?.contains("FRIEND4002") == true ->
-                            "자기 자신에 대한 요청은 처리할 수 없습니다."
-                        e.message?.contains("FRIEND4040") == true ->
-                            "존재하지 않는 유저입니다."
+                        e.message?.contains("FRIEND4002") == true -> "자기 자신에 대한 요청은 처리할 수 없습니다."
+                        e.message?.contains("FRIEND4040") == true -> "존재하지 않는 유저입니다."
                         else -> "맞팔로우 목록 조회 실패 (${e.message})"
                     }
                     _errorMessage.value = Event(msg)
@@ -579,4 +580,42 @@ class FriendViewModel @Inject constructor(
         }
     }
 
+    // 틈 요청자와 함께 가능한 빈틈(시간) 리스트
+    private val _possibleTimeList = MutableLiveData<List<TimeCardItem?>>()
+    val possibleTimeList: LiveData<List<TimeCardItem?>> get() = _possibleTimeList
+
+    fun getPossibleTimeWithFriend(request: PossibleTimeRequest) {
+        viewModelScope.launch {
+            repository.getPossibleTime(request)
+                .onSuccess { result ->
+                    val mappedList = result.availableTime.map { available ->
+                        TimeCardItem(
+                            startTime = available.startTime,
+                            endTime = available.endTime
+                        )
+                    }
+                    _possibleTimeList.value = mappedList
+                    _successMessage.value = Event("가능한 시간 조회 성공 (${mappedList.size}개)")
+                    Log.d("POSSIBLE_TIME", "조회 결과: $mappedList")
+                }
+                .onFailure { e ->
+                    _possibleTimeList.value = emptyList()
+                    _errorMessage.value = Event("가능한 시간 조회 실패 (${e.message})")
+                    Log.e("POSSIBLE_TIME", "조회 실패: ${e.message}", e)
+                }
+        }
+    }
+
+    fun resendTeumRequest(
+        requestId: Int,
+        body: ResendTeumRequest,
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit
+    ) {
+        viewModelScope.launch {
+            repository.resendTeumRequest(requestId, body)
+                .onSuccess { onSuccess() }
+                .onFailure { e -> onError(e.message ?: "재요청 실패") }
+        }
+    }
 }
