@@ -180,17 +180,17 @@ class FillingActivity01Fragment : Fragment() {
 
         binding.searchBtn.setOnClickListener {
 
-            // 위치 선택 + 직접 입력 시 예외 처리
-            if (selectedLocationButton != null && selectedLocationText.toString().isNotBlank()) {
-                Toast.makeText(requireContext(), "위치와 직접 입력은 둘 중 하나만 선택해야 합니다.", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
+//            // 위치 선택 + 직접 입력 시 예외 처리
+//            if (selectedLocationButton != null && selectedLocationText.toString().isNotBlank()) {
+//                Toast.makeText(requireContext(), "위치와 직접 입력은 둘 중 하나만 선택해야 합니다.", Toast.LENGTH_SHORT).show()
+//                return@setOnClickListener
+//            }
 
-            // 카테고리 선택 + 직접 입력 시 예외 처리
-            if (selectedCategoryButton != null && selectedCategoryText.toString().isNotBlank()) {
-                Toast.makeText(requireContext(), "카테고리와 직접 입력은 둘 중 하나만 선택해야 합니다.", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
+//            // 카테고리 선택 + 직접 입력 시 예외 처리
+//            if (selectedCategoryButton != null && selectedCategoryText.toString().isNotBlank()) {
+//                Toast.makeText(requireContext(), "카테고리와 직접 입력은 둘 중 하나만 선택해야 합니다.", Toast.LENGTH_SHORT).show()
+//                return@setOnClickListener
+//            }
 
             val wishRequest = ActivityWishRequest(
                 estimatedDuration = selectedTimeTag ?: "",
@@ -230,9 +230,11 @@ class FillingActivity01Fragment : Fragment() {
     }
 
     private fun updateNextButtonState() {
-        val isAllSelected = selectedTimeTag != null &&
-                (selectedLocationButton != null || !selectedLocationText.isNullOrBlank()) &&
-                (selectedCategoryButton != null || !selectedCategoryText.isNullOrBlank())
+//        val isAllSelected = selectedTimeTag != null &&
+//                (selectedLocationButton != null || !selectedLocationText.isNullOrBlank()) &&
+//                (selectedCategoryButton != null || !selectedCategoryText.isNullOrBlank())
+
+        val isAllSelected = selectedTimeTag != null && selectedLocationText != null && selectedCategoryButton != null
 
         binding.searchBtn.isEnabled = isAllSelected
         binding.searchBtn.setBackgroundColor(
