@@ -6,13 +6,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.GridLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentMonthlyCalendarBinding
+import com.example.teumteum.ui.calendar.viewModel.CalendarViewModel
 import com.example.teumteum.utils.*
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
 import java.time.YearMonth
+import java.time.format.DateTimeFormatter
 
 @AndroidEntryPoint
 class MonthlyCalendarFragment : Fragment() {
@@ -26,6 +30,10 @@ class MonthlyCalendarFragment : Fragment() {
     private lateinit var onClickListener: IDateClickListener
 
     private var showDot: Boolean = true
+
+    private val viewModel: CalendarViewModel by activityViewModels()
+    private var scheduleMap: Map<String, Boolean> = emptyMap() // "yyyy-MM-dd" -> hasSchedule
+    private val dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,6 +56,17 @@ class MonthlyCalendarFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         showDot = arguments?.getBoolean("showDot", true) ?: true
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        setupObservers()
+
+        // 현재 월 달력 범위로 서버 조회
+        val startDate = dateList.first()!!.format(dateFormatter)
+        val endDate = dateList.last()!!.format(dateFormatter)
+        viewModel.getCalendar(startDate, endDate)
     }
 
     private fun setupCalendar(displayMonthDate: LocalDate) {
@@ -87,7 +106,8 @@ class MonthlyCalendarFragment : Fragment() {
         binding.monthlyCalendarGrid.columnCount = 7
 
         dateList.forEachIndexed { index, date ->
-            val cellView = inflater.inflate(R.layout.item_day_cell, binding.monthlyCalendarGrid, false)
+            val cellView =
+                inflater.inflate(R.layout.item_day_cell, binding.monthlyCalendarGrid, false)
             val dayText = cellView.findViewById<TextView>(R.id.day_text)
             val dotView = cellView.findViewById<View>(R.id.dot_view)
 
@@ -104,9 +124,9 @@ class MonthlyCalendarFragment : Fragment() {
                     dayText.setTextColor(requireContext().getColor(R.color.teumteum_deactive))
                 }
 
-                dotView.visibility =
-                    if (showDot && dotDates.any { it.isEqual(date) }) View.VISIBLE else View.INVISIBLE
-
+                val key = date.format(dateFormatter)
+                val has = scheduleMap[key] == true
+                dotView.visibility = if (has) View.VISIBLE else View.INVISIBLE
 
                 dayText.setOnClickListener {
                     selectedDate = date
@@ -130,7 +150,11 @@ class MonthlyCalendarFragment : Fragment() {
     }
 
     companion object {
-        fun newInstance(position: Int, onClickListener: IDateClickListener, showDot: Boolean = true, dotDates: List<LocalDate> = emptyList()
+        fun newInstance(
+            position: Int,
+            onClickListener: IDateClickListener,
+            showDot: Boolean = true,
+            dotDates: List<LocalDate> = emptyList()
         ): MonthlyCalendarFragment {
             val fragment = MonthlyCalendarFragment()
             fragment.position = position
@@ -143,5 +167,23 @@ class MonthlyCalendarFragment : Fragment() {
         }
     }
 
+    private fun setupObservers() {
+        viewModel.calendarData.observe(viewLifecycleOwner) { list ->
+            // 날짜-일정여부 Map으로 변환
+            scheduleMap = list.associate { it.date.take(10) to it.hasSchedule }
+            renderCalendar(getDisplayMonthDate())
+        }
+
+        viewModel.error.observe(viewLifecycleOwner) { msg ->
+            msg?.let { Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show() }
+        }
+    }
+
+    private fun getDisplayMonthDate(): LocalDate {
+        val baseDate = getSavedDateOrToday(requireContext())
+        val startPosition = Int.MAX_VALUE / 2
+        val monthOffset = position - startPosition
+        return baseDate.plusMonths(monthOffset.toLong())
+    }
 
 }
