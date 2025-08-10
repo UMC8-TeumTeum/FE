@@ -325,17 +325,25 @@ class FriendViewModel @Inject constructor(
         }
     }
 
-    fun resendTeumRequest(parentRequestId: Int, request: ResendTeumRequest){
+    fun resendTeumRequest(
+        requestId: Int,
+        body: ResendTeumRequest,
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit
+    ) {
         viewModelScope.launch {
-            repository.resendTeumRequest(parentRequestId, request)
-                .onSuccess { result ->
-                    Log.d("RESEND_TEUM_REQUEST", result.toString())
+            try {
+                val result = repository.resendTeumRequest(requestId, body)
+
+                result.onSuccess {
+                    onSuccess()
+                }.onFailure { e ->
+                    onError(e.message ?: "재요청 실패")
                 }
-                .onFailure { e ->
-                    _possibleTimeList.value = emptyList()
-                    _errorMessage.value = "실패 (${e.message})"
-                    Log.e("RESEND_TEUM_REQUEST", "실패: ${e.message}", e)
-                }
+
+            } catch (e: Exception) {
+                onError(e.message ?: "재요청 실패")
+            }
         }
     }
 

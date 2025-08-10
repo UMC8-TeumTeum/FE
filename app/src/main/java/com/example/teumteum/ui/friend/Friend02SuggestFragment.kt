@@ -85,18 +85,26 @@ class Friend02SuggestFragment : Fragment() {
                 return@setOnClickListener
             }
 
+            // 로딩 중 중복 클릭 방지
+            binding.btnSend.isEnabled = false
+
             viewModel.resendTeumRequest(
                 currentItem.requestId,
                 ResendTeumRequest(
                     startTime = selected.startTime,
                     endTime = selected.endTime
-                )
+                ),
+                onSuccess = {
+                    parentFragmentManager.beginTransaction()
+                        .replace(R.id.main_frm, FriendSendFragment())
+                        .addToBackStack(null)
+                        .commit()
+                },
+                onError = { msg ->
+                    Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+                    binding.btnSend.isEnabled = true
+                }
             )
-
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, FriendSendFragment())
-                .addToBackStack(null)
-                .commit()
         }
 
         setupTimeCardRecyclerView()
