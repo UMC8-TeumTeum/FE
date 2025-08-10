@@ -68,10 +68,11 @@ class Friend01SearchResultFragment : Fragment() {
             toast?.show()
         }
 
-        viewModel.errorMessage.observe(viewLifecycleOwner) { msg: String? ->
-            msg?.let {
-//                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
-                Log.e("SEARCH_RESULT_FRAGMENT", "오류: $it")
+        viewModel.errorMessage.observe(viewLifecycleOwner) { event ->
+            event.getContentIfNotHandled()?.let { msg ->
+                // Toast로 띄우거나 Log 출력
+                // Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+                Log.e("SEARCH_RESULT_FRAGMENT", "오류: $msg")
             }
         }
 
