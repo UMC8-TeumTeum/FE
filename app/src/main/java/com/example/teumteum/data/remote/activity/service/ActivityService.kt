@@ -4,6 +4,7 @@ import com.example.teumteum.data.remote.activity.model.ActivityAiRequest
 import com.example.teumteum.data.remote.activity.model.ActivityAiResponse
 import com.example.teumteum.data.remote.activity.model.ActivityWishRequest
 import com.example.teumteum.data.remote.activity.model.ActivityWishResponse
+import com.example.teumteum.data.remote.activity.model.AssignWishRequest
 import com.example.teumteum.data.remote.activity.model.FillAiRequest
 import com.example.teumteum.data.remote.activity.model.FillAiResponse
 import com.example.teumteum.utils.ApiResponse
@@ -19,6 +20,9 @@ interface ActivityService {
 
     @POST("/api/activities/ai")
     suspend fun activityAi(@Body request: ActivityAiRequest): Call<ActivityAiResponse>
+
+    @POST("/api/wishes/{wishId}/assign")
+    suspend fun assignWish(@Path("wishId") wishId: Long, @Body request: AssignWishRequest): Response<ApiResponse<Unit>>
 
     @POST("/api/activies/ai/assign")
     suspend fun fillAi(@Path("aiContentId") aiContentId: Long, @Body request: FillAiRequest): Call<FillAiResponse>

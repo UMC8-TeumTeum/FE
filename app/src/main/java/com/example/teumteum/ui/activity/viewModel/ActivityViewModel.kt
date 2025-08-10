@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.teumteum.data.remote.activity.model.ActivityWishRequest
 import com.example.teumteum.data.remote.activity.model.ActivityWishResult
+import com.example.teumteum.data.remote.activity.model.AssignWishRequest
 import com.example.teumteum.data.remote.activity.repository.ActivityRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -37,6 +38,19 @@ class ActivityViewModel @Inject constructor(
             }
             result.onFailure { e ->
                 _errorMessage.value = e.localizedMessage ?: "채움활동 위시 조회에 실패했습니다."
+            }
+        }
+    }
+
+    // 위시 빈틈 채우기
+    fun assignWish(wishId: Long, request: AssignWishRequest) {
+        viewModelScope.launch {
+            val result = activityRepository.assignWish(wishId, request)
+            result.onSuccess { response ->
+                _activityWishSuccess.value = true
+            }
+            result.onFailure { e ->
+                _errorMessage.value = e.localizedMessage ?: "위시 빈틈채우기에 실패했습니다."
             }
         }
     }

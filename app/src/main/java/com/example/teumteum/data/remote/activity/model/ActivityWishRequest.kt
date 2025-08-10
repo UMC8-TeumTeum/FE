@@ -14,6 +14,12 @@ data class ActivityAiRequest(
     @SerializedName("categoryId") val categoryId: Long? = null
 )
 
+data class AssignWishRequest(
+    @SerializedName("startTime") val startTime: String,
+    @SerializedName("endTime") val endTime: String,
+    @SerializedName("isForce") val isForce: Boolean
+)
+
 data class FillAiRequest(
     @SerializedName("aiContentId") val aiContentId: Long,
     @SerializedName("date") val date: String,

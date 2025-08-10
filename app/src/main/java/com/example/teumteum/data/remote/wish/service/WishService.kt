@@ -1,12 +1,11 @@
 package com.example.teumteum.data.remote.wish.service
 
 import com.example.teumteum.data.entities.Wish
-import com.example.teumteum.data.remote.wish.model.FillWishResponse
+import com.example.teumteum.data.remote.wish.model.AssignWishRequest
 import com.example.teumteum.data.remote.wish.model.DeleteWishesRequest
 import com.example.teumteum.data.remote.wish.model.DeleteWishesResponse
 import com.example.teumteum.data.remote.wish.model.EditWishRequest
 import com.example.teumteum.data.remote.wish.model.EditWishResponse
-import com.example.teumteum.data.remote.wish.model.FillWishRequest
 import com.example.teumteum.data.remote.wish.model.RegisterWishRequest
 import com.example.teumteum.data.remote.wish.model.RegisterWishResponse
 import com.example.teumteum.data.remote.wish.model.WishlistResult
@@ -36,7 +35,4 @@ interface WishService {
 
     @HTTP(method = "DELETE", path = "/api/wishes", hasBody = true)
     suspend fun deleteWishes(@Body request: DeleteWishesRequest): Response<ApiResponse<DeleteWishesResponse>>
-
-    @POST("/api/wishes/{wishId}/assign")
-    suspend fun fillWish(@Path("wishId") wishId: Long, @Body request: FillWishRequest): Response<ApiResponse<FillWishResponse>>
 }
