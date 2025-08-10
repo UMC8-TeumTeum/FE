@@ -34,5 +34,4 @@ interface TodoService {
 
     @GET("/api/home/todo/user-reminds")
     suspend fun getOnboardingReminders(): Response<ApiResponse<GetOnboardingReminders>>
-
 }
