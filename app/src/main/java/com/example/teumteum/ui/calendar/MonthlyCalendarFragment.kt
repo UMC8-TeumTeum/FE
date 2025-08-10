@@ -35,6 +35,13 @@ class MonthlyCalendarFragment : Fragment() {
     private var scheduleMap: Map<String, Boolean> = emptyMap() // "yyyy-MM-dd" -> hasSchedule
     private val dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        showDot = arguments?.getBoolean("showDot", true) ?: true
+        selectedDate = getSavedDateOrToday(requireContext())
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -47,26 +54,21 @@ class MonthlyCalendarFragment : Fragment() {
         val monthOffset = position - startPosition
         val displayMonthDate = baseDate.plusMonths(monthOffset.toLong())
 
-        selectedDate = getSavedDateOrToday(requireContext())
         setupCalendar(displayMonthDate)
 
         return binding.root
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        showDot = arguments?.getBoolean("showDot", true) ?: true
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         setupObservers()
+        refreshMonth()
+    }
 
-        // 현재 월 달력 범위로 서버 조회
-        val startDate = dateList.first()!!.format(dateFormatter)
-        val endDate = dateList.last()!!.format(dateFormatter)
-        viewModel.getCalendar(startDate, endDate)
+    override fun onResume() {
+        super.onResume()
+        refreshMonth()
     }
 
     private fun setupCalendar(displayMonthDate: LocalDate) {
@@ -184,6 +186,13 @@ class MonthlyCalendarFragment : Fragment() {
         val startPosition = Int.MAX_VALUE / 2
         val monthOffset = position - startPosition
         return baseDate.plusMonths(monthOffset.toLong())
+    }
+
+    private fun refreshMonth() {
+        // 현재 월 달력 범위로 서버 조회
+        val startDate = dateList.first()!!.format(dateFormatter)
+        val endDate = dateList.last()!!.format(dateFormatter)
+        viewModel.getCalendar(startDate, endDate)
     }
 
 }
