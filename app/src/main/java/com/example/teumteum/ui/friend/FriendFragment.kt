@@ -48,6 +48,14 @@ class FriendFragment : Fragment() {
         //  내 정보(닉네임, 프로필) 가져오기
         viewModel.fetchMyInfo()
 
+        val defaultTab = arguments?.getString("defaultTab", "following")
+
+        if (defaultTab == "follower") {
+            binding.tabFollower.performClick()
+        } else {
+            binding.tabFollowing.performClick()
+        }
+
         recommendAdapter = RecommendAdapter(
             onCardClick = { item: TeumReceivedItem, position: Int ->
                 //틈 읽음 처리
@@ -71,7 +79,10 @@ class FriendFragment : Fragment() {
             data = emptyList(),
             onProfileClick = { user ->
                 val fragment = FriendProfileFollowFragment().apply {
-                    arguments = Bundle().apply { putInt("userId", user.userId) }
+                    arguments = Bundle().apply {
+                        putInt("userId", user.userId)
+                        putString("fromTab", "following")
+                    }
                 }
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.main_frm, fragment)
@@ -96,7 +107,64 @@ class FriendFragment : Fragment() {
             }
         )
 
-        followerAdapter = FollowerAdapter(emptyList())
+        // 팔로워 어댑터
+        followerAdapter = FollowerAdapter(
+            data = emptyList(),
+            onProfileClick = { user ->
+                viewModel.getFriendProfile(user.userId) { profile ->
+                    val fragment = if (profile.following) {
+                        FriendProfileFollowingFragment().apply {
+                            arguments = Bundle().apply {
+                                putInt("userId", profile.userId)
+                                putString("name", profile.name)
+                                putString("field", profile.field)
+                                putString("imageUrl", profile.profileImageUrl)
+                                putString("fromTab", "follower") // 🔹 탭 정보 추가
+                            }
+                        }
+                    } else {
+                        FriendProfileFollowFragment().apply {
+                            arguments = Bundle().apply {
+                                putInt("userId", profile.userId)
+                                putString("fromTab", "follower") // 🔹 탭 정보 추가
+                            }
+                        }
+                    }
+                    parentFragmentManager.beginTransaction()
+                        .replace(R.id.main_frm, fragment)
+                        .addToBackStack(null)
+                        .commit()
+                }
+            },
+            onSendClick = { user ->
+                viewModel.getFriendProfile(user.userId) { profile ->
+                    if (profile.following) {
+                        val f = FriendRoommateDateFragment().apply {
+                            arguments = Bundle().apply {
+                                putInt("targetUserId", profile.userId)
+                                putString("targetNickname", profile.name)
+                                putString("targetProfileUrl", profile.profileImageUrl)
+                            }
+                        }
+                        parentFragmentManager.beginTransaction()
+                            .replace(R.id.main_frm, f)
+                            .addToBackStack(null)
+                            .commit()
+                    } else {
+                        val frag = FriendProfileFollowFragment().apply {
+                            arguments = Bundle().apply {
+                                putInt("userId", profile.userId)
+                                putString("fromTab", "follower")
+                            }
+                        }
+                        parentFragmentManager.beginTransaction()
+                            .replace(R.id.main_frm, frag)
+                            .addToBackStack(null)
+                            .commit()
+                    }
+                }
+            }
+        )
 
         // 리사이클러뷰 세팅
         binding.followingRecyclerView.apply {
@@ -215,9 +283,8 @@ class FriendFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         (activity as? MainActivity)?.showBottomBar()
-        // 복귀 시 팔로잉 탭 유지
-        binding.tabFollowing.performClick()
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

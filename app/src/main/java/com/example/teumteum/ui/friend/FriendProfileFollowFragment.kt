@@ -47,7 +47,19 @@ class FriendProfileFollowFragment : Fragment() {
         }
 
         // 프로필 정보 요청
-        viewModel.getFriendProfile(userId)
+        viewModel.getFriendProfile(userId) { profile ->
+            // 프로필 정보로 UI 세팅
+            binding.profileNicknameTv.text = profile.name
+            binding.profileFieldTv.text = profile.field
+
+            Glide.with(requireContext())
+                .load(profile.profileImageUrl)
+                .placeholder(R.drawable.gray_teum)
+                .error(R.drawable.gray_teum)
+                .into(binding.profileIv)
+
+            binding.modifyProfileBtn.text = if (profile.following) "팔로잉" else "팔로우"
+        }
 
         // 성공 시 프로필 바인딩
         viewModel.friendProfile.observe(viewLifecycleOwner) { result ->
@@ -100,14 +112,18 @@ class FriendProfileFollowFragment : Fragment() {
 
         // 뒤로가기 버튼
         binding.backBtn.setOnClickListener {
-            // FriendFragment로 이동
+            val fromTab = arguments?.getString("fromTab", "follower") // 기본값 follower
+            val friendFragment = FriendFragment().apply {
+                arguments = Bundle().apply {
+                    putString("defaultTab", fromTab)
+                }
+            }
             parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, FriendFragment())
+                .replace(R.id.main_frm, friendFragment)
                 .commit()
 
             (activity as? MainActivity)?.showBottomBar()
         }
-
 
         // 설정 버튼
         binding.settingBtn.setOnClickListener {

@@ -120,8 +120,15 @@ class FriendViewModel @Inject constructor(
 
 
     fun addRecentKeyword(keyword: String) {
-        val updated = _recentKeywords.value.orEmpty() + keyword
-        _recentKeywords.value = updated
+        val currentList = _recentKeywords.value.orEmpty().toMutableList()
+
+        // 이미 있으면 삭제
+        currentList.remove(keyword)
+
+        // 맨 앞에 추가
+        currentList.add(0, keyword)
+
+        _recentKeywords.value = currentList
     }
 
     fun removeLastKeyword() {
@@ -153,19 +160,15 @@ class FriendViewModel @Inject constructor(
     private val _friendProfile = MutableLiveData<FriendProfileResult>()
     val friendProfile: LiveData<FriendProfileResult> get() = _friendProfile
 
-    fun getFriendProfile(userId: Int) {
+    fun getFriendProfile(userId: Int, onResult: (FriendProfileResult) -> Unit) {
         viewModelScope.launch {
             repository.getFriendProfile(userId)
-                .onSuccess { result ->
-                    _friendProfile.value = result
-                    _successMessage.value = Event("친구 프로필 조회 성공")
+                .onSuccess { profile ->
+                    _friendProfile.value = profile
+                    onResult(profile)
                 }
                 .onFailure { e ->
-                    val msg = when {
-                        e.message?.contains("FRIEND4002") == true -> "자기 자신의 프로필은 조회할 수 없습니다."
-                        e.message?.contains("FRIEND4040") == true -> "존재하지 않는 유저입니다."
-                        else -> "친구 프로필 조회 실패 (${e.message})"
-                    }
+                    val msg = "친구 프로필 조회 실패 (${e.message})"
                     _errorMessage.value = Event(msg)
                 }
         }

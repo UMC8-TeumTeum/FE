@@ -1,4 +1,3 @@
-// ui/friend/adapter/FollowerAdapter.kt
 package com.example.teumteum.ui.friend.adapter
 
 import android.view.LayoutInflater
@@ -21,7 +20,8 @@ class FollowerAdapter(
         notifyDataSetChanged()
     }
 
-    inner class VH(val binding: Friend01ItemFollowerBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class VH(val binding: Friend01ItemFollowerBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(item: FollowerResult) = with(binding) {
             // 이름
             nameTv.text = item.nickname
@@ -40,7 +40,7 @@ class FollowerAdapter(
                 .load(item.profileImageUrl)
                 .placeholder(R.drawable.gray_teum)
                 .error(R.drawable.gray_teum)
-                .centerCrop()
+                .circleCrop()
                 .into(profileIv)
 
             // 클릭 리스너
