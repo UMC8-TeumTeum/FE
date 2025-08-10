@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/timeCard"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    android:orientation="horizontal"
+    android:paddingStart="14dp"
+    android:paddingEnd="18dp"
+    android:paddingTop="14dp"
+    android:paddingBottom="9dp"
+    android:background="@drawable/friend_time_card_bg_selected"
+    android:gravity="center_vertical"
+    android:layout_marginBottom="12dp"
+    android:layout_marginStart="15dp"
+    android:layout_marginEnd="15dp"
+    >
+
+    <LinearLayout
+        android:id="@+id/startTimeLl"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="start">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="0dp"
+            android:text="시작"
+            android:textSize="12sp"
+            android:textColor="#5C6569"
+            android:fontFamily="@font/noto_sans_kr_regular" />
+
+        <!-- 시간 + 화살표 묶는 가로 LinearLayout -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <!-- 시간 -->
+            <TextView
+                android:id="@+id/startTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:includeFontPadding="false"
+                android:lineSpacingExtra="0dp"
+                android:text="00:00"
+                android:textSize="22sp"
+                android:textColor="#0F0F0F"
+                android:fontFamily="@font/noto_sans_kr_semibold"
+                android:layout_marginEnd="6dp" />
+
+            <!-- 위아래 화살표 -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_marginStart="80dp">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/friend_up"
+                    android:layout_marginBottom="4dp" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/friend_down" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/endTimeLl"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="start">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="종료"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="0dp"
+            android:textSize="12sp"
+            android:textColor="#5C6569"
+            android:fontFamily="@font/noto_sans_kr_regular" />
+
+        <!-- 시간 + 화살표 묶는 가로 LinearLayout -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <!-- 시간 -->
+            <TextView
+                android:id="@+id/endTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:includeFontPadding="false"
+                android:lineSpacingExtra="0dp"
+                android:text="00:00"
+                android:textSize="22sp"
+                android:textColor="#0F0F0F"
+                android:fontFamily="@font/noto_sans_kr_semibold"
+                android:layout_marginEnd="6dp" />
+
+            <!-- 위아래 화살표 -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_marginStart="90dp">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/friend_up"
+                    android:layout_marginBottom="4dp" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/friend_down" />
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

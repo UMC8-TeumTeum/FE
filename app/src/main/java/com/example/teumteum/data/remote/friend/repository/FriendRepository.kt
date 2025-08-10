@@ -5,6 +5,7 @@ import com.example.teumteum.data.AppUserManager
 import com.example.teumteum.data.remote.friend.model.*
 import com.example.teumteum.data.remote.friend.service.FriendService
 import com.example.teumteum.utils.handleApiResponse
+import retrofit2.http.Body
 import javax.inject.Inject
 
 class FriendRepository @Inject constructor(
@@ -114,4 +115,15 @@ class FriendRepository @Inject constructor(
         handleApiResponse(response)
     }
 
+    suspend fun getPossibleTime(@Body request: PossibleTimeRequest): Result<PossibleTimeResult> = runCatching {
+        val response = api.getPossibleTime(request)
+        Log.d("GetPossibleTime", "response = ${response.body()}")
+        handleApiResponse(response)
+    }
+
+    suspend fun resendTeumRequest(parentRequestId: Int, @Body request: ResendTeumRequest): Result<ResendTeumResult> = runCatching {
+        val response = api.resendTeumRequest(parentRequestId, request)
+        Log.d("ResendTeumRequest", "response = ${response.body()}")
+        handleApiResponse(response)
+    }
 }
