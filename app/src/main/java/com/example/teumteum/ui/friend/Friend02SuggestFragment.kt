@@ -118,8 +118,7 @@ class Friend02SuggestFragment : Fragment() {
         }
 
         // 2) 날짜 받기
-        val selectedDate = arguments?.getString("selectedDate")
-            ?: LocalDate.now().toString() // "yyyy-MM-dd" 형태
+        val selectedDate = currentItem.date
 
         // 3) Request 생성 (내 아이디 + 요청자 아이디)
         val request = PossibleTimeRequest(
