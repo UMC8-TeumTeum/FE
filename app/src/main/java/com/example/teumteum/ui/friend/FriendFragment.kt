@@ -45,6 +45,9 @@ class FriendFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        //  내 정보(닉네임, 프로필) 가져오기
+        viewModel.fetchMyInfo()
+
         recommendAdapter = RecommendAdapter(
             onCardClick = { item: TeumReceivedItem, position: Int ->
                 //틈 읽음 처리
@@ -147,8 +150,19 @@ class FriendFragment : Fragment() {
         }
 
         binding.viewPromiseBtn.setOnClickListener {
+            val myNickname = viewModel.myNickname.value ?: ""
+            val myProfileUrl = viewModel.myProfileUrl.value ?: ""
+
+            val frag = FriendPromiseFragment().apply {
+                arguments = Bundle().apply {
+                    putString("nickname", myNickname)
+                    putString("profileImageUrl", myProfileUrl)
+                }
+            }
+
+            // 3) 전달한 인스턴스(frag)로 교체
             parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, FriendPromiseFragment())
+                .replace(R.id.main_frm, frag)
                 .addToBackStack(null)
                 .commit()
         }

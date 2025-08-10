@@ -92,17 +92,18 @@ class FriendRoommateDateFragment : Fragment() {
             .into(binding.profileIv1)
 
         // 2-2) 우측 = 나 표시 (ViewModel에서 내 프로필 관찰)
-//        viewModel.myProfile.observe(viewLifecycleOwner) { me ->
-//            binding.profileNicknameTv2.text = me?.name ?: "나"
-//            Glide.with(binding.profileIv2)
-//                .load(me?.profileImageUrl)
-//                .placeholder(R.drawable.gray_teum)
-//                .error(R.drawable.gray_teum)
-//                .circleCrop()
-//                .into(binding.profileIv2)
-//        }
-//        // 최초 1회 로딩 (이미 있으면 내부에서 무시)
-//        viewModel.loadMyProfile()
+        viewModel.fetchMyInfo() // 최초 1회 로딩
+        viewModel.myNickname.observe(viewLifecycleOwner) { myNick ->
+            binding.profileNicknameTv2.text = myNick ?: "나"
+        }
+        viewModel.myProfileUrl.observe(viewLifecycleOwner) { myUrl ->
+            Glide.with(this)
+                .load(myUrl)
+                .placeholder(R.drawable.gray_teum)
+                .error(R.drawable.gray_teum)
+                .circleCrop()
+                .into(binding.profileIv2)
+        }
 
         // 초기 버튼 상태 비활성화
         binding.nextBtn.isEnabled = false
@@ -111,10 +112,7 @@ class FriendRoommateDateFragment : Fragment() {
 
         // 뒤로가기 버튼
         binding.btnBack.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, FriendFragment())
-                .addToBackStack(null)
-                .commit()
+            parentFragmentManager.popBackStack()
         }
 
         binding.nextBtn.setOnClickListener {
@@ -125,9 +123,15 @@ class FriendRoommateDateFragment : Fragment() {
 
             val bundle = Bundle().apply {
                 putString("selected_date", formattedDate)
+
+                // 상대방 정보
                 putInt("targetUserId", targetUserId)
                 putString("targetNickname", targetNickname)
                 putString("targetProfileUrl", targetProfileUrl)
+
+                //  내 정보
+                putString("myNickname", viewModel.myNickname.value)
+                putString("myProfileUrl", viewModel.myProfileUrl.value)
             }
 
             val fragment = FriendRoommateFriendFragment().apply {

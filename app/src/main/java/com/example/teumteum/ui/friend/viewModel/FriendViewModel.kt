@@ -24,7 +24,8 @@ import kotlin.math.E
 
 @HiltViewModel
 class FriendViewModel @Inject constructor(
-    private val repository: FriendRepository
+    private val repository: FriendRepository,
+    private val myPageRepository: com.example.teumteum.data.remote.mypage.repository.MyPageRepository
 ) : ViewModel() {
 
     private var searchJob: Job? = null
@@ -41,6 +42,26 @@ class FriendViewModel @Inject constructor(
     //    상단 프로필의 star_btn 과 리스트 아이템의 starIv 가 함께 관찰하는 공통 상태
     private val _favoriteMap = MutableLiveData<Map<Int, Boolean>>(emptyMap())
     val favoriteMap: LiveData<Map<Int, Boolean>> get() = _favoriteMap
+
+    private val _myNickname = MutableLiveData<String>()
+    val myNickname: LiveData<String> get() = _myNickname
+
+    private val _myProfileUrl = MutableLiveData<String>()
+    val myProfileUrl: LiveData<String> get() = _myProfileUrl
+
+    fun fetchMyInfo() {
+        viewModelScope.launch {
+            myPageRepository.getMyInfo()
+                .onSuccess { info: com.example.teumteum.data.remote.mypage.model.MyInfoResponse ->
+                    _myNickname.value = info.nickname
+                    _myProfileUrl.value = info.profileImageUrl
+                }
+                .onFailure { e: Throwable ->
+                    Log.e("MY_INFO", "내 정보 조회 실패: ${e.message}", e)
+                }
+        }
+    }
+
 
     // 1. 사용자 검색
     private val _searchResults = MutableLiveData<List<FriendSearchResult>>()
@@ -481,7 +502,7 @@ class FriendViewModel @Inject constructor(
                 }
         }
     }
-
+  // 틈 읽기
     fun readTeumRequest(responseId: Int) {
         viewModelScope.launch {
             repository.readTeumRequest(responseId)
@@ -493,11 +514,52 @@ class FriendViewModel @Inject constructor(
                             item
                         }
                     }
-                    _successMessage.value = "틈 요청 읽음 처리 성공"
+                    _successMessage.value = Event("틈 요청 읽음 처리 성공")
                 }
                 .onFailure { e ->
-                    _errorMessage.value = "틈 요청 읽음 처리 실패 (${e.message})"
+                    _errorMessage.value = Event("틈 요청 읽음 처리 실패 (${e.message})")
                     Log.d("ReadTeumRequest", _errorMessage.value.toString())
+                }
+        }
+    }
+
+    // 15. 맞팔로우 목록
+    private val _mutualFriends = MutableLiveData<List<MutualFriendItem>>()
+    val mutualFriends: LiveData<List<MutualFriendItem>> get() = _mutualFriends
+
+    fun getMutualFriends(excludeUserId: Int? = null) {
+        viewModelScope.launch {
+            val myUserId = AppUserManager.userId
+
+            // 1. 자기 자신 제외 방지
+            if (excludeUserId != null && excludeUserId == myUserId) {
+                _errorMessage.value = Event("자기 자신은 제외할 수 없습니다.")
+                return@launch
+            }
+
+            // 2. excludeUserId 값에 따라 API 호출 분기
+            if (excludeUserId == null || excludeUserId == -1) {
+                repository.getMutualFriends(null) // 전체 조회
+            } else {
+                repository.getMutualFriends(excludeUserId) // 특정 ID 제외 조회
+            }
+                // 3. API 성공 시
+                .onSuccess { list ->
+                    _mutualFriends.value = list
+                    _successMessage.value = Event("친구 목록 조회에 성공하였습니다.")
+                   Log.d("MUTUAL_FRAGMENT", "친구 목록 조회에 성공하였습니다")
+                }
+                // 4. API 실패 시
+                .onFailure { e ->
+                    val msg = when {
+                        e.message?.contains("FRIEND4002") == true ->
+                            "자기 자신에 대한 요청은 처리할 수 없습니다."
+                        e.message?.contains("FRIEND4040") == true ->
+                            "존재하지 않는 유저입니다."
+                        else -> "맞팔로우 목록 조회 실패 (${e.message})"
+                    }
+                    _errorMessage.value = Event(msg)
+                    Log.e("MUTUAL_FRAGMENT", msg, e)
                 }
         }
     }

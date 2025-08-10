@@ -92,4 +92,12 @@ interface FriendService {
     suspend fun readTeumRequest(
         @Path("responseId") responseId: Int
     ): Response<ApiResponse<Int>>
+
+    @GET("/api/friends/mutuals")
+    suspend fun getMutualFriends(
+        @Query("page") page: Int,
+        @Query("size") size: Int,
+        @Query("excludeUserId") excludeUserId: Int? = null
+    ): Response<ApiResponse<MutualFriendResult>>
+
 }

@@ -5,6 +5,8 @@ import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.bumptech.glide.Glide
+import com.example.teumteum.R
 import com.example.teumteum.data.remote.friend.model.TeumScheduleDetailResult
 import com.example.teumteum.databinding.FragmentFriendPromiseBinding
 import com.example.teumteum.ui.calendar.IDateClickListener
@@ -46,6 +48,10 @@ class FriendPromiseFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity as? MainActivity)?.hideBottomBar()
+
+        // 1) 번들로 전달받은 내 닉네임/프로필 표시
+        val nickname = arguments?.getString("nickname")
+        binding.tvName.text = ((nickname ?: "닉네임") + "님의")
 
         setupHeader()
         setupRecyclerView()
