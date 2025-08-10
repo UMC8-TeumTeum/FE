@@ -12,7 +12,7 @@ class CalendarRepository @Inject constructor(
     private val calendarService: CalendarService
 ){
 
-    suspend fun getCalendar(startDate: String, endDate: String): Result<GetCalendarResponse> {
+    suspend fun getCalendar(startDate: String, endDate: String): Result<List<GetCalendarResponse>> {
         return try {
             val response = calendarService.getCalendar(startDate, endDate)
             Log.d("CalendarGet", "response = ${response.body()}")

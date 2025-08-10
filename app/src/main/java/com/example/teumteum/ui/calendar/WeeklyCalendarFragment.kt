@@ -7,11 +7,16 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
+import com.example.teumteum.data.remote.calendar.model.GetCalendarResponse
 import com.example.teumteum.databinding.FragmentWeeklyCalendarBinding
+import com.example.teumteum.ui.calendar.viewModel.CalendarViewModel
+import com.example.teumteum.ui.main.viewModel.HomeViewModel
 import com.example.teumteum.utils.*
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @AndroidEntryPoint
 class WeeklyCalendarFragment : Fragment() {
@@ -25,6 +30,10 @@ class WeeklyCalendarFragment : Fragment() {
     private lateinit var onClickListener: IDateClickListener
     private val todayPosition = Int.MAX_VALUE / 2
 
+    private val viewModel: CalendarViewModel by activityViewModels()
+    private var scheduleMap: Map<String, Boolean> = emptyMap() // "yyyy-MM-dd" -> hasSchedule
+    private val dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -37,16 +46,27 @@ class WeeklyCalendarFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         val newDate = calculateNewDate()
         calculateDatesOfWeek(newDate)
+
         val baseMonth = newDate.monthValue
         setOneWeekDateIntoTextView(baseMonth)
         selectTodayIfInWeek()
+
+        // 주간 범위로 캘린더 호출
+        val startDate = dates.first().format(dateFormatter)
+        val endDate = dates.last().format(dateFormatter)
+        viewModel.getCalendar(startDate, endDate)
+
+        setupObservers()
+        refreshWeek()
     }
 
     override fun onResume() {
         super.onResume()
         setPrevSelectedDate()
+        refreshWeek()
     }
 
     override fun onPause() {
@@ -77,15 +97,12 @@ class WeeklyCalendarFragment : Fragment() {
     }
 
     private fun setOneWeekDateIntoTextView(baseMonth: Int) {
-        val today = LocalDate.now()
 
         for (i in textViewList.indices) {
             val date = dates[i]
             val textView = textViewList[i]
-            val dotView = dotViewList[i]
 
             textView.text = date.dayOfMonth.toString()
-            dotView.visibility = if (date == today) View.VISIBLE else View.GONE
 
             textView.setTextColor(
                 if (date.monthValue == baseMonth)
@@ -129,14 +146,11 @@ class WeeklyCalendarFragment : Fragment() {
         for (i in textViewList.indices) {
             val date = dates[i]
             val textView = textViewList[i]
-            val dotView = dotViewList[i]
 
             if (date == today) {
                 setTodayStyle(requireContext(), textView)
-                dotView.visibility = View.VISIBLE
             } else {
                 resetDateStyle(requireContext(), textView)
-                dotView.visibility = View.GONE
             }
 
             textView.setTextColor(
@@ -149,11 +163,52 @@ class WeeklyCalendarFragment : Fragment() {
     }
 
     companion object {
-        fun newInstance(position: Int, onClickListener: IDateClickListener): WeeklyCalendarFragment {
+        fun newInstance(
+            position: Int,
+            onClickListener: IDateClickListener
+        ): WeeklyCalendarFragment {
             val fragment = WeeklyCalendarFragment()
             fragment.position = position
             fragment.onClickListener = onClickListener
             return fragment
         }
+    }
+
+    private fun setupObservers() {
+        viewModel.calendarData.observe(viewLifecycleOwner) { list ->
+
+            // 일정 리스트 관찰 → 날짜-일정여부 맵으로 변환 → 도트 적용
+            scheduleMap = list.associate { it.date to it.hasSchedule }
+            applyDots()
+        }
+
+        viewModel.error.observe(viewLifecycleOwner) { msg ->
+            msg?.let { Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show() }
+        }
+    }
+
+    private fun applyDots() {
+        for (i in dates.indices) {
+            val key = dates[i].format(dateFormatter)
+            val has = scheduleMap[key] == true
+            dotViewList[i].visibility = if (has) View.VISIBLE else View.GONE
+        }
+    }
+
+    private fun refreshWeek() {
+        val newDate = calculateNewDate()
+        calculateDatesOfWeek(newDate)
+
+        val baseMonth = newDate.monthValue
+        setOneWeekDateIntoTextView(baseMonth)
+        selectTodayIfInWeek()
+
+        val startDate = dates.first().format(dateFormatter)
+        val endDate = dates.last().format(dateFormatter)
+
+        // 해당 주 데이터 재조회
+        viewModel.getCalendar(startDate, endDate)
+
+        applyDots()
     }
 }

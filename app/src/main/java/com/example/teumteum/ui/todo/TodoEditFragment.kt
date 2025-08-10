@@ -201,7 +201,7 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
         val description = binding.detailTextEt.text.toString()
         val isPublic = binding.publicToggle01Iv.isChecked
         val includeTeum = binding.includeToggle01Iv.isChecked
-        val remindAlarm = getSelectedRemindAlarms()
+//        val remindAlarm = getSelectedRemindAlarms()
 
         return EditTodoRequest(
             title = title,
@@ -210,7 +210,7 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
             description = description,
             isPublic = isPublic,
             includeTeum = includeTeum,
-            remindAlarm = remindAlarm
+//            remindAlarm = remindAlarm
         )
     }
 

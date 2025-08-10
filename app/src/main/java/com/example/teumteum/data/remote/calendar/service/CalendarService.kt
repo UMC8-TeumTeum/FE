@@ -8,5 +8,5 @@ import retrofit2.http.Query
 
 interface CalendarService {
     @GET("/api/home/calendar")
-    suspend fun getCalendar(@Query("startDate") startDate: String, @Query("endDate") endDate: String): Response<ApiResponse<GetCalendarResponse>>
+    suspend fun getCalendar(@Query("startDate") startDate: String, @Query("endDate") endDate: String): Response<ApiResponse<List<GetCalendarResponse>>>
 }

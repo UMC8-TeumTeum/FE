@@ -22,7 +22,6 @@ class MonthlyCalendarFragment : Fragment() {
     private lateinit var selectedDate: LocalDate
     private var dotDates: List<LocalDate> = emptyList()
 
-
     private var position: Int = 0
     private lateinit var onClickListener: IDateClickListener
 
