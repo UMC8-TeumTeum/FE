@@ -1,6 +1,6 @@
 package com.example.teumteum.data.remote.todo.model
 
-import com.example.teumteum.data.remote.todo.model.enums.TodoType
+import com.example.teumteum.data.remote.todo.model.enums.ScheduleType
 import com.google.gson.annotations.SerializedName
 
 data class TodoResult(
@@ -14,11 +14,11 @@ data class TodoListResult(
     @SerializedName("endTime") val endTime: String,
     @SerializedName("isPublic") val isPublic: Boolean,
     @SerializedName("hasAlarm") var hasAlarm: Boolean? = null,
-    @SerializedName("type") val type: TodoType
+    @SerializedName("type") val type: ScheduleType
 )
 
 data class GetTodoResult(
-    @SerializedName("type") val type: TodoType,
+    @SerializedName("type") val type: ScheduleType,
     @SerializedName("title") val title: String,
     @SerializedName("startTime") val startTime: String,
     @SerializedName("endTime") val endTime: String,
