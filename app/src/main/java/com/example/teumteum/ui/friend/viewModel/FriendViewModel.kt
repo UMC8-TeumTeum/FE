@@ -53,6 +53,9 @@ class FriendViewModel @Inject constructor(
     private val _myProfileUrl = MutableLiveData<String>()
     val myProfileUrl: LiveData<String> get() = _myProfileUrl
 
+    private val _teumTimeText = MutableLiveData<String>()
+    val teumTimeText: LiveData<String> get() = _teumTimeText
+
     // 선택된 친구 목록 저장용
     private val _selectedFriends =
         MutableLiveData<MutableList<FriendProfileResult>>(mutableListOf())
@@ -621,4 +624,24 @@ class FriendViewModel @Inject constructor(
                 .onFailure { e -> onError(e.message ?: "재요청 실패") }
         }
     }
+
+    // 친구의 빈틈 시간 조회
+    fun loadFriendTeumTime(userId: Int) {
+        viewModelScope.launch {
+            repository.getFriendTeumTime(userId)
+                .onSuccess { result ->
+                    _teumTimeText.value = result.toKoreanDuration()
+                    Log.d("TEUM_TIME_FRAGMENT", "친구 빈틈 시간 조회에 성공하였습니다.")
+                }
+                .onFailure { e ->
+                    _teumTimeText.value = "-"
+                    Log.e("TEUM_TIME_FRAGMENT", "빈틈 시간 조회 실패: ${e.message}")
+                }
+        }
+    }
+
+    private fun TeumTimeResult.toKoreanDuration(): String {
+        return "${days}일 ${hours}시간 ${minutes}분"
+    }
+
 }

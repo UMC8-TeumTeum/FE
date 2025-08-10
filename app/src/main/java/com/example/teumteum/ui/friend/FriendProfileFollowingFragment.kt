@@ -57,6 +57,16 @@ class FriendProfileFollowingFragment : Fragment() {
             .error(R.drawable.gray_teum)
             .into(binding.profileIv)
 
+        //  빈틈 시간 조회
+        if (targetUserId != -1) {
+            viewModel.loadFriendTeumTime(targetUserId)
+        }
+
+        //  빈틈 시간 옵저브
+        viewModel.teumTimeText.observe(viewLifecycleOwner) {
+            binding.profileTimerTv.text = it
+        }
+
         // 뒤로가기 버튼 클릭 시
         binding.backBtn.setOnClickListener {
             // 이전 프래그먼트로 돌아가기

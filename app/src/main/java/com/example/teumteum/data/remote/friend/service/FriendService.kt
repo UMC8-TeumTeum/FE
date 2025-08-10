@@ -113,4 +113,11 @@ interface FriendService {
         @Path("parentRequestId") parentRequestId: Int,
         @Body request: ResendTeumRequest
     ): Response<ApiResponse<ResendTeumResult>>
+
+    // 친구의 빈틈 시간 조회
+    @GET("/api/friends/{userId}/teum-time")
+    suspend fun getFriendTeumTime(
+        @Path("userId") userId: Int): Response<ApiResponse<TeumTimeResult>>
+
+
 }
