@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 
 import com.bumptech.glide.Glide
 import com.example.teumteum.R
+import com.example.teumteum.data.remote.friend.model.FriendProfileResult
 import com.example.teumteum.databinding.FragmentFriendProfileFollowingBinding
 import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.example.teumteum.ui.main.MainActivity
@@ -77,6 +78,25 @@ class FriendProfileFollowingFragment : Fragment() {
                 viewModel.toggleFavorite(targetUserId)
             }
         }
+
+        // sendBtn 클릭 시 친구 저장 + FriendRoommateDateFragment로 이동
+        binding.sendBtn.setOnClickListener {
+            if (targetUserId != -1) {
+                val dateFragment = FriendRoommateDateFragment().apply {
+                    arguments = Bundle().apply {
+                        putInt("targetUserId", targetUserId)
+                        putString("targetNickname", binding.profileNicknameTv.text.toString())
+                        putString("targetProfileUrl", arguments?.getString("imageUrl") ?: "")
+                    }
+                }
+
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.main_frm, dateFragment)
+                    .addToBackStack(null)
+                    .commit()
+            }
+        }
+
 
         observeViewModel()
     }

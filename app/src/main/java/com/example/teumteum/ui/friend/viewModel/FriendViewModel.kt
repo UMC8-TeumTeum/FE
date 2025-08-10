@@ -49,6 +49,21 @@ class FriendViewModel @Inject constructor(
     private val _myProfileUrl = MutableLiveData<String>()
     val myProfileUrl: LiveData<String> get() = _myProfileUrl
 
+    // 선택된 친구 목록 저장용
+    private val _selectedFriends = MutableLiveData<MutableList<FriendProfileResult>>(mutableListOf())
+    val selectedFriends: LiveData<MutableList<FriendProfileResult>> get() = _selectedFriends
+
+    // 선택된 친구 추가
+    fun addSelectedFriend(friend: FriendProfileResult) {
+        val currentList = _selectedFriends.value ?: mutableListOf()
+        // 중복 방지
+        if (currentList.none { it.userId == friend.userId }) {
+            currentList.add(friend)
+            _selectedFriends.value = currentList
+        }
+    }
+
+
     fun fetchMyInfo() {
         viewModelScope.launch {
             myPageRepository.getMyInfo()
