@@ -1,6 +1,5 @@
 package com.example.teumteum.data.remote.home.service
 
-import com.example.teumteum.data.remote.home.model.GetCalendarResponse
 import com.example.teumteum.data.remote.home.model.ScheduleResult
 import com.example.teumteum.data.remote.home.model.TeumTimeResponse
 import com.example.teumteum.utils.ApiResponse
@@ -15,7 +14,4 @@ interface HomeService {
 
     @GET("/api/home/teum-time")
     suspend fun getTeumTime(): Response<ApiResponse<TeumTimeResponse>>
-
-    @GET("/api/home/calendar")
-    suspend fun getCalendar(@Query("startDate") startDate: String, @Query("endDate") endDate: String): Response<ApiResponse<GetCalendarResponse>>
 }

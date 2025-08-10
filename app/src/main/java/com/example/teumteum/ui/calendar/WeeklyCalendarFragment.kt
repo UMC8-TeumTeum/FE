@@ -8,15 +8,13 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.teumteum.R
-import com.example.teumteum.data.remote.calendar.dto.CalendarResult
 import com.example.teumteum.databinding.FragmentWeeklyCalendarBinding
-import com.example.teumteum.ui.calendar.view.CalendarView
 import com.example.teumteum.utils.*
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
 
 @AndroidEntryPoint
-class WeeklyCalendarFragment : Fragment(), CalendarView {
+class WeeklyCalendarFragment : Fragment() {
 
     private lateinit var binding: FragmentWeeklyCalendarBinding
     private lateinit var textViewList: List<TextView>
@@ -157,18 +155,5 @@ class WeeklyCalendarFragment : Fragment(), CalendarView {
             fragment.onClickListener = onClickListener
             return fragment
         }
-    }
-
-    override fun onGetCalendarSuccess(code: String, calendar: List<CalendarResult>) {
-        Toast.makeText(requireContext(), "캘린더가 성공적으로 조회되었습니다.", Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onGetCalendarFailure(code: String, message: String?) {
-        val errorMessage = when (code) {
-            "NETWORK_ERROR" -> "네트워크 오류가 발생했습니다."
-            "PARSE_ERROR" -> "서버 응답을 해석할 수 없습니다."
-            else -> message ?: "조회에 실패했습니다. 다시 시도해주세요."
-        }
-        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
     }
 }

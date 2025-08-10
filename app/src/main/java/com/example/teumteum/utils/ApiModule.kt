@@ -2,7 +2,6 @@ package com.example.teumteum.utils
 
 import com.example.teumteum.data.remote.activity.service.ActivityService
 import com.example.teumteum.data.remote.alarm.AlarmRetrofitInterface
-import com.example.teumteum.data.remote.calendar.CalendarRetrofitInterface
 import com.example.teumteum.data.remote.friend.service.FriendService
 import com.example.teumteum.data.remote.mypage.service.MyPageService
 import com.example.teumteum.data.remote.home.service.HomeService

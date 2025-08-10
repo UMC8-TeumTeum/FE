@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.teumteum.data.remote.home.model.GetCalendarResponse
+import com.example.teumteum.data.remote.calendar.model.GetCalendarResponse
 import com.example.teumteum.data.remote.home.repository.HomeRepository
 import com.example.teumteum.ui.main.data.TimeBlock
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,9 +21,6 @@ class HomeViewModel @Inject constructor(
 
     private val _scheduleList = MutableLiveData<List<TimeBlock>>(emptyList())
     val scheduleList: LiveData<List<TimeBlock>> = _scheduleList
-
-    private val _calendarData = MutableLiveData<GetCalendarResponse>()
-    val calendarData: LiveData<GetCalendarResponse> = _calendarData
 
     private var date: String? = null
 
@@ -96,19 +93,6 @@ class HomeViewModel @Inject constructor(
         val currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
         date = currentDate
         getTodaySchedule(currentDate)
-    }
-
-    // 캘린더 일정 조회
-    private fun getCalendar(startDate: String, endDate: String) {
-        viewModelScope.launch {
-            val result = repository.getCalendar(startDate, endDate)
-
-            result.onSuccess {
-                _calendarData.value = it
-            }.onFailure { e ->
-                _error.value = e.localizedMessage ?: "캘린더 조회에 실패했습니다."
-            }
-        }
     }
 }
 
