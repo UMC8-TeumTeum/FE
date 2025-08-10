@@ -22,8 +22,8 @@ class HomeViewModel @Inject constructor(
     private val _scheduleList = MutableLiveData<List<TimeBlock>>(emptyList())
     val scheduleList: LiveData<List<TimeBlock>> = _scheduleList
 
-    private val _calendarSchedule = MutableLiveData<GetCalendarResponse>()
-    val calendarSchedule: LiveData<GetCalendarResponse> = _calendarSchedule
+    private val _calendarData = MutableLiveData<GetCalendarResponse>()
+    val calendarData: LiveData<GetCalendarResponse> = _calendarData
 
     private var date: String? = null
 
@@ -101,13 +101,12 @@ class HomeViewModel @Inject constructor(
     // 캘린더 일정 조회
     private fun getCalendar(startDate: String, endDate: String) {
         viewModelScope.launch {
-
             val result = repository.getCalendar(startDate, endDate)
 
             result.onSuccess {
-                _calendarSchedule.value = it
+                _calendarData.value = it
             }.onFailure { e ->
-                _error.value = e.localizedMessage ?: "캘린더 일정 조회에 실패했습니다."
+                _error.value = e.localizedMessage ?: "캘린더 조회에 실패했습니다."
             }
         }
     }
