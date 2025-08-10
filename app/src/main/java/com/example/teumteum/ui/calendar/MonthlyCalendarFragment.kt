@@ -99,7 +99,6 @@ class MonthlyCalendarFragment : Fragment() {
     private fun renderCalendar(displayMonthDate: LocalDate) {
         val inflater = LayoutInflater.from(context)
         val today = LocalDate.now()
-        val currentMonth = displayMonthDate.monthValue
 
         binding.monthlyCalendarGrid.removeAllViews()
         binding.monthlyCalendarGrid.columnCount = 7
@@ -119,13 +118,15 @@ class MonthlyCalendarFragment : Fragment() {
                 dayText.text = date.dayOfMonth.toString()
                 updateDayUi(requireContext(), dayText, date, selectedDate, today)
 
-                if (date.monthValue != currentMonth) {
+                val inCurrentMonth = YearMonth.from(date) == YearMonth.from(displayMonthDate)
+                if (!inCurrentMonth) {
                     dayText.setTextColor(requireContext().getColor(R.color.teumteum_deactive))
                 }
 
+                // 현재 달인 경우에만 점 표시
                 val key = date.format(dateFormatter)
-                val has = scheduleMap[key] == true
-                dotView.visibility = if (has) View.VISIBLE else View.INVISIBLE
+                val showDotNow = showDot && inCurrentMonth && (scheduleMap[key] == true)
+                dotView.visibility = if (showDotNow) View.VISIBLE else View.INVISIBLE
 
                 dayText.setOnClickListener {
                     selectedDate = date
