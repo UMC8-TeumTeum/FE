@@ -61,7 +61,6 @@ class MonthlyCalendarFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         setupObservers()
         refreshMonth()
     }
@@ -73,29 +72,27 @@ class MonthlyCalendarFragment : Fragment() {
 
     private fun setupCalendar(displayMonthDate: LocalDate) {
         val yearMonth = YearMonth.from(displayMonthDate)
+
         val firstDay = yearMonth.atDay(1)
-        val daysInMonth = yearMonth.lengthOfMonth()
+        val lastDay  = yearMonth.atEndOfMonth()
 
-        val firstDayOfWeek = firstDay.dayOfWeek.value % 7
+        fun dow0Sun(d: LocalDate) = d.dayOfWeek.value % 7
 
-        val tempDateList = mutableListOf<LocalDate?>()
+        // 시작일: 해당 달 1일이 속한 주의 '일요일'
+        val startDate = firstDay.minusDays(dow0Sun(firstDay).toLong())
 
-        val prevMonth = yearMonth.minusMonths(1)
-        val prevMonthLastDay = prevMonth.lengthOfMonth()
-        for (i in firstDayOfWeek - 1 downTo 0) {
-            tempDateList.add(prevMonth.atDay(prevMonthLastDay - i))
+        // 종료일: 해당 달 말일이 속한 주의 '토요일'
+        val endDate = lastDay.plusDays((6 - dow0Sun(lastDay)).toLong())
+
+        // startDate ~ endDate 까지 채우기
+        val temp = mutableListOf<LocalDate>()
+        var cur = startDate
+        while (!cur.isAfter(endDate)) {
+            temp.add(cur)
+            cur = cur.plusDays(1)
         }
 
-        for (day in 1..daysInMonth) {
-            tempDateList.add(yearMonth.atDay(day))
-        }
-
-        val nextMonth = yearMonth.plusMonths(1)
-        while (tempDateList.size < 35) {
-            tempDateList.add(nextMonth.atDay(tempDateList.size - daysInMonth - firstDayOfWeek + 1))
-        }
-
-        this.dateList = tempDateList
+        this.dateList = temp
         renderCalendar(displayMonthDate)
     }
 
@@ -106,10 +103,10 @@ class MonthlyCalendarFragment : Fragment() {
 
         binding.monthlyCalendarGrid.removeAllViews()
         binding.monthlyCalendarGrid.columnCount = 7
+        binding.monthlyCalendarGrid.rowCount = dateList.size / 7
 
         dateList.forEachIndexed { index, date ->
-            val cellView =
-                inflater.inflate(R.layout.item_day_cell, binding.monthlyCalendarGrid, false)
+            val cellView = inflater.inflate(R.layout.item_day_cell, binding.monthlyCalendarGrid, false)
             val dayText = cellView.findViewById<TextView>(R.id.day_text)
             val dotView = cellView.findViewById<View>(R.id.dot_view)
 
