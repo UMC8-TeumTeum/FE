@@ -81,17 +81,20 @@ class PromiseDetailBottomSheet(
 
 
         //  성공 메시지
-        viewModel.successMessage.observe(viewLifecycleOwner) { message ->
-            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-            dismiss()
-        }
-
-        //  에러 메시지
-        viewModel.errorMessage.observe(viewLifecycleOwner) { error ->
-            error?.let {
-                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+        viewModel.successMessage.observe(viewLifecycleOwner) { event ->
+            event.getContentIfNotHandled()?.let { message ->
+                Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+                dismiss()
             }
         }
+
+        // 에러 메시지
+        viewModel.errorMessage.observe(viewLifecycleOwner) { event ->
+            event.getContentIfNotHandled()?.let { err ->
+                Toast.makeText(requireContext(), err, Toast.LENGTH_SHORT).show()
+            }
+        }
+
     }
 
     private fun showParticipantProfiles(detail: TeumScheduleDetailResult) {

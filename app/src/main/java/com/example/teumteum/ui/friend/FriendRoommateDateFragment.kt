@@ -6,10 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import com.bumptech.glide.Glide
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentFriendRoommateDateBinding
 import com.example.teumteum.ui.calendar.IDateClickListener
 import com.example.teumteum.ui.calendar.MonthlyCalendarFragment
+import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.example.teumteum.ui.main.MainActivity
 import com.example.teumteum.utils.getSavedDateOrToday
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,6 +25,13 @@ class FriendRoommateDateFragment : Fragment() {
 
     private var _binding: FragmentFriendRoommateDateBinding? = null
     private val binding get() = _binding!!
+
+    private val viewModel: FriendViewModel by activityViewModels()
+
+    // 전달받은 타겟 유저
+    private var targetUserId: Int = -1
+    private var targetNickname: String? = null
+    private var targetProfileUrl: String? = null
 
     private var selectedDate: LocalDate? = null
     private val today: LocalDate = LocalDate.now()
@@ -46,6 +56,15 @@ class FriendRoommateDateFragment : Fragment() {
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let {
+            targetUserId = it.getInt("targetUserId")
+            targetNickname = it.getString("targetNickname")
+            targetProfileUrl = it.getString("targetProfileUrl")
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -63,6 +82,29 @@ class FriendRoommateDateFragment : Fragment() {
         setupNavigationButtons()
         updateCalendarFragment()
 
+        // 2-1) 좌측 = 상대(타겟) 표시
+        binding.profileNicknameTv1.text = targetNickname ?: "상대"
+        Glide.with(binding.profileIv1)
+            .load(targetProfileUrl)
+            .placeholder(R.drawable.gray_teum)
+            .error(R.drawable.gray_teum)
+            .circleCrop()
+            .into(binding.profileIv1)
+
+        // 2-2) 우측 = 나 표시 (ViewModel에서 내 프로필 관찰)
+        viewModel.fetchMyInfo() // 최초 1회 로딩
+        viewModel.myNickname.observe(viewLifecycleOwner) { myNick ->
+            binding.profileNicknameTv2.text = myNick ?: "나"
+        }
+        viewModel.myProfileUrl.observe(viewLifecycleOwner) { myUrl ->
+            Glide.with(this)
+                .load(myUrl)
+                .placeholder(R.drawable.gray_teum)
+                .error(R.drawable.gray_teum)
+                .circleCrop()
+                .into(binding.profileIv2)
+        }
+
         // 초기 버튼 상태 비활성화
         binding.nextBtn.isEnabled = false
         binding.nextBtn.setBackgroundColor(Color.parseColor("#F6F6F6"))
@@ -70,10 +112,7 @@ class FriendRoommateDateFragment : Fragment() {
 
         // 뒤로가기 버튼
         binding.btnBack.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, FriendFragment())
-                .addToBackStack(null)
-                .commit()
+            parentFragmentManager.popBackStack()
         }
 
         binding.nextBtn.setOnClickListener {
@@ -84,6 +123,15 @@ class FriendRoommateDateFragment : Fragment() {
 
             val bundle = Bundle().apply {
                 putString("selected_date", formattedDate)
+
+                // 상대방 정보
+                putInt("targetUserId", targetUserId)
+                putString("targetNickname", targetNickname)
+                putString("targetProfileUrl", targetProfileUrl)
+
+                //  내 정보
+                putString("myNickname", viewModel.myNickname.value)
+                putString("myProfileUrl", viewModel.myProfileUrl.value)
             }
 
             val fragment = FriendRoommateFriendFragment().apply {

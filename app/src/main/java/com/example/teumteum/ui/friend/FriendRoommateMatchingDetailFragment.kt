@@ -78,12 +78,11 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
         }
 
 
+        // 뒤로가기 버튼 처리
         binding.btnBack.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, FriendRoommateTimeFragment())
-                .addToBackStack(null)
-                .commit()
+            parentFragmentManager.popBackStack()
         }
+
         setupTimePickers()
 
         // 초기 버튼 상태 설정

@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import android.util.Log
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.teumteum.R
@@ -26,8 +27,13 @@ class FriendFragment : Fragment() {
 
     private var _binding: FragmentFriendBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: FriendViewModel by viewModels()
+
+    // ViewModel은 activityViewModels()로 공유
+    private val viewModel: FriendViewModel by activityViewModels()
+
     private lateinit var recommendAdapter: RecommendAdapter
+    private lateinit var followingAdapter: FollowingAdapter
+    private lateinit var followerAdapter: FollowerAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -38,6 +44,17 @@ class FriendFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        //  내 정보(닉네임, 프로필) 가져오기
+        viewModel.fetchMyInfo()
+
+        val defaultTab = arguments?.getString("defaultTab", "following")
+
+        if (defaultTab == "follower") {
+            binding.tabFollower.performClick()
+        } else {
+            binding.tabFollowing.performClick()
+        }
 
         recommendAdapter = RecommendAdapter(
             onCardClick = { item: TeumReceivedItem, position: Int ->
@@ -51,7 +68,6 @@ class FriendFragment : Fragment() {
                         putInt("selectedPosition", position)
                     }
                 }
-
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.main_frm, fragment)
                     .addToBackStack(null)
@@ -59,9 +75,132 @@ class FriendFragment : Fragment() {
             }
         )
 
+        followingAdapter = FollowingAdapter(
+            data = emptyList(),
+            onProfileClick = { user ->
+                val fragment = FriendProfileFollowFragment().apply {
+                    arguments = Bundle().apply {
+                        putInt("userId", user.userId)
+                        putString("fromTab", "following")
+                    }
+                }
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.main_frm, fragment)
+                    .addToBackStack(null)
+                    .commit()
+            },
+            onSendClick = { user ->
+                val f = FriendRoommateDateFragment().apply {
+                    arguments = Bundle().apply {
+                        putInt("targetUserId", user.userId)
+                        putString("targetNickname", user.nickname)
+                        putString("targetProfileUrl", user.profileImageUrl)
+                    }
+                }
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.main_frm, f)
+                    .addToBackStack(null)
+                    .commit()
+            },
+            onStarClick = { userId ->
+                viewModel.toggleFavorite(userId)
+            }
+        )
+
+        // 팔로워 어댑터
+        followerAdapter = FollowerAdapter(
+            data = emptyList(),
+            onProfileClick = { user ->
+                viewModel.getFriendProfile(user.userId) { profile ->
+                    val fragment = if (profile.following) {
+                        FriendProfileFollowingFragment().apply {
+                            arguments = Bundle().apply {
+                                putInt("userId", profile.userId)
+                                putString("name", profile.name)
+                                putString("field", profile.field)
+                                putString("imageUrl", profile.profileImageUrl)
+                                putString("fromTab", "follower") // 🔹 탭 정보 추가
+                            }
+                        }
+                    } else {
+                        FriendProfileFollowFragment().apply {
+                            arguments = Bundle().apply {
+                                putInt("userId", profile.userId)
+                                putString("fromTab", "follower") // 🔹 탭 정보 추가
+                            }
+                        }
+                    }
+                    parentFragmentManager.beginTransaction()
+                        .replace(R.id.main_frm, fragment)
+                        .addToBackStack(null)
+                        .commit()
+                }
+            },
+            onSendClick = { user ->
+                viewModel.getFriendProfile(user.userId) { profile ->
+                    if (profile.following) {
+                        val f = FriendRoommateDateFragment().apply {
+                            arguments = Bundle().apply {
+                                putInt("targetUserId", profile.userId)
+                                putString("targetNickname", profile.name)
+                                putString("targetProfileUrl", profile.profileImageUrl)
+                            }
+                        }
+                        parentFragmentManager.beginTransaction()
+                            .replace(R.id.main_frm, f)
+                            .addToBackStack(null)
+                            .commit()
+                    } else {
+                        val frag = FriendProfileFollowFragment().apply {
+                            arguments = Bundle().apply {
+                                putInt("userId", profile.userId)
+                                putString("fromTab", "follower")
+                            }
+                        }
+                        parentFragmentManager.beginTransaction()
+                            .replace(R.id.main_frm, frag)
+                            .addToBackStack(null)
+                            .commit()
+                    }
+                }
+            }
+        )
+
+        // 리사이클러뷰 세팅
+        binding.followingRecyclerView.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = followingAdapter
+        }
+
+        binding.followerRecyclerView.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = followerAdapter
+        }
+
         binding.recommendRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
             adapter = recommendAdapter
+        }
+
+        // 탭 클릭 리스너
+        binding.tabFollowing.setOnClickListener {
+            binding.tabFollowing.setTextColor(Color.parseColor("#0F0F0F"))
+            binding.tabFollower.setTextColor(Color.parseColor("#B1B2B3"))
+            binding.followingRecyclerView.visibility = View.VISIBLE
+            binding.followerRecyclerView.visibility = View.GONE
+
+            // 팔로잉 목록 조회
+            viewModel.getFollowingUsers()
+        }
+
+        binding.tabFollower.setOnClickListener {
+            binding.tabFollowing.setTextColor(Color.parseColor("#B1B2B3"))
+            binding.tabFollower.setTextColor(Color.parseColor("#0F0F0F"))
+            binding.followingRecyclerView.visibility = View.GONE
+            binding.followerRecyclerView.visibility = View.VISIBLE
+
+            // 팔로워 목록 조회
+            viewModel.getFollowerUsers()
         }
 
         binding.btnAlarm.setOnClickListener {
@@ -78,66 +217,47 @@ class FriendFragment : Fragment() {
                 .commit()
         }
 
-        val followingAdapter = FollowingAdapter(
-            data = emptyList(),
-            onProfileClick = { user ->
-                val fragment = FriendProfileFollowFragment().apply {
-                    arguments = Bundle().apply {
-                        putInt("userId", user.userId)
-                    }
-                }
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.main_frm, fragment)
-                    .addToBackStack(null)
-                    .commit()
-            },
-            onSendClick = { user ->
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.main_frm, FriendRoommateDateFragment())
-                    .addToBackStack(null)
-                    .commit()
-            }
-        )
-
-        val followerAdapter = FollowerAdapter(emptyList())
-
-        binding.followerRecyclerView.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = followerAdapter
-        }
-
-        binding.followingRecyclerView.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = followingAdapter
-        }
-
-        binding.tabFollowing.setOnClickListener {
-            binding.tabFollowing.setTextColor(Color.parseColor("#0F0F0F"))
-            binding.tabFollower.setTextColor(Color.parseColor("#B1B2B3"))
-            binding.followingRecyclerView.visibility = View.VISIBLE
-            binding.followerRecyclerView.visibility = View.GONE
-        }
-
-        binding.tabFollower.setOnClickListener {
-            binding.tabFollowing.setTextColor(Color.parseColor("#B1B2B3"))
-            binding.tabFollower.setTextColor(Color.parseColor("#0F0F0F"))
-            binding.followingRecyclerView.visibility = View.GONE
-            binding.followerRecyclerView.visibility = View.VISIBLE
-        }
-
         binding.viewPromiseBtn.setOnClickListener {
+            val myNickname = viewModel.myNickname.value ?: ""
+            val myProfileUrl = viewModel.myProfileUrl.value ?: ""
+
+            val frag = FriendPromiseFragment().apply {
+                arguments = Bundle().apply {
+                    putString("nickname", myNickname)
+                    putString("profileImageUrl", myProfileUrl)
+                }
+            }
+
+            // 3) 전달한 인스턴스(frag)로 교체
             parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, FriendPromiseFragment())
+                .replace(R.id.main_frm, frag)
                 .addToBackStack(null)
                 .commit()
         }
-        viewModel.successMessage.observe(viewLifecycleOwner) { msg ->
-            Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+
+        // ViewModel 옵저버 세팅
+        viewModel.followingUsers.observe(viewLifecycleOwner) { list ->
+            followingAdapter.updateData(list)
         }
 
-        viewModel.errorMessage.observe(viewLifecycleOwner) { msg ->
-            msg?.let {
-                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+        viewModel.favoriteMap.observe(viewLifecycleOwner) { favMap ->
+            followingAdapter.setFavoriteMap(favMap)
+        }
+
+        //  추가: 팔로워 목록 옵저버
+        viewModel.followerUsers.observe(viewLifecycleOwner) { list ->
+            followerAdapter.updateData(list)
+        }
+
+        viewModel.successMessage.observe(viewLifecycleOwner) { event ->
+            event.getContentIfNotHandled()?.let { msg ->
+                Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        viewModel.errorMessage.observe(viewLifecycleOwner) { event ->
+            event.getContentIfNotHandled()?.let { msg ->
+                Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -149,13 +269,15 @@ class FriendFragment : Fragment() {
                 recommendAdapter.setTeumList(teumList)
             } else {
                 Log.d("RECEIVED_FRAGMENT", "틈 요청이 없습니다.")
-
                 binding.emptyTeumRequestLayout.visibility = View.VISIBLE
                 binding.recommendRecyclerView.visibility = View.GONE
             }
         }
 
         viewModel.getTeumRequests()
+
+        // 탭 팔로잉 기본 선택
+        binding.tabFollowing.performClick()
     }
 
     override fun onResume() {
@@ -163,8 +285,10 @@ class FriendFragment : Fragment() {
         (activity as? MainActivity)?.showBottomBar()
     }
 
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
 }
+
