@@ -28,8 +28,8 @@ class TodoViewModel @Inject constructor(
     private val _todolistItems = MutableLiveData<List<TodoListResult>>()
     val todolistItems: LiveData<List<TodoListResult>> get() = _todolistItems
 
-    private val _onBoardingReminders = MutableLiveData<GetOnboardingReminders>()
-    val onBoardingReminders: LiveData<GetOnboardingReminders> = _onBoardingReminders
+    private val _onBoardingReminders = MutableLiveData<List<Int>>()
+    val onBoardingReminders: LiveData<List<Int>> = _onBoardingReminders
 
     private val _registerSuccess = MutableLiveData<Boolean>()
     val registerSuccess: LiveData<Boolean> get() = _registerSuccess
@@ -109,8 +109,8 @@ class TodoViewModel @Inject constructor(
         viewModelScope.launch {
             val result = todoRepository.getOnboardingReminders()
 
-            result.onSuccess {
-                _onBoardingReminders.value = it
+            result.onSuccess { dto ->
+                _onBoardingReminders.value = dto.reminders ?: emptyList()
             }.onFailure { e ->
                 _errorMessage.value = e.localizedMessage ?: "온보딩 리마인드 알림 조회에 실패했습니다."
             }

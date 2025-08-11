@@ -64,6 +64,7 @@
                         android:id="@+id/todo_title_et"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
                         android:background="@color/transparent"
                         android:fontFamily="@font/noto_sans_kr_medium"
                         android:gravity="top|start"
@@ -71,6 +72,7 @@
                         android:textColorHint="@color/text_primary"
                         android:textColor="@color/text_primary"
                         android:inputType="textMultiLine"
+                        android:includeFontPadding="false"
                         android:maxLines="5"
                         android:minHeight="28dp"
                         android:textSize="20sp" />
@@ -425,7 +427,7 @@
                                     android:layout_weight="1"
                                     android:fontFamily="@font/noto_sans_kr_regular"
                                     android:includeFontPadding="false"
-                                    tools:text="30분 전"
+                                    android:text="30분 전"
                                     android:textColor="@color/text_primary"
                                     android:textSize="15sp" />
 
@@ -454,7 +456,7 @@
                                     android:layout_weight="1"
                                     android:fontFamily="@font/noto_sans_kr_regular"
                                     android:includeFontPadding="false"
-                                    tools:text="10분 전"
+                                    android:text="10분 전"
                                     android:textColor="@color/text_primary"
                                     android:textSize="15sp" />
 
