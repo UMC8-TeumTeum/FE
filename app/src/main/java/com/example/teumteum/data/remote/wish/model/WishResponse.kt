@@ -3,10 +3,6 @@ package com.example.teumteum.data.remote.wish.model
 import com.example.teumteum.data.remote.todo.model.TodoResult
 import com.google.gson.annotations.SerializedName
 
-data class RegisterWishResponse(
-    @SerializedName("result") val result: Map<String, String>? = null
-)
-
 data class WishlistResult(
     @SerializedName("wishlist") val wishlist: List<WishlistItem>,
     @SerializedName("pageNumber") val pageNumber: Int,
@@ -22,10 +18,6 @@ data class WishResult(
     @SerializedName("content") val content: String,
     @SerializedName("estimatedDuration") val estimatedDuration: String,
     @SerializedName("categories") val categories: List<WishCategories>
-)
-
-data class EditWishResponse(
-    @SerializedName("result") val result: Map<String, String>?
 )
 
 data class FillWishResponse(

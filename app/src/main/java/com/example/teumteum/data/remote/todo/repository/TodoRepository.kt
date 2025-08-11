@@ -9,6 +9,7 @@ import com.example.teumteum.data.remote.todo.model.TodoListResult
 import com.example.teumteum.data.remote.todo.model.TodoResult
 import com.example.teumteum.data.remote.todo.service.TodoService
 import com.example.teumteum.utils.handleApiResponse
+import com.example.teumteum.utils.handleApiResponseUnit
 import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -50,7 +51,7 @@ class TodoRepository @Inject constructor(
     suspend fun deleteTodo(todoId: Long): Result<Unit> = runCatching {
         val response = todoService.deleteTodo(todoId)
         Log.d("DeleteTodo", "response = ${response.body()}")
-        handleApiResponse(response)
+        handleApiResponseUnit(response)
     }
 
     // 온보딩의 리마인드 알림 정보 조회

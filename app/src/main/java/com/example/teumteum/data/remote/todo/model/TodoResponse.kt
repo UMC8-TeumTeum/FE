@@ -32,5 +32,5 @@ data class GetTodoResult(
 )
 
 data class GetOnboardingReminders(
-    @SerializedName("reminders") val reminders: List<Int>
+    @SerializedName("reminders") val reminders: List<Int>? = null
 )

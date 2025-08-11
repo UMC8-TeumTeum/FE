@@ -3,10 +3,8 @@ package com.example.teumteum.data.remote.wish.service
 import com.example.teumteum.data.remote.wish.model.FillWishResponse
 import com.example.teumteum.data.remote.wish.model.DeleteWishesRequest
 import com.example.teumteum.data.remote.wish.model.EditWishRequest
-import com.example.teumteum.data.remote.wish.model.EditWishResponse
 import com.example.teumteum.data.remote.wish.model.FillWishRequest
 import com.example.teumteum.data.remote.wish.model.RegisterWishRequest
-import com.example.teumteum.data.remote.wish.model.RegisterWishResponse
 import com.example.teumteum.data.remote.wish.model.WishCategories
 import com.example.teumteum.data.remote.wish.model.WishResult
 import com.example.teumteum.data.remote.wish.model.WishlistResult
@@ -23,7 +21,7 @@ import retrofit2.http.Query
 interface WishService {
 
     @POST("/api/wishes")
-    suspend fun registerWish(@Body request: RegisterWishRequest): Response<ApiResponse<RegisterWishResponse>>
+    suspend fun registerWish(@Body request: RegisterWishRequest): Response<ApiResponse<Unit>>
 
     @GET("/api/wishes/wishlist")
     suspend fun getWishlist(@Query("duration") duration: String, @Query("page") page: Int): Response<ApiResponse<WishlistResult>>
@@ -32,7 +30,7 @@ interface WishService {
     suspend fun getWish(@Path("wishId") wishId: Long): Response<ApiResponse<WishResult>>
 
     @PATCH("/api/wishes/{wishId}")
-    suspend fun editWish(@Path("wishId") wishId: Long, @Body request: EditWishRequest): Response<ApiResponse<EditWishResponse>>
+    suspend fun editWish(@Path("wishId") wishId: Long, @Body request: EditWishRequest): Response<ApiResponse<Unit>>
 
     @HTTP(method = "DELETE", path = "/api/wishes", hasBody = true)
     suspend fun deleteWishes(@Body request: DeleteWishesRequest): Response<ApiResponse<Unit>>
