@@ -107,17 +107,4 @@ class WishViewModel @Inject constructor(
             }
         }
     }
-
-    // 위시 카테고리 조회
-    fun getWishCategories() {
-        viewModelScope.launch {
-            val result = wishRepository.getWishCategories()
-
-            result.onSuccess {
-                _wishCategories.value = it
-            }.onFailure { e ->
-                _errorMessage.value = e.localizedMessage ?: "위시 카테고리 조회에 실패했습니다."
-            }
-        }
-    }
 }
