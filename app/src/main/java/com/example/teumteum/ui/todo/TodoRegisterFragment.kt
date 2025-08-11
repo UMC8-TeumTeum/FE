@@ -524,7 +524,7 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
         val description = binding.detailTextEt.text.toString()
         val isPublic = binding.publicToggle01Iv.isChecked
         val includeTeum = binding.includeToggle01Iv.isChecked
-        val remindAlarm = getSelectedRemindAlarms()
+//        val remindAlarm = getSelectedRemindAlarms()
 
         return RegisterTodoRequest(
             title = title,
@@ -533,7 +533,7 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
             description = description,
             isPublic = isPublic,
             includeTeum = includeTeum,
-            remindAlarm = remindAlarm
+//            remindAlarm = remindAlarm
         )
     }
 

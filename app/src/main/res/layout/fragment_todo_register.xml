@@ -132,7 +132,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:fontFamily="@font/noto_sans_kr_regular"
-                                android:text="시작 날짜"
+                                tools:text="시작 날짜"
                                 android:textColor="@color/text_primary"
                                 android:textSize="15sp" />
 

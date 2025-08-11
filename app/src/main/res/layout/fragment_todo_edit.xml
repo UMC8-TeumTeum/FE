@@ -119,7 +119,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:fontFamily="@font/noto_sans_kr_regular"
-                                android:text="4월 2일 (수)"
+                                tools:text="4월 2일 (수)"
                                 android:textColor="@color/text_primary"
                                 android:textSize="15sp" />
 
@@ -130,7 +130,7 @@
                                 android:clickable="true"
                                 android:focusable="true"
                                 android:fontFamily="@font/noto_sans_kr_regular"
-                                android:text="오후 3:00"
+                                tools:text="오후 3:00"
                                 android:textColor="@color/text_primary"
                                 android:textSize="15sp" />
                         </LinearLayout>
@@ -257,7 +257,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:fontFamily="@font/noto_sans_kr_regular"
-                                android:text="4월 2일 (수)"
+                                tools:text="4월 2일 (수)"
                                 android:textColor="@color/text_primary"
                                 android:textSize="15sp" />
 
@@ -268,7 +268,7 @@
                                 android:clickable="true"
                                 android:focusable="true"
                                 android:fontFamily="@font/noto_sans_kr_regular"
-                                android:text="오후 9:00"
+                                tools:text="오후 9:00"
                                 android:textColor="@color/text_primary"
                                 android:textSize="15sp" />
                         </LinearLayout>
