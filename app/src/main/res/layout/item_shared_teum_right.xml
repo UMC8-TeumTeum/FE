@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="21dp">
+
+    <!-- 프로필 -->
+
+    <!-- 이름 -->
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/profile_iv"
+        android:layout_width="38dp"
+        android:layout_height="38dp"
+        android:layout_marginEnd="12dp"
+        android:background="@color/gray"
+        android:scaleType="centerCrop"
+        app:layout_constraintEnd_toStartOf="@+id/nameTv"
+        app:layout_constraintTop_toTopOf="parent"
+        app:shapeAppearanceOverlay="@style/CircleImage" />
+
+    <TextView
+        android:id="@+id/nameTv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="7.5dp"
+        android:fontFamily="@font/noto_sans_kr_medium"
+        android:includeFontPadding="false"
+        android:textColor="@color/text_primary"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="최아연" />
+
+    <!-- 날짜 -->
+    <TextView
+        android:id="@+id/dateTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="8.52dp"
+        android:fontFamily="@font/noto_sans_kr_regular"
+        android:includeFontPadding="false"
+        android:textColor="#0F0F0F"
+        android:textSize="11sp"
+        app:layout_constraintEnd_toStartOf="@+id/dividerIv1"
+        app:layout_constraintTop_toBottomOf="@id/profile_iv"
+        tools:text="25.04.27" />
+
+    <!-- 구분 기호 -->
+    <TextView
+        android:id="@+id/dividerIv1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8.52dp"
+        android:fontFamily="@font/noto_sans_kr_medium"
+        android:text="|"
+        android:textColor="#0F0F0F"
+        android:textSize="12dp"
+        app:layout_constraintBottom_toBottomOf="@id/dateTv"
+        app:layout_constraintEnd_toStartOf="@+id/clockIv"
+        app:layout_constraintTop_toTopOf="@id/dateTv" />
+
+    <!-- 시계 아이콘 -->
+    <ImageView
+        android:id="@+id/clockIv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="2dp"
+        app:layout_constraintBottom_toBottomOf="@id/dateTv"
+        app:layout_constraintEnd_toStartOf="@+id/timeRangeTv"
+        app:layout_constraintTop_toTopOf="@id/dateTv"
+        app:srcCompat="@drawable/friend_timer_outline"
+        app:tint="#0F0F0F" />
+
+    <!-- 시간 범위 -->
+    <TextView
+        android:id="@+id/timeRangeTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/noto_sans_kr_regular"
+        android:includeFontPadding="false"
+        android:textColor="#0F0F0F"
+        android:textSize="11sp"
+        app:layout_constraintBottom_toBottomOf="@id/dateTv"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/dateTv"
+        tools:text="23:00 ~ 00:00" />
+
+    <!-- 말풍선 -->
+    <LinearLayout
+        android:id="@+id/messageLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/bg_teum_time_left"
+        android:orientation="horizontal"
+        android:paddingStart="14dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="14dp"
+        android:paddingBottom="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/dateTv">
+
+        <!-- 제목 -->
+        <TextView
+            android:id="@+id/messageTitleTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:textAlignment="viewEnd"
+            android:fontFamily="@font/noto_sans_kr_medium"
+            android:includeFontPadding="false"
+            android:textColor="#0F0F0F"
+            android:textSize="12sp"
+            tools:text="10년만에 블루문" />
+
+        <!-- 구분 기호 -->
+        <TextView
+            android:id="@+id/separatorTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="4dp"
+            android:gravity="end"
+            android:textAlignment="viewEnd"
+            android:fontFamily="@font/noto_sans_kr_medium"
+            android:includeFontPadding="false"
+            android:text="|"
+            android:textColor="#0F0F0F"
+            android:textSize="12sp" />
+
+        <!-- 내용 -->
+        <TextView
+            android:id="@+id/messageContentTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:textAlignment="viewEnd"
+            android:fontFamily="@font/noto_sans_kr_medium"
+            android:includeFontPadding="false"
+            android:textColor="#0F0F0F"
+            android:textSize="12sp"
+            tools:text="모교 뒷편 야산에서 텐트 치고..." />
+
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
