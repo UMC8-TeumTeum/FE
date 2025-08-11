@@ -1,5 +1,6 @@
 package com.example.teumteum.data.remote.todo.service
 
+import com.example.teumteum.data.remote.todo.model.AlarmStatusRequest
 import com.example.teumteum.data.remote.todo.model.EditTodoRequest
 import com.example.teumteum.data.remote.todo.model.GetOnboardingReminders
 import com.example.teumteum.data.remote.todo.model.GetTodoResult
@@ -11,6 +12,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
@@ -34,4 +36,7 @@ interface TodoService {
 
     @GET("/api/home/todo/user-reminds")
     suspend fun getOnboardingReminders(): Response<ApiResponse<GetOnboardingReminders>>
+
+    @PATCH("/api/home/alarm")
+    suspend fun updateAlarmStatus(@Body request: AlarmStatusRequest): Response<ApiResponse<Unit>>
 }

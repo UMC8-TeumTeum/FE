@@ -1,6 +1,7 @@
 package com.example.teumteum.data.remote.todo.repository
 
 import android.util.Log
+import com.example.teumteum.data.remote.todo.model.AlarmStatusRequest
 import com.example.teumteum.data.remote.todo.model.EditTodoRequest
 import com.example.teumteum.data.remote.todo.model.GetOnboardingReminders
 import com.example.teumteum.data.remote.todo.model.GetTodoResult
@@ -59,5 +60,12 @@ class TodoRepository @Inject constructor(
         val response = todoService.getOnboardingReminders()
         Log.d("GetOnboardingReminders", "response = ${response.body()}")
         handleApiResponse(response)
+    }
+
+    // 투두 알림 on/off
+    suspend fun updateAlarmStatus(request: AlarmStatusRequest): Result<Unit> = runCatching {
+        val response = todoService.updateAlarmStatus(request)
+        Log.d("PatchAlarmStatus", "response = ${response.body()}")
+        handleApiResponseUnit(response)
     }
 }

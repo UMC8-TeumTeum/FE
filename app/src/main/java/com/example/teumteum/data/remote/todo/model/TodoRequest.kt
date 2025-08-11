@@ -1,5 +1,6 @@
 package com.example.teumteum.data.remote.todo.model
 
+import com.example.teumteum.data.remote.todo.model.enums.AlarmStatus
 import com.google.gson.annotations.SerializedName
 
 data class RegisterTodoRequest(
@@ -20,4 +21,9 @@ data class EditTodoRequest(
     @SerializedName("isPublic") val isPublic: Boolean,
     @SerializedName("includeTeum") val includeTeum: Boolean,
     @SerializedName("remindAlarm") val remindAlarm: List<ReminderAlarm>? = null
+)
+
+data class AlarmStatusRequest(
+    @SerializedName("todoId") val todoId: Long,
+    @SerializedName("alarmStatus") var alarmStatus: AlarmStatus
 )

@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.teumteum.data.remote.todo.model.AlarmStatusRequest
 import com.example.teumteum.data.remote.todo.model.EditTodoRequest
 import com.example.teumteum.data.remote.todo.model.GetOnboardingReminders
 import com.example.teumteum.data.remote.todo.model.GetTodoResult
@@ -30,6 +31,9 @@ class TodoViewModel @Inject constructor(
 
     private val _onBoardingReminders = MutableLiveData<List<Int>>()
     val onBoardingReminders: LiveData<List<Int>> = _onBoardingReminders
+
+    private val _alarmStatusUpdated = MutableLiveData<Boolean>()
+    val alarmStatusUpdated: LiveData<Boolean> get() = _alarmStatusUpdated
 
     private val _registerSuccess = MutableLiveData<Boolean>()
     val registerSuccess: LiveData<Boolean> get() = _registerSuccess
@@ -113,6 +117,20 @@ class TodoViewModel @Inject constructor(
                 _onBoardingReminders.value = dto.reminders ?: emptyList()
             }.onFailure { e ->
                 _errorMessage.value = e.localizedMessage ?: "온보딩 리마인드 알림 조회에 실패했습니다."
+            }
+        }
+    }
+
+    // 투두 알림 on/off
+    fun patchAlarmStatus(request: AlarmStatusRequest) {
+        viewModelScope.launch {
+            val result = todoRepository.updateAlarmStatus(request)
+
+            result.onSuccess {
+                _alarmStatusUpdated.value = true
+            }.onFailure { e ->
+                _alarmStatusUpdated.value = false
+                _errorMessage.value = e.localizedMessage ?: "투두 알림 변경에 실패했습니다."
             }
         }
     }
