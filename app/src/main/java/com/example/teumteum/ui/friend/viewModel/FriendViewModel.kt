@@ -609,6 +609,7 @@ class FriendViewModel @Inject constructor(
         }
     }
 
+    //틈 재요청
     fun resendTeumRequest(
         requestId: Int,
         body: ResendTeumRequest,
@@ -621,4 +622,5 @@ class FriendViewModel @Inject constructor(
                 .onFailure { e -> onError(e.message ?: "재요청 실패") }
         }
     }
+
 }
