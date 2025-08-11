@@ -43,13 +43,13 @@ class HomeFragment : Fragment(), IDateClickListener {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: HomeViewModel by activityViewModels()
-
     private val today: LocalDate = LocalDate.now()
     private lateinit var selectedDate: LocalDate
 
     private lateinit var adapter: TodoListRVAdapter
     private var todolistItems: List<TodoListResult> = emptyList()
+
+    private val viewModel: HomeViewModel by activityViewModels()
     private val todoViewModel: TodoViewModel by activityViewModels()
     private val myHomeViewModel: MyHomeViewModel by activityViewModels()
 

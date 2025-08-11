@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.todo.model.TodoListResult
 import com.example.teumteum.data.remote.todo.model.enums.AlarmStatus
+import com.example.teumteum.data.remote.todo.model.enums.ScheduleType
 import com.example.teumteum.databinding.ItemTodolistBinding
 import com.example.teumteum.ui.todo.TodoEditFragment
 
@@ -32,7 +33,7 @@ class TodoListRVAdapter(private val fragmentManager: FragmentManager, private va
             if (item.isPublic) R.drawable.ic_unlock_sv else R.drawable.ic_lock_sv
         )
 
-        if (item.type.name == "ROUTINE") {
+        if (item.type == ScheduleType.ROUTINE) {
             binding.root.setCardBackgroundColor(ContextCompat.getColor(binding.root.context, R.color.main_2))
         } else {
             binding.root.setCardBackgroundColor(ContextCompat.getColor(binding.root.context, R.color.white))

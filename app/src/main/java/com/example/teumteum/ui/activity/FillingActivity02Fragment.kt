@@ -35,7 +35,7 @@ class FillingActivity02Fragment : Fragment() {
         AiRecommend(3, "독서하기", "30m", "자기계발")
     )
 
-    private val activityViewModel: ActivityViewModel by activityViewModels()
+    private val viewModel: ActivityViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -89,7 +89,7 @@ class FillingActivity02Fragment : Fragment() {
                 categoryId = categoryId,
                 customCategory = customCategory
             )
-            activityViewModel.activityWish(request)
+            viewModel.activityWish(request)
 
         }
 
@@ -106,7 +106,7 @@ class FillingActivity02Fragment : Fragment() {
 
     private fun setupObservers() {
 
-        activityViewModel.activityWishes.observe(viewLifecycleOwner) { wishes ->
+        viewModel.activityWishes.observe(viewLifecycleOwner) { wishes ->
             val filtered = wishes.filter { it.title.isNotBlank() }
             Log.d("위시확인", "받은 위시 개수: ${filtered.size}")
             filtered.forEach {
@@ -127,7 +127,7 @@ class FillingActivity02Fragment : Fragment() {
             wishAdapter.notifyDataSetChanged()
         }
 
-        activityViewModel.errorMessage.observe(viewLifecycleOwner) { errorMsg ->
+        viewModel.errorMessage.observe(viewLifecycleOwner) { errorMsg ->
             errorMsg?.let {
                 Log.e("FillingActivity02Fragment", "에러 발생: $it")
             }

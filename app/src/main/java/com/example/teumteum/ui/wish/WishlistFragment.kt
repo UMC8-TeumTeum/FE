@@ -28,7 +28,7 @@ class WishlistFragment() : Fragment() {
 
     private var wishlistItems: List<WishlistItem> = emptyList()
 
-    private val wishViewModel: WishViewModel by activityViewModels()
+    private val viewModel: WishViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,8 +38,8 @@ class WishlistFragment() : Fragment() {
         _binding = FragmentWishlistBinding.inflate(inflater, container, false)
 
         binding.editTv.setOnClickListener {
-            val currentList = wishViewModel.wishlistItems.value ?: emptyList()
-            wishViewModel.updateWishlistItems(currentList.toMutableList())
+            val currentList = viewModel.wishlistItems.value ?: emptyList()
+            viewModel.updateWishlistItems(currentList.toMutableList())
 
             parentFragmentManager.beginTransaction()
                 .replace(R.id.main_frm, WishlistEditFragment())
@@ -99,7 +99,7 @@ class WishlistFragment() : Fragment() {
             refreshWishlist()
         }
 
-        wishViewModel.getWishlist(duration = "all", page = 1)
+        viewModel.getWishlist(duration = "all", page = 1)
     }
 
     private fun setupTimeFilterButtons() {
@@ -169,7 +169,7 @@ class WishlistFragment() : Fragment() {
     }
 
     private fun setupObservers() {
-        wishViewModel.wishlistItems.observe(viewLifecycleOwner) { itemList ->
+        viewModel.wishlistItems.observe(viewLifecycleOwner) { itemList ->
             wishlistItems = itemList
 
             if (itemList.isEmpty()) {
@@ -182,12 +182,12 @@ class WishlistFragment() : Fragment() {
             }
         }
 
-        wishViewModel.errorMessage.observe(viewLifecycleOwner) { error ->
+        viewModel.errorMessage.observe(viewLifecycleOwner) { error ->
             Toast.makeText(requireContext(), "위시리스트 조회 실패: $error", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun refreshWishlist() {
-        wishViewModel.getWishlist(duration = "all", page = 1)
+        viewModel.getWishlist(duration = "all", page = 1)
     }
 }

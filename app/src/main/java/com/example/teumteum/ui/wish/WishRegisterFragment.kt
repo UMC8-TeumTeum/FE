@@ -33,7 +33,7 @@ class WishRegisterFragment : BottomSheetDialogFragment() {
     private var isWishSelected = true
     private var isFromWish: Boolean = false
 
-    private val wishViewModel: WishViewModel by activityViewModels()
+    private val viewModel: WishViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,7 +49,7 @@ class WishRegisterFragment : BottomSheetDialogFragment() {
 
         isFromWish = arguments?.getBoolean("isFromWish") ?: false
 
-//        wishViewModel.getWishCategories()
+//        viewModel.getWishCategories()
         setupUI()
         setupObservers()
     }
@@ -95,7 +95,7 @@ class WishRegisterFragment : BottomSheetDialogFragment() {
 
         binding.btnWishRegister.setOnClickListener {
             if (validateInputs()) {
-                wishViewModel.registerWish(getWishRequest())
+                viewModel.registerWish(getWishRequest())
             }
         }
 
@@ -204,11 +204,11 @@ class WishRegisterFragment : BottomSheetDialogFragment() {
     }
 
     private fun setupObservers() {
-//        wishViewModel.wishCategories.observe(viewLifecycleOwner) { categoryList ->
+//        viewModel.wishCategories.observe(viewLifecycleOwner) { categoryList ->
 //            setupCategoryButtons(categoryList)
 //        }
 
-        wishViewModel.registerSuccess.observe(viewLifecycleOwner) { isSuccess ->
+        viewModel.registerSuccess.observe(viewLifecycleOwner) { isSuccess ->
             if (isSuccess) {
                 Toast.makeText(requireContext(), "위시가 등록되었습니다.", Toast.LENGTH_SHORT).show()
                 parentFragmentManager.setFragmentResult("wish_register", Bundle())
@@ -222,7 +222,7 @@ class WishRegisterFragment : BottomSheetDialogFragment() {
             }
         }
 
-        wishViewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
+        viewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
             Log.e("WishRegister", "위시 등록 실패: $errorMessage")
         }
     }

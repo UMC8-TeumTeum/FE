@@ -28,7 +28,7 @@ class FillingActivity01Fragment : Fragment() {
     private var selectedCategoryText: String? = null
     private var selectedCategoryButton: View? = null
 
-    private val activityViewModel: ActivityViewModel by activityViewModels()
+    private val viewModel: ActivityViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -144,7 +144,7 @@ class FillingActivity01Fragment : Fragment() {
                 customCategory = binding.fillingActivityCategoryEt.text.toString()
             )
 
-            activityViewModel.activityWish(request)
+            viewModel.activityWish(request)
 
             val bundle = Bundle().apply {
                 putString("selectedTime", selectedTimeTag)
@@ -185,7 +185,7 @@ class FillingActivity01Fragment : Fragment() {
 
     private fun setupObservers() {
 
-        activityViewModel.errorMessage.observe(viewLifecycleOwner) { errorMsg ->
+        viewModel.errorMessage.observe(viewLifecycleOwner) { errorMsg ->
             errorMsg?.let {
                 Log.e("FillingActivity01Fragment", "에러 발생: $it")
             }

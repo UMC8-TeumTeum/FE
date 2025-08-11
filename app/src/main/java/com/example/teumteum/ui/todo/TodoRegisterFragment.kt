@@ -70,7 +70,7 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
     private var calendarFragmentEnd: MonthlyCalendarFragment? = null
     private var isStartDateSelected = true
 
-    private val todoViewModel: TodoViewModel by activityViewModels()
+    private val viewModel: TodoViewModel by activityViewModels()
     private val myHomeViewModel: MyHomeViewModel by activityViewModels()
 
     private var sleepStart: LocalTime? = null
@@ -566,7 +566,7 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
         }
 
         val request = getTodoRequest()
-        todoViewModel.registerTodo(request)
+        viewModel.registerTodo(request)
     }
 
     private fun isOverlappingWithSleep(startMin: Int, endMin: Int): Boolean {
@@ -580,7 +580,7 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
 
     private fun setupObservers() {
 
-        todoViewModel.registerSuccess.observe(viewLifecycleOwner) {
+        viewModel.registerSuccess.observe(viewLifecycleOwner) {
             Toast.makeText(requireContext(), "투두가 성공적으로 등록되었습니다.", Toast.LENGTH_SHORT).show()
             parentFragmentManager.setFragmentResult("todo_register", Bundle())
 
@@ -592,7 +592,7 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
             }
         }
 
-        todoViewModel.errorMessage.observe(viewLifecycleOwner) { errorMsg ->
+        viewModel.errorMessage.observe(viewLifecycleOwner) { errorMsg ->
             Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_SHORT).show()
         }
     }

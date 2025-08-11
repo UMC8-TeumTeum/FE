@@ -61,7 +61,7 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
     private var calendarFragmentEnd: MonthlyCalendarFragment? = null
     private var isStartDateSelected = true
 
-    private val todoViewModel: TodoViewModel by activityViewModels()
+    private val viewModel: TodoViewModel by activityViewModels()
     private val myHomeViewModel: MyHomeViewModel by activityViewModels()
 
     private val alarmLabelToMinutes = mapOf(
@@ -175,7 +175,7 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
         }
 
         if (todoId != -1L) {
-            todoViewModel.getTodo(todoId)
+            viewModel.getTodo(todoId)
         }
 
         myHomeViewModel.profileImageUrl.observe(viewLifecycleOwner) { imageUrl ->
@@ -230,7 +230,7 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
         }
 
         val request = getTodoRequest()
-        todoViewModel.editTodo(todoId, request)
+        viewModel.editTodo(todoId, request)
     }
 
     private fun getSelectedRemindAlarms(): List<Int> {
@@ -539,7 +539,7 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
             .create()
 
         dialogBinding.todoConfirmTv.setOnClickListener {
-            todoViewModel.deleteTodo(todoId)
+            viewModel.deleteTodo(todoId)
             dialog.dismiss()
             dismiss()
         }
@@ -662,7 +662,7 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
     }
 
     private fun setupObservers() {
-        todoViewModel.todo.observe(viewLifecycleOwner) { todo ->
+        viewModel.todo.observe(viewLifecycleOwner) { todo ->
             if (todo == null) return@observe
 
             binding.todoTitleEt.setText(todo.title)
@@ -784,7 +784,7 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
             parentFragmentManager.setFragmentResult("todo_get", Bundle())
         }
 
-        todoViewModel.editSuccess.observe(viewLifecycleOwner) {
+        viewModel.editSuccess.observe(viewLifecycleOwner) {
             if (it == true) {
                 Toast.makeText(requireContext(), "투두가 성공적으로 수정되었습니다.", Toast.LENGTH_SHORT).show()
                 parentFragmentManager.setFragmentResult("todo_edit", Bundle())
@@ -793,7 +793,7 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
         }
 
         // 삭제 성공 시
-        todoViewModel.deleteSuccess.observe(viewLifecycleOwner) {
+        viewModel.deleteSuccess.observe(viewLifecycleOwner) {
             if (it == true) {
                 Toast.makeText(requireContext(), "투두가 성공적으로 삭제되었습니다.", Toast.LENGTH_SHORT).show()
                 parentFragmentManager.setFragmentResult("todo_delete", Bundle())
@@ -801,7 +801,7 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
             }
         }
 
-        todoViewModel.errorMessage.observe(viewLifecycleOwner) { errorMsg ->
+        viewModel.errorMessage.observe(viewLifecycleOwner) { errorMsg ->
             Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_SHORT).show()
         }
     }

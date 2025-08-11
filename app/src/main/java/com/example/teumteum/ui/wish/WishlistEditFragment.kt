@@ -25,7 +25,7 @@ class WishlistEditFragment() : Fragment() {
     private lateinit var adapter: WishlistEditRVAdapter
     private lateinit var editedWishlist: MutableList<WishlistItem>
 
-    private val wishViewModel: WishViewModel by activityViewModels()
+    private val viewModel: WishViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,7 +35,7 @@ class WishlistEditFragment() : Fragment() {
         _binding = FragmentWishlistEditBinding.inflate(inflater, container, false)
 
         // ViewModel에서 데이터 복사
-        editedWishlist = wishViewModel.wishlistItems.value?.map { it.copy() }?.toMutableList() ?: mutableListOf()
+        editedWishlist = viewModel.wishlistItems.value?.map { it.copy() }?.toMutableList() ?: mutableListOf()
 
         return binding.root
     }
@@ -87,7 +87,7 @@ class WishlistEditFragment() : Fragment() {
 
             if (deletedIds.isNotEmpty()) {
                 val request = DeleteWishesRequest(deletedIds)
-                wishViewModel.deleteWishes(request)
+                viewModel.deleteWishes(request)
             }
 
             parentFragmentManager.beginTransaction()
@@ -101,14 +101,14 @@ class WishlistEditFragment() : Fragment() {
     }
 
     private fun setupObservers() {
-        wishViewModel.deleteSuccess.observe(viewLifecycleOwner) { isSuccess ->
+        viewModel.deleteSuccess.observe(viewLifecycleOwner) { isSuccess ->
             if (isSuccess) {
                 Toast.makeText(requireContext(), "삭제가 완료되었어요.", Toast.LENGTH_SHORT).show()
 
                 // ViewModel 내 리스트 갱신
                 val deletedIds = editedWishlist.filter { it.isDeleted }.map { it.id }
-                val updatedList = wishViewModel.wishlistItems.value?.filterNot { it.id in deletedIds } ?: emptyList()
-                wishViewModel.updateWishlistItems(updatedList)
+                val updatedList = viewModel.wishlistItems.value?.filterNot { it.id in deletedIds } ?: emptyList()
+                viewModel.updateWishlistItems(updatedList)
 
                 // 삭제 결과 전달
                 parentFragmentManager.setFragmentResult("wish_delete", Bundle())
@@ -120,7 +120,7 @@ class WishlistEditFragment() : Fragment() {
             }
         }
 
-        wishViewModel.errorMessage.observe(viewLifecycleOwner) { error ->
+        viewModel.errorMessage.observe(viewLifecycleOwner) { error ->
             Toast.makeText(requireContext(), "삭제 실패: $error", Toast.LENGTH_SHORT).show()
         }
     }
