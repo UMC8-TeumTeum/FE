@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.teumteum.databinding.FragmentFriendRoommateFriendAddBinding
@@ -23,7 +24,7 @@ class FriendRoommateFriendAddFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var adapter: FriendAddAdapter
-    private val viewModel: FriendViewModel by viewModels()
+    private val viewModel: FriendViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -70,6 +71,11 @@ class FriendRoommateFriendAddFragment : Fragment() {
         // 5) 뒤로가기
         binding.backButton.setOnClickListener {
             val selectedFriends = adapter.getSelectedUserIdsWithInfo() // FriendProfileResult 리스트
+            //뷰모델 저장
+            viewModel.setTeumRequestReceiverUserIds(selectedFriends.map {
+                it.userId
+            })
+
             val result = Bundle().apply {
                 putParcelableArrayList("friends", ArrayList(selectedFriends))
             }

@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentFriendRoommateMatchingDetailBinding
 import com.example.teumteum.ui.friend.adapter.TimeCardAdapter
+import com.example.teumteum.ui.friend.data.SelectedTime
 import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.example.teumteum.ui.main.MainActivity
 import com.example.teumteum.ui.signup.SignUpActivity
@@ -84,8 +85,9 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
         }
 
         // 전송할게요 버튼 클릭 시 dialogFragment 화면 띄우기
-        //Todo: 전송 API 연동
         binding.sendBtn.setOnClickListener {
+            setViewModelData()
+
             val dialog = FriendMatchingPreviewDialog()
             dialog.show(parentFragmentManager, "PreviewDialog")
         }
@@ -344,5 +346,17 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
 
             updateNextButtonState()
         }
+    }
+
+    private fun setViewModelData() {
+        val selectedTime = timeCardAdapter.getSelectedItem()
+        viewModel.setTeumRequestSelectedTime(
+            SelectedTime(
+                startTime = selectedTime!!.startTime,
+                endTime = selectedTime.endTime
+            )
+        )
+        viewModel.setTeumRequestTitle(binding.editTextTitle.text.toString())
+        viewModel.setTeumRequestDescription(binding.editTextDetail.text.toString())
     }
 }
