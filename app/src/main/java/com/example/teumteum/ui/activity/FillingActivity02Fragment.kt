@@ -44,6 +44,8 @@ class FillingActivity02Fragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
+        showLoadingPage()
+
         wishAdapter = WishRecommendRVAdapter(wishList, parentFragmentManager)
         binding.wishRecommendRv.adapter = wishAdapter
 
@@ -65,38 +67,9 @@ class FillingActivity02Fragment : Fragment() {
                 .commit()
         }
 
-        binding.fabRefreshIv.setOnClickListener {
-            val estimatedDuration = arguments?.getString("selectedTime") ?: ""
-            val location = arguments?.getString("location") ?: ""
-            val customCategory = arguments?.getString("customCategory") ?: ""
-            val selectedCategoryText = arguments?.getString("selectedCategory")
+        getFillingActivity()
 
-            val categoryNameToId = mapOf(
-                "자기계발" to 1L,
-                "운동" to 2L,
-                "취미" to 3L,
-                "일상" to 4L,
-                "문화생활" to 5L,
-                "휴식" to 6L
-            )
-            val categoryId = categoryNameToId[selectedCategoryText]
-
-            val wishRequest = ActivityWishRequest(
-                estimatedDuration = estimatedDuration,
-                categoryId = categoryId,
-                customCategory = customCategory
-            )
-            activityViewModel.activityWish(wishRequest)
-
-            val aiRequest = ActivityAiRequest(
-                estimatedDuration = estimatedDuration,
-                location = location,
-                categoryId = categoryId,
-                customCategory = customCategory
-            )
-            activityViewModel.activityAi(aiRequest)
-
-        }
+        binding.fabRefreshIv.setOnClickListener { getFillingActivity() }
 
         binding.fabRefreshIv.post {
             applyBlurShadow(
@@ -106,7 +79,60 @@ class FillingActivity02Fragment : Fragment() {
         }
 
         setupObservers()
+        setupLoadingObserver()
+    }
 
+    private fun getFillingActivity() {
+        val estimatedDuration = arguments?.getString("selectedTime") ?: ""
+        val location = arguments?.getString("location") ?: ""
+        val customCategory = arguments?.getString("customCategory") ?: ""
+        val selectedCategoryText = arguments?.getString("selectedCategory")
+
+        val categoryNameToId = mapOf(
+            "자기계발" to 1L, "운동" to 2L, "취미" to 3L,
+            "일상" to 4L, "문화생활" to 5L, "휴식" to 6L
+        )
+        val categoryId = categoryNameToId[selectedCategoryText]
+
+        activityViewModel.activityWish(
+            ActivityWishRequest(
+                estimatedDuration = estimatedDuration,
+                categoryId = categoryId,
+                customCategory = customCategory
+            )
+        )
+        activityViewModel.activityAi(
+            ActivityAiRequest(
+                estimatedDuration = estimatedDuration,
+                location = location,
+                categoryId = categoryId,
+                customCategory = customCategory
+            )
+        )
+    }
+
+    private fun showLoadingPage() {
+        val tag = LoadingPageFragment.TAG
+        if (parentFragmentManager.findFragmentByTag(tag) == null) {
+            parentFragmentManager.beginTransaction()
+                .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                .add(R.id.main_frm, LoadingPageFragment.newInstance(), tag)
+                .commitAllowingStateLoss()
+        }
+    }
+
+    private fun setupLoadingObserver() {
+        activityViewModel.loading.observe(viewLifecycleOwner) { isLoading ->
+            val tag = LoadingPageFragment.TAG
+            val loading = parentFragmentManager.findFragmentByTag(tag) as? LoadingPageFragment
+            if (isLoading) {
+                // 90%까지 채워두고 로딩 중 상태
+                loading?.animateProgress(90)
+            } else {
+                // 100% 채우고 닫기
+                loading?.completeAndDismiss()
+            }
+        }
     }
 
     private fun setupObservers() {

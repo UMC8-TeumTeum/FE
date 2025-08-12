@@ -33,35 +33,61 @@ class ActivityViewModel @Inject constructor(
     private val _activityAiContents = MutableLiveData<List<ActivityAiResult>>()
     val activityAiContents: LiveData<List<ActivityAiResult>> get() = _activityAiContents
 
+    private val _loading = MutableLiveData(false)
+    val loading: LiveData<Boolean> = _loading
+
+    private var pendingCount = 0
+    private fun startLoading() {
+        pendingCount += 1
+        if (_loading.value != true) _loading.value = true
+    }
+    private fun endLoading() {
+        pendingCount = (pendingCount - 1).coerceAtLeast(0)
+        _loading.value = pendingCount > 0
+    }
+
     // 채움활동 위시리스트 불러오기
     fun activityWish(request: ActivityWishRequest) {
         viewModelScope.launch {
-            val result = activityRepository.activityWish(request)
-            result.onSuccess { response ->
-                _activityWishSuccess.value = true
-                _activityWishes.value = response.result?.wishes
-                    ?.filter { it.title.isNotBlank() }
-                    .orEmpty()
-            }
-            result.onFailure { e ->
-                _errorMessage.value = e.localizedMessage ?: "채움활동 위시 조회에 실패했습니다."
+            startLoading()
+            _errorMessage.value = null
+            try {
+                val result = activityRepository.activityWish(request)
+                result.onSuccess { response ->
+                    _activityWishSuccess.value = true
+                    _activityWishes.value = response.result?.wishes
+                        ?.filter { it.title.isNotBlank() }
+                        .orEmpty()
+                }
+                result.onFailure { e ->
+                    _errorMessage.value = e.localizedMessage ?: "채움활동 위시 조회에 실패했습니다."
+                }
+            } finally {
+                endLoading()
             }
         }
     }
 
-    // 채움활동 ai컨텐츠 불러오기
+    // 채움활동 AI 컨텐츠 불러오기
     fun activityAi(request: ActivityAiRequest) {
         viewModelScope.launch {
-            val result = activityRepository.activityAi(request)
-            result.onSuccess { response ->
-                _activityAiSuccess.value = true
-                _activityAiContents.value = response.result?.aiContents
-                    ?.filter { it.title.isNotBlank() }
-                    .orEmpty()
-            }
-            result.onFailure { e ->
-                _errorMessage.value = e.localizedMessage ?: "채움활동 ai컨텐츠 조회에 실패했습니다."
+            startLoading()
+            _errorMessage.value = null
+            try {
+                val result = activityRepository.activityAi(request)
+                result.onSuccess { response ->
+                    _activityAiSuccess.value = true
+                    _activityAiContents.value = response.result?.aiContents
+                        ?.filter { it.title.isNotBlank() }
+                        .orEmpty()
+                }
+                result.onFailure { e ->
+                    _errorMessage.value = e.localizedMessage ?: "채움활동 AI 컨텐츠 조회에 실패했습니다."
+                }
+            } finally {
+                endLoading()
             }
         }
     }
+
 }
