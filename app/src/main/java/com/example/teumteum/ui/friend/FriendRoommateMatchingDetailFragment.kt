@@ -357,6 +357,12 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
             )
         )
         viewModel.setTeumRequestTitle(binding.editTextTitle.text.toString())
-        viewModel.setTeumRequestDescription(binding.editTextDetail.text.toString())
+        if(binding.editTextDetail.text.isEmpty()){
+            //기본 멘트
+            viewModel.setTeumRequestDescription("같이 빈틈을 채워봐요.")
+        }else{
+            viewModel.setTeumRequestDescription(binding.editTextDetail.text.toString())
+        }
+
     }
 }

@@ -203,13 +203,6 @@ class FriendViewModel @Inject constructor(
     private val _teumRequestMainTargetProfileImage = MutableLiveData<String>()
     val teumRequestMainTargetProfileImage: LiveData<String> get() = _teumRequestMainTargetProfileImage
 
-    val previewTitle = MediatorLiveData<String>().apply {
-        addSource(_teumRequestTitle) { value = it ?: "" }
-    }
-    val previewDescription = MediatorLiveData<String>().apply {
-        addSource(_teumRequestDescription) { value = it ?: "" }
-    }
-
     //Setter
     fun setTeumRequestTitle(v: String)            { _teumRequestTitle.value = v }
     fun setTeumRequestDescription(v: String)      { _teumRequestDescription.value = v }
@@ -220,7 +213,6 @@ class FriendViewModel @Inject constructor(
     fun setTeumRequestMainTargetUserId(v: Int) { _teumRequestMainTargetUserId.value = v }
     fun setTeumRequestMainTargetUserName(v: String)   { _teumRequestMainTargetUserName.value = v }
     fun setTeumRequestMainTargetProfileImage(v: String) { _teumRequestMainTargetProfileImage.value = v }
-
 
     //요청 생성 메소드
     fun buildTeumRequest(): TeumRequest? {
