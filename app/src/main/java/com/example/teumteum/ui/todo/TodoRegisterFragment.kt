@@ -656,4 +656,13 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
             Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_SHORT).show()
         }
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        popupWindow?.dismiss()
+        popupWindow = null
+        calendarFragmentStart = null
+        calendarFragmentEnd = null
+        _binding = null
+    }
 }

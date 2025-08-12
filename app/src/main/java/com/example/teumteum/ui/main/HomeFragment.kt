@@ -20,7 +20,7 @@ import com.example.teumteum.ui.calendar.CalendarMode
 import com.example.teumteum.ui.alarm.AlarmFragment
 import com.example.teumteum.ui.calendar.CalendarVPAdapter
 import com.example.teumteum.ui.activity.FillingActivity01Fragment
-import com.example.teumteum.ui.todo.adapter.TodoListRVAdapter
+import com.example.teumteum.ui.todo.adapter.TodoRVAdapter
 import com.example.teumteum.ui.todo.TodoRegisterFragment
 import com.example.teumteum.ui.wish.WishlistFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -46,7 +46,7 @@ class HomeFragment : Fragment(), IDateClickListener {
     private val today: LocalDate = LocalDate.now()
     private lateinit var selectedDate: LocalDate
 
-    private lateinit var adapter: TodoListRVAdapter
+    private lateinit var adapter: TodoRVAdapter
     private var todolistItems: List<TodoListResult> = emptyList()
 
     private val viewModel: HomeViewModel by activityViewModels()
@@ -54,6 +54,8 @@ class HomeFragment : Fragment(), IDateClickListener {
     private val myHomeViewModel: MyHomeViewModel by activityViewModels()
 
     private var isAM: Boolean = true
+
+    private val TODO_SHEET_TAG = "TodoRegisterSheet"
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -85,15 +87,19 @@ class HomeFragment : Fragment(), IDateClickListener {
         }
 
         binding.fabAddIv.setOnClickListener {
+            (parentFragmentManager.findFragmentByTag(TODO_SHEET_TAG) as? TodoRegisterFragment)?.let { sheet ->
+                if (sheet.dialog?.isShowing == true) return@setOnClickListener
+                sheet.dismissAllowingStateLoss() // 인스턴스 정리
+            }
+
             val scheduleList = viewModel.scheduleList.value ?: emptyList()
             val sleepBlocks = scheduleList.filter { it.type == TimeType.SLEEP }
 
-            val bottomSheet = TodoRegisterFragment().apply {
+            TodoRegisterFragment().apply {
                 arguments = Bundle().apply {
                     putParcelableArrayList("sleepBlocks", ArrayList(sleepBlocks))
                 }
-            }
-            bottomSheet.show(parentFragmentManager, bottomSheet.tag)
+            }.show(parentFragmentManager, TODO_SHEET_TAG)
         }
 
         binding.btnLoadWishlistTv.setOnClickListener {
@@ -127,7 +133,7 @@ class HomeFragment : Fragment(), IDateClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        adapter = TodoListRVAdapter(parentFragmentManager, todolistItems)
+        adapter = TodoRVAdapter(parentFragmentManager, todolistItems)
         binding.todolistRv.adapter = adapter
         val date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 
@@ -399,6 +405,11 @@ class HomeFragment : Fragment(), IDateClickListener {
         todoViewModel.errorMessage.observe(viewLifecycleOwner) { error ->
             Toast.makeText(requireContext(), "투두리스트 조회 실패: $error", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 }

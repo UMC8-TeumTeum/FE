@@ -13,7 +13,7 @@ import com.example.teumteum.data.remote.todo.model.enums.ScheduleType
 import com.example.teumteum.databinding.ItemTodolistBinding
 import com.example.teumteum.ui.todo.TodoEditFragment
 
-class TodoListRVAdapter(private val fragmentManager: FragmentManager, private var todoList: List<TodoListResult>) : RecyclerView.Adapter<TodoListRVAdapter.ViewHolder>() {
+class TodoRVAdapter(private val fragmentManager: FragmentManager, private var todoList: List<TodoListResult>) : RecyclerView.Adapter<TodoRVAdapter.ViewHolder>() {
 
     inner class ViewHolder(val binding: ItemTodolistBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -55,8 +55,11 @@ class TodoListRVAdapter(private val fragmentManager: FragmentManager, private va
             )
 
             binding.ivAlarm.setOnClickListener {
+                item.alarmStatus = if (item.alarmStatus == AlarmStatus.ACTIVE)
+                    AlarmStatus.INACTIVE else AlarmStatus.ACTIVE
+
                 binding.ivAlarm.setImageResource(
-                    if (item.alarmStatus != AlarmStatus.INACTIVE) R.drawable.ic_alarm_on_sv
+                    if (item.alarmStatus == AlarmStatus.INACTIVE) R.drawable.ic_alarm_on_sv
                     else R.drawable.ic_alarm_off_sv
                 )
             }
