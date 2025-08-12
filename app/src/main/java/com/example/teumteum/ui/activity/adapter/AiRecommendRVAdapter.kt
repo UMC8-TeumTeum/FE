@@ -24,7 +24,8 @@ class AiRecommendRVAdapter( private var aiList: List<ActivityAiResult>, private 
         val binding = holder.binding
 
         binding.wishTitleTv.text = item.title
-        binding.wishTimeTv.text = item.estimatedDuration
+        binding.wishTimeTv.text =
+            when (item.estimatedDuration.lowercase()) { "1h" -> "1h-" ; else -> item.estimatedDuration }
 
         binding.fillButton.setOnClickListener {
             val fragment = FillingSetting01Fragment().apply {
