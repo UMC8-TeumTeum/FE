@@ -174,7 +174,7 @@ class FillingActivity01Fragment : Fragment() {
         }
 
         binding.backArrowIv.setOnClickListener {
-            parentFragmentManager.popBackStack()
+            requireActivity().onBackPressedDispatcher.onBackPressed()
         }
 
         binding.searchBtn.setOnClickListener {

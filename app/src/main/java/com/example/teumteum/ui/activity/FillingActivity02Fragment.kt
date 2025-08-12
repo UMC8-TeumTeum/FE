@@ -61,6 +61,10 @@ class FillingActivity02Fragment : Fragment() {
 
         getFillingActivity()
 
+        binding.backArrowIv.setOnClickListener {
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
+
         // 새로고침: 시머 -> 재조회
         binding.fabRefreshIv.setOnClickListener {
             showShimmer()
