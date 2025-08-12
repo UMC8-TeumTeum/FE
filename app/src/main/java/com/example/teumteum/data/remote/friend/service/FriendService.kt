@@ -139,4 +139,13 @@ interface FriendService {
     suspend fun getFriendPublicTodoCalendar(
         @Path("userId") userId: Int, @Query("month") month: String): Response<ApiResponse<List<String>>>
 
+    // 특정 날짜의 공개 투두 조회
+    @GET("/api/friends/{userId}/todos/public")
+    suspend fun getFriendPublicTodosByDate(
+        @Path("userId") userId: Int, @Query("date") date: String): Response<ApiResponse<List<PublicTodoResult>>>
+
+    // 틈 요청 날짜 리스트
+    @GET("/api/teums/requests/calendar")
+    suspend fun getTeumRequestCalendar(
+        @Query("month") month: String): Response<ApiResponse<List<String>>>
 }

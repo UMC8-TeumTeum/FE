@@ -21,7 +21,7 @@ class TeumRequestAdapter(private val itemList: List<TeumRequestItem>) :
             binding.tvTime.text = item.time
             binding.title.text = item.title
             binding.description.text = item.description
-            binding.imgProfile.setImageResource(item.profileImageRes)
+            binding.profileIv.setImageResource(item.profileImageRes)
 
             // api 연결 후 다시 해봐야 됨
             if (item.isCanceled) {

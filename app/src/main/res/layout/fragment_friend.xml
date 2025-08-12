@@ -95,7 +95,7 @@
             android:layout_marginEnd="19dp"
             app:cardCornerRadius="15dp"
             app:cardElevation="0dp"
-            app:cardBackgroundColor="#A6FFFFFF">>
+            app:cardBackgroundColor="#A6FFFFFF">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -137,7 +137,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recommendRecyclerView"
             android:layout_width="match_parent"
-            android:layout_height="180dp"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="21dp"
             android:layout_marginTop="183dp"
             android:clipToPadding="false"
@@ -203,7 +203,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/followingRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="292dp"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
         android:clipToPadding="false"
         android:nestedScrollingEnabled="true"
@@ -214,7 +214,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/followerRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="292dp"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
         android:clipToPadding="false"
         android:nestedScrollingEnabled="true"

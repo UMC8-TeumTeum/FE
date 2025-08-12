@@ -4,12 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.teumteum.databinding.FragmentFriendTodoListBinding
 import com.example.teumteum.ui.calendar.IDateClickListener
 import com.example.teumteum.ui.calendar.MonthlyCalendarFragment
-import com.example.teumteum.ui.friend.adapter.TeumEventAdapter
+import com.example.teumteum.ui.friend.adapter.PublicTodoAdapter
 import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.example.teumteum.ui.main.MainActivity
 import com.example.teumteum.utils.getSavedDateOrToday
@@ -30,10 +31,8 @@ class FriendTodoListFragment : Fragment() {
     private var currentMonthOffset = 0
     private val today = LocalDate.now()
 
-    private lateinit var eventAdapter: TeumEventAdapter
+    private lateinit var todoAdapter: PublicTodoAdapter
     private var selectedDate: LocalDate? = null
-    private var lastClickedScheduleId: Int = -1
-
     private var friendUserId: Int = -1 // 공개 투두 조회 대상
 
     override fun onCreateView(
@@ -69,15 +68,10 @@ class FriendTodoListFragment : Fragment() {
             setupCalendarFragment()
         }
 
-        // (리스트/상세는 필요 시 계속 사용)
-        viewModel.scheduledTeumList.observe(viewLifecycleOwner) { list ->
-            eventAdapter.updateData(list)
-        }
-        viewModel.teumScheduleDetail.observe(viewLifecycleOwner) { detail ->
-            detail?.let {
-                val isPast = viewModel.isPastSchedule.value ?: false
-                // showPromiseDetailBottomSheet(it, lastClickedScheduleId, isPast)
-            }
+        // 날짜별 공개 투두 결과 관찰 → 카드 표시/숨김
+        viewModel.publicTodosByDate.observe(viewLifecycleOwner) { list ->
+            todoAdapter.submitList(list)
+            binding.rvEventList.isVisible = list.isNotEmpty()
         }
     }
 
@@ -87,11 +81,9 @@ class FriendTodoListFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        eventAdapter = TeumEventAdapter(emptyList()) { scheduleId ->
-            lastClickedScheduleId = scheduleId
-            viewModel.fetchTeumScheduleDetail(scheduleId)
-        }
-        binding.rvEventList.adapter = eventAdapter
+        todoAdapter = PublicTodoAdapter()
+        binding.rvEventList.adapter = todoAdapter
+        binding.rvEventList.isVisible = false // 처음엔 숨김
     }
 
     private fun setupCalendarNavigation() {
@@ -99,14 +91,14 @@ class FriendTodoListFragment : Fragment() {
             currentMonthOffset--
             setupHeader()
             setupCalendarFragment()
-            fetchDotDates() //이전/다음 달마다 재조회
+            fetchDotDates() // 이전 달 재조회
         }
 
         binding.homeCalendarNextDateIv.setOnClickListener {
             currentMonthOffset++
             setupHeader()
             setupCalendarFragment()
-            fetchDotDates()
+            fetchDotDates() // 다음 달 재조회
         }
     }
 
@@ -118,8 +110,10 @@ class FriendTodoListFragment : Fragment() {
                 override fun onClickDate(date: LocalDate) {
                     selectedDate = date
                     val dateStr = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-                    // 날짜 클릭 시 리스트 조회가 필요하면 여기에 API 호출 연결
-                    // viewModel.fetchFriendPublicTodosByDate(friendUserId, dateStr)
+                    if (friendUserId != -1) {
+                        // 날짜 클릭 시 특정 날짜 공개 투두 조회
+                        viewModel.fetchFriendPublicTodosByDate(friendUserId, dateStr)
+                    }
                 }
             },
             showDot = true,

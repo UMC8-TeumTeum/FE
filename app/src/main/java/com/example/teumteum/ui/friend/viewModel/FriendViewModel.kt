@@ -732,6 +732,43 @@ class FriendViewModel @Inject constructor(
         }
     }
 
+    // 특정 날짜의 공개 투두 조회
+    private val _publicTodosByDate = MutableLiveData<List<PublicTodoResult>>(emptyList())
+    val publicTodosByDate: LiveData<List<PublicTodoResult>> get() = _publicTodosByDate
 
+    fun fetchFriendPublicTodosByDate(userId: Int, date: String) {
+        viewModelScope.launch {
+            repository.getFriendPublicTodosByDate(userId, date)
+                .onSuccess { _publicTodosByDate.value = it }
+                .onFailure {
+                    _publicTodosByDate.value = emptyList()
+                    _errorMessage.value = Event(it.message ?: "공개 투두 조회 실패")
+                }
+        }
+    }
 
+    // 틈 요청 날짜 리스트 조회
+    private val _requestDotDates = MutableLiveData<List<LocalDate>>(emptyList())
+    val requestDotDates: LiveData<List<LocalDate>> get() = _requestDotDates
+
+    fun fetchRequestTeumDates(month: String) {
+        viewModelScope.launch {
+            repository.getTeumRequestCalendar(month)
+                .onSuccess { result ->
+                    // "YYYY-MM-DD" -> LocalDate 변환
+                    val dates =
+                        result.mapNotNull { runCatching { LocalDate.parse(it) }.getOrNull() }
+                    _requestDotDates.value = dates
+                    Log.d(
+                        "FRIEND_REQUEST_DATES",
+                        "요청 달력 조회 성공: month=$month, count=${dates.size}"
+                    )
+                }
+                .onFailure { e ->
+                    _requestDotDates.value = emptyList()
+                    _errorMessage.value = Event("요청 달력 조회 실패 (${e.message})")
+                    Log.e("FRIEND_REQUEST_DATES", "요청 달력 조회 실패: ${e.message}", e)
+                }
+        }
+    }
 }

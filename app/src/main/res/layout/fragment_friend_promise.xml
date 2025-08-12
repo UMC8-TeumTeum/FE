@@ -154,16 +154,15 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvEventList"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginTop="38dp"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         android:paddingBottom="10dp"
         android:clipToPadding="false"
-        android:nestedScrollingEnabled="false"
-        android:overScrollMode="never"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintTop_toBottomOf="@id/divider2"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         tools:listitem="@layout/item_teum_event_card" />

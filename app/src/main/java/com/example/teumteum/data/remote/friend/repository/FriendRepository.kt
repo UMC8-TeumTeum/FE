@@ -156,7 +156,7 @@ class FriendRepository @Inject constructor(
         }
     }
 
-    // 14) 팔로워 목록 (리스트만 반환)
+    // 14) 팔로워 목록
     suspend fun getFollowers(page: Int, size: Int): Result<List<FollowerResult>> = runCatching {
         val response = api.getFollowers(page, size)
         val body = response.body()
@@ -168,7 +168,7 @@ class FriendRepository @Inject constructor(
         }
     }
 
-    // 14-1) 팔로워 목록 (페이지 전체)
+    // 14-1) 팔로워 목록
     suspend fun getFollowersPage(page: Int, size: Int): Result<FollowerPageResult> = runCatching {
         val response = api.getFollowers(page, size)
         val body = response.body()
@@ -340,5 +340,43 @@ class FriendRepository @Inject constructor(
         }
     }
 
+    // 특정 날짜 공개 투두 조회
+    suspend fun getFriendPublicTodosByDate(
+        userId: Int,
+        date: String
+    ): Result<List<PublicTodoResult>> = runCatching {
+        val response = api.getFriendPublicTodosByDate(userId, date)
+        val body = response.body()
 
+        if (!response.isSuccessful || body == null) {
+            throw Exception("HTTP ${response.code()} - ${response.errorBody()?.string() ?: response.message()}")
+        }
+
+        Log.d(
+            "PUBLIC_TODO_DAY",
+            "isSuccess=${body.isSuccess}, code=${body.code}, message=${body.message}"
+        )
+
+        if (body.isSuccess && body.code == "FRIEND2005") {
+            body.result ?: emptyList()
+        } else {
+            val msg = when (body.code) {
+                "FRIEND4002" -> "자기 자신에 대한 요청은 처리할 수 없습니다."
+                "FRIEND4040" -> "존재하지 않는 유저입니다."
+                else -> body.message
+            }
+            throw Exception("${body.code} - $msg")
+        }
+    }
+
+    // 틈 요청 날짜 리스트 조회
+    suspend fun getTeumRequestCalendar(month: String): Result<List<String>> = runCatching {
+        val response = api.getTeumRequestCalendar(month)
+        val body = response.body()
+        if (response.isSuccessful && body?.isSuccess == true) {
+            body.result ?: emptyList()
+        } else {
+            throw Exception("${body?.code ?: "HTTP ${response.code()}"} - ${body?.message ?: response.message()}")
+        }
+    }
 }
