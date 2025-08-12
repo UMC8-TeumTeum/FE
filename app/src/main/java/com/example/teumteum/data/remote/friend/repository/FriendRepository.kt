@@ -49,7 +49,7 @@ class FriendRepository @Inject constructor(
         val body = response.body()
         if (response.isSuccessful && body?.isSuccess == true) {
             Log.d("SEND_TEUM_REQUEST", body.toString())
-            body.result?.id ?: throw Exception("teumId 없음")
+            body.result ?: throw Exception("teumId 없음")
         } else {
             throw Exception("${body?.code ?: "HTTP ${response.code()}"} - ${body?.message ?: response.message()}")
         }

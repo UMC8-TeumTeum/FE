@@ -263,8 +263,8 @@ class FriendViewModel @Inject constructor(
                         e.message?.contains("TEUM4091") == true -> "자기 자신에게 틈 요청을 보낼 수 없습니다."
                         else -> "틈 요청 실패 (${e.message})"
                     }
+                    Log.d("SEND_TEUM_REQUEST", msg.toString())
                     _errorMessage.value = Event(msg)
-                    Log.d("SEND_TEUM_REQUEST", _errorMessage.value.toString())
                 }
         }
     }
