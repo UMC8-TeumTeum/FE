@@ -32,6 +32,7 @@ class FillingActivity02Fragment : Fragment() {
 
     private var firstLoad = true
     private var isRefreshing = false
+    private var pendingWishEmpty: Boolean? = null // 조건에 만족하는 위시가 없을 때의 상태 여부
 
     private var shimmerStartAt = 0L
     private val minShimmerShownMs = 600L
@@ -118,18 +119,25 @@ class FillingActivity02Fragment : Fragment() {
         }
     }
 
+    private fun applyWishEmptyState(isEmpty: Boolean) {
+        if (isEmpty) {
+            binding.fillingActivityWishNotExistsCv.visibility = View.VISIBLE
+            binding.wishRecommendRv.visibility = View.GONE
+        } else {
+            binding.fillingActivityWishNotExistsCv.visibility = View.GONE
+            binding.wishRecommendRv.visibility = View.VISIBLE
+        }
+    }
+
     private fun setupObservers() {
         activityViewModel.activityWishes.observe(viewLifecycleOwner) { wishes ->
             wishList.clear()
             wishList.addAll(wishes)
+            val isEmpty = wishes.isEmpty()
+            pendingWishEmpty = isEmpty
+
             if (!isRefreshing) {
-                if (wishes.isEmpty()) {
-                    binding.fillingActivityWishNotExistsCv.visibility = View.VISIBLE
-                    binding.wishRecommendRv.visibility = View.GONE
-                } else {
-                    binding.fillingActivityWishNotExistsCv.visibility = View.GONE
-                    binding.wishRecommendRv.visibility = View.VISIBLE
-                }
+                applyWishEmptyState(isEmpty)
             }
             wishAdapter.notifyDataSetChanged()
         }
@@ -199,6 +207,9 @@ class FillingActivity02Fragment : Fragment() {
             binding.shimmerWish.apply { stopShimmer(); visibility = View.GONE }
             binding.aiRecommendRv.alpha = 1f
             binding.wishRecommendRv.alpha = 1f
+
+            // 응답으로 계산된 빈 상태 적용
+            pendingWishEmpty?.let { applyWishEmptyState(it) }
             isRefreshing = false
         }, delay)
     }
