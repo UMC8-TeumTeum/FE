@@ -10,7 +10,8 @@ data class ActivityWishRequest(
 
 data class ActivityAiRequest(
     @SerializedName("estimatedDuration") val estimatedDuration: String,
-    @SerializedName("location") val location: String? = null,
+    @SerializedName("locationId") val locationId: Long? = null,
+    @SerializedName("customLocation") val customLocation: String? = null,
     @SerializedName("categoryId") val categoryId: Long? = null,
     @SerializedName("customCategory") val customCategory: String? = null
 )

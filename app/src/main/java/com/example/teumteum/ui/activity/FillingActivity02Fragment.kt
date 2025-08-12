@@ -84,14 +84,22 @@ class FillingActivity02Fragment : Fragment() {
 
     private fun getFillingActivity() {
         val estimatedDuration = arguments?.getString("selectedTime") ?: ""
-        val location = arguments?.getString("location") ?: ""
+        val customLocation = arguments?.getString("customLocation") ?: ""
+        val selectedLocationText = arguments?.getString("selectedLocation")
         val customCategory = arguments?.getString("customCategory") ?: ""
         val selectedCategoryText = arguments?.getString("selectedCategory")
+
+        val locationNameToId = mapOf(
+            "집" to 1L, "학교" to 2L, "회사" to 3L,
+            "이동중" to 4L, "실외" to 5L, "실내" to 6L
+        )
 
         val categoryNameToId = mapOf(
             "자기계발" to 1L, "운동" to 2L, "취미" to 3L,
             "일상" to 4L, "문화생활" to 5L, "휴식" to 6L
         )
+
+        val locationId = locationNameToId[selectedLocationText]
         val categoryId = categoryNameToId[selectedCategoryText]
 
         activityViewModel.activityWish(
@@ -104,7 +112,8 @@ class FillingActivity02Fragment : Fragment() {
         activityViewModel.activityAi(
             ActivityAiRequest(
                 estimatedDuration = estimatedDuration,
-                location = location,
+                locationId = locationId,
+                customLocation = customLocation,
                 categoryId = categoryId,
                 customCategory = customCategory
             )

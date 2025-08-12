@@ -147,7 +147,6 @@ class FillingActivity01Fragment : Fragment() {
                     categoryBtn.setBackgroundColor(defaultBg)
                     categoryBtn.setTextColor(defaultText)
                     selectedCategoryButton = null
-                    selectedCategoryText = null
                     updateNextButtonState()
                     return@setOnClickListener
                 }
@@ -162,6 +161,16 @@ class FillingActivity01Fragment : Fragment() {
                 selectedCategoryButton = categoryBtn
                 updateNextButtonState()
             }
+        }
+
+        binding.fillingActivityLocationEt.doOnTextChanged { text, _, _, _ ->
+            val locationText = text?.toString()?.trim()
+
+            // 직접 입력이 없으면 selectedLocationText에 반영
+            selectedLocationText = if (!locationText.isNullOrEmpty()) locationText else null
+
+            // 버튼 상태 갱신
+            updateNextButtonState()
         }
 
         binding.fillingActivityCategoryEt.doOnTextChanged { text, _, _, _ ->
@@ -202,7 +211,8 @@ class FillingActivity01Fragment : Fragment() {
 
             val aiRequest = ActivityAiRequest(
                 estimatedDuration = selectedTimeTag ?: "",
-                location = binding.fillingActivityLocationEt.text.toString(),
+                locationId = selectedLocationButton?.tag as? Long,
+                customLocation = binding.fillingActivityLocationEt.text.toString(),
                 categoryId = selectedCategoryButton?.tag as? Long,
                 customCategory = binding.fillingActivityCategoryEt.text.toString()
             )
@@ -211,7 +221,8 @@ class FillingActivity01Fragment : Fragment() {
 
             val bundle = Bundle().apply {
                 putString("selectedTime", selectedTimeTag)
-                putString("location", binding.fillingActivityLocationEt.text.toString())
+                putString("selectedLocation", selectedLocationText)
+                putString("customLocation", binding.fillingActivityLocationEt.text.toString())
                 putString("selectedCategory", selectedCategoryText)
                 putString("customCategory", binding.fillingActivityCategoryEt.text.toString())
             }
@@ -234,7 +245,7 @@ class FillingActivity01Fragment : Fragment() {
 //                (selectedLocationButton != null || !selectedLocationText.isNullOrBlank()) &&
 //                (selectedCategoryButton != null || !selectedCategoryText.isNullOrBlank())
 
-        val isAllSelected = selectedTimeTag != null && selectedLocationText != null && selectedCategoryButton != null
+        val isAllSelected = selectedTimeTag != null && (selectedLocationButton != null || selectedLocationText != null) && (selectedCategoryButton != null || selectedCategoryText != null)
 
         binding.searchBtn.isEnabled = isAllSelected
         binding.searchBtn.setBackgroundColor(
