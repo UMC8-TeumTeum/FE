@@ -240,24 +240,18 @@ class FriendViewModel @Inject constructor(
     }
 
     // 4. 틈 요청 보내기
-    fun sendTeumRequest(request: TeumRequest) {
+    fun sendTeumRequest(request: TeumRequest,
+                        onSuccess: () -> Unit,
+                        onError: (String) -> Unit) {
         viewModelScope.launch {
             Log.d("SEND_TEUM_REQUEST", request.toString())
             repository.sendTeumRequest(request)
                 .onSuccess { teumId ->
-                    _successMessage.value = Event("틈 요청이 성공적으로 생성되었습니다. (id: $teumId)")
+//                    _successMessage.value = Event("틈 요청이 성공적으로 생성되었습니다. (id: $teumId)")
                     Log.d("SEND_TEUM_REQUEST", "teumId $teumId")
+                    onSuccess()
                 }
-                .onFailure { e ->
-                    val msg = when {
-                        e.message?.contains("TEUM4030") == true -> "요청 또는 응답에 대한 권한이 없습니다."
-                        e.message?.contains("COMMON400") == true -> "잘못된 요청입니다."
-                        e.message?.contains("TEUM4091") == true -> "자기 자신에게 틈 요청을 보낼 수 없습니다."
-                        else -> "틈 요청 실패 (${e.message})"
-                    }
-                    Log.d("SEND_TEUM_REQUEST", msg.toString())
-                    _errorMessage.value = Event(msg)
-                }
+                .onFailure { e -> onError(e.message ?: "재요청 실패") }
         }
     }
 

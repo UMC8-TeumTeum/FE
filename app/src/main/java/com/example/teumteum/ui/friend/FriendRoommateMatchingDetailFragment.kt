@@ -352,8 +352,8 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
         val selectedTime = timeCardAdapter.getSelectedItem()
         viewModel.setTeumRequestSelectedTime(
             SelectedTime(
-                startTime = selectedTime!!.startTime,
-                endTime = selectedTime.endTime
+                startTime = convert24To00(selectedTime!!.startTime),
+                endTime = convert24To00(selectedTime.endTime)
             )
         )
         viewModel.setTeumRequestTitle(binding.editTextTitle.text.toString())
@@ -364,5 +364,10 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
             viewModel.setTeumRequestDescription(binding.editTextDetail.text.toString())
         }
 
+    }
+
+    //24:00 -> 00:00 변환
+    private fun convert24To00(timeStr: String): String {
+        return if (timeStr == "24:00") "00:00" else timeStr
     }
 }

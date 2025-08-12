@@ -81,7 +81,6 @@ class FriendMatchingPreviewDialog : DialogFragment() {
 
         // 전송 버튼
         binding.btnSend.setOnClickListener {
-            dismiss()
 
             val request = viewModel.buildTeumRequest()
             Log.d("SEND_TEUM_REQUEST", request.toString())
@@ -90,12 +89,19 @@ class FriendMatchingPreviewDialog : DialogFragment() {
             }
 
             // 전송
-            viewModel.sendTeumRequest(request)
+            viewModel.sendTeumRequest(
+                request,
+                onSuccess = {
+                    parentFragmentManager.beginTransaction()
+                        .replace(R.id.main_frm, FriendSendFragment())
+                        .addToBackStack(null)
+                        .commit()
 
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, FriendSendFragment())
-                .addToBackStack(null)
-                .commit()
+                    dismiss()
+                },
+                onError = { msg ->
+                    Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+                })
         }
     }
 
