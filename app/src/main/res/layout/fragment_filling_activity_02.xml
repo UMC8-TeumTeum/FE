@@ -95,19 +95,46 @@
             app:layout_constraintStart_toStartOf="@id/back_arrow_iv"
             app:layout_constraintTop_toBottomOf="@id/filling_activity_friend_search_cv" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/ai_recommend_rv"
+        <FrameLayout
+            android:id="@+id/ai_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:clipToPadding="false"
-            android:nestedScrollingEnabled="true"
-            android:overScrollMode="never"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/filling_activity_ai_recommend_tv"
-            tools:listitem="@layout/item_wishlist" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/ai_recommend_rv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:nestedScrollingEnabled="true"
+                android:overScrollMode="never"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_wishlist" />
+
+            <com.facebook.shimmer.ShimmerFrameLayout
+                android:id="@+id/shimmer_ai"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:focusable="false"
+                android:visibility="gone"
+                app:shimmer_auto_start="false"
+                app:shimmer_duration="1500">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <include layout="@layout/item_skeleton_row"/>
+                    <include layout="@layout/item_skeleton_row"/>
+                    <include layout="@layout/item_skeleton_row"/>
+                </LinearLayout>
+            </com.facebook.shimmer.ShimmerFrameLayout>
+        </FrameLayout>
 
         <TextView
             android:id="@+id/filling_activity_wish_recommend_tv"
@@ -121,21 +148,48 @@
             android:textColor="@color/text_primary"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="@id/back_arrow_iv"
-            app:layout_constraintTop_toBottomOf="@id/ai_recommend_rv" />
+            app:layout_constraintTop_toBottomOf="@id/ai_container" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/wish_recommend_rv"
+        <FrameLayout
+            android:id="@+id/wish_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:clipToPadding="false"
-            android:nestedScrollingEnabled="true"
-            android:overScrollMode="never"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/filling_activity_wish_recommend_tv"
-            tools:listitem="@layout/item_wishlist" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/wish_recommend_rv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:nestedScrollingEnabled="true"
+                android:overScrollMode="never"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_wishlist" />
+
+            <com.facebook.shimmer.ShimmerFrameLayout
+                android:id="@+id/shimmer_wish"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:focusable="false"
+                android:visibility="gone"
+                app:shimmer_auto_start="false"
+                app:shimmer_duration="1500">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <include layout="@layout/item_skeleton_row"/>
+                    <include layout="@layout/item_skeleton_row"/>
+                    <include layout="@layout/item_skeleton_row"/>
+                </LinearLayout>
+            </com.facebook.shimmer.ShimmerFrameLayout>
+        </FrameLayout>
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/filling_activity_wish_not_exists_cv"
@@ -151,7 +205,7 @@
             app:cardElevation="0dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/filling_activity_wish_recommend_tv"
+            app:layout_constraintTop_toBottomOf="@id/wish_container"
             app:strokeWidth="0dp">
 
             <androidx.constraintlayout.widget.ConstraintLayout

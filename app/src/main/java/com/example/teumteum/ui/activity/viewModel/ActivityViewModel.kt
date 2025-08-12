@@ -38,19 +38,17 @@ class ActivityViewModel @Inject constructor(
 
     private var pendingCount = 0
     private fun startLoading() {
-        pendingCount += 1
-        if (_loading.value != true) _loading.value = true
+        if (pendingCount++ == 0) _loading.postValue(true)
     }
     private fun endLoading() {
         pendingCount = (pendingCount - 1).coerceAtLeast(0)
-        _loading.value = pendingCount > 0
+        if (pendingCount == 0) _loading.postValue(false)
     }
 
     // 채움활동 위시리스트 불러오기
     fun activityWish(request: ActivityWishRequest) {
         viewModelScope.launch {
             startLoading()
-            _errorMessage.value = null
             try {
                 val result = activityRepository.activityWish(request)
                 result.onSuccess { response ->
@@ -72,7 +70,6 @@ class ActivityViewModel @Inject constructor(
     fun activityAi(request: ActivityAiRequest) {
         viewModelScope.launch {
             startLoading()
-            _errorMessage.value = null
             try {
                 val result = activityRepository.activityAi(request)
                 result.onSuccess { response ->

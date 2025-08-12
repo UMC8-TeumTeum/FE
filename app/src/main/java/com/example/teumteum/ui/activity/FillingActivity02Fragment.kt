@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
@@ -16,174 +17,182 @@ import com.example.teumteum.databinding.FragmentFillingActivity02Binding
 import com.example.teumteum.ui.activity.adapter.AiRecommendRVAdapter
 import com.example.teumteum.ui.activity.adapter.WishRecommendRVAdapter
 import com.example.teumteum.ui.activity.viewModel.ActivityViewModel
-import com.example.teumteum.ui.friend.FriendFragment
-import com.example.teumteum.utils.applyBlurShadow
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class FillingActivity02Fragment : Fragment() {
 
     private lateinit var binding: FragmentFillingActivity02Binding
-
     private lateinit var aiAdapter: AiRecommendRVAdapter
     private lateinit var wishAdapter: WishRecommendRVAdapter
-    private var wishList: MutableList<ActivityWishResult> = mutableListOf()
-    private var aiList: MutableList<ActivityAiResult> = mutableListOf()
+    private val wishList = mutableListOf<ActivityWishResult>()
+    private val aiList = mutableListOf<ActivityAiResult>()
 
     private val activityViewModel: ActivityViewModel by activityViewModels()
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    private var firstLoad = true
+    private var isRefreshing = false
+
+    private var shimmerStartAt = 0L
+    private val minShimmerShownMs = 600L
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, s: Bundle?): View {
         binding = FragmentFillingActivity02Binding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
-        showLoadingPage()
-
         wishAdapter = WishRecommendRVAdapter(wishList, parentFragmentManager)
         binding.wishRecommendRv.adapter = wishAdapter
 
         aiAdapter = AiRecommendRVAdapter(aiList, parentFragmentManager)
         binding.aiRecommendRv.adapter = aiAdapter
 
-        // 바텀 내비게이션 숨기기
-        val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
-        bottomNav?.visibility = View.GONE
+        binding.fabShadowIv.isClickable = false
+        binding.fabRefreshIv.bringToFront()
 
-        binding.backArrowIv.setOnClickListener {
-            parentFragmentManager.popBackStack()
-        }
+        // 옵저버 -> 최초 조회
+        setupObservers()
+        setupLoadingObserver()
 
-        binding.fillingActivityFriendSearchCv.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, FriendFragment())
-                .addToBackStack(null)
-                .commit()
+        if (firstLoad) {
+            view.post { showLoadingPage() }
         }
 
         getFillingActivity()
 
-        binding.fabRefreshIv.setOnClickListener { getFillingActivity() }
-
-        binding.fabRefreshIv.post {
-            applyBlurShadow(
-                sourceView = binding.fabRefreshIv,
-                targetImageView = binding.fabShadowIv
-            )
+        // 새로고침: 시머 -> 재조회
+        binding.fabRefreshIv.setOnClickListener {
+            showShimmer()
+            getFillingActivity() // API 재호출
         }
-
-        setupObservers()
-        setupLoadingObserver()
     }
 
     private fun getFillingActivity() {
-        val estimatedDuration = arguments?.getString("selectedTime") ?: ""
-        val customLocation = arguments?.getString("customLocation") ?: ""
-        val selectedLocationText = arguments?.getString("selectedLocation")
-        val customCategory = arguments?.getString("customCategory") ?: ""
-        val selectedCategoryText = arguments?.getString("selectedCategory")
 
-        val locationNameToId = mapOf(
-            "집" to 1L, "학교" to 2L, "회사" to 3L,
-            "이동중" to 4L, "실외" to 5L, "실내" to 6L
-        )
-        val locationId = locationNameToId[selectedLocationText]
+        val args = requireArguments()
 
-        val categoryNameToId = mapOf(
-            "자기계발" to 1L, "운동" to 2L, "취미" to 3L,
-            "일상" to 4L, "문화생활" to 5L, "휴식" to 6L
-        )
-        val categoryId = categoryNameToId[selectedCategoryText]
+        val estimatedDuration = args.getString("selectedTime").orEmpty()
+        val locationId = args.getLong("locationId", -1L).takeIf { it > 0 }
+        val customLocation = args.getString("customLocation")?.takeIf { it.isNotBlank() }
+        val categoryId = args.getLong("categoryId", -1L).takeIf { it > 0 }
+        val customCategory = args.getString("customCategory")?.takeIf { it.isNotBlank() }
 
-        activityViewModel.activityWish(
-            ActivityWishRequest(
-                estimatedDuration = estimatedDuration,
-                categoryId = categoryId,
-                customCategory = customCategory
-            )
+        val wishRequest = ActivityWishRequest(
+            estimatedDuration = estimatedDuration,
+            categoryId = categoryId,
+            customCategory = customCategory
         )
-        activityViewModel.activityAi(
-            ActivityAiRequest(
-                estimatedDuration = estimatedDuration,
-                locationId = locationId,
-                customLocation = customLocation,
-                categoryId = categoryId,
-                customCategory = customCategory
-            )
-        )
-    }
+        activityViewModel.activityWish(wishRequest)
 
-    private fun showLoadingPage() {
-        val tag = LoadingPageFragment.TAG
-        if (parentFragmentManager.findFragmentByTag(tag) == null) {
-            parentFragmentManager.beginTransaction()
-                .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
-                .add(R.id.main_frm, LoadingPageFragment.newInstance(), tag)
-                .commitAllowingStateLoss()
-        }
+        val aiRequest = ActivityAiRequest(
+            estimatedDuration = estimatedDuration,
+            locationId = locationId,
+            customLocation = customLocation,
+            categoryId = categoryId,
+            customCategory = customCategory
+        )
+        activityViewModel.activityAi(aiRequest)
     }
 
     private fun setupLoadingObserver() {
         activityViewModel.loading.observe(viewLifecycleOwner) { isLoading ->
             val tag = LoadingPageFragment.TAG
-            val loading = parentFragmentManager.findFragmentByTag(tag) as? LoadingPageFragment
+            val fm = parentFragmentManager
+            val overlay = fm.findFragmentByTag(tag) as? LoadingPageFragment
+
             if (isLoading) {
-                // 90%까지 채워두고 로딩 중 상태
-                loading?.animateProgress(90)
+                if (!firstLoad && !isRefreshing) showShimmer() // 새로고침 시 시머 보이기
             } else {
-                // 100% 채우고 닫기
-                loading?.completeAndDismiss()
+                overlay?.completeAndDismiss()
+                if (isRefreshing) hideShimmer()
+                if (firstLoad) firstLoad = false   // 최초 사이클 끝나면 false
             }
         }
     }
 
     private fun setupObservers() {
-
         activityViewModel.activityWishes.observe(viewLifecycleOwner) { wishes ->
-            val filtered = wishes.filter { it.title.isNotBlank() }
-            Log.d("위시확인", "받은 위시 개수: ${filtered.size}")
-            filtered.forEach {
-                Log.d("위시", "id=${it.id}, title='${it.title}'")
-            }
-
             wishList.clear()
             wishList.addAll(wishes)
-
-            if (wishes.isEmpty()) {
-                binding.fillingActivityWishNotExistsCv.visibility = View.VISIBLE
-                binding.wishRecommendRv.visibility = View.GONE
-            } else {
-                binding.fillingActivityWishNotExistsCv.visibility = View.GONE
-                binding.wishRecommendRv.visibility = View.VISIBLE
+            if (!isRefreshing) {
+                if (wishes.isEmpty()) {
+                    binding.fillingActivityWishNotExistsCv.visibility = View.VISIBLE
+                    binding.wishRecommendRv.visibility = View.GONE
+                } else {
+                    binding.fillingActivityWishNotExistsCv.visibility = View.GONE
+                    binding.wishRecommendRv.visibility = View.VISIBLE
+                }
             }
-
             wishAdapter.notifyDataSetChanged()
         }
-
         activityViewModel.activityAiContents.observe(viewLifecycleOwner) { aiContents ->
-            val filtered = aiContents.filter { it.title.isNotBlank() }
-            Log.d("ai컨텐츠확인", "받은 ai컨텐츠 개수: ${filtered.size}")
-            filtered.forEach {
-                Log.d("ai컨텐츠", "id=${it.id}, title='${it.title}'")
-            }
-
             aiList.clear()
             aiList.addAll(aiContents)
-
             aiAdapter.notifyDataSetChanged()
         }
-
-        activityViewModel.errorMessage.observe(viewLifecycleOwner) { errorMsg ->
-            errorMsg?.let {
-                Log.e("FillingActivity02Fragment", "에러 발생: $it")
-            }
-        }
+        activityViewModel.errorMessage.observe(viewLifecycleOwner) { it?.let { Log.e("Filling02", it) } }
     }
 
+    private fun showLoadingPage() {
+        val tag = LoadingPageFragment.TAG
+        val fm = parentFragmentManager
+
+        // 실행 중 트랜잭션과 충돌하지 않도록 다음 프레임으로 미룸
+        val addOverlay = Runnable {
+            if (!isAdded || fm.isStateSaved) return@Runnable
+            if (fm.findFragmentByTag(tag) == null) {
+                fm.beginTransaction()
+                    .setReorderingAllowed(true)
+                    .add(R.id.main_frm, LoadingPageFragment.newInstance(), tag)
+                    .commitAllowingStateLoss()
+            }
+        }
+
+        // view가 있으면 view.post, 없으면 액티비티의 decorView로 post
+        (view ?: activity?.window?.decorView)?.post(addOverlay)
+    }
+
+
+    private fun showShimmer() {
+        isRefreshing = true
+        shimmerStartAt = android.os.SystemClock.uptimeMillis()
+
+        // 레이아웃 유지하면서 recyclerview 감추기
+        binding.aiRecommendRv.alpha = 0f
+        binding.wishRecommendRv.alpha = 0f
+        binding.fillingActivityWishNotExistsCv.visibility = View.GONE
+
+        // 위 레이어 고정 + 측정 후 시작
+        fun on(t: com.facebook.shimmer.ShimmerFrameLayout) {
+            t.visibility = View.VISIBLE
+            t.bringToFront()
+            ViewCompat.setTranslationZ(t, 8f)
+            t.setShimmer(
+                com.facebook.shimmer.Shimmer.AlphaHighlightBuilder()
+                    .setDuration(2000L)
+                    .setBaseAlpha(0.55f)
+                    .setHighlightAlpha(1f)
+                    .setIntensity(0.30f)
+                    .setDropoff(0.65f)
+                    .setDirection(com.facebook.shimmer.Shimmer.Direction.LEFT_TO_RIGHT)
+                    .build()
+            )
+            t.post { t.startShimmer() }
+        }
+        on(binding.shimmerAi)
+        on(binding.shimmerWish)
+    }
+
+    private fun hideShimmer() {
+        val elapsed = android.os.SystemClock.uptimeMillis() - shimmerStartAt
+        val delay = (minShimmerShownMs - elapsed).coerceAtLeast(0L)
+        binding.root.postDelayed({
+            binding.shimmerAi.apply { stopShimmer(); visibility = View.GONE }
+            binding.shimmerWish.apply { stopShimmer(); visibility = View.GONE }
+            binding.aiRecommendRv.alpha = 1f
+            binding.wishRecommendRv.alpha = 1f
+            isRefreshing = false
+        }, delay)
+    }
 }

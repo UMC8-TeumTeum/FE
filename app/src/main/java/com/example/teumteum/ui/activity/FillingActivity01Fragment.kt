@@ -11,8 +11,6 @@ import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
-import com.example.teumteum.data.remote.activity.model.ActivityAiRequest
-import com.example.teumteum.data.remote.activity.model.ActivityWishRequest
 import com.example.teumteum.databinding.FragmentFillingActivity01Binding
 import com.example.teumteum.ui.activity.viewModel.ActivityViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -165,16 +163,6 @@ class FillingActivity01Fragment : Fragment() {
             }
         }
 
-        binding.fillingActivityLocationEt.doOnTextChanged { text, _, _, _ ->
-            val locationText = text?.toString()?.trim()
-
-            // 직접 입력이 없으면 selectedLocationText에 반영
-            selectedLocationText = if (!locationText.isNullOrEmpty()) locationText else null
-
-            // 버튼 상태 갱신
-            updateNextButtonState()
-        }
-
         binding.fillingActivityCategoryEt.doOnTextChanged { text, _, _, _ ->
             val categoryText = text?.toString()?.trim()
 
@@ -191,6 +179,14 @@ class FillingActivity01Fragment : Fragment() {
 
         binding.searchBtn.setOnClickListener {
 
+            val selectedLocationId = selectedLocationButton?.tag as? Long
+            val selectedCategoryId = selectedCategoryButton?.tag as? Long
+
+            val customLocation = binding.fillingActivityLocationEt.text.toString().trim()
+                .takeIf { it.isNotEmpty() }
+            val customCategory = binding.fillingActivityCategoryEt.text.toString().trim()
+                .takeIf { it.isNotEmpty() }
+
             // 위치 선택 + 직접 입력 시 예외 처리
             if (selectedLocationButton != null && selectedLocationText != null) {
                 Toast.makeText(requireContext(), "위치와 직접 입력은 둘 중 하나만 선택해야 합니다.", Toast.LENGTH_SHORT).show()
@@ -203,30 +199,14 @@ class FillingActivity01Fragment : Fragment() {
                 return@setOnClickListener
             }
 
-            val wishRequest = ActivityWishRequest(
-                estimatedDuration = selectedTimeTag ?: "",
-                categoryId = selectedCategoryButton?.tag as? Long,
-                customCategory = binding.fillingActivityCategoryEt.text.toString()
-            )
-
-            activityViewModel.activityWish(wishRequest)
-
-            val aiRequest = ActivityAiRequest(
-                estimatedDuration = selectedTimeTag ?: "",
-                locationId = selectedLocationButton?.tag as? Long,
-                customLocation = binding.fillingActivityLocationEt.text.toString(),
-                categoryId = selectedCategoryButton?.tag as? Long,
-                customCategory = binding.fillingActivityCategoryEt.text.toString()
-            )
-
-            activityViewModel.activityAi(aiRequest)
-
             val bundle = Bundle().apply {
-                putString("selectedTime", selectedTimeTag)
-                putString("selectedLocation", selectedLocationText)
-                putString("customLocation", binding.fillingActivityLocationEt.text.toString())
-                putString("selectedCategory", selectedCategoryText)
-                putString("customCategory", binding.fillingActivityCategoryEt.text.toString())
+                putString("selectedTime", selectedTimeTag ?: "")
+
+                selectedLocationId?.let { putLong("locationId", it) }
+                    ?: putString("customLocation", customLocation)
+
+                selectedCategoryId?.let { putLong("categoryId", it) }
+                    ?: putString("customCategory", customCategory)
             }
 
             val fragment = FillingActivity02Fragment().apply {

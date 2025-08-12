@@ -36,7 +36,7 @@ class LoadingPageFragment : Fragment() {
         animateProgress(to = 90)
     }
 
-    fun animateProgress(to: Int, onEnd: (() -> Unit)? = null) {
+    private fun animateProgress(to: Int, onEnd: (() -> Unit)? = null) {
         val start = progress.progress
         val end = to.coerceIn(0, 100)
 
@@ -49,9 +49,9 @@ class LoadingPageFragment : Fragment() {
         ValueAnimator.ofInt(start, end).apply {
             duration = 1500L
             addUpdateListener { animator ->
-                progress.setProgressCompat(animator.animatedValue as Int, false)
+                progress.setProgressCompat(animator.animatedValue as Int, true)
             }
-            doOnEnd { onEnd?.let { it() } }
+            doOnEnd { onEnd?.invoke() }
             start()
         }
     }
