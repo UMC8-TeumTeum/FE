@@ -56,7 +56,7 @@ class TodoListRVAdapter(private val fragmentManager: FragmentManager, private va
 
             binding.ivAlarm.setOnClickListener {
                 binding.ivAlarm.setImageResource(
-                    if (item.alarmStatus == AlarmStatus.INACTIVE) R.drawable.ic_alarm_on_sv
+                    if (item.alarmStatus != AlarmStatus.INACTIVE) R.drawable.ic_alarm_on_sv
                     else R.drawable.ic_alarm_off_sv
                 )
             }
