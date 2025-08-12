@@ -5,11 +5,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
-import com.example.teumteum.data.remote.activity.model.ActivityWishRequest
 import com.example.teumteum.databinding.FragmentFillingActivity01Binding
 import com.example.teumteum.ui.activity.viewModel.ActivityViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -23,7 +24,8 @@ class FillingActivity01Fragment : Fragment() {
     private var selectedTimeTag: String? = null
     private var selectedTimeButton: View? = null
 
-    private var selectedLocation: String? = null
+    private var selectedLocationText: String? = null
+    private var selectedLocationButton: View? = null
 
     private var selectedCategoryText: String? = null
     private var selectedCategoryButton: View? = null
@@ -91,18 +93,39 @@ class FillingActivity01Fragment : Fragment() {
             binding.btnFillingActivityLocation06
         )
 
-        locationButtons.forEach { locationBtn ->
+        val locationIds = listOf(1L, 2L, 3L, 4L, 5L, 6L)
+        locationButtons.forEachIndexed { index, locationBtn ->
+            locationBtn.tag = locationIds[index]
             locationBtn.setOnClickListener {
+                // 이미 선택된 같은 버튼이면 해제
+                if (selectedLocationButton === locationBtn) {
+                    locationBtn.setBackgroundColor(defaultBg)
+                    locationBtn.setTextColor(defaultText)
+                    selectedLocationButton = null
+                    updateNextButtonState()
+                    return@setOnClickListener
+                }
+
+                // 기존 선택 초기화 + 새 선택
                 locationButtons.forEach {
                     it.setBackgroundColor(defaultBg)
                     it.setTextColor(defaultText)
                 }
-
                 locationBtn.setBackgroundColor(selectedBg)
                 locationBtn.setTextColor(selectedText)
-                selectedLocation = locationBtn.text.toString()
+                selectedLocationButton = locationBtn
                 updateNextButtonState()
             }
+        }
+
+        binding.fillingActivityLocationEt.doOnTextChanged { text, _, _, _ ->
+            val categoryText = text?.toString()?.trim()
+
+            // 직접 입력이 있으면 selectedCategoryText에 반영
+            selectedLocationText = if (!categoryText.isNullOrEmpty()) categoryText else null
+
+            // 버튼 상태 갱신
+            updateNextButtonState()
         }
 
         // 카테고리 선택
@@ -119,37 +142,71 @@ class FillingActivity01Fragment : Fragment() {
         categoryButtons.forEachIndexed { index, categoryBtn ->
             categoryBtn.tag = categoryIds[index]
             categoryBtn.setOnClickListener {
+                // 이미 선택된 같은 버튼이면 해제
+                if (selectedCategoryButton === categoryBtn) {
+                    categoryBtn.setBackgroundColor(defaultBg)
+                    categoryBtn.setTextColor(defaultText)
+                    selectedCategoryButton = null
+                    updateNextButtonState()
+                    return@setOnClickListener
+                }
+
+                // 기존 선택 초기화 + 새 선택
                 categoryButtons.forEach {
                     it.setBackgroundColor(defaultBg)
                     it.setTextColor(defaultText)
                 }
-
                 categoryBtn.setBackgroundColor(selectedBg)
                 categoryBtn.setTextColor(selectedText)
                 selectedCategoryButton = categoryBtn
-                selectedCategoryText = categoryBtn.text.toString()
                 updateNextButtonState()
             }
         }
 
+        binding.fillingActivityCategoryEt.doOnTextChanged { text, _, _, _ ->
+            val categoryText = text?.toString()?.trim()
+
+            // 직접 입력이 있으면 selectedCategoryText에 반영
+            selectedCategoryText = if (!categoryText.isNullOrEmpty()) categoryText else null
+
+            // 버튼 상태 갱신
+            updateNextButtonState()
+        }
+
         binding.backArrowIv.setOnClickListener {
-            parentFragmentManager.popBackStack()
+            requireActivity().onBackPressedDispatcher.onBackPressed()
         }
 
         binding.searchBtn.setOnClickListener {
 
-            val request = ActivityWishRequest(
-                estimatedDuration = selectedTimeTag ?: "",
-                categoryId = selectedCategoryButton?.tag as? Long,
-                customCategory = binding.fillingActivityCategoryEt.text.toString()
-            )
+            val selectedLocationId = selectedLocationButton?.tag as? Long
+            val selectedCategoryId = selectedCategoryButton?.tag as? Long
 
-            viewModel.activityWish(request)
+            val customLocation = binding.fillingActivityLocationEt.text.toString().trim()
+                .takeIf { it.isNotEmpty() }
+            val customCategory = binding.fillingActivityCategoryEt.text.toString().trim()
+                .takeIf { it.isNotEmpty() }
+
+            // 위치 선택 + 직접 입력 시 예외 처리
+            if (selectedLocationButton != null && selectedLocationText != null) {
+                Toast.makeText(requireContext(), "위치와 직접 입력은 둘 중 하나만 선택해야 합니다.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // 카테고리 선택 + 직접 입력 시 예외 처리
+            if (selectedCategoryButton != null && selectedCategoryText != null) {
+                Toast.makeText(requireContext(), "카테고리와 직접 입력은 둘 중 하나만 선택해야 합니다.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
             val bundle = Bundle().apply {
-                putString("selectedTime", selectedTimeTag)
-                putString("selectedCategory", selectedCategoryText)
-                putString("customCategory", binding.fillingActivityCategoryEt.text.toString())
+                putString("selectedTime", selectedTimeTag ?: "")
+
+                selectedLocationId?.let { putLong("locationId", it) }
+                    ?: putString("customLocation", customLocation)
+
+                selectedCategoryId?.let { putLong("categoryId", it) }
+                    ?: putString("customCategory", customCategory)
             }
 
             val fragment = FillingActivity02Fragment().apply {
@@ -163,10 +220,16 @@ class FillingActivity01Fragment : Fragment() {
         }
 
         setupObservers()
+
+        // 초기화 이벤트 수신
+        parentFragmentManager.setFragmentResultListener("reset_form", viewLifecycleOwner) { _, _ ->
+            clearAllInputs()
+        }
     }
 
     private fun updateNextButtonState() {
-        val isAllSelected = selectedTimeTag != null && selectedLocation != null && selectedCategoryText != null
+
+        val isAllSelected = selectedTimeTag != null && (selectedLocationButton != null || selectedLocationText != null) && (selectedCategoryButton != null || selectedCategoryText != null)
 
         binding.searchBtn.isEnabled = isAllSelected
         binding.searchBtn.setBackgroundColor(
@@ -190,5 +253,64 @@ class FillingActivity01Fragment : Fragment() {
                 Log.e("FillingActivity01Fragment", "에러 발생: $it")
             }
         }
+    }
+
+    private fun clearAllInputs() {
+        val defaultStroke = ContextCompat.getColor(requireContext(), R.color.teumteum_bg)
+        val defaultBg = ContextCompat.getColor(requireContext(), R.color.main_2)
+        val defaultText = ContextCompat.getColor(requireContext(), R.color.text_primary)
+
+        // 시간 카드 초기화
+        val timeCards = listOf(
+            binding.fillingActivityTime01Cv,
+            binding.fillingActivityTime02Cv,
+            binding.fillingActivityTime03Cv,
+            binding.fillingActivityTime04Cv
+        )
+        timeCards.forEach {
+            it.strokeColor = defaultStroke
+            it.strokeWidth = 0
+        }
+        selectedTimeTag = null
+        selectedTimeButton = null
+
+        // 위치 버튼 초기화
+        val locationButtons = listOf(
+            binding.btnFillingActivityLocation01,
+            binding.btnFillingActivityLocation02,
+            binding.btnFillingActivityLocation03,
+            binding.btnFillingActivityLocation04,
+            binding.btnFillingActivityLocation05,
+            binding.btnFillingActivityLocation06
+        )
+        locationButtons.forEach {
+            it.setBackgroundColor(defaultBg)
+            it.setTextColor(defaultText)
+        }
+        selectedLocationButton = null
+        selectedLocationText = null
+        binding.fillingActivityLocationEt.setText("")
+
+        // 카테고리 버튼 초기화
+        val categoryButtons = listOf(
+            binding.btnFillingActivityCategory01,
+            binding.btnFillingActivityCategory02,
+            binding.btnFillingActivityCategory03,
+            binding.btnFillingActivityCategory04,
+            binding.btnFillingActivityCategory05,
+            binding.btnFillingActivityCategory06
+        )
+        categoryButtons.forEach {
+            it.setBackgroundColor(defaultBg)
+            it.setTextColor(defaultText)
+        }
+        selectedCategoryButton = null
+        selectedCategoryText = null
+        binding.fillingActivityCategoryEt.setText("")
+
+        updateNextButtonState()
+
+        // 포커스 해제
+        binding.root.clearFocus()
     }
 }
