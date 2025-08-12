@@ -771,4 +771,24 @@ class FriendViewModel @Inject constructor(
                 }
         }
     }
+
+    // 특정 날짜의 약속된 틈 조회
+    private val _teumRequestsByDate = MutableLiveData<List<TeumRequestDateResult>>()
+    val teumRequestsByDate: LiveData<List<TeumRequestDateResult>> get() = _teumRequestsByDate
+
+    fun loadTeumRequestsByDate(date: String) {
+        viewModelScope.launch {
+            repository.getTeumRequestsByDate(date)
+                .onSuccess { list ->
+                    Log.d("TEUM2006", "지정한 날짜의 틈 요청 목록이 조회되었습니다.")
+                    Log.d("TEUM2006", "조회 날짜: $date, 총 ${list.size}건")
+                    _teumRequestsByDate.value = list
+                }
+                .onFailure { e ->
+                    Log.e("TEUM2006", "날짜별 틈 요청 조회 실패: ${e.message}")
+                    _errorMessage.value = Event("날짜별 틈 요청 조회 실패")
+                }
+        }
+    }
+
 }

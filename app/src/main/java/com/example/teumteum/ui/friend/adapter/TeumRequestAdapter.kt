@@ -1,65 +1,91 @@
 package com.example.teumteum.ui.friend.adapter
 
-import android.graphics.Color
-import android.text.SpannableString
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
-import com.example.teumteum.R
+import com.bumptech.glide.Glide
+import com.example.teumteum.data.remote.friend.model.TeumRequestDateResult
+import com.example.teumteum.data.remote.friend.model.UserMiniDto
 import com.example.teumteum.databinding.ItemRequestHistoryBinding
+import com.google.android.flexbox.FlexboxLayout
+import com.google.android.material.imageview.ShapeableImageView
 
-class TeumRequestAdapter(private val itemList: List<TeumRequestItem>) :
-    RecyclerView.Adapter<TeumRequestAdapter.TeumRequestViewHolder>() {
+class TeumRequestAdapter(
+    private var itemList: List<TeumRequestDateResult> = emptyList()
+) : RecyclerView.Adapter<TeumRequestAdapter.TeumRequestViewHolder>() {
 
     inner class TeumRequestViewHolder(val binding: ItemRequestHistoryBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: TeumRequestItem) {
-            binding.tvName.text = item.name
-            binding.tvDate.text = "${item.date}     |"
-            binding.tvTime.text = item.time
-            binding.title.text = item.title
-            binding.description.text = item.description
-            binding.profileIv.setImageResource(item.profileImageRes)
 
-            // api 연결 후 다시 해봐야 됨
-            if (item.isCanceled) {
-                // 약속 취소 상태일 때
-                binding.tvStatus.visibility = View.VISIBLE
-                binding.tvStatus.text = "약속이 취소되었어요"
+        fun bind(data: TeumRequestDateResult) {
+            // 취소 여부
+            binding.tvStatus.visibility = if (data.isCancelled) View.VISIBLE else View.GONE
 
-                // 상단 배경 색 변경
-                binding.root.findViewById<LinearLayout>(R.id.topContainer)
-                    ?.setBackgroundColor(Color.parseColor("#D3D3D3"))
+            // 프로필 이미지
+            Glide.with(binding.profileIv.context)
+                .load(data.requester.profileImageUrl)
+                .placeholder(com.example.teumteum.R.drawable.gray_teum) // 로딩 중 기본
+                .error(com.example.teumteum.R.drawable.gray_teum)       // 로딩 실패 시 기본
+                .fallback(com.example.teumteum.R.drawable.gray_teum)    // URL이 null일 때 기본
+                .into(binding.profileIv)
 
-            } else {
-                // 기본 정상 상태
-                binding.tvStatus.visibility = View.GONE
 
-                binding.root.findViewById<LinearLayout>(R.id.topContainer)
-                    ?.setBackgroundColor(Color.parseColor("#7770FE"))
-                binding.tvName.setTextColor(Color.WHITE)
-                binding.tvDate.setTextColor(Color.WHITE)
-                binding.tvTime.setTextColor(Color.WHITE)
-                binding.title.setTextColor(Color.parseColor("#0F0F0F"))
-                binding.description.setTextColor(Color.parseColor("#788084"))
+            binding.tvName.text = data.requester.nickname ?: "이름없음"
+
+            // 날짜/시간
+            val dateFormatted = data.date.replace("-", ".").substring(2) // "25.09.02"
+            binding.tvDate.text = "$dateFormatted     |"
+            binding.tvTime.text = "${data.timeSlot.start} ~ ${data.timeSlot.end}"
+
+            // 제목 / 설명
+            binding.title.text = data.title
+            binding.description.text = data.description
+
+            // 상태별 FlexboxLayout
+            setUserList(binding.containerAccepted, data.accepted)
+            setUserList(binding.containerCancelled, data.cancelled)
+            setUserList(binding.containerPending, data.pending)
+        }
+
+        private fun setUserList(container: FlexboxLayout, users: List<UserMiniDto>) {
+            container.removeAllViews()
+            val inflater = LayoutInflater.from(container.context)
+            for (user in users) {
+                val imageView = inflater.inflate(
+                    com.example.teumteum.R.layout.item_user_circle,
+                    container,
+                    false
+                ) as ShapeableImageView
+                Glide.with(imageView.context)
+                    .load(user.profileImageUrl)
+                    .placeholder(com.example.teumteum.R.drawable.gray_teum)
+                    .error(com.example.teumteum.R.drawable.gray_teum)
+                    .fallback(com.example.teumteum.R.drawable.gray_teum)
+                    .into(imageView)
+
+                container.addView(imageView)
             }
         }
     }
 
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TeumRequestViewHolder {
-            val binding = ItemRequestHistoryBinding.inflate(
-                LayoutInflater.from(parent.context),
-                parent,
-                false
-            )
-            return TeumRequestViewHolder(binding)
-        }
-
-        override fun onBindViewHolder(holder: TeumRequestViewHolder, position: Int) {
-            holder.bind(itemList[position])
-        }
-
-        override fun getItemCount(): Int = itemList.size
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TeumRequestViewHolder {
+        val binding = ItemRequestHistoryBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
+        return TeumRequestViewHolder(binding)
     }
+
+    override fun onBindViewHolder(holder: TeumRequestViewHolder, position: Int) {
+        holder.bind(itemList[position])
+    }
+
+    override fun getItemCount(): Int = itemList.size
+
+    fun submitList(newList: List<TeumRequestDateResult>) {
+        itemList = newList
+        notifyDataSetChanged()
+    }
+}

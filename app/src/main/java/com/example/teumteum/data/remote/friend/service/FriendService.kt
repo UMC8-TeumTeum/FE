@@ -148,4 +148,11 @@ interface FriendService {
     @GET("/api/teums/requests/calendar")
     suspend fun getTeumRequestCalendar(
         @Query("month") month: String): Response<ApiResponse<List<String>>>
+
+    // 특정 날짜의 틈 요청 조회
+    @GET("/api/teums/requests")
+    suspend fun getTeumRequestsByDate(
+        @Query("date") date: String // "YYYY-MM-DD"
+    ): Response<ApiResponse<List<TeumRequestDateResult>>>
+
 }

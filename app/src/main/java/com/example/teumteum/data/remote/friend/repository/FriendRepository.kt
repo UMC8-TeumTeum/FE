@@ -379,4 +379,20 @@ class FriendRepository @Inject constructor(
             throw Exception("${body?.code ?: "HTTP ${response.code()}"} - ${body?.message ?: response.message()}")
         }
     }
+
+    // 특정 날짜의 틈 요청 조회
+    suspend fun getTeumRequestsByDate(date: String): Result<List<TeumRequestDateResult>> = runCatching {
+        val response = api.getTeumRequestsByDate(date)
+        val body = response.body()
+
+        if (!response.isSuccessful || body == null) {
+            throw Exception("HTTP ${response.code()} - ${response.errorBody()?.string() ?: response.message()}")
+        }
+
+        if (body.isSuccess && body.result != null) {
+            body.result
+        } else {
+            throw Exception("${body.code} - ${body.message}")
+        }
+    }
 }

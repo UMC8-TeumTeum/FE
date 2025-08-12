@@ -50,16 +50,15 @@ class FriendTeumRequestFragment : Fragment() {
 
         (activity as? MainActivity)?.hideBottomBar()
 
-        // RecyclerView는 API 붙일 때 바인딩. 지금은 숨김 유지(더미 완전 제거)
-        binding.requestHistoryRecyclerView.visibility = View.GONE
+        // 어댑터 초기화
+        adapter = TeumRequestAdapter()
         binding.requestHistoryRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.requestHistoryRecyclerView.adapter = adapter
+        binding.requestHistoryRecyclerView.visibility = View.GONE // 처음엔 숨김
 
         // 뒤로가기
         binding.btnBack.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, FriendFragment())
-                .addToBackStack(null)
-                .commit()
+            requireActivity().onBackPressedDispatcher.onBackPressed()
         }
 
         // 이전/다음
@@ -69,6 +68,16 @@ class FriendTeumRequestFragment : Fragment() {
         viewModel.requestDotDates.observe(viewLifecycleOwner) { dates ->
             requestDotDates = HashSet(dates)
             updateCalendarFragment() // 최신 점 목록 반영해서 다시 그림
+        }
+
+        // 날짜별 요청 리스트 관찰
+        viewModel.teumRequestsByDate.observe(viewLifecycleOwner) { list ->
+            if (list.isNullOrEmpty()) {
+                binding.requestHistoryRecyclerView.visibility = View.GONE
+            } else {
+                binding.requestHistoryRecyclerView.visibility = View.VISIBLE
+                adapter.submitList(list) // TeumRequestAdapter가 TeumRequestDateResult를 바로 받게 수정
+            }
         }
 
         // 최초 표시 월에 대한 API 호출
@@ -105,9 +114,8 @@ class FriendTeumRequestFragment : Fragment() {
             selectedDate = date
             updateCalendarFragment()
 
-            // TODO: 선택 날짜의 “요청 기록 리스트” API가 준비되면 여기서 ViewModel 호출해서
-            //  binding.requestHistoryRecyclerView.visibility = View.VISIBLE 로 전환해주면 됨.
-            binding.requestHistoryRecyclerView.visibility = View.GONE
+            val dateStr = date.format(java.time.format.DateTimeFormatter.ISO_DATE)
+            viewModel.loadTeumRequestsByDate(dateStr) // 날짜별 요청 API 호출
         }
     }
 
