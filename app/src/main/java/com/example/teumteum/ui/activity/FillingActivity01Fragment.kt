@@ -220,6 +220,11 @@ class FillingActivity01Fragment : Fragment() {
         }
 
         setupObservers()
+
+        // 초기화 이벤트 수신
+        parentFragmentManager.setFragmentResultListener("reset_form", viewLifecycleOwner) { _, _ ->
+            clearAllInputs()
+        }
     }
 
     private fun updateNextButtonState() {
@@ -248,5 +253,64 @@ class FillingActivity01Fragment : Fragment() {
                 Log.e("FillingActivity01Fragment", "에러 발생: $it")
             }
         }
+    }
+
+    private fun clearAllInputs() {
+        val defaultStroke = ContextCompat.getColor(requireContext(), R.color.teumteum_bg)
+        val defaultBg = ContextCompat.getColor(requireContext(), R.color.main_2)
+        val defaultText = ContextCompat.getColor(requireContext(), R.color.text_primary)
+
+        // 시간 카드 초기화
+        val timeCards = listOf(
+            binding.fillingActivityTime01Cv,
+            binding.fillingActivityTime02Cv,
+            binding.fillingActivityTime03Cv,
+            binding.fillingActivityTime04Cv
+        )
+        timeCards.forEach {
+            it.strokeColor = defaultStroke
+            it.strokeWidth = 0
+        }
+        selectedTimeTag = null
+        selectedTimeButton = null
+
+        // 위치 버튼 초기화
+        val locationButtons = listOf(
+            binding.btnFillingActivityLocation01,
+            binding.btnFillingActivityLocation02,
+            binding.btnFillingActivityLocation03,
+            binding.btnFillingActivityLocation04,
+            binding.btnFillingActivityLocation05,
+            binding.btnFillingActivityLocation06
+        )
+        locationButtons.forEach {
+            it.setBackgroundColor(defaultBg)
+            it.setTextColor(defaultText)
+        }
+        selectedLocationButton = null
+        selectedLocationText = null
+        binding.fillingActivityLocationEt.setText("")
+
+        // 카테고리 버튼 초기화
+        val categoryButtons = listOf(
+            binding.btnFillingActivityCategory01,
+            binding.btnFillingActivityCategory02,
+            binding.btnFillingActivityCategory03,
+            binding.btnFillingActivityCategory04,
+            binding.btnFillingActivityCategory05,
+            binding.btnFillingActivityCategory06
+        )
+        categoryButtons.forEach {
+            it.setBackgroundColor(defaultBg)
+            it.setTextColor(defaultText)
+        }
+        selectedCategoryButton = null
+        selectedCategoryText = null
+        binding.fillingActivityCategoryEt.setText("")
+
+        updateNextButtonState()
+
+        // 포커스 해제
+        binding.root.clearFocus()
     }
 }

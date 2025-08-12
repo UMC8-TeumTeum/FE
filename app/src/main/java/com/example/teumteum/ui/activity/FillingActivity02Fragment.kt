@@ -62,6 +62,9 @@ class FillingActivity02Fragment : Fragment() {
         getFillingActivity()
 
         binding.backArrowIv.setOnClickListener {
+            // 초기화 신호 전송
+            parentFragmentManager.setFragmentResult("reset_form", Bundle.EMPTY)
+
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
 
