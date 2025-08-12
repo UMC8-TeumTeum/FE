@@ -93,13 +93,12 @@ class FillingActivity02Fragment : Fragment() {
             "집" to 1L, "학교" to 2L, "회사" to 3L,
             "이동중" to 4L, "실외" to 5L, "실내" to 6L
         )
+        val locationId = locationNameToId[selectedLocationText]
 
         val categoryNameToId = mapOf(
             "자기계발" to 1L, "운동" to 2L, "취미" to 3L,
             "일상" to 4L, "문화생활" to 5L, "휴식" to 6L
         )
-
-        val locationId = locationNameToId[selectedLocationText]
         val categoryId = categoryNameToId[selectedCategoryText]
 
         activityViewModel.activityWish(
