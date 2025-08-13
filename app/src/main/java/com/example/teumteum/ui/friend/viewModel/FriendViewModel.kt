@@ -782,6 +782,8 @@ class FriendViewModel @Inject constructor(
                 .onSuccess { list ->
                     Log.d("TEUM2006", "지정한 날짜의 틈 요청 목록이 조회되었습니다.")
                     Log.d("TEUM2006", "조회 날짜: $date, 총 ${list.size}건")
+
+                    // 서버 응답 그대로 사용 (resend 풀어서 추가하지 않음)
                     _teumRequestsByDate.value = list
                 }
                 .onFailure { e ->
@@ -790,5 +792,6 @@ class FriendViewModel @Inject constructor(
                 }
         }
     }
+
 
 }

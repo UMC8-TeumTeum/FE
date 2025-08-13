@@ -18,18 +18,28 @@ class TeumRequestAdapter(
     inner class TeumRequestViewHolder(val binding: ItemRequestHistoryBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(data: TeumRequestDateResult) {
+        fun bind(data: TeumRequestDateResult, position: Int, fullList: List<TeumRequestDateResult>) {
             // 취소 여부
             binding.tvStatus.visibility = if (data.isCancelled) View.VISIBLE else View.GONE
+
+            // 기본 숨김
+            binding.originalDivider.visibility = View.GONE
+
+            // 조건: 현재 아이템이 원본 요청이고, 다음 아이템이 재요청일 경우
+            val isOriginal = data.isResend == false
+            val nextIsResend = if (position + 1 < fullList.size) fullList[position + 1].isResend == true else false
+
+            if (isOriginal && nextIsResend) {
+                binding.originalDivider.visibility = View.VISIBLE
+            }
 
             // 프로필 이미지
             Glide.with(binding.profileIv.context)
                 .load(data.requester.profileImageUrl)
-                .placeholder(com.example.teumteum.R.drawable.gray_teum) // 로딩 중 기본
-                .error(com.example.teumteum.R.drawable.gray_teum)       // 로딩 실패 시 기본
-                .fallback(com.example.teumteum.R.drawable.gray_teum)    // URL이 null일 때 기본
+                .placeholder(com.example.teumteum.R.drawable.gray_teum)
+                .error(com.example.teumteum.R.drawable.gray_teum)
+                .fallback(com.example.teumteum.R.drawable.gray_teum)
                 .into(binding.profileIv)
-
 
             binding.tvName.text = data.requester.nickname ?: "이름없음"
 
@@ -79,7 +89,7 @@ class TeumRequestAdapter(
     }
 
     override fun onBindViewHolder(holder: TeumRequestViewHolder, position: Int) {
-        holder.bind(itemList[position])
+        holder.bind(itemList[position], position, itemList)
     }
 
     override fun getItemCount(): Int = itemList.size
