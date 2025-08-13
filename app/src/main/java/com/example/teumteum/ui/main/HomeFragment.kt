@@ -14,6 +14,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.viewpager2.widget.ViewPager2
 import com.example.teumteum.ui.calendar.IDateClickListener
 import com.example.teumteum.R
+import com.example.teumteum.data.remote.todo.model.AlarmStatusRequest
 import com.example.teumteum.databinding.FragmentHomeBinding
 import com.example.teumteum.ui.calendar.CalendarMode
 
@@ -28,6 +29,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 import com.example.teumteum.data.remote.todo.model.TodoListResult
+import com.example.teumteum.data.remote.todo.model.enums.AlarmStatus
 import com.example.teumteum.ui.calendar.viewModel.CalendarViewModel
 import com.example.teumteum.ui.todo.viewModel.TodoViewModel
 import com.example.teumteum.ui.clock.ChartUtils
@@ -134,8 +136,17 @@ class HomeFragment : Fragment(), IDateClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        adapter = TodoRVAdapter(parentFragmentManager, todolistItems)
+        adapter = TodoRVAdapter(parentFragmentManager, todolistItems) { id, toActive ->
+            val status = if (toActive) AlarmStatus.ACTIVE else AlarmStatus.INACTIVE
+            todoViewModel.patchAlarmStatus(
+                AlarmStatusRequest(
+                    todoId = id,
+                    alarmStatus = status
+                )
+            )
+        }
         binding.todolistRv.adapter = adapter
+
         val date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 
         viewModel.getTodayScheduleIfNeeded()

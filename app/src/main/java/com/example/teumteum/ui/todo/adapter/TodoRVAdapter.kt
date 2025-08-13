@@ -13,12 +13,17 @@ import com.example.teumteum.data.remote.todo.model.enums.ScheduleType
 import com.example.teumteum.databinding.ItemTodolistBinding
 import com.example.teumteum.ui.todo.TodoEditFragment
 
-class TodoRVAdapter(private val fragmentManager: FragmentManager, private var todoList: List<TodoListResult>) : RecyclerView.Adapter<TodoRVAdapter.ViewHolder>() {
+class TodoRVAdapter(
+    private val fragmentManager: FragmentManager,
+    private var todoList: List<TodoListResult>,
+    private val onToggleAlarm: (id: Long, toActive: Boolean) -> Unit
+) : RecyclerView.Adapter<TodoRVAdapter.ViewHolder>() {
 
     inner class ViewHolder(val binding: ItemTodolistBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
-        val binding: ItemTodolistBinding = ItemTodolistBinding.inflate(LayoutInflater.from(viewGroup.context), viewGroup, false)
+        val binding: ItemTodolistBinding =
+            ItemTodolistBinding.inflate(LayoutInflater.from(viewGroup.context), viewGroup, false)
         return ViewHolder(binding)
     }
 
@@ -34,9 +39,19 @@ class TodoRVAdapter(private val fragmentManager: FragmentManager, private var to
         )
 
         if (item.type == ScheduleType.ROUTINE) {
-            binding.root.setCardBackgroundColor(ContextCompat.getColor(binding.root.context, R.color.main_2))
+            binding.root.setCardBackgroundColor(
+                ContextCompat.getColor(
+                    binding.root.context,
+                    R.color.main_2
+                )
+            )
         } else {
-            binding.root.setCardBackgroundColor(ContextCompat.getColor(binding.root.context, R.color.white))
+            binding.root.setCardBackgroundColor(
+                ContextCompat.getColor(
+                    binding.root.context,
+                    R.color.white
+                )
+            )
         }
 
         binding.root.setOnClickListener {
@@ -55,13 +70,16 @@ class TodoRVAdapter(private val fragmentManager: FragmentManager, private var to
             )
 
             binding.ivAlarm.setOnClickListener {
-                item.alarmStatus = if (item.alarmStatus == AlarmStatus.ACTIVE)
-                    AlarmStatus.INACTIVE else AlarmStatus.ACTIVE
+                // 토글 후 상태
+                val toActive = (item.alarmStatus != AlarmStatus.ACTIVE)
+                item.alarmStatus = if (toActive) AlarmStatus.ACTIVE else AlarmStatus.INACTIVE
 
                 binding.ivAlarm.setImageResource(
-                    if (item.alarmStatus == AlarmStatus.INACTIVE) R.drawable.ic_alarm_on_sv
-                    else R.drawable.ic_alarm_off_sv
+                    if (toActive) R.drawable.ic_alarm_on_sv else R.drawable.ic_alarm_off_sv
                 )
+
+                // 해당 투두의 모든 알림 활성화/비활성화
+                onToggleAlarm(item.id, toActive)
             }
         }
     }
