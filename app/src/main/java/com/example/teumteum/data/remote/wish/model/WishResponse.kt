@@ -1,31 +1,30 @@
 package com.example.teumteum.data.remote.wish.model
 
-import com.example.teumteum.data.entities.Wish
 import com.example.teumteum.data.remote.todo.model.TodoResult
 import com.google.gson.annotations.SerializedName
 
-data class RegisterWishResponse(
-    @SerializedName("result") val result: Map<String, String>? = null
+data class WishlistResult(
+    @SerializedName("wishlist") val wishlist: List<WishlistItem>,
+    @SerializedName("pageNumber") val pageNumber: Int,
+    @SerializedName("pageSize") val pageSize: Int,
+    @SerializedName("hasNext") val hasNext: Boolean,
+    @SerializedName("isFirst") val isFirst: Boolean,
+    @SerializedName("isLast") val isLast: Boolean
 )
 
-data class GetWishlistResponse(
-    @SerializedName("result") val result: WishlistResult?
-)
-
-data class GetWishResponse(
-    @SerializedName("result") val result: Wish
-)
-
-data class EditWishResponse(
-    @SerializedName("result") val result: Map<String, String>?
-)
-
-data class DeleteWishesResponse(
-    @SerializedName("isSuccess") val isSuccess: Boolean,
-    @SerializedName("code") val code: String,
-    @SerializedName("message") val message: String
+data class WishResult(
+    @SerializedName("id") val id: Long,
+    @SerializedName("title") val title: String,
+    @SerializedName("content") val content: String,
+    @SerializedName("estimatedDuration") val estimatedDuration: String,
+    @SerializedName("categories") val categories: List<WishCategories>
 )
 
 data class FillWishResponse(
     @SerializedName("result") val result: TodoResult?
+)
+
+data class WishCategories(
+    @SerializedName("id") val categoryId: Long,
+    @SerializedName("name") val categoryName: String
 )

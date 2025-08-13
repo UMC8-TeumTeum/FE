@@ -64,6 +64,7 @@
                         android:id="@+id/todo_title_et"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
                         android:background="@color/transparent"
                         android:fontFamily="@font/noto_sans_kr_medium"
                         android:gravity="top|start"
@@ -71,6 +72,7 @@
                         android:textColorHint="@color/text_primary"
                         android:textColor="@color/text_primary"
                         android:inputType="textMultiLine"
+                        android:includeFontPadding="false"
                         android:maxLines="5"
                         android:minHeight="28dp"
                         android:textSize="20sp" />
@@ -84,10 +86,11 @@
                         android:src="@drawable/ic_horizon_sv" />
 
                     <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:id="@+id/profile_iv"
+                        android:layout_width="38dp"
+                        android:layout_height="38dp"
                         android:layout_marginTop="20dp"
-                        android:src="@drawable/ic_sample_profile" />
+                        android:src="@drawable/dot_circle_gray" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -118,7 +121,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:fontFamily="@font/noto_sans_kr_regular"
-                                android:text="4월 2일 (수)"
+                                tools:text="4월 2일 (수)"
                                 android:textColor="@color/text_primary"
                                 android:textSize="15sp" />
 
@@ -129,7 +132,7 @@
                                 android:clickable="true"
                                 android:focusable="true"
                                 android:fontFamily="@font/noto_sans_kr_regular"
-                                android:text="오후 3:00"
+                                tools:text="오후 3:00"
                                 android:textColor="@color/text_primary"
                                 android:textSize="15sp" />
                         </LinearLayout>
@@ -256,7 +259,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:fontFamily="@font/noto_sans_kr_regular"
-                                android:text="4월 2일 (수)"
+                                tools:text="4월 2일 (수)"
                                 android:textColor="@color/text_primary"
                                 android:textSize="15sp" />
 
@@ -267,7 +270,7 @@
                                 android:clickable="true"
                                 android:focusable="true"
                                 android:fontFamily="@font/noto_sans_kr_regular"
-                                android:text="오후 9:00"
+                                tools:text="오후 9:00"
                                 android:textColor="@color/text_primary"
                                 android:textSize="15sp" />
                         </LinearLayout>
@@ -429,7 +432,7 @@
                                     android:textSize="15sp" />
 
                                 <androidx.appcompat.widget.SwitchCompat
-                                    android:id="@+id/category_toggle_01_iv"
+                                    android:id="@+id/alarm_toggle_01_iv"
                                     style="@style/category_toggle"
                                     android:layout_width="wrap_content"
                                     android:layout_height="20dp"
@@ -458,7 +461,7 @@
                                     android:textSize="15sp" />
 
                                 <androidx.appcompat.widget.SwitchCompat
-                                    android:id="@+id/category_toggle_02_iv"
+                                    android:id="@+id/alarm_toggle_02_iv"
                                     style="@style/category_toggle"
                                     android:layout_width="wrap_content"
                                     android:layout_height="20dp"
@@ -549,7 +552,7 @@
                                 android:textSize="15sp" />
 
                             <androidx.appcompat.widget.SwitchCompat
-                                android:id="@+id/category_toggle_03_iv"
+                                android:id="@+id/public_toggle_01_iv"
                                 style="@style/category_toggle"
                                 android:layout_width="wrap_content"
                                 android:layout_height="20dp"
@@ -583,7 +586,7 @@
                                 android:textSize="15sp" />
 
                             <androidx.appcompat.widget.SwitchCompat
-                                android:id="@+id/category_toggle_04_iv"
+                                android:id="@+id/include_toggle_01_iv"
                                 style="@style/category_toggle"
                                 android:layout_width="wrap_content"
                                 android:layout_height="20dp"

@@ -9,7 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.wish.model.RegisterWishRequest
 import com.example.teumteum.databinding.FragmentWishRegisterBinding
@@ -24,7 +24,8 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class WishRegisterFragment : BottomSheetDialogFragment() {
 
-    private lateinit var binding: FragmentWishRegisterBinding
+    private var _binding: FragmentWishRegisterBinding? = null
+    private val binding get() = _binding!!
 
     private var selectedTimeButton: View? = null
     private val selectedCategoryButtons = mutableListOf<MaterialButton>()
@@ -32,14 +33,14 @@ class WishRegisterFragment : BottomSheetDialogFragment() {
     private var isWishSelected = true
     private var isFromWish: Boolean = false
 
-    private val wishViewModel: WishViewModel by viewModels()
+    private val viewModel: WishViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentWishRegisterBinding.inflate(inflater, container, false)
+        _binding = FragmentWishRegisterBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -48,6 +49,7 @@ class WishRegisterFragment : BottomSheetDialogFragment() {
 
         isFromWish = arguments?.getBoolean("isFromWish") ?: false
 
+//        viewModel.getWishCategories()
         setupUI()
         setupObservers()
     }
@@ -58,11 +60,31 @@ class WishRegisterFragment : BottomSheetDialogFragment() {
         binding.btnTodo.setOnClickListener {
             if (isWishSelected) {
 
-                binding.btnWish.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.teumteum_bg))
-                binding.btnWish.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
+                binding.btnWish.setBackgroundColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.teumteum_bg
+                    )
+                )
+                binding.btnWish.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.text_primary
+                    )
+                )
 
-                binding.btnTodo.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
-                binding.btnTodo.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+                binding.btnTodo.setBackgroundColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.text_primary
+                    )
+                )
+                binding.btnTodo.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.white
+                    )
+                )
 
                 isWishSelected = false
                 childFragmentManager.beginTransaction()
@@ -73,7 +95,7 @@ class WishRegisterFragment : BottomSheetDialogFragment() {
 
         binding.btnWishRegister.setOnClickListener {
             if (validateInputs()) {
-                wishViewModel.registerWish(getWishRequest())
+                viewModel.registerWish(getWishRequest())
             }
         }
 
@@ -85,7 +107,8 @@ class WishRegisterFragment : BottomSheetDialogFragment() {
         super.onStart()
 
         dialog?.let { dialog ->
-            val bottomSheet = dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+            val bottomSheet =
+                dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
             bottomSheet?.let {
                 val screenHeight = resources.displayMetrics.heightPixels
                 val desiredHeight = (screenHeight * 0.84).toInt()
@@ -181,7 +204,11 @@ class WishRegisterFragment : BottomSheetDialogFragment() {
     }
 
     private fun setupObservers() {
-        wishViewModel.registerSuccess.observe(viewLifecycleOwner) { isSuccess ->
+//        viewModel.wishCategories.observe(viewLifecycleOwner) { categoryList ->
+//            setupCategoryButtons(categoryList)
+//        }
+
+        viewModel.registerSuccess.observe(viewLifecycleOwner) { isSuccess ->
             if (isSuccess) {
                 Toast.makeText(requireContext(), "위시가 등록되었습니다.", Toast.LENGTH_SHORT).show()
                 parentFragmentManager.setFragmentResult("wish_register", Bundle())
@@ -195,7 +222,7 @@ class WishRegisterFragment : BottomSheetDialogFragment() {
             }
         }
 
-        wishViewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
+        viewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
             Log.e("WishRegister", "위시 등록 실패: $errorMessage")
         }
     }

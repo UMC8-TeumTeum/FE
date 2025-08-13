@@ -33,7 +33,7 @@ fun setTodayStyle(context: Context, textView: TextView) {
 
 fun resetDateStyle(context: Context, textView: TextView) {
     textView.background = null
-    textView.setTextColor(ContextCompat.getColor(context, R.color.black))
+    textView.setTextColor(ContextCompat.getColor(context, R.color.text_primary))
     textView.setTypeface(null, Typeface.NORMAL)
 }
 

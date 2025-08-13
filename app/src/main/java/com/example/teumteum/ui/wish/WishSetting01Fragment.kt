@@ -4,13 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
-import com.example.teumteum.ui.main.data.TimeBlock
-import com.example.teumteum.ui.main.data.TimeType
 import com.example.teumteum.databinding.FragmentWishSetting01Binding
 import com.example.teumteum.ui.clock.ChartUtils
 import com.example.teumteum.ui.clock.IconPieChartRenderer
@@ -22,7 +19,8 @@ import kotlin.getValue
 @AndroidEntryPoint
 class WishSetting01Fragment : Fragment() {
 
-    private lateinit var binding: FragmentWishSetting01Binding
+    private var _binding: FragmentWishSetting01Binding? = null
+    private val binding get() = _binding!!
 
     private var selectedButtonId: Int? = null
 
@@ -39,7 +37,7 @@ class WishSetting01Fragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentWishSetting01Binding.inflate(inflater, container, false)
+        _binding = FragmentWishSetting01Binding.inflate(inflater, container, false)
         return binding.root
     }
 
