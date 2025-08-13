@@ -50,9 +50,11 @@ class TodoViewModel @Inject constructor(
             val result = todoRepository.registerTodo(request)
             result.onSuccess {
                 _registerSuccess.value = true
+                _registerSuccess.value = false
             }
             result.onFailure { e ->
                 _errorMessage.value = e.localizedMessage ?: "투두 등록에 실패했습니다."
+                _errorMessage.value = null
             }
         }
     }
@@ -89,9 +91,11 @@ class TodoViewModel @Inject constructor(
             val result = todoRepository.editTodo(todoId, request)
             result.onSuccess {
                 _editSuccess.value = true
+                _editSuccess.value = false
             }
             result.onFailure { e ->
                 _errorMessage.value = e.localizedMessage ?: "투두 수정에 실패했습니다."
+                _errorMessage.value = null
             }
         }
     }
@@ -102,8 +106,10 @@ class TodoViewModel @Inject constructor(
             val result = todoRepository.deleteTodo(todoId)
             result.onSuccess {
                 _deleteSuccess.value = true
+                _deleteSuccess.value = false
             }.onFailure { e ->
                 _errorMessage.value = e.localizedMessage ?: "투두 삭제에 실패했습니다."
+                _errorMessage.value = null
             }
         }
     }

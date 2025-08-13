@@ -3,6 +3,7 @@ package com.example.teumteum.ui.todo
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -34,6 +35,7 @@ import com.example.teumteum.databinding.DialogConfirmTodoDeleteBinding
 import com.example.teumteum.databinding.DialogConfirmTodoEditBinding
 import com.example.teumteum.ui.calendar.IDateClickListener
 import com.example.teumteum.ui.calendar.MonthlyCalendarFragment
+import com.example.teumteum.ui.main.data.TimeBlock
 import com.example.teumteum.ui.myhome.viewModel.MyHomeViewModel
 import com.example.teumteum.ui.todo.viewModel.TodoViewModel
 import com.example.teumteum.utils.combineDateTime
@@ -42,6 +44,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -83,9 +86,17 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
     private var originalIncludeTeum: Boolean = false
     private var originalRemindAlarm: List<Int> = emptyList()
 
+    private var sleepStart: LocalTime? = null
+    private var sleepEnd: LocalTime? = null
+
+    private var sleepBlocks: List<TimeBlock> = emptyList()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         todoId = arguments?.getLong("todo_id") ?: -1L
+        arguments?.let {
+            sleepBlocks = it.getParcelableArrayList("sleepBlocks") ?: emptyList()
+        }
     }
 
     override fun onCreateView(
@@ -104,6 +115,13 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
             } else {
                 null
             }
+        }
+
+        arguments?.let {
+            val start = it.getString("sleepStart")
+            val end = it.getString("sleepEnd")
+            sleepStart = start?.let { LocalTime.parse(it) }
+            sleepEnd = end?.let { LocalTime.parse(it) }
         }
 
         // isAlarmOn 값에 따른 알림 바텀시트 변경
@@ -232,31 +250,53 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
             return
         }
 
+        val startTime = combineDateTime(binding.startDateTv, binding.startTimeTv)
+        val endTime = combineDateTime(binding.endDateTv, binding.endTimeTv)
+        val startLocalTime = LocalTime.parse(startTime.substring(11)) // HH:mm
+        val endLocalTime = LocalTime.parse(endTime.substring(11))
+
+        val startMin = startLocalTime.hour * 60 + startLocalTime.minute
+        val endMin = endLocalTime.hour * 60 + endLocalTime.minute
+
+        if (isOverlappingWithSleep(startMin, endMin)) {
+            Toast.makeText(requireContext(), "해당 시간에는 수면 패턴이 존재합니다.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         val request = getTodoRequest()
         viewModel.editTodo(todoId, request)
+    }
+
+    private fun isOverlappingWithSleep(startMin: Int, endMin: Int): Boolean {
+        return sleepBlocks.any { sleep ->
+            val sleepStart = sleep.startTime
+            val sleepEnd = sleep.endTime
+            // 겹치는 경우
+            startMin < sleepEnd && endMin > sleepStart
+        }
     }
 
     // 온보딩 리마인드 알림 조회 api 연동 시 수정 예정
     private fun getSelectedRemindAlarms(): List<ReminderAlarm>? {
         val result = mutableListOf<ReminderAlarm>()
 
-        // 고정 항목 30분 전
-        result.add(
-            ReminderAlarm(
-                alarm = 30,
-                status = if (binding.alarmToggle01Iv.isChecked)
-                    AlarmStatus.ACTIVE else AlarmStatus.INACTIVE
-            )
-        )
-
-        // 고정 항목 10분 전
-        result.add(
-            ReminderAlarm(
-                alarm = 10,
-                status = if (binding.alarmToggle02Iv.isChecked)
-                    AlarmStatus.ACTIVE else AlarmStatus.INACTIVE
-            )
-        )
+//        // 고정 항목 30분 전
+//        result.add(
+//            ReminderAlarm(
+//                alarm = 30,
+//                status = if (binding.alarmToggle01Iv.isChecked)
+//                    AlarmStatus.ACTIVE else AlarmStatus.INACTIVE
+//            )
+//        )
+//
+//        // 고정 항목 10분 전
+//        result.add(
+//            ReminderAlarm(
+//                alarm = 10,
+//                status = if (binding.alarmToggle02Iv.isChecked)
+//                    AlarmStatus.ACTIVE else AlarmStatus.INACTIVE
+//            )
+//        )
 
         // 동적 항목 (온보딩에서 추가된 알림 등)
         for (i in 0 until binding.alarmLayoutContainer.childCount) {
@@ -325,16 +365,28 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
 
     private fun isModified(): Boolean {
         val currentTitle = binding.todoTitleEt.text.toString().trim()
+
         val currentStartTime = combineDateTime(binding.startDateTv, binding.startTimeTv)
         val currentEndTime = combineDateTime(binding.endDateTv, binding.endTimeTv)
+
         val currentDescription = binding.detailTextEt.text.toString().trim()
         val currentIsPublic = binding.publicToggle01Iv.isChecked
         val currentIncludeTeum = binding.includeToggle01Iv.isChecked
         val currentRemindAlarm = getSelectedRemindAlarms()
 
+        Log.d("isModifiedCheck", """
+        currentTitle: $currentTitle / originalTitle: $originalTitle / changed: ${currentTitle != originalTitle}
+        currentStartTime: $currentStartTime / originalStartTime: $originalStartTime / changed: ${currentStartTime != originalStartTime}
+        currentEndTime: $currentEndTime / originalEndTime: $originalEndTime / changed: ${currentEndTime != originalEndTime}
+        currentDescription: $currentDescription / originalDescription: $originalDescription / changed: ${currentDescription != originalDescription}
+        currentIsPublic: $currentIsPublic / originalIsPublic: $originalIsPublic / changed: ${currentIsPublic != originalIsPublic}
+        currentIncludeTeum: $currentIncludeTeum / originalIncludeTeum: $originalIncludeTeum / changed: ${currentIncludeTeum != originalIncludeTeum}
+        currentRemindAlarm: $currentRemindAlarm / originalRemindAlarm: $originalRemindAlarm / changed: ${currentRemindAlarm != originalRemindAlarm}
+    """.trimIndent())
+
         return currentTitle != originalTitle ||
-                currentStartTime == originalStartTime ||
-                currentEndTime == originalEndTime ||
+                currentStartTime != originalStartTime ||
+                currentEndTime != originalEndTime ||
                 currentDescription != originalDescription ||
                 currentIsPublic != originalIsPublic ||
                 currentIncludeTeum != originalIncludeTeum ||
@@ -753,8 +805,10 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
 
             // 선택 여부 확인용 원본 저장
             originalTitle = todo.title
+            combineDateTime(binding.startDateTv, binding.startTimeTv)
             originalStartTime = todo.startTime
             originalEndTime = todo.endTime
+
             originalDescription = todo.description
             originalIsPublic = todo.isPublic
             originalIncludeTeum = todo.includeTeum

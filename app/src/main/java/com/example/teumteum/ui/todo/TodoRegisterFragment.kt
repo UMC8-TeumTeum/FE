@@ -107,7 +107,6 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
             val end = it.getString("sleepEnd")
             sleepStart = start?.let { LocalTime.parse(it) }
             sleepEnd = end?.let { LocalTime.parse(it) }
-
         }
 
         val today = getTodayFormatted()
@@ -576,7 +575,6 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
         val endTime = combineDateTime(binding.endDateTv, binding.endTimeTv)
         val startLocalTime = LocalTime.parse(startTime.substring(11)) // HH:mm
         val endLocalTime = LocalTime.parse(endTime.substring(11))
-
         val startMin = startLocalTime.hour * 60 + startLocalTime.minute
         val endMin = endLocalTime.hour * 60 + endLocalTime.minute
 
