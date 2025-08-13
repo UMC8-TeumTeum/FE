@@ -122,6 +122,7 @@ class FriendRoommateFriendFragment : Fragment() {
                 putString("myProfileUrl", myProfileUrl)
                 putString("targetNickname", targetNickname)
                 putString("targetProfileUrl", targetProfileUrl)
+                putInt("targetUserId", targetUserId)
                 putParcelableArrayList("addedFriends", ArrayList(addedFriends))
             }
 
