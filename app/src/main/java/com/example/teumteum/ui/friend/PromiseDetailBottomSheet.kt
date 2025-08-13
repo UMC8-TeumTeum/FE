@@ -139,7 +139,10 @@ class PromiseDetailBottomSheet(
 
     private fun formatTime(time: String): String {
         return try {
-            val parsed = LocalTime.parse(time)
+            // 24:00 → 00:00으로 변환 후 파싱
+            val normalizedTime = if (time == "24:00") "00:00" else time
+            val parsed = LocalTime.parse(normalizedTime)
+
             val hour = if (parsed.hour % 12 == 0) 12 else parsed.hour % 12
             val ampm = if (parsed.hour < 12) "오전" else "오후"
             "$ampm $hour:${parsed.minute.toString().padStart(2, '0')}"
@@ -147,6 +150,7 @@ class PromiseDetailBottomSheet(
             time
         }
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

@@ -161,7 +161,7 @@ class FriendRepository @Inject constructor(
         }
     }
 
-    // 14) 팔로워 목록 (리스트만 반환)
+    // 14) 팔로워 목록
     suspend fun getFollowers(page: Int, size: Int): Result<List<FollowerResult>> = runCatching {
         val response = api.getFollowers(page, size)
         val body = response.body()
@@ -173,7 +173,7 @@ class FriendRepository @Inject constructor(
         }
     }
 
-    // 14-1) 팔로워 목록 (페이지 전체)
+    // 14-1) 팔로워 목록
     suspend fun getFollowersPage(page: Int, size: Int): Result<FollowerPageResult> = runCatching {
         val response = api.getFollowers(page, size)
         val body = response.body()
@@ -223,5 +223,181 @@ class FriendRepository @Inject constructor(
         val response = api.resendTeumRequest(parentRequestId, request)
         Log.d("ResendTeumRequest", "response = ${response.body()}")
         handleApiResponse(response)
+    }
+
+    // 19) 친구 빈틈 시간 조회
+    suspend fun getFriendTeumTime(userId: Int): Result<TeumTimeResult> = runCatching {
+        val response = api.getFriendTeumTime(userId)
+        val body = response.body()
+        if (response.isSuccessful && body?.isSuccess == true && body.result != null) {
+            body.result
+        } else {
+            throw Exception("${body?.code ?: "HTTP ${response.code()}"} - ${body?.message ?: response.message()}")
+        }
+    }
+
+    // 20) 서로의 빈틈을 함께한 시간 조회
+    suspend fun getSharedTeumTime(userId: Int): Result<TeumTimeResult> = runCatching {
+        val response = api.getSharedTeumTime(userId)
+        val body = response.body()
+
+        if (!response.isSuccessful) {
+            throw Exception("HTTP ${response.code()} - ${response.errorBody()?.string() ?: response.message()}")
+        }
+        if (body == null) throw Exception("응답 본문이 비어있습니다.")
+
+        if (body.isSuccess && body.code == "TEUM2012" && body.result != null) {
+            body.result
+        } else {
+            val msg = when (body.code) {
+                "TEUM4002" -> "자기 자신은 조회할 수 없습니다."
+                "USER4040" -> "존재하지 않는 사용자입니다."
+                else -> body.message
+            }
+            throw Exception(msg)
+        }
+    }
+
+    // 21) 함께한 틈 목록 조회
+    suspend fun getSharedTeumList(
+        userId: Int,
+        page: Int = 1,
+        size: Int = 10
+    ): Result<List<SharedTeumItem>> = runCatching {
+        val response = api.getSharedTeumList(userId, page, size)
+        val body = response.body()
+
+        if (!response.isSuccessful) {
+            throw Exception("HTTP ${response.code()} - ${response.errorBody()?.string() ?: response.message()}")
+        }
+        if (body == null) throw Exception("응답 본문이 비어있습니다.")
+
+        if (body.isSuccess && body.code == "TEUM2013") {
+            body.result?.content ?: emptyList()
+        } else {
+            val msg = when (body.code) {
+                "USER4040" -> "존재하지 않는 사용자입니다."
+                "TEUM4002" -> "자기 자신은 조회할 수 없습니다."
+                else -> body.message
+            }
+            throw Exception("${body.code} - $msg")
+        }
+    }
+
+    // 22) 최근 공개 투두 조회 (최신 등록순 2개)
+    suspend fun getRecentPublicTodos(userId: Int): Result<List<PublicTodoResult>> = runCatching {
+        val response = api.getRecentPublicTodos(userId)
+        val http = response.code()
+        val body = response.body()
+
+        // HTTP 실패
+        if (!response.isSuccessful) {
+            Log.d("RECENT_PUBLIC_TODO", "서버 오류")
+            throw Exception("HTTP $http - ${response.errorBody()?.string() ?: response.message()}")
+        }
+
+        // 본문 없음
+        if (body == null) {
+            Log.d("RECENT_PUBLIC_TODO", "응답 본문이 비어있습니다.")
+            throw Exception("응답 본문이 비어있습니다.")
+        }
+
+        // 결과 2개로 제한
+        val trimmed = body.result?.take(2) ?: emptyList()
+
+        // 성공/실패 분기 (로그 한 줄만)
+        if (body.isSuccess && body.code == "FRIEND2005") {
+            Log.d("RECENT_PUBLIC_TODO", body.message)
+            trimmed
+        } else {
+            val msg = when (body.code) {
+                "FRIEND4040" -> "존재하지 않는 유저입니다."
+                "FRIEND4002" -> "자기 자신은 조회할 수 없습니다."
+                else -> body.message
+            }
+            Log.d("RECENT_PUBLIC_TODO", msg)
+            throw Exception("${body.code} - $msg")
+        }
+    }
+
+    // 공개 투두 날짜 리스트 조회
+    suspend fun getFriendPublicTodoDates(userId: Int, month: String): Result<List<String>> = runCatching {
+        val response = api.getFriendPublicTodoCalendar(userId, month)
+        val body = response.body()
+
+        if (!response.isSuccessful || body == null) {
+            throw Exception("HTTP ${response.code()} - ${response.errorBody()?.string() ?: response.message()}")
+        }
+
+        Log.d("PUBLIC_TODO_CALENDAR",
+            "isSuccess=${body.isSuccess}, code=${body.code}, message=${body.message}"
+        )
+
+        if (body.isSuccess && body.code == "FRIEND2005") {
+            body.result ?: emptyList()
+        } else {
+            val msg = when (body.code) {
+                "FRIEND4002" -> "자기 자신은 조회할 수 없습니다."
+                "FRIEND4040" -> "존재하지 않는 유저입니다."
+                else -> body.message
+            }
+            throw Exception("${body.code} - $msg")
+        }
+    }
+
+    // 특정 날짜 공개 투두 조회
+    suspend fun getFriendPublicTodosByDate(
+        userId: Int,
+        date: String
+    ): Result<List<PublicTodoResult>> = runCatching {
+        val response = api.getFriendPublicTodosByDate(userId, date)
+        val body = response.body()
+
+        if (!response.isSuccessful || body == null) {
+            throw Exception("HTTP ${response.code()} - ${response.errorBody()?.string() ?: response.message()}")
+        }
+
+        Log.d(
+            "PUBLIC_TODO_DAY",
+            "isSuccess=${body.isSuccess}, code=${body.code}, message=${body.message}"
+        )
+
+        if (body.isSuccess && body.code == "FRIEND2005") {
+            body.result ?: emptyList()
+        } else {
+            val msg = when (body.code) {
+                "FRIEND4002" -> "자기 자신에 대한 요청은 처리할 수 없습니다."
+                "FRIEND4040" -> "존재하지 않는 유저입니다."
+                else -> body.message
+            }
+            throw Exception("${body.code} - $msg")
+        }
+    }
+
+    // 틈 요청 날짜 리스트 조회
+    suspend fun getTeumRequestCalendar(month: String): Result<List<String>> = runCatching {
+        val response = api.getTeumRequestCalendar(month)
+        val body = response.body()
+        if (response.isSuccessful && body?.isSuccess == true) {
+            body.result ?: emptyList()
+        } else {
+            throw Exception("${body?.code ?: "HTTP ${response.code()}"} - ${body?.message ?: response.message()}")
+        }
+    }
+
+    // 특정 날짜의 틈 요청 조회
+    suspend fun getTeumRequestsByDate(date: String): Result<List<TeumRequestDateResult>> = runCatching {
+        val response = api.getTeumRequestsByDate(date)
+        val body = response.body()
+
+        if (!response.isSuccessful || body == null) {
+            throw Exception("HTTP ${response.code()} - ${response.errorBody()?.string() ?: response.message()}")
+        }
+
+        if (body.isSuccess && body.result != null) {
+            body.result
+        } else {
+            throw Exception("${body.code} - ${body.message}")
+        }
     }
 }

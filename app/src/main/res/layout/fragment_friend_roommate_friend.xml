@@ -242,14 +242,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="97dp"
-        android:layout_marginEnd="97dp"
-        android:layout_marginBottom="20dp"
         android:layout_marginTop="-10dp"
+        android:layout_marginEnd="97dp"
         android:fontFamily="@font/noto_sans_kr_medium"
         android:text="함께 할 친구를 더 찾아볼까요?"
         android:textColor="#0F0F0F"
         android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@+id/addFriendBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/card_container" />
@@ -260,16 +258,14 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="149dp"
         android:layout_marginEnd="149dp"
-        android:layout_marginBottom="95dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="20dp"
         android:background="@drawable/bg_circle_purple"
         android:contentDescription="친구 추가"
         android:scaleType="center"
         android:src="@drawable/plusbtn"
-        app:layout_constraintBottom_toTopOf="@+id/match_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/card_container" />
+        app:layout_constraintTop_toBottomOf="@+id/tvMoreFriend" />
 
 
     <com.google.android.material.button.MaterialButton

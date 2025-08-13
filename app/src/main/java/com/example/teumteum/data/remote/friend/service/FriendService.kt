@@ -113,4 +113,46 @@ interface FriendService {
         @Path("parentRequestId") parentRequestId: Int,
         @Body request: ResendTeumRequest
     ): Response<ApiResponse<ResendTeumResult>>
+
+    // 친구의 빈틈 시간 조회
+    @GET("/api/friends/{userId}/teum-time")
+    suspend fun getFriendTeumTime(
+        @Path("userId") userId: Int): Response<ApiResponse<TeumTimeResult>>
+
+    // 서로의 빈틈을 함께한 시간 조회
+    @GET("/api/teums/{userId}/shared/teum-time")
+    suspend fun getSharedTeumTime(
+        @Path("userId") userId: Int): Response<ApiResponse<TeumTimeResult>>
+
+    // 함께한 틈 목록 조회
+    @GET("/api/teums/{userId}/shared")
+    suspend fun getSharedTeumList(
+        @Path("userId") userId: Int, @Query("page") page: Int = 1, @Query("size") size: Int = 10): Response<ApiResponse<SharedTeumListResult>>
+
+    // 최근 공개 투두 조회
+    @GET("/api/friends/{userId}/todos/public/recent")
+    suspend fun getRecentPublicTodos(
+        @Path("userId") userId: Int): Response<ApiResponse<List<PublicTodoResult>>>
+
+    // 공개 투두 날짜 리스트 조회
+    @GET("/api/friends/{userId}/todos/public/calendar")
+    suspend fun getFriendPublicTodoCalendar(
+        @Path("userId") userId: Int, @Query("month") month: String): Response<ApiResponse<List<String>>>
+
+    // 특정 날짜의 공개 투두 조회
+    @GET("/api/friends/{userId}/todos/public")
+    suspend fun getFriendPublicTodosByDate(
+        @Path("userId") userId: Int, @Query("date") date: String): Response<ApiResponse<List<PublicTodoResult>>>
+
+    // 틈 요청 날짜 리스트
+    @GET("/api/teums/requests/calendar")
+    suspend fun getTeumRequestCalendar(
+        @Query("month") month: String): Response<ApiResponse<List<String>>>
+
+    // 특정 날짜의 틈 요청 조회
+    @GET("/api/teums/requests")
+    suspend fun getTeumRequestsByDate(
+        @Query("date") date: String // "YYYY-MM-DD"
+    ): Response<ApiResponse<List<TeumRequestDateResult>>>
+
 }
