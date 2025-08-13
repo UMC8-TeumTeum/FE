@@ -8,9 +8,12 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.bumptech.glide.Glide
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.friend.model.FriendProfileResult
+import com.example.teumteum.data.remote.friend.model.TeumTimeResult
 import com.example.teumteum.databinding.FragmentFriendProfileFollowBinding
 import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.example.teumteum.ui.main.MainActivity
@@ -24,6 +27,9 @@ class FriendProfileFollowFragment : Fragment() {
 
     private val viewModel: FriendViewModel by viewModels()
     private var navigatedToFollowing = false // 자동 이동 중복 방지
+
+    private val _teumTimeText = MutableLiveData<String>()
+    val teumTimeText: LiveData<String> get() = _teumTimeText
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -59,6 +65,14 @@ class FriendProfileFollowFragment : Fragment() {
                 .into(binding.profileIv)
 
             binding.modifyProfileBtn.text = if (profile.following) "팔로잉" else "팔로우"
+        }
+
+        // 빈틈 시간 조회
+        viewModel.loadFriendTeumTime(userId)
+
+        // 빈틈 시간 옵저브
+        viewModel.teumTimeText.observe(viewLifecycleOwner) {
+            binding.profileTimerTv.text = it
         }
 
         // 성공 시 프로필 바인딩
@@ -161,6 +175,15 @@ class FriendProfileFollowFragment : Fragment() {
         } else {
             Toast.makeText(requireContext(), "프로필 정보를 불러오는 중입니다.", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun TeumTimeResult.toKoreanDuration(): String {
+        val parts = buildList {
+            if (days > 0) add("${days}일")
+            if (hours > 0) add("${hours}시간")
+            if (minutes > 0) add("${minutes}분")
+        }
+        return if (parts.isEmpty()) "0분" else parts.joinToString(" ")
     }
 
     override fun onDestroyView() {

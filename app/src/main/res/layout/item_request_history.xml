@@ -6,9 +6,10 @@
     android:layout_height="wrap_content"
     app:cardCornerRadius="10dp"
     app:cardElevation="0dp"
+    android:layout_marginBottom="40dp"
     app:cardBackgroundColor="@android:color/white">
 
-    <!-- 약속 상태 표시용 TextView (예: 약속이 취소되었어요) -->
+    <!-- 약속 상태 표시용 TextView -->
     <TextView
         android:id="@+id/tvStatus"
         android:layout_width="wrap_content"
@@ -20,6 +21,13 @@
         android:textColor="#0F0F0F"
         android:fontFamily="@font/noto_sans_kr_medium"
         android:visibility="gone" />
+
+    <View
+        android:id="@+id/originalDivider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#E0E0E0"
+        android:visibility="gone"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -35,15 +43,16 @@
             android:background="#7770FE"
             android:gravity="center_vertical">
 
-            <ImageView
-                android:id="@+id/imgProfile"
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/profile_iv"
                 android:layout_width="38dp"
                 android:layout_height="38dp"
                 android:layout_marginStart="20dp"
-                android:layout_marginTop="14dp"
-                android:layout_marginBottom="15dp"
-                android:background="@drawable/freind01_circle_profile"
-                android:scaleType="centerCrop" />
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@color/gray"
+                android:scaleType="centerCrop"
+                app:shapeAppearanceOverlay="@style/CircleImage" />
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -131,13 +140,12 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="200dp">
 
             <TextView
                 android:id="@+id/labelAccept"
                 android:layout_width="56dp"
                 android:layout_height="32dp"
-                android:layout_marginStart="20dp"
                 android:layout_marginTop="29dp"
                 android:background="@drawable/bg_label_accept"
                 android:gravity="center"
@@ -151,7 +159,6 @@
                 android:id="@+id/labelCancel"
                 android:layout_width="56dp"
                 android:layout_height="32dp"
-                android:layout_marginStart="20dp"
                 android:layout_marginTop="24dp"
                 android:background="@drawable/bg_label_accept"
                 android:gravity="center"
@@ -165,7 +172,6 @@
                 android:id="@+id/labelNoAnswer"
                 android:layout_width="56dp"
                 android:layout_height="32dp"
-                android:layout_marginStart="20dp"
                 android:layout_marginTop="24dp"
                 android:background="@drawable/bg_label_accept"
                 android:gravity="center"
@@ -175,22 +181,22 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/labelCancel" />
 
+            <!-- 수직 구분선은 그대로 사용 -->
             <View
                 android:id="@+id/verticalDivider"
                 android:layout_width="1dp"
-                android:layout_height="152dp"
+                android:layout_height="0dp"
                 android:layout_marginStart="15dp"
-                android:layout_marginBottom="36dp"
                 android:layout_marginTop="25dp"
+                android:layout_marginBottom="25dp"
                 android:background="#CBCCD0"
+                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@id/labelAccept"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintStart_toEndOf="@id/labelAccept" />
 
-
-            <!-- ConstraintLayout 안에 FlexboxLayout으로 사용자 프로필 정렬 -->
+            <!-- 수락 컨테이너 -->
             <com.google.android.flexbox.FlexboxLayout
-                android:id="@+id/profileImageContainer"
+                android:id="@+id/containerAccepted"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -198,49 +204,38 @@
                 android:layout_marginEnd="12dp"
                 app:flexWrap="wrap"
                 app:justifyContent="flex_start"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/verticalDivider"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
 
-                <!-- 더미 사용자 프로필 이미지들 -->
-                <ImageView
-                    android:layout_width="38dp"
-                    android:layout_height="38dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:background="@drawable/freind01_circle_profile"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/gray_teum" />
+            <!-- 취소 컨테이너 -->
+            <com.google.android.flexbox.FlexboxLayout
+                android:id="@+id/containerCancelled"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="58dp"
+                android:layout_marginEnd="12dp"
+                app:flexWrap="wrap"
+                app:justifyContent="flex_start"
+                app:layout_constraintStart_toEndOf="@id/verticalDivider"
+                app:layout_constraintTop_toBottomOf="@id/containerAccepted"
+                app:layout_constraintEnd_toEndOf="parent" />
 
-                <ImageView
-                    android:layout_width="38dp"
-                    android:layout_height="38dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:background="@drawable/freind01_circle_profile"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/gray_teum" />
+            <!-- 미응답 컨테이너 -->
+            <com.google.android.flexbox.FlexboxLayout
+                android:id="@+id/containerPending"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="12dp"
+                android:layout_marginBottom="24dp"
+                app:flexWrap="wrap"
+                app:justifyContent="flex_start"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/verticalDivider" />
 
-                <ImageView
-                    android:layout_width="38dp"
-                    android:layout_height="38dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:background="@drawable/freind01_circle_profile"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/gray_teum" />
-
-                <ImageView
-                    android:layout_width="38dp"
-                    android:layout_height="38dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:background="@drawable/freind01_circle_profile"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/gray_teum" />
-
-                <!-- 필요한 만큼 반복 추가 가능 -->
-            </com.google.android.flexbox.FlexboxLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

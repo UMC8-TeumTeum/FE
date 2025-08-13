@@ -55,6 +55,9 @@ class FriendViewModel @Inject constructor(
     private val _myProfileUrl = MutableLiveData<String>()
     val myProfileUrl: LiveData<String> get() = _myProfileUrl
 
+    private val _teumTimeText = MutableLiveData<String>()
+    val teumTimeText: LiveData<String> get() = _teumTimeText
+
     // 선택된 친구 목록 저장용
     private val _selectedFriends =
         MutableLiveData<MutableList<FriendProfileResult>>(mutableListOf())
@@ -685,4 +688,171 @@ class FriendViewModel @Inject constructor(
         }
     }
 
+    // 친구의 빈틈 시간 조회
+    fun loadFriendTeumTime(userId: Int) {
+        viewModelScope.launch {
+            repository.getFriendTeumTime(userId)
+                .onSuccess { result ->
+                    _teumTimeText.value = result.toKoreanDuration()
+                    Log.d("TEUM_TIME_FRAGMENT", "친구 빈틈 시간 조회에 성공하였습니다.")
+                }
+                .onFailure { e ->
+                    _teumTimeText.value = "-"
+                    Log.e("TEUM_TIME_FRAGMENT", "빈틈 시간 조회 실패: ${e.message}")
+                }
+        }
+    }
+
+    private fun TeumTimeResult.toKoreanDuration(): String {
+        return "${days}일 ${hours}시간 ${minutes}분"
+    }
+
+    // 서로의 빈틈(함께한) 시간 텍스트 → nickname_tv에 바인딩 용
+    private val _sharedTeumTimeText = MutableLiveData<String>()
+    val sharedTeumTimeText: LiveData<String> get() = _sharedTeumTimeText
+
+    // 서로의 빈틈을 함께한 시간 조회 (나 + 친구)
+    fun loadSharedTeumTime(targetUserId: Int) {
+        viewModelScope.launch {
+            val myId = AppUserManager.userId
+            if (targetUserId == myId) {
+                _errorMessage.value = Event("자기 자신은 조회할 수 없습니다.")
+                _sharedTeumTimeText.value = "0일 0시간 0분" // 현재 포맷과 일관 유지
+                return@launch
+            }
+
+            repository.getSharedTeumTime(targetUserId)
+                .onSuccess { result ->
+                    _sharedTeumTimeText.value = result.toKoreanDuration()
+                    Log.d("TEUM_TIME_SHARED", "함께한 빈틈 시간 정보가 조회되었습니다.")
+                }
+                .onFailure { e ->
+                    _sharedTeumTimeText.value = "0일 0시간 0분" // 실패 시 기본값
+                    _errorMessage.value = Event(e.message ?: "함께한 빈틈 시간 조회 실패")
+                    Log.e("TEUM_TIME_SHARED", "조회 실패: ${e.message}")
+                }
+        }
+    }
+
+    // 함께한 틈 목록
+    private val _sharedTeumList = MutableLiveData<List<SharedTeumItem>>()
+    val sharedTeumList: LiveData<List<SharedTeumItem>> get() = _sharedTeumList
+
+    fun loadSharedTeumList(userId: Int, page: Int = 1, size: Int = 10) {
+        viewModelScope.launch {
+            repository.getSharedTeumList(userId, page, size)
+                .onSuccess { list ->
+                    _sharedTeumList.value = list
+                    Log.d(
+                        "SHARED_TEUM_LIST",
+                        "isSuccess=true, code=TEUM2013, message=함께한 틈 목록이 조회되었습니다. size=${list.size}"
+                    )
+                }
+                .onFailure { e ->
+                    Log.e("SHARED_TEUM_LIST", "목록 조회 실패: ${e.message}")
+                    _errorMessage.value = Event(e.message ?: "함께한 틈 목록 조회 실패")
+                    _sharedTeumList.value = emptyList()
+                }
+        }
+    }
+
+    // 최근 공개 투두 조회
+    private val _recentTodos = MutableLiveData<List<PublicTodoResult>>()
+    val recentTodos: LiveData<List<PublicTodoResult>> get() = _recentTodos
+
+    fun fetchRecentPublicTodos(userId: Int) {
+        viewModelScope.launch {
+            repository.getRecentPublicTodos(userId)
+                .onSuccess { list ->
+                    // 0개면 UI에서 카드 컨테이너 숨기도록 empty 리스트 그대로 전달
+                    _recentTodos.value = list
+                }
+                .onFailure { e ->
+                    // 에러 메시지는 기존 공통 에러 Event로만 알림 (로그는 Repository에서만)
+                    _recentTodos.value = emptyList()
+                    _errorMessage.value = Event(e.message ?: "최근 공개 투두 조회 실패")
+                }
+        }
+    }
+
+    // 공개 투두 날짜 리스트 조회
+    private val _publicTodoDotDates = MutableLiveData<List<LocalDate>>(emptyList())
+    val publicTodoDotDates: LiveData<List<LocalDate>> get() = _publicTodoDotDates
+
+    fun fetchFriendPublicTodoDates(userId: Int, month: String) {
+        viewModelScope.launch {
+            repository.getFriendPublicTodoDates(userId, month)
+                .onSuccess { dates ->
+                    // "YYYY-MM-DD" -> LocalDate 로 변환해서 보관
+                    _publicTodoDotDates.value = dates.mapNotNull {
+                        runCatching { LocalDate.parse(it) }.getOrNull()
+                    }
+                }
+                .onFailure { e ->
+                    _publicTodoDotDates.value = emptyList()
+                    _errorMessage.value = Event(e.message ?: "공개 투두 달력 조회 실패")
+                }
+        }
+    }
+
+    // 특정 날짜의 공개 투두 조회
+    private val _publicTodosByDate = MutableLiveData<List<PublicTodoResult>>(emptyList())
+    val publicTodosByDate: LiveData<List<PublicTodoResult>> get() = _publicTodosByDate
+
+    fun fetchFriendPublicTodosByDate(userId: Int, date: String) {
+        viewModelScope.launch {
+            repository.getFriendPublicTodosByDate(userId, date)
+                .onSuccess { _publicTodosByDate.value = it }
+                .onFailure {
+                    _publicTodosByDate.value = emptyList()
+                    _errorMessage.value = Event(it.message ?: "공개 투두 조회 실패")
+                }
+        }
+    }
+
+    // 틈 요청 날짜 리스트 조회
+    private val _requestDotDates = MutableLiveData<List<LocalDate>>(emptyList())
+    val requestDotDates: LiveData<List<LocalDate>> get() = _requestDotDates
+
+    fun fetchRequestTeumDates(month: String) {
+        viewModelScope.launch {
+            repository.getTeumRequestCalendar(month)
+                .onSuccess { result ->
+                    // "YYYY-MM-DD" -> LocalDate 변환
+                    val dates =
+                        result.mapNotNull { runCatching { LocalDate.parse(it) }.getOrNull() }
+                    _requestDotDates.value = dates
+                    Log.d(
+                        "FRIEND_REQUEST_DATES",
+                        "요청 달력 조회 성공: month=$month, count=${dates.size}"
+                    )
+                }
+                .onFailure { e ->
+                    _requestDotDates.value = emptyList()
+                    _errorMessage.value = Event("요청 달력 조회 실패 (${e.message})")
+                    Log.e("FRIEND_REQUEST_DATES", "요청 달력 조회 실패: ${e.message}", e)
+                }
+        }
+    }
+
+    // 특정 날짜의 약속된 틈 조회
+    private val _teumRequestsByDate = MutableLiveData<List<TeumRequestDateResult>>()
+    val teumRequestsByDate: LiveData<List<TeumRequestDateResult>> get() = _teumRequestsByDate
+
+    fun loadTeumRequestsByDate(date: String) {
+        viewModelScope.launch {
+            repository.getTeumRequestsByDate(date)
+                .onSuccess { list ->
+                    Log.d("TEUM2006", "지정한 날짜의 틈 요청 목록이 조회되었습니다.")
+                    Log.d("TEUM2006", "조회 날짜: $date, 총 ${list.size}건")
+
+                    // 서버 응답 그대로 사용 (resend 풀어서 추가하지 않음)
+                    _teumRequestsByDate.value = list
+                }
+                .onFailure { e ->
+                    Log.e("TEUM2006", "날짜별 틈 요청 조회 실패: ${e.message}")
+                    _errorMessage.value = Event("날짜별 틈 요청 조회 실패")
+                }
+        }
+    }
 }
