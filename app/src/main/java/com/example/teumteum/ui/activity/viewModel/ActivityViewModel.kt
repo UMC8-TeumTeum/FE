@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.teumteum.data.remote.activity.model.ActivityAiRequest
+import com.example.teumteum.data.remote.activity.model.ActivityAiResult
 import com.example.teumteum.data.remote.activity.model.ActivityWishRequest
 import com.example.teumteum.data.remote.activity.model.ActivityWishResult
 import com.example.teumteum.data.remote.activity.repository.ActivityRepository
@@ -25,19 +27,64 @@ class ActivityViewModel @Inject constructor(
     private val _activityWishes = MutableLiveData<List<ActivityWishResult>>()
     val activityWishes: LiveData<List<ActivityWishResult>> get() = _activityWishes
 
+    private val _activityAiSuccess = MutableLiveData<Boolean>()
+    val activityAiSuccess: LiveData<Boolean> get() = _activityAiSuccess
+
+    private val _activityAiContents = MutableLiveData<List<ActivityAiResult>>()
+    val activityAiContents: LiveData<List<ActivityAiResult>> get() = _activityAiContents
+
+    private val _loading = MutableLiveData(false)
+    val loading: LiveData<Boolean> = _loading
+
+    private var pendingCount = 0
+    private fun startLoading() {
+        if (pendingCount++ == 0) _loading.postValue(true)
+    }
+    private fun endLoading() {
+        pendingCount = (pendingCount - 1).coerceAtLeast(0)
+        if (pendingCount == 0) _loading.postValue(false)
+    }
+
     // 채움활동 위시리스트 불러오기
     fun activityWish(request: ActivityWishRequest) {
         viewModelScope.launch {
-            val result = activityRepository.activityWish(request)
-            result.onSuccess { response ->
-                _activityWishSuccess.value = true
-                _activityWishes.value = response.result?.wishes
-                    ?.filter { it.title.isNotBlank() }
-                    .orEmpty()
-            }
-            result.onFailure { e ->
-                _errorMessage.value = e.localizedMessage ?: "채움활동 위시 조회에 실패했습니다."
+            startLoading()
+            try {
+                val result = activityRepository.activityWish(request)
+                result.onSuccess { response ->
+                    _activityWishSuccess.value = true
+                    _activityWishes.value = response.result?.wishes
+                        ?.filter { it.title.isNotBlank() }
+                        .orEmpty()
+                }
+                result.onFailure { e ->
+                    _errorMessage.value = e.localizedMessage ?: "채움활동 위시 조회에 실패했습니다."
+                }
+            } finally {
+                endLoading()
             }
         }
     }
+
+    // 채움활동 AI 컨텐츠 불러오기
+    fun activityAi(request: ActivityAiRequest) {
+        viewModelScope.launch {
+            startLoading()
+            try {
+                val result = activityRepository.activityAi(request)
+                result.onSuccess { response ->
+                    _activityAiSuccess.value = true
+                    _activityAiContents.value = response.result?.aiContents
+                        ?.filter { it.title.isNotBlank() }
+                        .orEmpty()
+                }
+                result.onFailure { e ->
+                    _errorMessage.value = e.localizedMessage ?: "채움활동 AI 컨텐츠 조회에 실패했습니다."
+                }
+            } finally {
+                endLoading()
+            }
+        }
+    }
+
 }

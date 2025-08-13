@@ -130,4 +130,7 @@ dependencies {
 
     //kakao
     implementation("com.kakao.sdk:v2-user:2.19.0")
+
+    //shimmer
+    implementation("com.facebook.shimmer:shimmer:0.5.0")
 }
