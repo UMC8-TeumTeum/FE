@@ -28,7 +28,7 @@ class FillingActivity02Fragment : Fragment() {
     private val wishList = mutableListOf<ActivityWishResult>()
     private val aiList = mutableListOf<ActivityAiResult>()
 
-    private val activityViewModel: ActivityViewModel by activityViewModels()
+    private val viewModel: ActivityViewModel by activityViewModels()
 
     private var firstLoad = true
     private var isRefreshing = false
@@ -91,7 +91,7 @@ class FillingActivity02Fragment : Fragment() {
             categoryId = categoryId,
             customCategory = customCategory
         )
-        activityViewModel.activityWish(wishRequest)
+        viewModel.activityWish(wishRequest)
 
         val aiRequest = ActivityAiRequest(
             estimatedDuration = estimatedDuration,
@@ -100,11 +100,11 @@ class FillingActivity02Fragment : Fragment() {
             categoryId = categoryId,
             customCategory = customCategory
         )
-        activityViewModel.activityAi(aiRequest)
+        viewModel.activityAi(aiRequest)
     }
 
     private fun setupLoadingObserver() {
-        activityViewModel.loading.observe(viewLifecycleOwner) { isLoading ->
+        viewModel.loading.observe(viewLifecycleOwner) { isLoading ->
             val tag = LoadingPageFragment.TAG
             val fm = parentFragmentManager
             val overlay = fm.findFragmentByTag(tag) as? LoadingPageFragment
@@ -130,7 +130,7 @@ class FillingActivity02Fragment : Fragment() {
     }
 
     private fun setupObservers() {
-        activityViewModel.activityWishes.observe(viewLifecycleOwner) { wishes ->
+        viewModel.activityWishes.observe(viewLifecycleOwner) { wishes ->
             wishList.clear()
             wishList.addAll(wishes)
             val isEmpty = wishes.isEmpty()
@@ -141,12 +141,14 @@ class FillingActivity02Fragment : Fragment() {
             }
             wishAdapter.notifyDataSetChanged()
         }
-        activityViewModel.activityAiContents.observe(viewLifecycleOwner) { aiContents ->
+
+        viewModel.activityAiContents.observe(viewLifecycleOwner) { aiContents ->
             aiList.clear()
             aiList.addAll(aiContents)
             aiAdapter.notifyDataSetChanged()
         }
-        activityViewModel.errorMessage.observe(viewLifecycleOwner) { it?.let { Log.e("Filling02", it) } }
+
+        viewModel.errorMessage.observe(viewLifecycleOwner) { it?.let { Log.e("Filling02", it) } }
     }
 
     private fun showLoadingPage() {

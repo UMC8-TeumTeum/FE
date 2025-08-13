@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_checked="false">
+        <layer-list>
+            <item android:bottom="2dp" android:left="2.5dp" android:right="2dp" android:top="2dp">
+                <shape android:shape="oval">
+                    <size android:width="16dp" android:height="16dp"/>
+                    <solid android:color="@color/teumteum_deactive"/>
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+</selector>

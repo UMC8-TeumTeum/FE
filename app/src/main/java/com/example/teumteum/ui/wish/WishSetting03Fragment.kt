@@ -14,6 +14,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import com.example.teumteum.R
 import com.example.teumteum.databinding.DialogConfirmRegisterBinding
+import com.example.teumteum.databinding.FragmentWishRegisterBinding
 import com.example.teumteum.databinding.FragmentWishSetting03Binding
 import com.example.teumteum.ui.main.HomeFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -23,7 +24,8 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class WishSetting03Fragment : Fragment() {
 
-    private lateinit var binding: FragmentWishSetting03Binding
+    private var _binding: FragmentWishSetting03Binding? = null
+    private val binding get() = _binding!!
 
     private var selectedStartTime: String? = null
     private var selectedEndTime: String? = null
@@ -33,7 +35,7 @@ class WishSetting03Fragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentWishSetting03Binding.inflate(inflater, container, false)
+        _binding = FragmentWishSetting03Binding.inflate(inflater, container, false)
         return binding.root
     }
 

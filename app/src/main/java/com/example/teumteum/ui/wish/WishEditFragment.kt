@@ -11,11 +11,12 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.example.teumteum.R
-import com.example.teumteum.data.entities.Wish
 import com.example.teumteum.data.remote.wish.model.DeleteWishesRequest
 import com.example.teumteum.data.remote.wish.model.EditWishRequest
+import com.example.teumteum.data.remote.wish.model.WishResult
 import com.example.teumteum.databinding.DialogConfirmWishDeleteBinding
 import com.example.teumteum.databinding.DialogConfirmWishEditBinding
 import com.example.teumteum.databinding.FragmentWishEditBinding
@@ -29,7 +30,9 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class WishEditFragment : BottomSheetDialogFragment() {
 
-    private lateinit var binding: FragmentWishEditBinding
+    private var _binding: FragmentWishEditBinding? = null
+    private val binding get() = _binding!!
+
     private var wishId: Long = -1L
 
     private var selectedTimeButton: View? = null
@@ -40,14 +43,14 @@ class WishEditFragment : BottomSheetDialogFragment() {
     private var originalTime: String = ""
     private var originalCategoryIds: List<Long> = emptyList()
 
-    private val wishViewModel: WishViewModel by viewModels()
+    private val viewModel: WishViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentWishEditBinding.inflate(inflater, container, false)
+        _binding = FragmentWishEditBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -58,7 +61,7 @@ class WishEditFragment : BottomSheetDialogFragment() {
 
         wishId = arguments?.getLong("wish_id") ?: -1L
         if (wishId != -1L) {
-            wishViewModel.getWish(wishId)
+            viewModel.getWish(wishId)
         }
 
         binding.btnWishSave.setOnClickListener {
@@ -89,7 +92,7 @@ class WishEditFragment : BottomSheetDialogFragment() {
                 categories = selectedCategoryIds
             )
 
-            wishViewModel.editWish(wishId, request)
+            viewModel.editWish(wishId, request)
         }
 
         binding.btnWishDelete.setOnClickListener {
@@ -100,7 +103,7 @@ class WishEditFragment : BottomSheetDialogFragment() {
     }
 
     private fun setupObservers() {
-        wishViewModel.wish.observe(viewLifecycleOwner) { wish ->
+        viewModel.wish.observe(viewLifecycleOwner) { wish ->
             if (wish == null) return@observe
 
             binding.wishTitleEt.setText(wish.title)
@@ -115,7 +118,7 @@ class WishEditFragment : BottomSheetDialogFragment() {
             originalCategoryIds = wish.categories.map { it.categoryId }.sorted()
         }
 
-        wishViewModel.editSuccess.observe(viewLifecycleOwner) {
+        viewModel.editSuccess.observe(viewLifecycleOwner) {
             if (it == true) {
                 Toast.makeText(requireContext(), "위시가 성공적으로 수정되었습니다.", Toast.LENGTH_SHORT).show()
                 parentFragmentManager.setFragmentResult("wish_edit", Bundle())
@@ -124,7 +127,7 @@ class WishEditFragment : BottomSheetDialogFragment() {
         }
 
         // 삭제 성공 시
-        wishViewModel.deleteSuccess.observe(viewLifecycleOwner) {
+        viewModel.deleteSuccess.observe(viewLifecycleOwner) {
             if (it == true) {
                 Toast.makeText(requireContext(), "위시가 성공적으로 삭제되었습니다.", Toast.LENGTH_SHORT).show()
                 parentFragmentManager.setFragmentResult("wish_delete", Bundle())
@@ -132,7 +135,7 @@ class WishEditFragment : BottomSheetDialogFragment() {
             }
         }
 
-        wishViewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
+        viewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
             errorMessage?.let {
                 Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
                 Log.e("WishError", it)
@@ -193,7 +196,7 @@ class WishEditFragment : BottomSheetDialogFragment() {
             .create()
 
         dialogBinding.wishConfirmTv.setOnClickListener {
-            wishViewModel.deleteWishes(request)
+            viewModel.deleteWishes(request)
             dialog.dismiss()
         }
 
@@ -293,7 +296,7 @@ class WishEditFragment : BottomSheetDialogFragment() {
         }
     }
 
-    private fun setupCategoryButtons(wish: Wish) {
+    private fun setupCategoryButtons(wish: WishResult) {
         val categoryButtons = listOf(
             binding.btnWishCategory01,
             binding.btnWishCategory02,

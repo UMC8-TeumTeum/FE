@@ -174,7 +174,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/noto_sans_kr_regular"
-                        android:text="1일 20시간 30분"
+                        tools:text="1일 20시간 30분"
                         android:textColor="@color/white"
                         android:textSize="12sp" />
                 </LinearLayout>
@@ -209,7 +209,7 @@
                         android:layout_marginStart="14dp"
                         android:fontFamily="@font/pretendard_medium"
                         android:gravity="center"
-                        android:text="2025년 6월"
+                        tools:text="2025년 6월"
                         android:textColor="@color/text_primary"
                         android:textSize="20sp"
                         app:layout_constraintStart_toStartOf="parent"

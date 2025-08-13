@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.teumteum.data.remote.calendar.model.GetCalendarResponse
 import com.example.teumteum.data.remote.home.repository.HomeRepository
 import com.example.teumteum.ui.main.data.TimeBlock
 import dagger.hilt.android.lifecycle.HiltViewModel
