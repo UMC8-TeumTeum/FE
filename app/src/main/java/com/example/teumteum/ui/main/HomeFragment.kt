@@ -1,11 +1,11 @@
 package com.example.teumteum.ui.main
 
-import android.R.attr.text
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -14,6 +14,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.viewpager2.widget.ViewPager2
 import com.example.teumteum.ui.calendar.IDateClickListener
 import com.example.teumteum.R
+import com.example.teumteum.data.remote.todo.model.AlarmStatusRequest
 import com.example.teumteum.databinding.FragmentHomeBinding
 import com.example.teumteum.ui.calendar.CalendarMode
 
@@ -27,32 +28,44 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
+import com.example.teumteum.data.remote.todo.model.TodoListResult
+import com.example.teumteum.data.remote.todo.model.enums.AlarmStatus
+import com.example.teumteum.ui.calendar.viewModel.CalendarViewModel
+import com.example.teumteum.ui.todo.viewModel.TodoViewModel
 import com.example.teumteum.ui.clock.ChartUtils
 import com.example.teumteum.ui.clock.IconPieChartRenderer
+import com.example.teumteum.ui.main.data.TimeType
 import com.example.teumteum.ui.main.viewModel.HomeViewModel
+import com.example.teumteum.ui.myhome.viewModel.MyHomeViewModel
 import com.example.teumteum.utils.applyBlurShadow
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class HomeFragment : Fragment(), IDateClickListener {
 
-    lateinit var binding: FragmentHomeBinding
-
-    private val viewModel: HomeViewModel by activityViewModels()
+    private var _binding: FragmentHomeBinding? = null
+    private val binding get() = _binding!!
 
     private val today: LocalDate = LocalDate.now()
     private lateinit var selectedDate: LocalDate
 
     private lateinit var adapter: TodoRVAdapter
+    private var todolistItems: List<TodoListResult> = emptyList()
+
+    private val viewModel: HomeViewModel by activityViewModels()
+    private val todoViewModel: TodoViewModel by activityViewModels()
+    private val myHomeViewModel: MyHomeViewModel by activityViewModels()
 
     private var isAM: Boolean = true
+
+    private val TODO_SHEET_TAG = "TodoRegisterSheet"
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentHomeBinding.inflate(inflater, container, false)
+        _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
         selectedDate = today
 
@@ -77,8 +90,19 @@ class HomeFragment : Fragment(), IDateClickListener {
         }
 
         binding.fabAddIv.setOnClickListener {
-            val bottomSheet = TodoRegisterFragment()
-            bottomSheet.show(parentFragmentManager, bottomSheet.tag)
+            (parentFragmentManager.findFragmentByTag(TODO_SHEET_TAG) as? TodoRegisterFragment)?.let { sheet ->
+                if (sheet.dialog?.isShowing == true) return@setOnClickListener
+                sheet.dismissAllowingStateLoss() // 인스턴스 정리
+            }
+
+            val scheduleList = viewModel.scheduleList.value ?: emptyList()
+            val sleepBlocks = scheduleList.filter { it.type == TimeType.SLEEP }
+
+            TodoRegisterFragment().apply {
+                arguments = Bundle().apply {
+                    putParcelableArrayList("sleepBlocks", ArrayList(sleepBlocks))
+                }
+            }.show(parentFragmentManager, TODO_SHEET_TAG)
         }
 
         binding.btnLoadWishlistTv.setOnClickListener {
@@ -112,8 +136,19 @@ class HomeFragment : Fragment(), IDateClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-//        adapter = TodoRVAdapter(parentFragmentManager, todoDummyList)
-//        binding.todolistRv.adapter = adapter
+        adapter = TodoRVAdapter(parentFragmentManager, todolistItems) { id, toActive ->
+            val status = if (toActive) AlarmStatus.ACTIVE else AlarmStatus.INACTIVE
+            todoViewModel.patchAlarmStatus(
+                AlarmStatusRequest(
+                    todoId = id,
+                    alarmStatus = status
+                )
+            )
+        }
+        binding.todolistRv.adapter = adapter
+
+        val date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+
         viewModel.getTodayScheduleIfNeeded()
         viewModel.getTeumTime()
 
@@ -155,8 +190,24 @@ class HomeFragment : Fragment(), IDateClickListener {
 
         // 투두 등록 성공 이벤트 수신
         parentFragmentManager.setFragmentResultListener("todo_register", viewLifecycleOwner) { _, _ ->
-//            refreshTodolist()
+            viewModel.refreshTodaySchedule()
+            refreshTodolist()
         }
+
+        // 투두 수정 성공 이벤트 수신
+        parentFragmentManager.setFragmentResultListener("todo_edit", viewLifecycleOwner) { _, _ ->
+            refreshTodolist()
+        }
+
+        // 투두 삭제 성공 이벤트 수신
+        parentFragmentManager.setFragmentResultListener("todo_delete", viewLifecycleOwner) { _, _ ->
+            refreshTodolist()
+        }
+
+        todoViewModel.getTodoList(date)
+        myHomeViewModel.getMyInfo()
+
+        setupObservers()
     }
 
     override fun onResume() {
@@ -165,7 +216,7 @@ class HomeFragment : Fragment(), IDateClickListener {
         bottomNav?.visibility = View.VISIBLE
     }
 
-    /** 주간 달력 연결 */
+    // 주간 달력 연결
     private fun setWeeklyCalendarViewPager() {
         saveSelectedDate(today)
         val calendarAdapter = CalendarVPAdapter(requireActivity(), CalendarMode.WEEKLY,this)
@@ -197,7 +248,7 @@ class HomeFragment : Fragment(), IDateClickListener {
     }
 
 
-    /** 월간 달력 연결 */
+    // 월간 달력 연결
     private fun setMonthlyCalendarViewPager() {
         saveSelectedDate(today)
         val calendarAdapter = CalendarVPAdapter(requireActivity(), CalendarMode.MONTHLY, this)
@@ -216,7 +267,7 @@ class HomeFragment : Fragment(), IDateClickListener {
         })
     }
 
-    /** 주간/월간 토글 버튼 클릭 이벤트 설정 */
+    // 주간/월간 토글 버튼 클릭 이벤트 설정
     private fun setCalendarModeToggleListeners() {
         binding.btnHomeWeeklyCalendar.setOnClickListener {
             updateCalendarToggle(true)
@@ -229,7 +280,7 @@ class HomeFragment : Fragment(), IDateClickListener {
         }
     }
 
-    /** 주간/월간 버튼 이미지 변경 */
+    // 주간/월간 버튼 이미지 변경
     private fun updateCalendarToggle(isWeekly: Boolean) {
         if (isWeekly) {
             binding.btnHomeWeeklyCalendar.apply {
@@ -258,13 +309,13 @@ class HomeFragment : Fragment(), IDateClickListener {
         }
     }
 
-    /** 주간 달력 표시 */
+    // 주간 달력 표시
     private fun showWeeklyCalendar() {
         binding.homeWeeklyCalendarWeekVp.visibility = View.VISIBLE
         binding.homeMonthlyCalendarMonthVp.visibility = View.GONE
     }
 
-    /** 월간 달력 표시 */
+    // 월간 달력 표시
     private fun showMonthlyCalendar() {
         binding.homeWeeklyCalendarWeekVp.visibility = View.GONE
         binding.homeMonthlyCalendarMonthVp.visibility = View.VISIBLE
@@ -284,6 +335,10 @@ class HomeFragment : Fragment(), IDateClickListener {
         selectedDate = date
         saveSelectedDate(date)
         binding.homeSelectedDateTv.text = dateFormat(date)
+
+        // 클릭된 날짜의 투두리스트 조회
+        val dateStr = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        todoViewModel.getTodoList(dateStr)
     }
 
 
@@ -340,6 +395,33 @@ class HomeFragment : Fragment(), IDateClickListener {
 
     companion object {
         private const val DATE_PATTERN = "yyyy년 M월"
+    }
+
+    private fun refreshTodolist() {
+        val today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        todoViewModel.getTodoList(date = today)
+    }
+
+    private fun setupObservers() {
+        todoViewModel.todolistItems.observe(viewLifecycleOwner) { itemList ->
+            todolistItems = itemList
+
+            if (itemList.isEmpty()) {
+                binding.todolistRv.visibility = View.GONE
+            } else {
+                binding.todolistRv.visibility = View.VISIBLE
+                adapter.updateList(itemList)
+            }
+        }
+
+        todoViewModel.errorMessage.observe(viewLifecycleOwner) { error ->
+            Toast.makeText(requireContext(), "투두리스트 조회 실패: $error", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 }

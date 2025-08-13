@@ -1,34 +1,35 @@
 package com.example.teumteum.data.remote.todo.model
 
+import com.example.teumteum.data.remote.todo.model.enums.AlarmStatus
+import com.example.teumteum.data.remote.todo.model.enums.ScheduleType
 import com.google.gson.annotations.SerializedName
 
-data class RegisterTodoResponse(
-    @SerializedName("result") val result: TodoResult?
+data class TodoResult(
+    @SerializedName("todoId") val todoId: Long
 )
 
-data class GetTodoListResponse(
-    @SerializedName("isSuccess") val isSuccess: Boolean,
-    @SerializedName("code") val code: String,
-    @SerializedName("message") val message: String,
-    @SerializedName("result") val result: TodoListResult?
+data class TodoListResult(
+    @SerializedName("id") val id: Long,
+    @SerializedName("title") val title: String,
+    @SerializedName("startTime") val startTime: String,
+    @SerializedName("endTime") val endTime: String,
+    @SerializedName("isPublic") val isPublic: Boolean,
+    @SerializedName("alarmStatus") var alarmStatus: AlarmStatus,
+    @SerializedName("type") val type: ScheduleType
 )
 
-data class GetTodoResponse(
-    @SerializedName("isSuccess") val isSuccess: Boolean,
-    @SerializedName("code") val code: String,
-    @SerializedName("message") val message: String,
-    @SerializedName("result") val result: GetTodoResult?
+data class GetTodoResult(
+    @SerializedName("type") val type: ScheduleType,
+    @SerializedName("title") val title: String,
+    @SerializedName("startTime") val startTime: String,
+    @SerializedName("endTime") val endTime: String,
+    @SerializedName("description") val description: String,
+    @SerializedName("isPublic") val isPublic: Boolean,
+    @SerializedName("includeTeum") val includeTeum: Boolean,
+    @SerializedName("remindAlarm") val remindAlarm: List<ReminderAlarm>? = null,
+    @SerializedName("profileUrl") val profileUrl: List<String>? = null
 )
 
-data class EditTodoResponse(
-    @SerializedName("isSuccess") val isSuccess: Boolean,
-    @SerializedName("code") val code: String,
-    @SerializedName("message") val message: String,
-    @SerializedName("result") val result: TodoResult?
-)
-
-data class DeleteTodoResponse(
-    @SerializedName("isSuccess") val isSuccess: Boolean,
-    @SerializedName("code") val code: String,
-    @SerializedName("message") val message: String
+data class GetOnboardingReminders(
+    @SerializedName("reminders") val reminders: List<Int>? = null
 )

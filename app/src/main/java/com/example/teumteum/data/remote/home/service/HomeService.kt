@@ -14,5 +14,4 @@ interface HomeService {
 
     @GET("/api/home/teum-time")
     suspend fun getTeumTime(): Response<ApiResponse<TeumTimeResponse>>
-
 }
