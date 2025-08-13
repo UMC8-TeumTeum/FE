@@ -1,37 +1,64 @@
 package com.example.teumteum.ui.friend.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.teumteum.R
+import com.example.teumteum.data.remote.friend.model.FollowerResult
 import com.example.teumteum.databinding.Friend01ItemFollowerBinding
-import com.example.teumteum.ui.friend.data.FollowerData
 
-class FollowerAdapter(private val followerList: List<FollowerData>) :
-    RecyclerView.Adapter<FollowerAdapter.FollowerViewHolder>() {
+class FollowerAdapter(
+    private var data: List<FollowerResult>,
+    private val onProfileClick: ((FollowerResult) -> Unit)? = null,
+    private val onSendClick: ((FollowerResult) -> Unit)? = null
+) : RecyclerView.Adapter<FollowerAdapter.VH>() {
 
-    inner class FollowerViewHolder(val binding: Friend01ItemFollowerBinding) :
+    fun updateData(newData: List<FollowerResult>) {
+        data = newData
+        notifyDataSetChanged()
+    }
+
+    inner class VH(val binding: Friend01ItemFollowerBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: FollowerData) {
-            binding.nameTv.text = item.name
-            binding.jobTv.text = " · ${item.job}"
-            binding.sendBtn.setOnClickListener {
-                // 비행기 버튼 동작
+        fun bind(item: FollowerResult) = with(binding) {
+            // 이름
+            nameTv.text = item.nickname
+
+            // 직업(없으면 GONE)
+            val job = item.job.trim()
+            if (job.isNotEmpty()) {
+                jobTv.visibility = View.VISIBLE
+                jobTv.text = " · $job"
+            } else {
+                jobTv.visibility = View.GONE
             }
+
+            // 프로필 이미지
+            Glide.with(root)
+                .load(item.profileImageUrl)
+                .placeholder(R.drawable.gray_teum)
+                .error(R.drawable.gray_teum)
+                .circleCrop()
+                .into(profileIv)
+
+            // 클릭 리스너
+            profileIv.setOnClickListener { onProfileClick?.invoke(item) }
+            sendBtn.setOnClickListener { onSendClick?.invoke(item) }
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FollowerViewHolder {
-        val binding = Friend01ItemFollowerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return FollowerViewHolder(binding)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
+        val binding = Friend01ItemFollowerBinding.inflate(
+            LayoutInflater.from(parent.context), parent, false
+        )
+        return VH(binding)
     }
 
-    override fun onBindViewHolder(holder: FollowerViewHolder, position: Int) {
-        holder.bind(followerList[position])
+    override fun onBindViewHolder(holder: VH, position: Int) {
+        holder.bind(data[position])
     }
 
-    override fun getItemCount(): Int = followerList.size
-
+    override fun getItemCount(): Int = data.size
 }
-
-

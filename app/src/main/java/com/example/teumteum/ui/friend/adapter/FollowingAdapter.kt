@@ -6,60 +6,77 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.teumteum.R
-import com.example.teumteum.ui.friend.data.FollowData
+import com.example.teumteum.data.remote.friend.model.FollowingResult
+import com.example.teumteum.databinding.Friend01ItemFollowingBinding
 
 class FollowingAdapter(
-    private val data: List<FollowData>,
-    private val onProfileClick: (FollowData) -> Unit,
-    private val onSendClick: (FollowData) -> Unit  //  추가: sendBtn 클릭용 콜백
+    private var data: List<FollowingResult>,
+    private val onProfileClick: (FollowingResult) -> Unit,
+    private val onSendClick: (FollowingResult) -> Unit,
+    private val onStarClick: (Int) -> Unit
 ) : RecyclerView.Adapter<FollowingAdapter.ViewHolder>() {
 
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val nameTv: TextView = itemView.findViewById(R.id.nameTv)
-        private val jobTv: TextView = itemView.findViewById(R.id.jobTv)
-        private val starIv: ImageButton = itemView.findViewById(R.id.starIv)
-        private val profileBtn: ImageButton = itemView.findViewById(R.id.profileLayout)
-        private val sendBtn: ImageButton = itemView.findViewById(R.id.sendBtn) //  추가
+    private var favoriteMap: Map<Int, Boolean> = emptyMap()
 
-        fun bind(user: FollowData) {
-            // 이름/직업 세팅
-            nameTv.text = user.name
-            jobTv.text = " · ${user.field}"
+    inner class ViewHolder(val binding: Friend01ItemFollowingBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(item: FollowingResult) {
+            binding.nameTv.text = item.nickname
 
-            // 별 아이콘 토글
-            starIv.setImageResource(
-                if (user.favorite) R.drawable.friend01_fill_star
-                else R.drawable.friend01_star
+            // 직업(없으면 GONE)
+            val job = item.job.trim()
+            if (job.isNotEmpty()) {
+                binding.jobTv.visibility = View.VISIBLE
+                binding.jobTv.text = " · $job"
+            } else {
+                binding.jobTv.visibility = View.GONE
+            }
+
+            Glide.with(binding.profileIv)
+                .load(item.profileImageUrl)
+                .placeholder(R.drawable.gray_teum)
+                .error(R.drawable.gray_teum)
+                .circleCrop()
+                .into(binding.profileIv)
+
+            binding.profileIv.setOnClickListener { onProfileClick(item) }
+            binding.sendBtn.setOnClickListener { onSendClick(item) }
+
+            // 즐겨찾기 상태에 따른 아이콘 변경
+            val isFav = favoriteMap[item.userId] ?: item.isFavorite
+            binding.starIv.setImageResource(
+                if (isFav) R.drawable.friend01_fill_star else R.drawable.friend01_star
             )
 
-            // 즐겨찾기 토글
-            starIv.setOnClickListener {
-                user.favorite = !user.favorite
-                notifyItemChanged(adapterPosition)
-            }
-
-            // 프로필 사진 클릭 시 콜백
-            profileBtn.setOnClickListener {
-                onProfileClick(user)
-            }
-
-            //  sendBtn 클릭 시 콜백 전달
-            sendBtn.setOnClickListener {
-                onSendClick(user)
+            binding.starIv.setOnClickListener {
+                onStarClick(item.userId)
             }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.friend01_item_following, parent, false)
-        return ViewHolder(view)
+        val binding = Friend01ItemFollowingBinding.inflate(
+            LayoutInflater.from(parent.context), parent, false
+        )
+        return ViewHolder(binding)
+    }
+
+    override fun getItemCount(): Int = data.size
+
+    fun updateData(newData: List<FollowingResult>) {
+        data = newData
+        notifyDataSetChanged()
+    }
+
+    fun setFavoriteMap(map: Map<Int, Boolean>) {
+        favoriteMap = map
+        notifyDataSetChanged()
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(data[position])
     }
-
-    override fun getItemCount(): Int = data.size
 }
+
+

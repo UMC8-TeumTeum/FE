@@ -2,19 +2,19 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="70dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:paddingHorizontal="10dp"
     android:gravity="center_vertical">
 
     <!-- 프로필 사진 (ImageButton으로 변경) -->
-    <ImageButton
-        android:id="@+id/profileLayout"
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/profile_iv"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:background="@drawable/freind01_circle_profile"
+        android:background="@color/gray"
         android:scaleType="centerCrop"
-        android:clickable="true"
-        android:focusable="true" />
+        app:shapeAppearanceOverlay="@style/CircleImage" />
 
     <!-- 이름 + 직업 -->
     <LinearLayout

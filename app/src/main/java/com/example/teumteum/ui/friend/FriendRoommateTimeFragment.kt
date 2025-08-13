@@ -3,21 +3,31 @@ package com.example.teumteum.ui.friend
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.example.teumteum.R
-import com.example.teumteum.ui.main.data.TimeBlock
-import com.example.teumteum.ui.main.data.TimeType
+import com.example.teumteum.data.remote.friend.model.FriendProfileResult
+import com.example.teumteum.data.remote.friend.model.PossibleTimeRequest
 import com.example.teumteum.databinding.FragmentFriendRoommateTimeBinding
 import com.example.teumteum.ui.clock.ChartUtils
 import com.example.teumteum.ui.friend.adapter.FriendProfileAdapter
-import com.example.teumteum.ui.friend.data.FriendProfileData
+import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.example.teumteum.ui.main.MainActivity
+import com.example.teumteum.ui.main.data.TimeBlock
+import com.example.teumteum.ui.main.data.TimeType
 import dagger.hilt.android.AndroidEntryPoint
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
+import kotlin.getValue
 
 @AndroidEntryPoint
 class FriendRoommateTimeFragment : Fragment() {
@@ -28,16 +38,10 @@ class FriendRoommateTimeFragment : Fragment() {
     private var isAM = true
     private lateinit var sleepIconBitmap: Bitmap
 
-    // 예시 시간 데이터
-    private val fullSchedule = listOf(
-        TimeBlock(0, 360, TimeType.SLEEP),     // 00:00 ~ 06:00
-        TimeBlock(360, 600, TimeType.TODO),    // 06:00 ~ 10:00
-        TimeBlock(660, 720, TimeType.TODO),    // 11:00 ~ 12:00
-        TimeBlock(780, 840, TimeType.TODO),    // 13:00 ~ 14:00
-        TimeBlock(900, 1080, TimeType.EMPTY),  // 15:00 ~ 18:00
-        TimeBlock(1140, 1320, TimeType.TODO),  // 19:00 ~ 22:00
-        TimeBlock(1320, 1440, TimeType.SLEEP)  // 22:00 ~ 24:00
-    )
+    private val viewModel: FriendViewModel by activityViewModels()
+
+    //차트에 들어갈 시간 데이터
+    private var currentFullDayBlocks: List<TimeBlock> = emptyList()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,46 +54,82 @@ class FriendRoommateTimeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 바텀네비게이션 삭제
         (activity as? MainActivity)?.hideBottomBar()
 
-        // 전달받은 날짜를 텍스트뷰에 반영
-        val receivedDate = arguments?.getString("selected_date")
-        if (!receivedDate.isNullOrEmpty()) {
-            binding.date.text = receivedDate
-        }
+        val receivedDate = arguments?.getString("selected_date") ?: ""
+        val myNickname = arguments?.getString("myNickname") ?: "나"
+        val myProfileUrl = arguments?.getString("myProfileUrl") ?: ""
+        val targetNickname = arguments?.getString("targetNickname") ?: "상대"
+        val targetProfileUrl = arguments?.getString("targetProfileUrl") ?: ""
+        //기존 타겟 유저 아이디
+        val targetUserId = arguments?.getInt("targetUserId") ?: -1
 
-        val profiles = listOf(
-            FriendProfileData("나", R.drawable.gray_teum),
-            FriendProfileData("문혜원",R.drawable.gray_teum ),
-            FriendProfileData("이솔민", R.drawable.gray_teum),
-            FriendProfileData("장채미", R.drawable.gray_teum),
-            FriendProfileData("이솔민", R.drawable.gray_teum)
+        // 날짜 표시
+        binding.date.text = receivedDate
+
+        // RecyclerView에 들어갈 리스트
+        val profileList = mutableListOf<FriendProfileResult>()
+
+        val addedFriends = arguments?.getParcelableArrayList<FriendProfileResult>("addedFriends") ?: emptyList()
+
+        // 1. 나
+        profileList.add(
+            FriendProfileResult(
+                userId = -1,
+                name = myNickname,
+                profileImageUrl = myProfileUrl,
+                field = "",
+                following = false,
+                favorite = false
+            )
         )
 
-        var adapter = FriendProfileAdapter(profiles) { profile ->
+        // 2. 상대
+        profileList.add(
+            FriendProfileResult(
+                userId = targetUserId,
+                name = targetNickname,
+                profileImageUrl = targetProfileUrl,
+                field = "",
+                following = false,
+                favorite = false
+            )
+        )
+
+        // 선택한 친구들 추가
+        profileList.addAll(addedFriends)
+
+        // 어댑터 연결
+        val adapter = FriendProfileAdapter(profileList) { profile ->
             // sendButton 클릭 시 동작
         }
-
-        binding.friendProfileRv.adapter = adapter
         binding.friendProfileRv.layoutManager = LinearLayoutManager(requireContext())
+        binding.friendProfileRv.adapter = adapter
 
 
-        // PieChart 기본 설정
+        //시간표 조회를 위한 요청 생성
+        val userIds: List<Int> = buildList {
+            if (targetUserId > 0) add(targetUserId)
+            addedFriends.asSequence()
+                .map { it.userId }
+                .filter { it > 0 }
+                .forEach { add(it) }
+        }.distinct()
+
+        // 요청 객체 생성
+        val request = PossibleTimeRequest(
+            userIds = userIds,
+            date = convertDateFormat(receivedDate)
+        )
+
+        Log.d("TIME_REQUEST", request.toString())
+        // 호출
+        viewModel.getPossibleTimeWithFriend(request)
+
+
+        // PieChart 설정
         ChartUtils.setupPieChart(binding.clockChart)
-
-        // 중앙 아이콘용 비트맵 로드
-//        sleepIconBitmap = ChartUtils.getBitmapFromVector(requireContext(), R.drawable.ic_sleep_sv)
-
-        // 아이콘 렌더러 설정
-//        binding.clockChart.renderer = IconPieChartRenderer(
-//            binding.clockChart,
-//            binding.clockChart.animator,
-//            binding.clockChart.viewPortHandler,
-//            sleepIconBitmap
-//        )
-
-        // 초기 시간 차트 세팅
+        observeViewModel()
         updateTimeChart()
         updateAMPMIndicator()
 
@@ -101,15 +141,11 @@ class FriendRoommateTimeFragment : Fragment() {
         }
 
         // 뒤로가기
-        // 버튼 클릭 시 FriendRoommateFriendFragment로 이동
         binding.btnBack.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, FriendRoommateFriendFragment())
-                .addToBackStack(null)
-                .commit()
+            parentFragmentManager.popBackStack()
         }
 
-        // 다음 버튼 클릭 시 FriendRoommateMatchingDetailFragment로 이동
+        // 다음 버튼
         binding.nextBtn.setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.main_frm, FriendRoommateMatchingDetailFragment())
@@ -119,19 +155,17 @@ class FriendRoommateTimeFragment : Fragment() {
     }
 
     private fun updateTimeChart() {
-        val halfBlocks = ChartUtils.splitAndFillTimeBlocks(fullSchedule, isAM)
+        // 데이터가 오기 전엔 예시(fullSchedule), 온 뒤엔 currentFullDayBlocks 사용
+        val baseBlocks = currentFullDayBlocks
+        val halfBlocks = ChartUtils.splitAndFillTimeBlocks(baseBlocks, isAM)
 
-        // 이 화면에서만 색상 통일 적용!
         val unifiedPurple = Color.parseColor("#847EFF")
         ChartUtils.setTimePieChartData(requireContext(), binding.clockChart, halfBlocks, unifiedPurple)
-        //  EMPTY 블럭 있는지 확인
-        val hasEmptyTime = halfBlocks.any { it.type == TimeType.EMPTY }
 
-        //  버튼 상태 업데이트
+        val hasEmptyTime = halfBlocks.any { it.type == TimeType.EMPTY }
         updateNextButton(hasEmptyTime)
     }
 
-    // 버튼 활성화 비활성화
     private fun updateNextButton(hasEmpty: Boolean) {
         if (!hasEmpty) {
             binding.nextBtn.isEnabled = false
@@ -144,18 +178,15 @@ class FriendRoommateTimeFragment : Fragment() {
         }
     }
 
-
     private fun updateAMPMIndicator() {
         val leftView = binding.leftView
         val rightView = binding.rightView
 
         if (isAM) {
-            // 왼쪽 막대, 오른쪽 점
             updateIndicatorView(leftView, 28, 4, R.drawable.clock_indicator_bar_purple)
             updateIndicatorView(rightView, 4, 4, R.drawable.clock_indicator_dot)
             binding.amPmTv.text = "AM"
         } else {
-            // 왼쪽 점, 오른쪽 막대
             updateIndicatorView(leftView, 4, 4, R.drawable.clock_indicator_dot)
             updateIndicatorView(rightView, 28, 4, R.drawable.clock_indicator_bar_purple)
             binding.amPmTv.text = "PM"
@@ -175,6 +206,29 @@ class FriendRoommateTimeFragment : Fragment() {
 
     private fun dpToPx(dp: Int): Int {
         return (dp * resources.displayMetrics.density).toInt()
+    }
+
+    private fun observeViewModel() {
+        viewModel.possibleTimeList.observe(viewLifecycleOwner) { list ->
+            Log.d("DEBUG", "observeViewModel triggered: ${list.size}개")
+
+            val cards = list.filterNotNull()
+            Log.d("DEBUG", "after filterNotNull: ${cards.size}개")
+
+            if (cards.isEmpty()) {
+                currentFullDayBlocks = listOf(TimeBlock(0, 1440, TimeType.TODO))
+            } else {
+                currentFullDayBlocks = ChartUtils.buildBlocksFromTimeCardItems(cards)
+            }
+
+            updateTimeChart()
+        }
+    }
+
+    private fun convertDateFormat(dateStr: String): String {
+        val formatterInput = DateTimeFormatter.ofPattern("yy.MM.dd(E)", Locale.KOREAN)
+        val formatterOutput = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.KOREAN)
+        return LocalDate.parse(dateStr, formatterInput).format(formatterOutput)
     }
 
     override fun onDestroyView() {

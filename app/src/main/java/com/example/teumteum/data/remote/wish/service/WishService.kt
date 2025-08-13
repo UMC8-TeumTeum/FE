@@ -1,7 +1,6 @@
 package com.example.teumteum.data.remote.wish.service
 
 import com.example.teumteum.data.entities.Wish
-import com.example.teumteum.data.remote.wish.model.AssignWishRequest
 import com.example.teumteum.data.remote.wish.model.DeleteWishesRequest
 import com.example.teumteum.data.remote.wish.model.DeleteWishesResponse
 import com.example.teumteum.data.remote.wish.model.EditWishRequest

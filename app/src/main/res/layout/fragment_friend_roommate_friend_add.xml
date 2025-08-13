@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="#FFFFFF">
 
     <!-- 상단 텍스트 -->
@@ -37,13 +38,13 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/friendRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="700dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="39dp"
         android:layout_marginStart="28dp"
         android:layout_marginEnd="28dp"
         app:layout_constraintTop_toBottomOf="@id/textTitle"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:listitem="@layout/item_friend_checkbox"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
