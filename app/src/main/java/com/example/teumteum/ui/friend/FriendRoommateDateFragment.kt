@@ -138,6 +138,8 @@ class FriendRoommateDateFragment : Fragment() {
                 arguments = bundle
             }
 
+            setViewModelData()
+
             parentFragmentManager.beginTransaction()
                 .replace(R.id.main_frm, fragment)
                 .addToBackStack(null)
@@ -181,6 +183,12 @@ class FriendRoommateDateFragment : Fragment() {
             .commit()
     }
 
+    private fun setViewModelData(){
+        viewModel.setTeumRequestMainTargetUserId(targetUserId)
+        viewModel.setTeumRequestMainTargetProfileImage(targetProfileUrl!!)
+        viewModel.setTeumRequestSelectedDate(selectedDate.toString())
+        viewModel.setTeumRequestMainTargetUserName(targetNickname!!)
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

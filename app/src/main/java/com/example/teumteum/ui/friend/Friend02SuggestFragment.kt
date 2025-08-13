@@ -91,8 +91,8 @@ class Friend02SuggestFragment : Fragment() {
             viewModel.resendTeumRequest(
                 currentItem.requestId,
                 ResendTeumRequest(
-                    startTime = selected.startTime,
-                    endTime = selected.endTime
+                    startTime = convert24To00(selected.startTime),
+                    endTime = convert24To00(selected.endTime)
                 ),
                 onSuccess = {
                     parentFragmentManager.beginTransaction()
@@ -283,6 +283,11 @@ class Friend02SuggestFragment : Fragment() {
         val tMin = LocalTime.parse(min)
         val tMax = LocalTime.parse(normMax)
         return !t.isBefore(tMin) && !t.isAfter(tMax)
+    }
+
+    //24:00 -> 00:00 변환
+    private fun convert24To00(timeStr: String): String {
+        return if (timeStr == "24:00") "00:00" else timeStr
     }
 
     companion object {

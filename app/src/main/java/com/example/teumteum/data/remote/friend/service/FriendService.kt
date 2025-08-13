@@ -26,10 +26,10 @@ interface FriendService {
     @GET("/api/teums/request/received")
     suspend fun getReceivedTeumRequests(): Response<ApiResponse<TeumReceivedResult>>
 
-    @POST("/api/teums/requests")
+    @POST("/api/teums/request")
     suspend fun sendTeumRequest(
         @Body body: TeumRequest
-    ): Response<ApiResponse<TeumRequestResult>>
+    ): Response<ApiResponse<Int>>
 
     @PATCH("/api/teums/response/{responseId}/status")
     suspend fun patchTeumStatus(

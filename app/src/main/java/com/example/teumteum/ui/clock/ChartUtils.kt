@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import com.example.teumteum.R
 import androidx.core.content.ContextCompat
+import com.example.teumteum.ui.friend.data.TimeCardItem
 import com.example.teumteum.ui.main.data.TimeBlock
 import com.example.teumteum.ui.main.data.TimeType
 import com.github.mikephil.charting.charts.PieChart
@@ -130,6 +131,84 @@ object ChartUtils {
         drawable.setBounds(0, 0, canvas.width, canvas.height)
         drawable.draw(canvas)
         return bitmap
+    }
+
+    private fun String.toMinuteOfDay(): Int {
+        val parts = split(":")
+        val h = parts.getOrNull(0)?.toIntOrNull() ?: 0
+        val m = parts.getOrNull(1)?.toIntOrNull() ?: 0
+
+        // "24:00"은 하루 끝(1440분)으로 허용
+        if (h == 24 && m == 0) return 1440
+
+        // 일반 유효 범위
+        val hour = h.coerceIn(0, 23)
+        val minute = m.coerceIn(0, 59)
+        return hour * 60 + minute
+    }
+
+    //가능한 시간 데이터(TimeCard)를 TimeBlock으로 변환
+    fun buildBlocksFromTimeCardItems(cards: List<TimeCardItem>): List<TimeBlock> {
+        if (cards.isEmpty()) {
+            // 카드가 없으면 하루 종일 EVENT 처리
+            return listOf(TimeBlock(0, 1440, TimeType.TODO))
+        }
+
+        // 문자열을 분으로 파싱하고 [0,1440] 기준으로 펼치기
+        val emptySegments = mutableListOf<Pair<Int, Int>>() // (start, end) in minutes
+        for (c in cards) {
+            val s = c.startTime.toMinuteOfDay()
+            val e = c.endTime.toMinuteOfDay()
+            if (s == e) continue // 길이 0은 무시
+
+            if (s < e) {
+                // 일반 구간
+                emptySegments += s to e
+            } else {
+                // 자정 넘김 구간: [s, 1440) + [0, e]
+                emptySegments += s to 1440
+                emptySegments += 0 to e
+            }
+        }
+        if (emptySegments.isEmpty()) {
+            return listOf(TimeBlock(0, 1440, TimeType.TODO))
+        }
+
+        // 2) EMPTY 구간 병합 (겹치거나 인접한 것도 하나로)
+        emptySegments.sortBy { it.first }
+        val mergedEmpty = mutableListOf<Pair<Int, Int>>()
+        var curStart = emptySegments[0].first
+        var curEnd = emptySegments[0].second
+        for (i in 1 until emptySegments.size) {
+            val (s, e) = emptySegments[i]
+            if (s <= curEnd) {
+                curEnd = maxOf(curEnd, e)
+            } else if (s == curEnd) {
+                // 인접: [a,b] + [b,c] -> [a,c]
+                curEnd = e
+            } else {
+                mergedEmpty += curStart to curEnd
+                curStart = s
+                curEnd = e
+            }
+        }
+        mergedEmpty += curStart to curEnd
+
+        // 비어있는 구간은 투두로 채우기
+        val result = mutableListOf<TimeBlock>()
+        var cursor = 0
+        fun addBlock(start: Int, end: Int, type: TimeType) {
+            if (start < end) result += TimeBlock(start, end, type)
+        }
+
+        for ((s, e) in mergedEmpty) {
+            addBlock(cursor, s, TimeType.TODO)
+            addBlock(s, e, TimeType.EMPTY)
+            cursor = e
+        }
+        addBlock(cursor, 1440, TimeType.TODO)
+
+        return result
     }
 
 }

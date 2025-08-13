@@ -2,12 +2,14 @@ package com.example.teumteum.ui.friend.viewModel
 
 import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.teumteum.data.AppUserManager
 import com.example.teumteum.data.remote.friend.model.*
 import com.example.teumteum.data.remote.friend.repository.FriendRepository
+import com.example.teumteum.ui.friend.data.SelectedTime
 
 import com.example.teumteum.utils.Event
 import com.google.gson.Gson
@@ -177,22 +179,82 @@ class FriendViewModel @Inject constructor(
         }
     }
 
+    private val _teumRequestTitle = MutableLiveData<String>("")
+    val teumRequestTitle: LiveData<String> get() = _teumRequestTitle
+
+    private val _teumRequestDescription = MutableLiveData<String>("")
+    val teumRequestDescription: LiveData<String> get() = _teumRequestDescription
+
+    private val _teumRequestSelectedDate = MutableLiveData<String>()
+    val teumRequestSelectedDate: LiveData<String> get() = _teumRequestSelectedDate
+
+    private val _teumRequestSelectedTime = MutableLiveData<SelectedTime?>()
+    val teumRequestSelectedTime: LiveData<SelectedTime?> get() = _teumRequestSelectedTime
+
+    private val _teumRequestGraphicId = MutableLiveData<Int?>()
+    val teumRequestGraphicId: LiveData<Int?> get() = _teumRequestGraphicId
+
+    private val _teumRequestReceiverUserIds = MutableLiveData<List<Int>>(emptyList())
+    val teumRequestReceiverUserIds: LiveData<List<Int>> get() = _teumRequestReceiverUserIds
+
+    private val _teumRequestMainTargetUserId = MutableLiveData<Int>()
+    val teumRequestMainTargetUserId: LiveData<Int> get() = _teumRequestMainTargetUserId
+
+    private val _teumRequestMainTargetUserName = MutableLiveData<String>()
+    val teumRequestMainTargetUserName: LiveData<String> get() = _teumRequestMainTargetUserName
+
+    private val _teumRequestMainTargetProfileImage = MutableLiveData<String>()
+    val teumRequestMainTargetProfileImage: LiveData<String> get() = _teumRequestMainTargetProfileImage
+
+    //Setter
+    fun setTeumRequestTitle(v: String)            { _teumRequestTitle.value = v }
+    fun setTeumRequestDescription(v: String)      { _teumRequestDescription.value = v }
+    fun setTeumRequestSelectedDate(v: String)   { _teumRequestSelectedDate.value = v }
+    fun setTeumRequestSelectedTime(v: SelectedTime?) { _teumRequestSelectedTime.value = v }
+    fun setTeumRequestGraphicId(v: Int?)          { _teumRequestGraphicId.value = v }
+    fun setTeumRequestReceiverUserIds(v: List<Int>) { _teumRequestReceiverUserIds.value = v }
+    fun setTeumRequestMainTargetUserId(v: Int) { _teumRequestMainTargetUserId.value = v }
+    fun setTeumRequestMainTargetUserName(v: String)   { _teumRequestMainTargetUserName.value = v }
+    fun setTeumRequestMainTargetProfileImage(v: String) { _teumRequestMainTargetProfileImage.value = v }
+
+    //요청 생성 메소드
+    fun buildTeumRequest(): TeumRequest? {
+        val title = _teumRequestTitle.value?.takeIf { it.isNotBlank() } ?: return null
+        val desc  = _teumRequestDescription.value ?: ""
+        val date  = _teumRequestSelectedDate.value ?: return null
+        val time  = _teumRequestSelectedTime.value ?: return null
+        val gid   = _teumRequestGraphicId.value ?: return null
+        val main  = _teumRequestMainTargetUserId.value ?: return null
+
+        val receiversRaw = _teumRequestReceiverUserIds.value.orEmpty()
+
+        val receivers = listOf(main) + receiversRaw
+        val finalReceivers = receivers.distinct()
+
+        return TeumRequest(
+            title = title,
+            description = desc,
+            date = date,
+            startTime = time.startTime,
+            endTime = time.endTime,
+            graphicId = gid,
+            receiverUserIds = finalReceivers
+        )
+    }
+
     // 4. 틈 요청 보내기
-    fun sendTeumRequest(request: TeumRequest) {
+    fun sendTeumRequest(request: TeumRequest,
+                        onSuccess: () -> Unit,
+                        onError: (String) -> Unit) {
         viewModelScope.launch {
+            Log.d("SEND_TEUM_REQUEST", request.toString())
             repository.sendTeumRequest(request)
                 .onSuccess { teumId ->
-                    _successMessage.value = Event("틈 요청이 성공적으로 생성되었습니다. (id: $teumId)")
+//                    _successMessage.value = Event("틈 요청이 성공적으로 생성되었습니다. (id: $teumId)")
+                    Log.d("SEND_TEUM_REQUEST", "teumId $teumId")
+                    onSuccess()
                 }
-                .onFailure { e ->
-                    val msg = when {
-                        e.message?.contains("TEUM4030") == true -> "요청 또는 응답에 대한 권한이 없습니다."
-                        e.message?.contains("COMMON400") == true -> "잘못된 요청입니다."
-                        e.message?.contains("TEUM4091") == true -> "자기 자신에게 틈 요청을 보낼 수 없습니다."
-                        else -> "틈 요청 실패 (${e.message})"
-                    }
-                    _errorMessage.value = Event(msg)
-                }
+                .onFailure { e -> onError(e.message ?: "재요청 실패") }
         }
     }
 
@@ -612,6 +674,7 @@ class FriendViewModel @Inject constructor(
         }
     }
 
+    //틈 재요청
     fun resendTeumRequest(
         requestId: Int,
         body: ResendTeumRequest,
@@ -792,6 +855,4 @@ class FriendViewModel @Inject constructor(
                 }
         }
     }
-
-
 }
