@@ -8,8 +8,8 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.teumteum.databinding.FragmentFriendTodoListBinding
+import com.example.teumteum.ui.calendar.FriendMonthlyCalendarFragment
 import com.example.teumteum.ui.calendar.IDateClickListener
-import com.example.teumteum.ui.calendar.MonthlyCalendarFragment
 import com.example.teumteum.ui.friend.adapter.PublicTodoAdapter
 import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.example.teumteum.ui.main.MainActivity
@@ -73,6 +73,7 @@ class FriendTodoListFragment : Fragment() {
             todoAdapter.submitList(list)
             binding.rvEventList.isVisible = list.isNotEmpty()
         }
+
     }
 
     private fun setupHeader() {
@@ -104,7 +105,7 @@ class FriendTodoListFragment : Fragment() {
 
     private fun setupCalendarFragment() {
         val displayDate = baseDate.plusMonths(currentMonthOffset.toLong())
-        val calendarFragment = MonthlyCalendarFragment.newInstance(
+        val calendarFragment = FriendMonthlyCalendarFragment.newInstance(
             position = Int.MAX_VALUE / 2 + currentMonthOffset,
             onClickListener = object : IDateClickListener {
                 override fun onClickDate(date: LocalDate) {

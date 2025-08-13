@@ -10,6 +10,7 @@ import com.example.teumteum.R
 import com.example.teumteum.data.remote.friend.model.TeumScheduleDetailResult
 import com.example.teumteum.databinding.FragmentFriendPromiseBinding
 import com.example.teumteum.ui.calendar.IDateClickListener
+import com.example.teumteum.ui.calendar.FriendMonthlyCalendarFragment
 import com.example.teumteum.ui.calendar.MonthlyCalendarFragment
 import com.example.teumteum.ui.friend.adapter.TeumEventAdapter
 import com.example.teumteum.ui.friend.viewModel.FriendViewModel
@@ -110,7 +111,7 @@ class FriendPromiseFragment : Fragment() {
 
     private fun setupCalendarFragment() {
         val displayDate = baseDate.plusMonths(currentMonthOffset.toLong())
-        val calendarFragment = MonthlyCalendarFragment.newInstance(
+        val calendarFragment = FriendMonthlyCalendarFragment.newInstance(
             position = Int.MAX_VALUE / 2 + currentMonthOffset,
             onClickListener = object : IDateClickListener {
                 override fun onClickDate(date: LocalDate) {
