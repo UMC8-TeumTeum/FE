@@ -26,7 +26,7 @@ data class GetTodoResult(
     @SerializedName("description") val description: String,
     @SerializedName("isPublic") val isPublic: Boolean,
     @SerializedName("includeTeum") val includeTeum: Boolean,
-    @SerializedName("remindAlarm") val remindAlarm: List<Int>? = null,
+    @SerializedName("remindAlarm") val remindAlarm: List<ReminderAlarm>? = null,
     @SerializedName("profileUrl") val profileUrl: List<String>? = null
 )
 

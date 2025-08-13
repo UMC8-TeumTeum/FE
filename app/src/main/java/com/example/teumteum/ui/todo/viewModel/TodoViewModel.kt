@@ -78,7 +78,7 @@ class TodoViewModel @Inject constructor(
             result.onSuccess {
                 _todo.value = it
             }.onFailure { e ->
-                _errorMessage.value = e.localizedMessage ?: "투두리스트 조회에 실패했습니다."
+                _errorMessage.value = e.localizedMessage ?: "투두 정보 조회에 실패했습니다."
             }
         }
     }
@@ -91,7 +91,7 @@ class TodoViewModel @Inject constructor(
                 _editSuccess.value = true
             }
             result.onFailure { e ->
-                _errorMessage.value = e.localizedMessage ?: "투두 등록에 실패했습니다."
+                _errorMessage.value = e.localizedMessage ?: "투두 수정에 실패했습니다."
             }
         }
     }

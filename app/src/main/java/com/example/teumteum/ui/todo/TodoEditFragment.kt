@@ -27,6 +27,9 @@ import com.example.teumteum.databinding.FragmentTodoEditBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 import com.example.teumteum.data.remote.todo.model.EditTodoRequest
+import com.example.teumteum.data.remote.todo.model.ReminderAlarm
+import com.example.teumteum.data.remote.todo.model.enums.AlarmStatus
+import com.example.teumteum.data.remote.todo.model.enums.ScheduleType
 import com.example.teumteum.databinding.DialogConfirmTodoDeleteBinding
 import com.example.teumteum.databinding.DialogConfirmTodoEditBinding
 import com.example.teumteum.ui.calendar.IDateClickListener
@@ -174,10 +177,6 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
             toggleCalendarVisibility()
         }
 
-        if (todoId != -1L) {
-            viewModel.getTodo(todoId)
-        }
-
         myHomeViewModel.profileImageUrl.observe(viewLifecycleOwner) { imageUrl ->
             if (!imageUrl.isNullOrBlank()) {
                 Glide.with(this)
@@ -191,6 +190,10 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
         }
 
         setupObservers()
+
+        if (todoId != -1L) {
+            viewModel.getTodo(todoId)
+        }
     }
 
     private fun getTodoRequest(): EditTodoRequest {
@@ -201,7 +204,7 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
         val description = binding.detailTextEt.text.toString()
         val isPublic = binding.publicToggle01Iv.isChecked
         val includeTeum = binding.includeToggle01Iv.isChecked
-//        val remindAlarm = getSelectedRemindAlarms()
+        val remindAlarm = getSelectedRemindAlarms()
 
         return EditTodoRequest(
             title = title,
@@ -210,7 +213,7 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
             description = description,
             isPublic = isPublic,
             includeTeum = includeTeum,
-//            remindAlarm = remindAlarm
+            remindAlarm = remindAlarm
         )
     }
 
@@ -233,28 +236,46 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
         viewModel.editTodo(todoId, request)
     }
 
-    private fun getSelectedRemindAlarms(): List<Int> {
-        val alarms = mutableListOf<Int>()
+    // 온보딩 리마인드 알림 조회 api 연동 시 수정 예정
+    private fun getSelectedRemindAlarms(): List<ReminderAlarm>? {
+        val result = mutableListOf<ReminderAlarm>()
 
-        if (binding.alarmToggle01Iv.isChecked) {
-            alarms.add(30)
-        }
-        if (binding.alarmToggle02Iv.isChecked) {
-            alarms.add(10)
-        }
+        // 고정 항목 30분 전
+        result.add(
+            ReminderAlarm(
+                alarm = 30,
+                status = if (binding.alarmToggle01Iv.isChecked)
+                    AlarmStatus.ACTIVE else AlarmStatus.INACTIVE
+            )
+        )
 
-        // 추가된 알림 항목들
+        // 고정 항목 10분 전
+        result.add(
+            ReminderAlarm(
+                alarm = 10,
+                status = if (binding.alarmToggle02Iv.isChecked)
+                    AlarmStatus.ACTIVE else AlarmStatus.INACTIVE
+            )
+        )
+
+        // 동적 항목 (온보딩에서 추가된 알림 등)
         for (i in 0 until binding.alarmLayoutContainer.childCount) {
             val child = binding.alarmLayoutContainer.getChildAt(i)
             val toggle = child.findViewById<SwitchCompat>(R.id.alarm_toggle_tv)
-            val labelText = child.findViewById<TextView>(R.id.alarm_set_tv).text.toString()
+            val label  = child.findViewById<TextView>(R.id.alarm_set_tv).text.toString()
 
-            if (toggle.isChecked) { // 커스텀 토글이 실제로 체크 가능한 경우
-                alarmLabelToMinutes[labelText]?.let { alarms.add(it) }
+            alarmLabelToMinutes[label]?.let { minute ->
+                result.add(
+                    ReminderAlarm(
+                        alarm = minute,
+                        status = if (toggle.isChecked)
+                            AlarmStatus.ACTIVE else AlarmStatus.INACTIVE
+                    )
+                )
             }
         }
 
-        return alarms
+        return if (result.isEmpty()) null else result
     }
 
     override fun onStart() {
@@ -685,25 +706,43 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
 
             binding.includeToggle01Iv.isChecked = todo.includeTeum
 
-            todo.remindAlarm?.forEach { minutes ->
-                val label = alarmLabelToMinutes.entries.firstOrNull { it.value == minutes }?.key
-                label?.let {
-                    if (!selectedItems.contains(it)) {
-                        selectedItems.add(it)
-                        addAlarmItem(it)
+            // 기존 선택 UI 초기화
+            binding.alarmItem01Ll.visibility = View.GONE
+            binding.alarmItem02Ll.visibility = View.GONE
+            binding.alarmToggle01Iv.isChecked = false
+            binding.alarmToggle02Iv.isChecked = false
+            binding.alarmLayoutContainer.removeAllViews()
+            selectedItems.clear()
+
+            todo.remindAlarm?.forEach { remindAlarm ->
+                val minutes = remindAlarm.alarm
+                val isOn = (remindAlarm.status == AlarmStatus.ACTIVE)
+
+                // UI 항목 표시/체크
+                when (minutes) {
+                    30 -> {
+                        binding.alarmItem01Ll.visibility = View.VISIBLE
+                        binding.alarmToggle01Iv.isChecked = isOn
+                        if (isOn) selectedItems.add("30분 전")
                     }
-
-                    when (it) {
-                        "30분 전" -> binding.alarmToggle01Iv.isChecked = true
-                        "10분 전" -> binding.alarmToggle02Iv.isChecked = true
-                        else -> {
-
+                    10 -> {
+                        binding.alarmItem02Ll.visibility = View.VISIBLE
+                        binding.alarmToggle02Iv.isChecked = isOn
+                        if (isOn) selectedItems.add("10분 전")
+                    }
+                    else -> {
+                        // 동적 항목 추가
+                        val label = alarmLabelToMinutes.entries.firstOrNull { it.value == minutes }?.key
+                        if (label != null) {
+                            addAlarmItem(label)
+                            // 추가된 뷰 찾아 토글 체크
                             for (i in 0 until binding.alarmLayoutContainer.childCount) {
                                 val child = binding.alarmLayoutContainer.getChildAt(i)
                                 val labelText = child.findViewById<TextView>(R.id.alarm_set_tv).text.toString()
-                                if (labelText == it) {
+                                if (labelText == label) {
                                     val toggle = child.findViewById<SwitchCompat>(R.id.alarm_toggle_tv)
-                                    toggle.isChecked = true
+                                    toggle.isChecked = isOn
+                                    if (isOn) selectedItems.add(label)
                                     break
                                 }
                             }
@@ -719,9 +758,9 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
             originalDescription = todo.description
             originalIsPublic = todo.isPublic
             originalIncludeTeum = todo.includeTeum
-            originalRemindAlarm = todo.remindAlarm ?: emptyList()
+            originalRemindAlarm = (todo.remindAlarm ?: emptyList()).map { it.alarm }
 
-            if (todo.type.name == "ROUTINE") {
+            if (todo.type == ScheduleType.ROUTINE) {
                 val deactiveColor = ContextCompat.getColor(requireContext(), R.color.teumteum_deactive)
 
                 binding.todoTitleEt.setTextColor(deactiveColor)

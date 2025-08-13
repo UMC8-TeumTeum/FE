@@ -500,29 +500,34 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
     }
 
     private fun getSelectedRemindAlarms(): List<ReminderAlarm>? {
-        val minutesSet = linkedSetOf<Int>() // 순서유지 + 중복제거
+        val map = linkedMapOf<Int, AlarmStatus>()
 
-        // 기본 항목
-        if (binding.alarmToggle01Iv.isChecked) minutesSet.add(30)
-        if (binding.alarmToggle02Iv.isChecked) minutesSet.add(10)
+        if (binding.alarmItem01Ll.isVisible) {
+            map[30] = if (binding.alarmToggle01Iv.isChecked)
+                AlarmStatus.ACTIVE else AlarmStatus.INACTIVE
+        }
 
-        // 동적 항목
+        if (binding.alarmItem02Ll.isVisible) {
+            map[10] = if (binding.alarmToggle02Iv.isChecked)
+                AlarmStatus.ACTIVE else AlarmStatus.INACTIVE
+        }
+
+        // 동적으로 추가된 알림들 모두 포함
         for (i in 0 until binding.alarmLayoutContainer.childCount) {
             val child = binding.alarmLayoutContainer.getChildAt(i)
             val toggle = child.findViewById<SwitchCompat>(R.id.alarm_toggle_tv)
-            val labelText = child.findViewById<TextView>(R.id.alarm_set_tv).text.toString()
-            if (toggle.isChecked) {
-                alarmLabelToMinutes[labelText]?.let { m ->
-                    if (m > 0) minutesSet.add(m)
-                }
-            }
+            val label  = child.findViewById<TextView>(R.id.alarm_set_tv).text.toString()
+            val minute = alarmLabelToMinutes[label] ?: continue
+
+            map[minute] = if (toggle.isChecked) AlarmStatus.ACTIVE else AlarmStatus.INACTIVE
         }
 
-        if (minutesSet.isEmpty()) return null
+        if (map.isEmpty()) return null
 
-        return minutesSet.sorted().map { m ->
-            ReminderAlarm(alarm = m, status = AlarmStatus.ACTIVE)
-        }
+        // 정렬하여 ReminderAlarm 리스트로 변환ㅎ
+        return map.entries
+            .sortedBy { it.key }
+            .map { (min, st) -> ReminderAlarm(alarm = min, status = st) }
     }
 
     private fun getTodayFormatted(): String {
