@@ -8,8 +8,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.teumteum.data.remote.login.repository.LoginRepository
 import com.example.teumteum.ui.signin.data.LoginResult
-import com.kakao.sdk.auth.model.OAuthToken
-import com.kakao.sdk.user.UserApiClient
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
@@ -24,24 +22,13 @@ class LoginViewModel @Inject constructor(
     private val _loginResult = MutableLiveData<LoginResult>()
     val loginResult: LiveData<LoginResult> = _loginResult
 
-    fun kakaoLogin() {
+    fun exchangeKakaoToken(kakaoAccessToken: String) {
         _loginResult.value = LoginResult.Loading
+        getJwtFromServer(kakaoAccessToken)
+    }
 
-        // 카카오 SDK 호출
-        val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
-            if (error != null) {
-                _loginResult.postValue(LoginResult.Error("카카오 로그인 실패: ${error.message}"))
-            } else if (token != null) {
-                Log.d("KakaoAccessToken", token.accessToken.toString())
-                getJwtFromServer(token.accessToken)
-            }
-        }
-
-        if (UserApiClient.instance.isKakaoTalkLoginAvailable(context)) {
-            UserApiClient.instance.loginWithKakaoTalk(context, callback = callback)
-        } else {
-            UserApiClient.instance.loginWithKakaoAccount(context, callback = callback)
-        }
+    fun onKakaoLoginFailed(t: Throwable) {
+        _loginResult.postValue(LoginResult.Error("카카오 로그인 실패: ${t.message}"))
     }
 
     private fun getJwtFromServer(kakaoAccessToken: String) {
