@@ -34,4 +34,7 @@
     <color name="clock_teum">#FFFFFF</color>
     <color name="clock_todo">#847EFF</color>
 
+    <color name="skeleton_card">#F6F6F6</color>
+    <color name="skeleton_block">#EAEAEA</color>
+
 </resources>
