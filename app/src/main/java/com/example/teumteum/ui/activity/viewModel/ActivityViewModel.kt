@@ -34,6 +34,9 @@ class ActivityViewModel @Inject constructor(
     private val _activityAiContents = MutableLiveData<List<ActivityAiResult>>()
     val activityAiContents: LiveData<List<ActivityAiResult>> get() = _activityAiContents
 
+    private val _assignWishSuccess = MutableLiveData<Boolean>()
+    val assignWishSuccess: LiveData<Boolean> get() = _assignWishSuccess
+
     private val _loading = MutableLiveData(false)
     val loading: LiveData<Boolean> = _loading
 

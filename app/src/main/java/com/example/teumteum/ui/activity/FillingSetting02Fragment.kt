@@ -1,6 +1,7 @@
 package com.example.teumteum.ui.activity
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -12,12 +13,18 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
+import com.example.teumteum.data.remote.activity.model.AssignWishRequest
+import com.example.teumteum.data.remote.wish.model.RegisterWishRequest
 import com.example.teumteum.databinding.DialogConfirmRegisterBinding
 import com.example.teumteum.databinding.FragmentFillingSetting02Binding
+import com.example.teumteum.ui.activity.viewModel.ActivityViewModel
 import com.example.teumteum.ui.main.HomeFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -27,6 +34,12 @@ class FillingSetting02Fragment : Fragment() {
 
     private var selectedStartTime: String? = null
     private var selectedEndTime: String? = null
+
+    private var wishId: Long = -1L
+
+    private val activityViewModel: ActivityViewModel by activityViewModels()
+
+    private var isForce: Boolean = true
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -93,6 +106,8 @@ class FillingSetting02Fragment : Fragment() {
         binding.registerBtn.setOnClickListener {
             showWishRegisterDialog()
         }
+
+        setupObservers()
     }
 
     private fun showCustomTimePicker(targetTextView: TextView) {
@@ -201,6 +216,17 @@ class FillingSetting02Fragment : Fragment() {
         binding.fillActivityTimeTv.text = time
     }
 
+    private fun getAssignWishRequest(): AssignWishRequest {
+        val startTime = binding.startChoiceTv.text.toString()
+        val endTime = binding.endChoiceTv.text.toString()
+
+        return AssignWishRequest(
+            startTime,
+            endTime,
+            isForce
+        )
+    }
+
     private fun showWishRegisterDialog() {
         val dialogBinding = DialogConfirmRegisterBinding.inflate(layoutInflater)
 
@@ -209,8 +235,11 @@ class FillingSetting02Fragment : Fragment() {
             .create()
 
         dialogBinding.wishConfirmTv.setOnClickListener {
-            Toast.makeText(requireContext(), "등록되었습니다.", Toast.LENGTH_SHORT).show()
-            dialog.dismiss()
+            // 일정 충돌 조건 처리 필요
+            activityViewModel.assignWish(wishId, getAssignWishRequest())
+            Toast.makeText(requireContext(), "위시가 투두에 등록되었습니다.", Toast.LENGTH_SHORT).show()
+            parentFragmentManager.setFragmentResult("todo_register", Bundle())
+
             parentFragmentManager.beginTransaction()
                 .replace(R.id.main_frm, HomeFragment())
                 .addToBackStack(null)
@@ -239,5 +268,19 @@ class FillingSetting02Fragment : Fragment() {
         }
 
         dialog.show()
+    }
+
+    private fun setupObservers() {
+        activityViewModel.assignWishSuccess.observe(viewLifecycleOwner) { isSuccess ->
+            if (isSuccess) {
+                Toast.makeText(requireContext(), "위시 빈틈채우기에 성공하였습니다.", Toast.LENGTH_SHORT).show()
+                parentFragmentManager.setFragmentResult("wish_assign", Bundle())
+
+            }
+        }
+
+        activityViewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
+            Log.e("WishRegister", "위시 등록 실패: $errorMessage")
+        }
     }
 }
