@@ -10,8 +10,8 @@ import androidx.fragment.app.activityViewModels
 import com.bumptech.glide.Glide
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentFriendRoommateDateBinding
+import com.example.teumteum.ui.calendar.FriendMonthlyCalendarFragment
 import com.example.teumteum.ui.calendar.IDateClickListener
-import com.example.teumteum.ui.calendar.MonthlyCalendarFragment
 import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.example.teumteum.ui.main.MainActivity
 import com.example.teumteum.utils.getSavedDateOrToday
@@ -166,7 +166,7 @@ class FriendRoommateDateFragment : Fragment() {
         val displayDate = baseDate.plusMonths(currentMonthOffset.toLong())
         binding.homeSelectedDateTv.text = "${displayDate.year}년 ${displayDate.monthValue}월"
 
-        val calendarFragment = MonthlyCalendarFragment.newInstance(
+        val calendarFragment = FriendMonthlyCalendarFragment.newInstance(
             position = Int.MAX_VALUE / 2 + currentMonthOffset,
             onClickListener = onClickListener,
             showDot = true

@@ -1,5 +1,6 @@
 package com.example.teumteum.ui.todo
 
+import android.R.string.ok
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
@@ -22,6 +23,9 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentTodoEditBinding
@@ -35,13 +39,16 @@ import com.example.teumteum.databinding.DialogConfirmTodoDeleteBinding
 import com.example.teumteum.databinding.DialogConfirmTodoEditBinding
 import com.example.teumteum.ui.calendar.IDateClickListener
 import com.example.teumteum.ui.calendar.MonthlyCalendarFragment
+import com.example.teumteum.ui.main.HomeFragment
 import com.example.teumteum.ui.main.data.TimeBlock
+import com.example.teumteum.ui.main.viewModel.HomeViewModel
 import com.example.teumteum.ui.myhome.viewModel.MyHomeViewModel
 import com.example.teumteum.ui.todo.viewModel.TodoViewModel
 import com.example.teumteum.utils.combineDateTime
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -69,6 +76,7 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
 
     private val viewModel: TodoViewModel by activityViewModels()
     private val myHomeViewModel: MyHomeViewModel by activityViewModels()
+//    private val homeViewModel: HomeViewModel by activityViewModels()
 
     private val alarmLabelToMinutes = mapOf(
         "30분 전" to 30,
@@ -612,9 +620,12 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
             .create()
 
         dialogBinding.todoConfirmTv.setOnClickListener {
-            viewModel.deleteTodo(todoId)
-            dialog.dismiss()
-            dismiss()
+//            viewModel.deleteTodo(todoId)
+//            dialog.dismiss()
+//            dismiss()
+            dialogBinding.todoConfirmTv.isEnabled = false // 중복 클릭 방지
+            dialog.dismiss() // 확인 다이얼로그만 닫기
+            viewModel.deleteTodo(todoId) // 삭제 요청만 보냄
         }
 
         dialogBinding.todoCancelTv.setOnClickListener {
@@ -890,10 +901,18 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
             if (it == true) {
                 Toast.makeText(requireContext(), "투두가 성공적으로 삭제되었습니다.", Toast.LENGTH_SHORT).show()
                 parentFragmentManager.setFragmentResult("todo_delete", Bundle())
+//                homeViewModel.refreshTodaySchedule()
                 dismiss()  // 현재 바텀시트만 닫기
+
             }
+
         }
 
+        viewModel.errorMessage.observe(viewLifecycleOwner) { errorMsg ->
+            Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_SHORT).show()
+        }
+
+        // 실패 메시지는 LiveData 그대로
         viewModel.errorMessage.observe(viewLifecycleOwner) { errorMsg ->
             Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_SHORT).show()
         }

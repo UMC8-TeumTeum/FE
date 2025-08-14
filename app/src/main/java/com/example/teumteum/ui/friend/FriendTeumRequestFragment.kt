@@ -7,12 +7,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentFriendTeumRequestBinding
+import com.example.teumteum.ui.calendar.FriendMonthlyCalendarFragment
 import com.example.teumteum.ui.calendar.IDateClickListener
-import com.example.teumteum.ui.calendar.MonthlyCalendarFragment
 import com.example.teumteum.ui.friend.adapter.TeumRequestAdapter
-import com.example.teumteum.ui.friend.adapter.TeumRequestItem
 import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.example.teumteum.ui.main.MainActivity
 import com.example.teumteum.utils.getSavedDateOrToday
@@ -123,7 +121,7 @@ class FriendTeumRequestFragment : Fragment() {
         val displayDate = baseDate.plusMonths(currentMonthOffset.toLong())
         binding.homeSelectedDateTv.text = "${displayDate.year}년 ${displayDate.monthValue}월"
 
-        val calendarFragment = MonthlyCalendarFragment.newInstance(
+        val calendarFragment = FriendMonthlyCalendarFragment.newInstance(
             position = Int.MAX_VALUE / 2 + currentMonthOffset,
             onClickListener = onClickListener,
             showDot = true,
