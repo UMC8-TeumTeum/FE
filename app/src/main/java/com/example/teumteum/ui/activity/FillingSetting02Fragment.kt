@@ -65,8 +65,6 @@ class FillingSetting02Fragment : Fragment() {
             ?: LocalDate.now().format(DateTimeFormatter.ISO_DATE)
 
         wishId = arguments?.getLong("wishId") ?: -1L
-        Log.d("AssignWish", "wishId = $wishId")
-        Toast.makeText(requireContext(), "wishId=$wishId", Toast.LENGTH_SHORT).show()
 
         val selectedTime = arguments?.getString("selected_time")
         val startTime = arguments?.getString("startTime")
@@ -110,7 +108,6 @@ class FillingSetting02Fragment : Fragment() {
         }
 
         binding.registerBtn.setOnClickListener {
-            Log.e("WishAssign", "CLICK registerBtn -> force=false, wishId=$wishId")
             activityViewModel.assignWish(wishId, assignWishRequest(false))
         }
 
@@ -236,8 +233,6 @@ class FillingSetting02Fragment : Fragment() {
         val startIso = combineDateTime(date, startHHmm)
         val endIso = combineDateTime(date, endHHmm)
 
-        Log.d("AssignWishRequest", "startIso = $startIso, endIso = $endIso")
-
         return AssignWishRequest(
             startTime = startIso,
             endTime = endIso,
@@ -293,14 +288,12 @@ class FillingSetting02Fragment : Fragment() {
                     .addToBackStack(null)
                     .commit()
 
-                Log.d("WishAssign", "위시 빈틈채우기 성공 -> 홈으로 이동")
             }
         }
 
         activityViewModel.errorCode.observe(viewLifecycleOwner) { code ->
             when (code) {
                 "HOME4092" -> {
-                    Log.w("WishAssign", "겹치는 일정 존재 -> 등록 모달창 호출")
                     showWishRegisterDialog()
                 }
                 else -> {
