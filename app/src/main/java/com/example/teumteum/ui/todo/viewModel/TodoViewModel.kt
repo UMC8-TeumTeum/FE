@@ -12,6 +12,9 @@ import com.example.teumteum.data.remote.todo.model.RegisterTodoRequest
 import com.example.teumteum.data.remote.todo.model.TodoListResult
 import com.example.teumteum.data.remote.todo.repository.TodoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -35,8 +38,8 @@ class TodoViewModel @Inject constructor(
     private val _alarmStatusUpdated = MutableLiveData<Boolean>()
     val alarmStatusUpdated: LiveData<Boolean> get() = _alarmStatusUpdated
 
-    private val _registerSuccess = MutableLiveData<Boolean>()
-    val registerSuccess: LiveData<Boolean> get() = _registerSuccess
+    private val _registerSuccess = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    val registerSuccess: SharedFlow<Unit> = _registerSuccess.asSharedFlow()
 
     private val _editSuccess = MutableLiveData<Boolean>()
     val editSuccess: LiveData<Boolean> get() = _editSuccess
@@ -49,8 +52,7 @@ class TodoViewModel @Inject constructor(
         viewModelScope.launch {
             val result = todoRepository.registerTodo(request)
             result.onSuccess {
-                _registerSuccess.value = true
-                _registerSuccess.value = false
+                _registerSuccess.tryEmit(Unit)
             }
             result.onFailure { e ->
                 _errorMessage.value = e.localizedMessage ?: "투두 등록에 실패했습니다."

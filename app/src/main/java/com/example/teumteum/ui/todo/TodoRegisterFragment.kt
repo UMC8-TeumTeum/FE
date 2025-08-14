@@ -20,6 +20,9 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
 import com.example.teumteum.databinding.FragmentTodoRegisterBinding
 import com.example.teumteum.R
@@ -40,6 +43,7 @@ import com.example.teumteum.ui.todo.viewModel.TodoViewModel
 import com.example.teumteum.utils.combineDateTime
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 import java.time.LocalDate
 import java.time.LocalTime
@@ -638,23 +642,24 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
 //    }
 
     private fun setupObservers() {
+        // 성공 이벤트는 Flow 수집으로 1회성 처리
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.registerSuccess.collect {
+                    Toast.makeText(requireContext(), "투두가 성공적으로 등록되었습니다.", Toast.LENGTH_SHORT).show()
+                    parentFragmentManager.setFragmentResult("todo_register", Bundle())
 
-//        viewModel.onBoardingReminders.observe(viewLifecycleOwner) { minutes: List<Int> ->
-//            applyRemindersFromMinutes(minutes)
-//        }
-
-        viewModel.registerSuccess.observe(viewLifecycleOwner) {
-            Toast.makeText(requireContext(), "투두가 성공적으로 등록되었습니다.", Toast.LENGTH_SHORT).show()
-            parentFragmentManager.setFragmentResult("todo_register", Bundle())
-
-            // 모든 바텀시트 닫기
-            (requireActivity().supportFragmentManager.fragments).forEach { fragment ->
-                if (fragment is BottomSheetDialogFragment) {
-                    fragment.dismissAllowingStateLoss()
+                    // 모든 바텀시트 닫기
+                    (requireActivity().supportFragmentManager.fragments).forEach { fragment ->
+                        if (fragment is BottomSheetDialogFragment) {
+                            fragment.dismissAllowingStateLoss()
+                        }
+                    }
                 }
             }
         }
 
+        // 실패 메시지는 LiveData 그대로
         viewModel.errorMessage.observe(viewLifecycleOwner) { errorMsg ->
             Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_SHORT).show()
         }
