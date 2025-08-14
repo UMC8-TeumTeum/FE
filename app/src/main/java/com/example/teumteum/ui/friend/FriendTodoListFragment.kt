@@ -1,6 +1,7 @@
 package com.example.teumteum.ui.friend
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,7 +34,7 @@ class FriendTodoListFragment : Fragment() {
 
     private lateinit var todoAdapter: PublicTodoAdapter
     private var selectedDate: LocalDate? = null
-    private var friendUserId: Int = -1 // 공개 투두 조회 대상
+    private var friendUserId: Int = -1
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,32 +49,32 @@ class FriendTodoListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         (activity as? MainActivity)?.hideBottomBar()
 
-        // 닉네임/유저ID 받기
         val nickname = arguments?.getString("nickname") ?: "닉네임"
         friendUserId = arguments?.getInt("userId") ?: -1
         binding.tvName.text = "${nickname}님이"
+
+        Log.d("FRIEND_TODO_LIST", "friendUserId = $friendUserId")
 
         setupHeader()
         setupRecyclerView()
         setupCalendarNavigation()
         setupCalendarFragment()
-        fetchDotDates() // 진입 시 현재 월 공개 투두 날짜 조회
+
+        // arguments에서 friendUserId 읽은 뒤에 호출
+        fetchDotDates()
 
         binding.btnBack.setOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
 
-        // 공개 투두 dot 날짜 관찰 → 달력 갱신
         viewModel.publicTodoDotDates.observe(viewLifecycleOwner) {
             setupCalendarFragment()
         }
 
-        // 날짜별 공개 투두 결과 관찰 → 카드 표시/숨김
         viewModel.publicTodosByDate.observe(viewLifecycleOwner) { list ->
             todoAdapter.submitList(list)
             binding.rvEventList.isVisible = list.isNotEmpty()
         }
-
     }
 
     private fun setupHeader() {
@@ -84,7 +85,7 @@ class FriendTodoListFragment : Fragment() {
     private fun setupRecyclerView() {
         todoAdapter = PublicTodoAdapter()
         binding.rvEventList.adapter = todoAdapter
-        binding.rvEventList.isVisible = false // 처음엔 숨김
+        binding.rvEventList.isVisible = false
     }
 
     private fun setupCalendarNavigation() {
@@ -92,14 +93,14 @@ class FriendTodoListFragment : Fragment() {
             currentMonthOffset--
             setupHeader()
             setupCalendarFragment()
-            fetchDotDates() // 이전 달 재조회
+            fetchDotDates()
         }
 
         binding.homeCalendarNextDateIv.setOnClickListener {
             currentMonthOffset++
             setupHeader()
             setupCalendarFragment()
-            fetchDotDates() // 다음 달 재조회
+            fetchDotDates()
         }
     }
 
@@ -112,13 +113,12 @@ class FriendTodoListFragment : Fragment() {
                     selectedDate = date
                     val dateStr = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
                     if (friendUserId != -1) {
-                        // 날짜 클릭 시 특정 날짜 공개 투두 조회
                         viewModel.fetchFriendPublicTodosByDate(friendUserId, dateStr)
                     }
                 }
             },
             showDot = true,
-            dotDates = viewModel.publicTodoDotDates.value ?: emptyList() // 공개 투두 dot 사용
+            dotDates = viewModel.publicTodoDotDates.value ?: emptyList()
         ).apply {
             arguments = Bundle().apply {
                 putSerializable("displayDate", displayDate)
@@ -133,10 +133,10 @@ class FriendTodoListFragment : Fragment() {
     }
 
     private fun fetchDotDates() {
-        if (friendUserId == -1) return // userId 없으면 호출 X
+        if (friendUserId == -1) return
         val displayDate = baseDate.plusMonths(currentMonthOffset.toLong())
         val monthStr = displayDate.format(DateTimeFormatter.ofPattern("yyyy-MM", Locale.KOREA))
-        viewModel.fetchFriendPublicTodoDates(friendUserId, monthStr) // 공개 투두 날짜 조회
+        viewModel.fetchFriendPublicTodoDates(friendUserId, monthStr)
     }
 
     override fun onDestroyView() {
@@ -144,3 +144,4 @@ class FriendTodoListFragment : Fragment() {
         _binding = null
     }
 }
+

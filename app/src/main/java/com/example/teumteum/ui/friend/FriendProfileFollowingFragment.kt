@@ -144,6 +144,7 @@ class FriendProfileFollowingFragment : Fragment() {
             val frag = FriendTodoListFragment().apply {
                 arguments = Bundle().apply {
                     putString("nickname", nickname)
+                    putInt("userId", targetUserId)
                 }
             }
 
