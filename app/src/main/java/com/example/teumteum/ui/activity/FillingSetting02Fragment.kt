@@ -17,6 +17,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.teumteum.R
+import com.example.teumteum.data.remote.activity.model.AssignAiRequest
 import com.example.teumteum.data.remote.activity.model.AssignWishRequest
 import com.example.teumteum.databinding.DialogConfirmRegisterBinding
 import com.example.teumteum.databinding.FragmentFillingSetting02Binding
@@ -38,7 +39,8 @@ class FillingSetting02Fragment : Fragment() {
     private var selectedEndTime: String? = null
     private var selectedDate: String? = null
 
-    private var wishId: Long = -1L
+    private var idStr: String? = null
+    private val wishId: Long? get() = idStr?.toLongOrNull()
 
     private val viewModel: ActivityViewModel by activityViewModels()
 
@@ -79,6 +81,14 @@ class FillingSetting02Fragment : Fragment() {
             else -> "활동을 등록하면 오늘의 투두리스트에 추가돼요"
         }
 
+        val rawId = arguments?.get("id") ?: arguments?.get("wishId")
+        idStr = when (rawId) {
+            is String -> rawId
+            is Long   -> rawId.toString()
+            is Int    -> rawId.toString()
+            else      -> null
+        }
+
         // 바텀 내비게이션 숨기기
         val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
         bottomNav?.visibility = View.GONE
@@ -86,8 +96,6 @@ class FillingSetting02Fragment : Fragment() {
         // 오늘 날짜로 폴백
         selectedDate = arguments?.getString("selected_date")
             ?: LocalDate.now().format(DateTimeFormatter.ISO_DATE)
-
-        wishId = arguments?.getLong("wishId") ?: -1L
 
         val selectedTime = arguments?.getString("selected_time")
         val startTime = arguments?.getString("startTime")
@@ -131,7 +139,15 @@ class FillingSetting02Fragment : Fragment() {
         }
 
         binding.registerBtn.setOnClickListener {
-            viewModel.assignWish(wishId, assignWishRequest(false))
+            if (arguments?.containsKey("wishId") == true) {
+                val id = wishId ?: run {
+                    Toast.makeText(requireContext(), "위시 id가 없습니다.", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+                viewModel.assignWish(id, assignWishRequest(false))
+            } else {
+                viewModel.assignAi(assignAiRequest(false))
+            }
         }
 
         setupObservers()
@@ -256,19 +272,44 @@ class FillingSetting02Fragment : Fragment() {
         )
     }
 
-    private fun showWishRegisterDialog() {
+    private fun assignAiRequest(isForce: Boolean): AssignAiRequest {
+        val startHHmm = binding.startChoiceTv.text.toString()
+        val endHHmm = binding.endChoiceTv.text.toString()
+
+        val date = selectedDate ?: LocalDate.now().format(DateTimeFormatter.ISO_DATE)
+        val startIso = combineDateTime(date, startHHmm)
+        val endIso = combineDateTime(date, endHHmm)
+
+        return AssignAiRequest(
+            id = idStr ?: "",
+            startTime = startIso,
+            endTime = endIso,
+            isForce = isForce
+        )
+    }
+
+    private fun showRegisterDialog() {
         val dialogBinding = DialogConfirmRegisterBinding.inflate(layoutInflater)
 
         val dialog = AlertDialog.Builder(requireContext(), R.style.RoundedAlertDialog)
             .setView(dialogBinding.root)
             .create()
 
-        dialogBinding.wishConfirmTv.setOnClickListener {
-            viewModel.assignWish(wishId, assignWishRequest(true))
+        dialogBinding.assignConfirmTv.setOnClickListener {
+            if (arguments?.containsKey("wishId") == true) {
+                val id = wishId ?: run {
+                    Toast.makeText(requireContext(), "위시 ID가 없습니다.", Toast.LENGTH_SHORT).show()
+                    dialog.dismiss()
+                    return@setOnClickListener
+                }
+                viewModel.assignWish(id, assignWishRequest(true))
+            } else {
+                viewModel.assignAi(assignAiRequest(true))
+            }
             dialog.dismiss()
         }
 
-        dialogBinding.wishCancelTv.setOnClickListener {
+        dialogBinding.assignCancelTv.setOnClickListener {
             dialog.dismiss()
         }
 
@@ -312,7 +353,7 @@ class FillingSetting02Fragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.assignError.collect { err ->
                     when (err.code) {
-                        "HOME4092" -> showWishRegisterDialog()
+                        "HOME4092" -> showRegisterDialog()
                         "CONFLICT4094", "CONFLICT4092" ->
                             Toast.makeText(requireContext(), err.message, Toast.LENGTH_SHORT).show()
                         else -> err.message.let {

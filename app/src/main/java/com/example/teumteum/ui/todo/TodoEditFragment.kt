@@ -888,24 +888,37 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
             parentFragmentManager.setFragmentResult("todo_get", Bundle())
         }
 
-        viewModel.editSuccess.observe(viewLifecycleOwner) {
-            if (it == true) {
-                Toast.makeText(requireContext(), "투두가 성공적으로 수정되었습니다.", Toast.LENGTH_SHORT).show()
-                parentFragmentManager.setFragmentResult("todo_edit", Bundle())
-                dismiss()  // 현재 바텀시트만 닫기
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.editSuccess.collect {
+                    Toast.makeText(requireContext(), "투두가 성공적으로 수정되었습니다.", Toast.LENGTH_SHORT).show()
+                    parentFragmentManager.setFragmentResult("todo_edit", Bundle())
+
+                    // 모든 바텀시트 닫기
+                    (requireActivity().supportFragmentManager.fragments).forEach { fragment ->
+                        if (fragment is BottomSheetDialogFragment) {
+                            fragment.dismissAllowingStateLoss()
+                        }
+                    }
+                }
             }
         }
 
         // 삭제 성공 시
-        viewModel.deleteSuccess.observe(viewLifecycleOwner) {
-            if (it == true) {
-                Toast.makeText(requireContext(), "투두가 성공적으로 삭제되었습니다.", Toast.LENGTH_SHORT).show()
-                parentFragmentManager.setFragmentResult("todo_delete", Bundle())
-//                homeViewModel.refreshTodaySchedule()
-                dismiss()  // 현재 바텀시트만 닫기
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.deleteSuccess.collect {
+                    Toast.makeText(requireContext(), "투두가 성공적으로 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+                    parentFragmentManager.setFragmentResult("todo_delete", Bundle())
 
+                    // 모든 바텀시트 닫기
+                    (requireActivity().supportFragmentManager.fragments).forEach { fragment ->
+                        if (fragment is BottomSheetDialogFragment) {
+                            fragment.dismissAllowingStateLoss()
+                        }
+                    }
+                }
             }
-
         }
 
         viewModel.errorMessage.observe(viewLifecycleOwner) { errorMsg ->

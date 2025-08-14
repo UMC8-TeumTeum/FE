@@ -7,6 +7,9 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.wish.model.DeleteWishesRequest
 import com.example.teumteum.data.remote.wish.model.WishlistItem
@@ -15,6 +18,7 @@ import com.example.teumteum.ui.wish.adapter.WishlistEditRVAdapter
 import com.example.teumteum.ui.wish.viewModel.WishViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class WishlistEditFragment() : Fragment() {
@@ -101,28 +105,32 @@ class WishlistEditFragment() : Fragment() {
     }
 
     private fun setupObservers() {
-        viewModel.deleteSuccess.observe(viewLifecycleOwner) { isSuccess ->
-            if (isSuccess) {
-                Toast.makeText(requireContext(), "삭제가 완료되었어요.", Toast.LENGTH_SHORT).show()
 
-                // ViewModel 내 리스트 갱신
-                val deletedIds = editedWishlist.filter { it.isDeleted }.map { it.id }
-                val updatedList = viewModel.wishlistItems.value?.filterNot { it.id in deletedIds } ?: emptyList()
-                viewModel.updateWishlistItems(updatedList)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.deleteSuccess.collect {
+                    Toast.makeText(requireContext(), "삭제가 완료되었어요.", Toast.LENGTH_SHORT).show()
 
-                // 삭제 결과 전달
-                parentFragmentManager.setFragmentResult("wish_delete", Bundle())
+                    // ViewModel 내 리스트 갱신
+                    val deletedIds = editedWishlist.filter { it.isDeleted }.map { it.id }
+                    val updatedList =
+                        viewModel.wishlistItems.value?.filterNot { it.id in deletedIds }
+                            ?: emptyList()
+                    viewModel.updateWishlistItems(updatedList)
 
-                // 위시리스트 화면으로 이동
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.main_frm, WishlistFragment())
-                    .commit()
+                    // 삭제 결과 전달
+                    parentFragmentManager.setFragmentResult("wish_delete", Bundle())
+
+                    // 위시리스트 화면으로 이동
+                    parentFragmentManager.beginTransaction()
+                        .replace(R.id.main_frm, WishlistFragment())
+                        .commit()
+                }
             }
         }
 
-        viewModel.errorMessage.observe(viewLifecycleOwner) { error ->
-            Toast.makeText(requireContext(), "삭제 실패: $error", Toast.LENGTH_SHORT).show()
+        viewModel.errorMessage.observe(viewLifecycleOwner) { errorMsg ->
+            Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_SHORT).show()
         }
     }
-
 }

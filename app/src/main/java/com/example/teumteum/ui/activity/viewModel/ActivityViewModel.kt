@@ -8,6 +8,7 @@ import com.example.teumteum.data.remote.activity.model.ActivityAiRequest
 import com.example.teumteum.data.remote.activity.model.ActivityAiResult
 import com.example.teumteum.data.remote.activity.model.ActivityWishRequest
 import com.example.teumteum.data.remote.activity.model.ActivityWishResult
+import com.example.teumteum.data.remote.activity.model.AssignAiRequest
 import com.example.teumteum.data.remote.activity.model.AssignWishRequest
 import com.example.teumteum.data.remote.activity.repository.ActivityRepository
 import com.example.teumteum.utils.ApiException
@@ -116,6 +117,27 @@ class ActivityViewModel @Inject constructor(
                 val apiEx = e as? ApiException
                 val code = apiEx?.code
                 val msg = apiEx?.message ?: e.localizedMessage ?: "위시 빈틈채우기에 실패했습니다."
+
+                _errorCode.value = code
+                _errorMessage.value = msg
+                _errorState.value = code?.let { ApiException(it, msg) }
+
+                _assignError.tryEmit(ApiException(code ?: "UNKNOWN", msg))
+            }
+        }
+    }
+
+    // ai컨텐츠 빈틈 채우기
+    fun assignAi(request: AssignAiRequest) {
+        viewModelScope.launch {
+            val result = activityRepository.assignAi(request)
+            result.onSuccess {
+                _assignSuccess.tryEmit(Unit)
+            }
+            result.onFailure { e ->
+                val apiEx = e as? ApiException
+                val code = apiEx?.code
+                val msg = apiEx?.message ?: e.localizedMessage ?: "ai컨텐츠 빈틈채우기에 실패했습니다."
 
                 _errorCode.value = code
                 _errorMessage.value = msg

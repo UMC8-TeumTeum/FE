@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentFillingSetting01Binding
+import com.example.teumteum.ui.activity.viewModel.ActivityViewModel
 import com.example.teumteum.ui.clock.ChartUtils
 import com.example.teumteum.ui.clock.IconPieChartRenderer
 import com.example.teumteum.ui.main.viewModel.HomeViewModel
@@ -27,10 +28,10 @@ class FillingSetting01Fragment : Fragment() {
     private var selectedEndTime: String? = null
 
     private val homeViewModel: HomeViewModel by activityViewModels()
+    private val viewModel: ActivityViewModel by activityViewModels()
 
     private var isAM: Boolean = true
-
-    private var wishId: Long = -1L
+    private var idStr: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -54,7 +55,13 @@ class FillingSetting01Fragment : Fragment() {
         val time = arguments?.getString("time")
         setTime(time.toString())
 
-        wishId = arguments?.getLong("wishId") ?: -1L
+        val rawId = arguments?.get("id")
+        idStr = when (rawId) {
+            is String -> rawId
+            is Long   -> rawId.toString()
+            is Int    -> rawId.toString()
+            else      -> null
+        }
 
         val source = arguments?.getString("source")
 
@@ -158,7 +165,7 @@ class FillingSetting01Fragment : Fragment() {
                     val fragment = FillingSetting03Fragment().apply {
                         arguments = Bundle().apply {
                             putString("source", source)
-                            putLong("wishId", wishId)
+                            putString("id", idStr)
                             putString("title", title)
                             putString("time", time)
                             putString("selected_time", selectedTimeText)
@@ -174,7 +181,7 @@ class FillingSetting01Fragment : Fragment() {
                     val fragment = FillingSetting02Fragment().apply {
                         arguments = Bundle().apply {
                             putString("source", source)
-                            putLong("wishId", wishId)
+                            putString("id", idStr)
                             putString("title", title)
                             putString("time", time)
                             putString("selected_time", selectedTimeText)
@@ -214,6 +221,36 @@ class FillingSetting01Fragment : Fragment() {
             updateTimeChart(isAM)
             updateIndicator(isAM)
         }
+
+        handleFromArgs()
+    }
+
+    private fun handleFromArgs() {
+        val rawId = arguments?.get("id")
+        val aiContentId: String? = (rawId as? String)
+        val wishId: Long? = (rawId as? Long)
+        val source = arguments?.getString("source")
+
+        when {
+            source == "Wishlist" && wishId != null -> onWishSelected(wishId)
+            source == "FillingActivity" && aiContentId != null && wishId == null -> onAiSelected(aiContentId)
+            source == "FillingActivity" && wishId != null -> onWishSelected(wishId)
+        }
+    }
+
+    // ↓ 실제 비교/처리 로직 (원하는 동작으로 바꾸면 됨)
+    private fun onAiSelected(aiId: String) {
+        // 예: ViewModel에 있는 AI 리스트에서 매칭
+        val ai = viewModel.activityAiContents.value
+            ?.firstOrNull { it.id == aiId }
+        // TODO: ai로 화면 세팅/다음 단계 이동 등
+    }
+
+    private fun onWishSelected(wishId: Long) {
+        // 예: ViewModel에 있는 위시 리스트에서 매칭
+        val wish = viewModel.activityWishes.value
+            ?.firstOrNull { it.id == wishId }
+        // TODO: wish로 화면 세팅/다음 단계 이동 등
     }
 
     private fun enableNextButton() {

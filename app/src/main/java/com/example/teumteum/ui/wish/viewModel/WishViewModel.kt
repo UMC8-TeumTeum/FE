@@ -12,6 +12,9 @@ import com.example.teumteum.data.remote.wish.model.WishResult
 import com.example.teumteum.data.remote.wish.model.WishlistItem
 import com.example.teumteum.data.remote.wish.repository.WishRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -32,21 +35,21 @@ class WishViewModel @Inject constructor(
     private val _wishCategories = MutableLiveData<List<WishCategories>>()
     val wishCategories: LiveData<List<WishCategories>> = _wishCategories
 
-    private val _registerSuccess = MutableLiveData<Boolean>()
-    val registerSuccess: LiveData<Boolean> get() = _registerSuccess
+    private val _registerSuccess = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    val registerSuccess: SharedFlow<Unit> = _registerSuccess.asSharedFlow()
 
-    private val _editSuccess = MutableLiveData<Boolean>()
-    val editSuccess: LiveData<Boolean> get() = _editSuccess
+    private val _editSuccess = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    val editSuccess: SharedFlow<Unit> = _editSuccess.asSharedFlow()
 
-    private val _deleteSuccess = MutableLiveData<Boolean>()
-    val deleteSuccess: LiveData<Boolean> get() = _deleteSuccess
+    private val _deleteSuccess = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    val deleteSuccess: SharedFlow<Unit> = _deleteSuccess.asSharedFlow()
 
     // 위시 등록
     fun registerWish(request: RegisterWishRequest) {
         viewModelScope.launch {
             val result = wishRepository.registerWish(request)
             result.onSuccess {
-                _registerSuccess.value = true
+                _registerSuccess.tryEmit(Unit)
             }
             result.onFailure { e ->
                 _errorMessage.value = e.localizedMessage ?: "위시 등록에 실패했습니다."
@@ -58,7 +61,6 @@ class WishViewModel @Inject constructor(
     fun getWishlist(duration: String, page: Int) {
         viewModelScope.launch {
             val result = wishRepository.getWishlist(duration, page)
-
             result.onSuccess { response ->
                 _wishlistItems.value = response.wishlist
             }.onFailure { e ->
@@ -71,7 +73,6 @@ class WishViewModel @Inject constructor(
     fun getWish(wishId: Long) {
         viewModelScope.launch {
             val result = wishRepository.getWish(wishId)
-
             result.onSuccess {
                 _wish.value = it
             }.onFailure { e ->
@@ -85,8 +86,9 @@ class WishViewModel @Inject constructor(
         viewModelScope.launch {
             val result = wishRepository.editWish(wishId, request)
             result.onSuccess {
-                _editSuccess.value = true
-            }.onFailure { e ->
+                _editSuccess.tryEmit(Unit)
+            }
+            result.onFailure { e ->
                 _errorMessage.value = e.localizedMessage ?: "위시 수정에 실패했습니다."
             }
         }
@@ -101,8 +103,9 @@ class WishViewModel @Inject constructor(
         viewModelScope.launch {
             val result = wishRepository.deleteWish(request)
             result.onSuccess {
-                _deleteSuccess.value = true
-            }.onFailure { e ->
+                _deleteSuccess.tryEmit(Unit)
+            }
+            result.onFailure { e ->
                 _errorMessage.value = e.localizedMessage ?: "위시 삭제에 실패했습니다."
             }
         }

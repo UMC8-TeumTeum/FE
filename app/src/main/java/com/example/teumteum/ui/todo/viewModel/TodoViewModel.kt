@@ -43,11 +43,11 @@ class TodoViewModel @Inject constructor(
     private val _registerSuccess = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
     val registerSuccess: SharedFlow<Unit> = _registerSuccess.asSharedFlow()
 
-    private val _editSuccess = MutableLiveData<Boolean>()
-    val editSuccess: LiveData<Boolean> get() = _editSuccess
+    private val _editSuccess = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    val editSuccess: SharedFlow<Unit> = _editSuccess.asSharedFlow()
 
-    private val _deleteSuccess = MutableLiveData<Boolean>()
-    val deleteSuccess: LiveData<Boolean> get() = _deleteSuccess
+    private val _deleteSuccess = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    val deleteSuccess: SharedFlow<Unit> = _deleteSuccess.asSharedFlow()
 
     // 투두 등록
     fun registerTodo(request: RegisterTodoRequest) {
@@ -94,8 +94,7 @@ class TodoViewModel @Inject constructor(
         viewModelScope.launch {
             val result = todoRepository.editTodo(todoId, request)
             result.onSuccess {
-                _editSuccess.value = true
-                _editSuccess.value = false
+                _editSuccess.tryEmit(Unit)
             }
             result.onFailure { e ->
                 _errorMessage.value = e.localizedMessage ?: "투두 수정에 실패했습니다."
@@ -109,8 +108,7 @@ class TodoViewModel @Inject constructor(
         viewModelScope.launch {
             val result = todoRepository.deleteTodo(todoId)
             result.onSuccess {
-                _deleteSuccess.value = true
-                _deleteSuccess.value = false
+                _deleteSuccess.tryEmit(Unit)
             }.onFailure { e ->
                 _errorMessage.value = e.localizedMessage ?: "투두 삭제에 실패했습니다."
                 _errorMessage.value = null

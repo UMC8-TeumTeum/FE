@@ -5,6 +5,7 @@ import com.example.teumteum.data.remote.activity.model.ActivityAiRequest
 import com.example.teumteum.data.remote.activity.model.ActivityAiResponse
 import com.example.teumteum.data.remote.activity.model.ActivityWishRequest
 import com.example.teumteum.data.remote.activity.model.ActivityWishResponse
+import com.example.teumteum.data.remote.activity.model.AssignAiRequest
 import com.example.teumteum.data.remote.activity.model.AssignWishRequest
 import com.example.teumteum.data.remote.activity.service.ActivityService
 import com.example.teumteum.utils.handleApiResponse
@@ -38,8 +39,8 @@ class ActivityRepository @Inject constructor(
     }
 
     // ai컨텐츠 빈틈 채우기
-    suspend fun assignAi(id: Long, request: AssignWishRequest): Result<Unit> = runCatching {
-        val response = activityService.assignAi(id, request)
+    suspend fun assignAi(request: AssignAiRequest): Result<Unit> = runCatching {
+        val response = activityService.assignAi(request)
         Log.d("AssignAi", "response = ${response.body()}")
         handleApiResponseUnit(response)
     }
