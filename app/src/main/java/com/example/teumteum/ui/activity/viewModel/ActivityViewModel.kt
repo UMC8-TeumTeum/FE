@@ -12,6 +12,9 @@ import com.example.teumteum.data.remote.activity.model.AssignWishRequest
 import com.example.teumteum.data.remote.activity.repository.ActivityRepository
 import com.example.teumteum.utils.ApiException
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -41,8 +44,12 @@ class ActivityViewModel @Inject constructor(
     private val _activityAiContents = MutableLiveData<List<ActivityAiResult>>()
     val activityAiContents: LiveData<List<ActivityAiResult>> get() = _activityAiContents
 
-    private val _assignWishSuccess = MutableLiveData<Boolean>()
-    val assignWishSuccess: LiveData<Boolean> get() = _assignWishSuccess
+    private val _assignSuccess = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    val assignSuccess: SharedFlow<Unit> = _assignSuccess.asSharedFlow()
+
+    private val _assignError = MutableSharedFlow<ApiException>(replay = 0, extraBufferCapacity = 1)
+    val assignError: SharedFlow<ApiException> = _assignError.asSharedFlow()
+
 
     private val _loading = MutableLiveData(false)
     val loading: LiveData<Boolean> = _loading
@@ -103,7 +110,7 @@ class ActivityViewModel @Inject constructor(
         viewModelScope.launch {
             val result = activityRepository.assignWish(wishId, request)
             result.onSuccess {
-                _activityWishSuccess.value = true
+                _assignSuccess.tryEmit(Unit)
             }
             result.onFailure { e ->
                 val apiEx = e as? ApiException
@@ -113,6 +120,8 @@ class ActivityViewModel @Inject constructor(
                 _errorCode.value = code
                 _errorMessage.value = msg
                 _errorState.value = code?.let { ApiException(it, msg) }
+
+                _assignError.tryEmit(ApiException(code ?: "UNKNOWN", msg))
             }
         }
     }

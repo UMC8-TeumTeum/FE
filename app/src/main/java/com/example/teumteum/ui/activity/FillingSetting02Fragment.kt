@@ -13,6 +13,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.activity.model.AssignWishRequest
 import com.example.teumteum.databinding.DialogConfirmRegisterBinding
@@ -22,6 +25,7 @@ import com.example.teumteum.ui.main.HomeFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -36,7 +40,7 @@ class FillingSetting02Fragment : Fragment() {
 
     private var wishId: Long = -1L
 
-    private val activityViewModel: ActivityViewModel by activityViewModels()
+    private val viewModel: ActivityViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,6 +59,26 @@ class FillingSetting02Fragment : Fragment() {
         val time = arguments?.getString("time")
         setTime(time.toString())
 
+        val source = arguments?.getString("source")
+
+        binding.assignTv.text = when (source) {
+            "FillingActivity" -> "채움활동"
+            "Wishlist" -> "위시리스트"
+            else -> "채움활동"
+        }
+
+        binding.assignSelectTv.text = when (source) {
+            "FillingActivity" -> "선택한 시간에 활동을 등록할까요?"
+            "Wishlist" -> "선택한 시간에 위시를 등록할까요?"
+            else -> "선택한 시간에 활동을 등록할까요?"
+        }
+
+        binding.assignRegisterTv.text = when (source) {
+            "FillingActivity" -> "활동을 등록하면 오늘의 투두리스트에 추가돼요"
+            "Wishlist" -> "위시를 등록하면 오늘의 투두리스트에 추가돼요"
+            else -> "활동을 등록하면 오늘의 투두리스트에 추가돼요"
+        }
+
         // 바텀 내비게이션 숨기기
         val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
         bottomNav?.visibility = View.GONE
@@ -69,7 +93,7 @@ class FillingSetting02Fragment : Fragment() {
         val startTime = arguments?.getString("startTime")
         val endTime = arguments?.getString("endTime")
 
-        binding.fillActivityTimeSettingTv.text = selectedTime
+        binding.assignTimeSettingTv.text = selectedTime
 
         if (!startTime.isNullOrEmpty() && !endTime.isNullOrEmpty()) {
             binding.startChoiceTv.text = startTime
@@ -78,11 +102,11 @@ class FillingSetting02Fragment : Fragment() {
             selectedEndTime = endTime
         }
 
-        binding.fillActivityStartContainer.setOnClickListener {
+        binding.assignStartContainer.setOnClickListener {
             showCustomTimePicker(binding.startChoiceTv)
         }
 
-        binding.fillActivityEndContainer.setOnClickListener {
+        binding.assignEndContainer.setOnClickListener {
             showCustomTimePicker(binding.endChoiceTv)
         }
 
@@ -107,7 +131,7 @@ class FillingSetting02Fragment : Fragment() {
         }
 
         binding.registerBtn.setOnClickListener {
-            activityViewModel.assignWish(wishId, assignWishRequest(false))
+            viewModel.assignWish(wishId, assignWishRequest(false))
         }
 
         setupObservers()
@@ -206,11 +230,11 @@ class FillingSetting02Fragment : Fragment() {
     }
 
     private fun setTitle(title: String){
-        binding.fillActivityTitleTv.text = title
+        binding.assignTitleTv.text = title
     }
 
     private fun setTime(time: String){
-        binding.fillActivityTimeTv.text = time
+        binding.assignTimeTv.text = time
     }
 
     private fun combineDateTime(date: String, timeHHmm: String): String {
@@ -240,16 +264,8 @@ class FillingSetting02Fragment : Fragment() {
             .create()
 
         dialogBinding.wishConfirmTv.setOnClickListener {
-            activityViewModel.assignWish(wishId, assignWishRequest(true))
+            viewModel.assignWish(wishId, assignWishRequest(true))
             dialog.dismiss()
-
-            Toast.makeText(requireContext(), "빈틈채우기에 성공하였습니다.", Toast.LENGTH_SHORT).show()
-            parentFragmentManager.setFragmentResult("assign", Bundle())
-
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, HomeFragment())
-                .addToBackStack(null)
-                .commit()
         }
 
         dialogBinding.wishCancelTv.setOnClickListener {
@@ -278,24 +294,34 @@ class FillingSetting02Fragment : Fragment() {
 
     private fun setupObservers() {
 
-        activityViewModel.errorState.observe(viewLifecycleOwner) { err ->
-            val code = err.code
-            val msg = err.message
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.assignSuccess.collect {
+                    Toast.makeText(requireContext(), "빈틈채우기에 성공하였습니다.", Toast.LENGTH_SHORT).show()
+                    parentFragmentManager.setFragmentResult("assign", Bundle())
 
-            when (code) {
-                "HOME4092" -> {
-                    showWishRegisterDialog()
+                    parentFragmentManager.beginTransaction()
+                        .replace(R.id.main_frm, HomeFragment())
+                        .addToBackStack(null)
+                        .commit()
                 }
-                "CONFLICT4094", "CONFLICT4092" -> {
-                    Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
-                }
-                else -> {
-                    if (msg.isNotBlank()) {
-                        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.assignError.collect { err ->
+                    when (err.code) {
+                        "HOME4092" -> showWishRegisterDialog()
+                        "CONFLICT4094", "CONFLICT4092" ->
+                            Toast.makeText(requireContext(), err.message, Toast.LENGTH_SHORT).show()
+                        else -> err.message.let {
+                            Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
             }
-            activityViewModel.clearError()
         }
+
     }
 }

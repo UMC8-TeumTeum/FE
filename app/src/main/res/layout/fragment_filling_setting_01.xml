@@ -17,7 +17,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/filling_activity_tv"
+        android:id="@+id/assign_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
@@ -30,7 +30,7 @@
         app:layout_constraintStart_toEndOf="@id/back_arrow_iv" />
 
     <TextView
-        android:id="@+id/filling_activity_select_tv"
+        android:id="@+id/assign_select_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
@@ -39,11 +39,11 @@
         android:textColor="@color/text_primary"
         android:textSize="20sp"
         android:includeFontPadding="false"
-        app:layout_constraintTop_toBottomOf="@id/filling_activity_tv"
+        app:layout_constraintTop_toBottomOf="@id/assign_tv"
         app:layout_constraintStart_toStartOf="@id/back_arrow_iv"/>
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/filling_activity_cv"
+        android:id="@+id/assign_cv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -53,8 +53,8 @@
         android:layout_marginHorizontal="10dp"
         android:layout_marginTop="10dp"
         android:backgroundTint="@color/main_1"
-        app:layout_constraintStart_toStartOf="@id/filling_activity_select_tv"
-        app:layout_constraintTop_toBottomOf="@id/filling_activity_select_tv">
+        app:layout_constraintStart_toStartOf="@id/assign_select_tv"
+        app:layout_constraintTop_toBottomOf="@id/assign_select_tv">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -62,7 +62,7 @@
             android:padding="5dp">
 
             <LinearLayout
-                android:id="@+id/filling_activity_time_layout"
+                android:id="@+id/assign_time_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -71,7 +71,7 @@
                 app:layout_constraintBottom_toBottomOf="parent">
 
                 <TextView
-                    android:id="@+id/filling_activity_time_tv"
+                    android:id="@+id/assign_time_tv"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:layout_marginStart="10dp"
@@ -84,7 +84,7 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/filling_activity_title_tv"
+                android:id="@+id/assign_title_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
@@ -92,7 +92,7 @@
                 android:fontFamily="@font/noto_sans_kr_regular"
                 android:textSize="15sp"
                 android:textColor="@color/white"
-                app:layout_constraintStart_toEndOf="@id/filling_activity_time_layout"
+                app:layout_constraintStart_toEndOf="@id/assign_time_layout"
                 app:layout_constraintTop_toTopOf="parent"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -103,7 +103,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/clock_mini_sv"
-        app:layout_constraintTop_toBottomOf="@id/filling_activity_cv"
+        app:layout_constraintTop_toBottomOf="@id/assign_cv"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="12dp"

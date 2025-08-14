@@ -1,7 +1,6 @@
 package com.example.teumteum.ui.activity
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -56,6 +55,20 @@ class FillingSetting01Fragment : Fragment() {
         setTime(time.toString())
 
         wishId = arguments?.getLong("wishId") ?: -1L
+
+        val source = arguments?.getString("source")
+
+        binding.assignTv.text = when (source) {
+            "FillingActivity" -> "채움활동"
+            "Wishlist" -> "위시리스트"
+            else -> "채움활동"
+        }
+
+        binding.assignSelectTv.text = when (source) {
+            "FillingActivity" -> "활동을 진행할 시간을 선택해주세요"
+            "Wishlist" -> "위시를 진행할 시간을 선택해주세요"
+            else -> "활동을 진행할 시간을 선택해주세요"
+        }
 
         // 바텀 내비게이션 숨기기
         val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
@@ -144,6 +157,7 @@ class FillingSetting01Fragment : Fragment() {
                 R.id.select_01_button -> {
                     val fragment = FillingSetting03Fragment().apply {
                         arguments = Bundle().apply {
+                            putString("source", source)
                             putLong("wishId", wishId)
                             putString("title", title)
                             putString("time", time)
@@ -159,6 +173,7 @@ class FillingSetting01Fragment : Fragment() {
                 R.id.select_02_button, R.id.select_03_button, R.id.select_04_button -> {
                     val fragment = FillingSetting02Fragment().apply {
                         arguments = Bundle().apply {
+                            putString("source", source)
                             putLong("wishId", wishId)
                             putString("title", title)
                             putString("time", time)
@@ -208,11 +223,11 @@ class FillingSetting01Fragment : Fragment() {
     }
 
     private fun setTitle(title: String){
-        binding.fillingActivityTitleTv.text = title
+        binding.assignTitleTv.text = title
     }
 
     private fun setTime(time: String){
-        binding.fillingActivityTimeTv.text = time
+        binding.assignTimeTv.text = time
     }
 
     private fun updateTimeChart(isAM: Boolean) {

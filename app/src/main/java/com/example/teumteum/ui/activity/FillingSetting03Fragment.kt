@@ -36,7 +36,7 @@ class FillingSetting03Fragment : Fragment() {
 
     private var wishId: Long = -1L
 
-    private val activityViewModel: ActivityViewModel by activityViewModels()
+    private val viewModel: ActivityViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,6 +55,26 @@ class FillingSetting03Fragment : Fragment() {
         val time = arguments?.getString("time")
         setTime(time.toString())
 
+        val source = arguments?.getString("source")
+
+        binding.assignTv.text = when (source) {
+            "FillingActivity" -> "채움활동"
+            "Wishlist" -> "위시리스트"
+            else -> "채움활동"
+        }
+
+        binding.assignSelectTv.text = when (source) {
+            "FillingActivity" -> "선택한 시간에 활동을 등록할까요?"
+            "Wishlist" -> "선택한 시간에 위시를 등록할까요?"
+            else -> "선택한 시간에 활동을 등록할까요?"
+        }
+
+        binding.assignRegisterTv.text = when (source) {
+            "FillingActivity" -> "활동을 등록하면 오늘의 투두리스트에 추가돼요"
+            "Wishlist" -> "위시를 등록하면 오늘의 투두리스트에 추가돼요"
+            else -> "활동을 등록하면 오늘의 투두리스트에 추가돼요"
+        }
+
         // 바텀 내비게이션 숨기기
         val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
         bottomNav?.visibility = View.GONE
@@ -67,13 +87,13 @@ class FillingSetting03Fragment : Fragment() {
 
         val selectedTime = arguments?.getString("selected_time")
 
-        binding.fillingActivityTimeSettingTv.text = selectedTime
+        binding.assignTimeSettingTv.text = selectedTime
 
-        binding.fillingActivityStartContainer.setOnClickListener {
+        binding.assignStartContainer.setOnClickListener {
             showCustomTimePicker(binding.startChoiceTv)
         }
 
-        binding.fillingActivityEndContainer.setOnClickListener {
+        binding.assignEndContainer.setOnClickListener {
             showCustomTimePicker(binding.endChoiceTv)
         }
 
@@ -98,7 +118,7 @@ class FillingSetting03Fragment : Fragment() {
         }
 
         binding.registerBtn.setOnClickListener {
-            activityViewModel.assignWish(wishId, assignWishRequest(false))
+            viewModel.assignWish(wishId, assignWishRequest(false))
         }
 
         setupObservers()
@@ -198,11 +218,11 @@ class FillingSetting03Fragment : Fragment() {
     }
 
     private fun setTitle(title: String){
-        binding.fillingActivityTitleTv.text = title
+        binding.assignTitleTv.text = title
     }
 
     private fun setTime(time: String){
-        binding.fillingActivityTimeTv.text = time
+        binding.assignTimeTv.text = time
     }
 
     private fun combineDateTime(date: String, timeHHmm: String): String {
@@ -232,7 +252,7 @@ class FillingSetting03Fragment : Fragment() {
             .create()
 
         dialogBinding.wishConfirmTv.setOnClickListener {
-            activityViewModel.assignWish(wishId, assignWishRequest(true))
+            viewModel.assignWish(wishId, assignWishRequest(true))
             dialog.dismiss()
 
             Toast.makeText(requireContext(), "빈틈채우기에 성공하였습니다.", Toast.LENGTH_SHORT).show()
@@ -289,7 +309,7 @@ class FillingSetting03Fragment : Fragment() {
 
     private fun setupObservers() {
 
-        activityViewModel.errorState.observe(viewLifecycleOwner) { err ->
+        viewModel.errorState.observe(viewLifecycleOwner) { err ->
             val code = err.code
             val msg = err.message
 
@@ -306,7 +326,7 @@ class FillingSetting03Fragment : Fragment() {
                     }
                 }
             }
-            activityViewModel.clearError()
+            viewModel.clearError()
         }
     }
 }

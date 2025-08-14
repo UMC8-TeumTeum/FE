@@ -8,8 +8,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.wish.model.WishlistItem
 import com.example.teumteum.databinding.ItemWishlistBinding
+import com.example.teumteum.ui.activity.FillingSetting01Fragment
 import com.example.teumteum.ui.wish.WishEditFragment
-import com.example.teumteum.ui.wish.WishSetting01Fragment
 
 class WishlistRVAdapter(private var wishlist: List<WishlistItem>, private val fragmentManager: FragmentManager) : RecyclerView.Adapter<WishlistRVAdapter.ViewHolder>() {
 
@@ -32,8 +32,10 @@ class WishlistRVAdapter(private var wishlist: List<WishlistItem>, private val fr
         }
 
         binding.fillButton.setOnClickListener {
-            val fragment = WishSetting01Fragment().apply {
+            val fragment = FillingSetting01Fragment().apply {
                 arguments = Bundle().apply {
+                    putString("source", "Wishlist")
+                    putLong("wishId", item.id)
                     putString("title", binding.wishTitleTv.text.toString())
                     putString("time", binding.wishTimeTv.text.toString())
                 }
