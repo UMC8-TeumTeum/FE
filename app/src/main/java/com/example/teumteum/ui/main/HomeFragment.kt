@@ -157,6 +157,7 @@ class HomeFragment : Fragment(), IDateClickListener {
         viewModel.teumTimeMinutes.observe(viewLifecycleOwner) { updateTeumTime() }
 
         viewModel.scheduleList.observe(viewLifecycleOwner) {
+            viewModel.refreshTodaySchedule()
             updateTimeChart(isAM)
             updateIndicator(isAM)
         }
