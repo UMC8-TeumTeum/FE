@@ -60,12 +60,33 @@ class ActivityViewModel @Inject constructor(
                 val result = activityRepository.activityWish(request)
                 result.onSuccess { response ->
                     _activityWishSuccess.value = true
-                    _activityWishes.value = response.result?.wishes
+                    _activityWishes.value = response.wishes
                         ?.filter { it.title.isNotBlank() }
                         .orEmpty()
                 }
                 result.onFailure { e ->
                     _errorMessage.value = e.localizedMessage ?: "채움활동 위시 조회에 실패했습니다."
+                }
+            } finally {
+                endLoading()
+            }
+        }
+    }
+
+    // 채움활동 AI 컨텐츠 불러오기
+    fun activityAi(request: ActivityAiRequest) {
+        viewModelScope.launch {
+            startLoading()
+            try {
+                val result = activityRepository.activityAi(request)
+                result.onSuccess { response ->
+                    _activityAiSuccess.value = true
+                    _activityAiContents.value = response.aiContents
+                        ?.filter { it.title.isNotBlank() }
+                        .orEmpty()
+                }
+                result.onFailure { e ->
+                    _errorMessage.value = e.localizedMessage ?: "채움활동 AI 컨텐츠 조회에 실패했습니다."
                 }
             } finally {
                 endLoading()
@@ -85,26 +106,4 @@ class ActivityViewModel @Inject constructor(
             }
         }
     }
-
-    // 채움활동 AI 컨텐츠 불러오기
-    fun activityAi(request: ActivityAiRequest) {
-        viewModelScope.launch {
-            startLoading()
-            try {
-                val result = activityRepository.activityAi(request)
-                result.onSuccess { response ->
-                    _activityAiSuccess.value = true
-                    _activityAiContents.value = response.result?.aiContents
-                        ?.filter { it.title.isNotBlank() }
-                        .orEmpty()
-                }
-                result.onFailure { e ->
-                    _errorMessage.value = e.localizedMessage ?: "채움활동 AI 컨텐츠 조회에 실패했습니다."
-                }
-            } finally {
-                endLoading()
-            }
-        }
-    }
-
 }

@@ -9,8 +9,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
-import com.example.teumteum.ui.main.data.TimeBlock
-import com.example.teumteum.ui.main.data.TimeType
 import com.example.teumteum.databinding.FragmentFillingSetting01Binding
 import com.example.teumteum.ui.clock.ChartUtils
 import com.example.teumteum.ui.clock.IconPieChartRenderer
