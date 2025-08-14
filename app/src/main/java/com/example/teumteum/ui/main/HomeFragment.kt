@@ -207,6 +207,12 @@ class HomeFragment : Fragment(), IDateClickListener {
             refreshTodolist()
         }
 
+        // 위시 빈틈 채우기 이벤트 수신
+        parentFragmentManager.setFragmentResultListener("wish_assign", viewLifecycleOwner) { _, _ ->
+            viewModel.refreshTodaySchedule()
+            refreshTodolist()
+        }
+
         todoViewModel.getTodoList(date)
         myHomeViewModel.getMyInfo()
 

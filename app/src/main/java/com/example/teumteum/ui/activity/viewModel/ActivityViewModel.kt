@@ -19,6 +19,9 @@ class ActivityViewModel @Inject constructor(
     private val activityRepository: ActivityRepository
 ) : ViewModel() {
 
+    private val _errorCode = MutableLiveData<String?>()
+    val errorCode: LiveData<String?> = _errorCode
+
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> get() = _errorMessage
 
@@ -74,7 +77,7 @@ class ActivityViewModel @Inject constructor(
     fun assignWish(wishId: Long, request: AssignWishRequest) {
         viewModelScope.launch {
             val result = activityRepository.assignWish(wishId, request)
-            result.onSuccess { response ->
+            result.onSuccess {
                 _activityWishSuccess.value = true
             }
             result.onFailure { e ->

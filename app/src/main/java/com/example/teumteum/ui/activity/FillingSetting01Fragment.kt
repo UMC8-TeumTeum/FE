@@ -1,6 +1,7 @@
 package com.example.teumteum.ui.activity
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,6 +33,8 @@ class FillingSetting01Fragment : Fragment() {
 
     private var isAM: Boolean = true
 
+    private var wishId: Long = -1L
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -53,6 +56,9 @@ class FillingSetting01Fragment : Fragment() {
 
         val time = arguments?.getString("time")
         setTime(time.toString())
+
+        wishId = arguments?.getLong("wishId") ?: -1L
+        Log.d("AssignWish", "wishId from arguments = $wishId")
 
         // 바텀 내비게이션 숨기기
         val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
@@ -141,6 +147,7 @@ class FillingSetting01Fragment : Fragment() {
                 R.id.select_01_button -> {
                     val fragment = FillingSetting03Fragment().apply {
                         arguments = Bundle().apply {
+                            putLong("wishId", wishId)
                             putString("title", title)
                             putString("time", time)
                             putString("selected_time", selectedTimeText)
@@ -155,6 +162,7 @@ class FillingSetting01Fragment : Fragment() {
                 R.id.select_02_button, R.id.select_03_button, R.id.select_04_button -> {
                     val fragment = FillingSetting02Fragment().apply {
                         arguments = Bundle().apply {
+                            putLong("wishId", wishId)
                             putString("title", title)
                             putString("time", time)
                             putString("selected_time", selectedTimeText)
