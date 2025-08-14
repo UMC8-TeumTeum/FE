@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.teumteum.data.remote.todo.model.AlarmStatusRequest
 import com.example.teumteum.data.remote.todo.model.EditTodoRequest
-import com.example.teumteum.data.remote.todo.model.GetOnboardingReminders
 import com.example.teumteum.data.remote.todo.model.GetTodoResult
 import com.example.teumteum.data.remote.todo.model.RegisterTodoRequest
 import com.example.teumteum.data.remote.todo.model.TodoListResult
@@ -22,6 +21,9 @@ import javax.inject.Inject
 class TodoViewModel @Inject constructor(
     private val todoRepository: TodoRepository
 ) : ViewModel() {
+
+    private val _errorCode = MutableLiveData<String?>()
+    val errorCode: LiveData<String?> = _errorCode
 
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> get() = _errorMessage

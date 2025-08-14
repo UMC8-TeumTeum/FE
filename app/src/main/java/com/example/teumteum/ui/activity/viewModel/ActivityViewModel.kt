@@ -10,6 +10,7 @@ import com.example.teumteum.data.remote.activity.model.ActivityWishRequest
 import com.example.teumteum.data.remote.activity.model.ActivityWishResult
 import com.example.teumteum.data.remote.activity.model.AssignWishRequest
 import com.example.teumteum.data.remote.activity.repository.ActivityRepository
+import com.example.teumteum.utils.ApiException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -18,6 +19,9 @@ import javax.inject.Inject
 class ActivityViewModel @Inject constructor(
     private val activityRepository: ActivityRepository
 ) : ViewModel() {
+
+    private val _errorState = MutableLiveData<ApiException>()
+    val errorState: LiveData<ApiException> = _errorState
 
     private val _errorCode = MutableLiveData<String?>()
     val errorCode: LiveData<String?> = _errorCode
@@ -102,8 +106,19 @@ class ActivityViewModel @Inject constructor(
                 _activityWishSuccess.value = true
             }
             result.onFailure { e ->
-                _errorMessage.value = e.localizedMessage ?: "위시 빈틈채우기에 실패했습니다."
+                val apiEx = e as? ApiException
+                val code = apiEx?.code
+                val msg = apiEx?.message ?: e.localizedMessage ?: "위시 빈틈채우기에 실패했습니다."
+
+                _errorCode.value = code
+                _errorMessage.value = msg
+                _errorState.value = code?.let { ApiException(it, msg) }
             }
         }
+    }
+
+    fun clearError() {
+        _errorCode.value = null
+        _errorMessage.value = null
     }
 }

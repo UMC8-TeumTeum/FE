@@ -204,9 +204,6 @@ class WishRegisterFragment : BottomSheetDialogFragment() {
     }
 
     private fun setupObservers() {
-//        viewModel.wishCategories.observe(viewLifecycleOwner) { categoryList ->
-//            setupCategoryButtons(categoryList)
-//        }
 
         viewModel.registerSuccess.observe(viewLifecycleOwner) { isSuccess ->
             if (isSuccess) {

@@ -56,7 +56,6 @@ class FillingSetting01Fragment : Fragment() {
         setTime(time.toString())
 
         wishId = arguments?.getLong("wishId") ?: -1L
-        Log.d("AssignWish", "wishId from arguments = $wishId")
 
         // 바텀 내비게이션 숨기기
         val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
