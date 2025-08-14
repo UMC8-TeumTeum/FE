@@ -22,7 +22,3 @@ data class ActivityAiResult(
     @SerializedName("title") val title: String,
     @SerializedName("estimatedDuration") val estimatedDuration: String
 )
-
-data class FillAiResponse(
-    @SerializedName("result") val result: TodoResult?
-)

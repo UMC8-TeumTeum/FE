@@ -22,10 +22,9 @@ data class AssignWishRequest(
     @SerializedName("isForce") val isForce: Boolean
 )
 
-data class FillAiRequest(
-    @SerializedName("aiContentId") val aiContentId: Long,
-    @SerializedName("date") val date: String,
+data class AssignAiRequest(
+    @SerializedName("id") val id: Long,
     @SerializedName("startTime") val startTime: String,
     @SerializedName("endTime") val endTime: String,
-    @SerializedName("isForce") val isForce: Boolean? = null
+    @SerializedName("isForce") val isForce: Boolean
 )

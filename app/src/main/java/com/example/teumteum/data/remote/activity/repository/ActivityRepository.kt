@@ -36,4 +36,11 @@ class ActivityRepository @Inject constructor(
         Log.d("AssignWish", "response = ${response.body()}")
         handleApiResponseUnit(response)
     }
+
+    // ai컨텐츠 빈틈 채우기
+    suspend fun assignAi(id: Long, request: AssignWishRequest): Result<Unit> = runCatching {
+        val response = activityService.assignAi(id, request)
+        Log.d("AssignAi", "response = ${response.body()}")
+        handleApiResponseUnit(response)
+    }
 }
