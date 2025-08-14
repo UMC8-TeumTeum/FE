@@ -2,6 +2,7 @@ package com.example.teumteum.ui.main
 
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -157,7 +158,6 @@ class HomeFragment : Fragment(), IDateClickListener {
         viewModel.teumTimeMinutes.observe(viewLifecycleOwner) { updateTeumTime() }
 
         viewModel.scheduleList.observe(viewLifecycleOwner) {
-            viewModel.refreshTodaySchedule()
             updateTimeChart(isAM)
             updateIndicator(isAM)
         }
@@ -197,11 +197,13 @@ class HomeFragment : Fragment(), IDateClickListener {
 
         // 투두 수정 성공 이벤트 수신
         parentFragmentManager.setFragmentResultListener("todo_edit", viewLifecycleOwner) { _, _ ->
+            viewModel.refreshTodaySchedule()
             refreshTodolist()
         }
 
         // 투두 삭제 성공 이벤트 수신
         parentFragmentManager.setFragmentResultListener("todo_delete", viewLifecycleOwner) { _, _ ->
+            viewModel.refreshTodaySchedule()
             refreshTodolist()
         }
 
@@ -401,6 +403,7 @@ class HomeFragment : Fragment(), IDateClickListener {
     private fun refreshTodolist() {
         val today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
         todoViewModel.getTodoList(date = today)
+        Log.d("TODO_LIST", "TODO_LIST: ${todoViewModel.todolistItems}")
     }
 
     private fun setupObservers() {
