@@ -403,7 +403,6 @@ class HomeFragment : Fragment(), IDateClickListener {
     private fun refreshTodolist() {
         val today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
         todoViewModel.getTodoList(date = today)
-        Log.d("TODO_LIST", "TODO_LIST: ${todoViewModel.todolistItems}")
     }
 
     private fun setupObservers() {

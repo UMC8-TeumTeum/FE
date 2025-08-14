@@ -115,7 +115,10 @@ object ChartUtils {
         }
 
         val data = PieData(dataSet).apply { setDrawValues(false) }
+        pieChart.clear()
         pieChart.data = data
+        pieChart.data.notifyDataChanged()
+        pieChart.notifyDataSetChanged()
         pieChart.invalidate()
     }
 

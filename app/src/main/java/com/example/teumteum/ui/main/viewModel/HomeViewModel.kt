@@ -10,6 +10,7 @@ import com.example.teumteum.data.remote.home.repository.HomeRepository
 import com.example.teumteum.ui.main.data.TimeBlock
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import retrofit2.adapter.rxjava2.Result.response
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
@@ -90,6 +91,7 @@ class HomeViewModel @Inject constructor(
 
     //스케줄이 변경되었을 때 업데이트
     fun refreshTodaySchedule() {
+        Log.d("asdf", "viewmodel")
         val currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
         date = currentDate
         getTodaySchedule(currentDate)
