@@ -1,6 +1,7 @@
 package com.example.teumteum.ui.activity
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -12,13 +13,18 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
+import com.example.teumteum.data.remote.activity.model.AssignWishRequest
 import com.example.teumteum.databinding.DialogConfirmRegisterBinding
 import com.example.teumteum.databinding.FragmentFillingSetting03Binding
+import com.example.teumteum.ui.activity.viewModel.ActivityViewModel
 import com.example.teumteum.ui.main.HomeFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @AndroidEntryPoint
 class FillingSetting03Fragment : Fragment() {
@@ -27,6 +33,11 @@ class FillingSetting03Fragment : Fragment() {
 
     private var selectedStartTime: String? = null
     private var selectedEndTime: String? = null
+    private var selectedDate: String? = null
+
+    private var wishId: Long = -1L
+
+    private val activityViewModel: ActivityViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,7 +56,18 @@ class FillingSetting03Fragment : Fragment() {
         val time = arguments?.getString("time")
         setTime(time.toString())
 
+        // 오늘 날짜로 폴백
+        selectedDate = arguments?.getString("selected_date")
+            ?: LocalDate.now().format(DateTimeFormatter.ISO_DATE)
+
+        wishId = arguments?.getLong("wishId") ?: -1L
+        Log.d("AssignWish", "wishId = $wishId")
+        Toast.makeText(requireContext(), "wishId=$wishId", Toast.LENGTH_SHORT).show()
+
         val selectedTime = arguments?.getString("selected_time")
+        val startTime = arguments?.getString("startTime")
+        val endTime = arguments?.getString("endTime")
+
         binding.fillingActivityTimeSettingTv.text = selectedTime
 
         // 바텀 내비게이션 숨기기
@@ -81,8 +103,11 @@ class FillingSetting03Fragment : Fragment() {
         }
 
         binding.registerBtn.setOnClickListener {
-            showWishRegisterDialog()
+            Log.e("WishAssign", "CLICK registerBtn -> force=false, wishId=$wishId")
+            activityViewModel.assignWish(wishId, assignWishRequest(false))
         }
+
+        setupObservers()
     }
 
     private fun showCustomTimePicker(targetTextView: TextView) {
@@ -187,6 +212,28 @@ class FillingSetting03Fragment : Fragment() {
         binding.fillingActivityTimeTv.text = time
     }
 
+    private fun combineDateTime(date: String, timeHHmm: String): String {
+        return "${date}T$timeHHmm"
+    }
+
+    private fun assignWishRequest(isForce: Boolean): AssignWishRequest {
+        val startHHmm = binding.startChoiceTv.text.toString()
+        val endHHmm = binding.endChoiceTv.text.toString()
+
+        val date = selectedDate ?: LocalDate.now().format(DateTimeFormatter.ISO_DATE)
+
+        val startIso = combineDateTime(date, startHHmm)
+        val endIso = combineDateTime(date, endHHmm)
+
+        Log.d("AssignWishRequest", "startIso = $startIso, endIso = $endIso")
+
+        return AssignWishRequest(
+            startTime = startIso,
+            endTime = endIso,
+            isForce = isForce
+        )
+    }
+
     private fun showWishRegisterDialog() {
         val dialogBinding = DialogConfirmRegisterBinding.inflate(layoutInflater)
 
@@ -195,12 +242,9 @@ class FillingSetting03Fragment : Fragment() {
             .create()
 
         dialogBinding.wishConfirmTv.setOnClickListener {
-            Toast.makeText(requireContext(), "등록되었습니다.", Toast.LENGTH_SHORT).show()
+            // 일정 충돌 조건 처리 필요
+            activityViewModel.assignWish(wishId, assignWishRequest(true))
             dialog.dismiss()
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, HomeFragment())
-                .addToBackStack(null)
-                .commit()
         }
 
         dialogBinding.wishCancelTv.setOnClickListener {
@@ -244,5 +288,37 @@ class FillingSetting03Fragment : Fragment() {
             else
                 requireContext().getColor(R.color.text_primary)
         )
+    }
+
+    private fun setupObservers() {
+        activityViewModel.assignWishSuccess.observe(viewLifecycleOwner) { isSuccess ->
+            if (isSuccess) {
+                Toast.makeText(requireContext(), "위시 빈틈채우기에 성공하였습니다.", Toast.LENGTH_SHORT).show()
+                parentFragmentManager.setFragmentResult("wish_assign", Bundle())
+
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.main_frm, HomeFragment())
+                    .addToBackStack(null)
+                    .commit()
+
+                Log.d("WishAssign", "위시 빈틈채우기 성공 -> 홈으로 이동")
+            }
+        }
+
+        activityViewModel.errorCode.observe(viewLifecycleOwner) { code ->
+            when (code) {
+                "HOME4092" -> {
+                    Log.w("WishAssign", "겹치는 일정 존재 -> 등록 모달창 호출")
+                    showWishRegisterDialog()
+                }
+                else -> {
+                    activityViewModel.errorMessage.value?.let { msg ->
+                        if (msg.isNotBlank()) {
+                            Toast.makeText(requireContext(), "위시 빈틈채우기 실패: $msg", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
+        }
     }
 }
