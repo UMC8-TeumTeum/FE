@@ -2,6 +2,7 @@ package com.example.teumteum.ui.main
 
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -196,11 +197,13 @@ class HomeFragment : Fragment(), IDateClickListener {
 
         // 투두 수정 성공 이벤트 수신
         parentFragmentManager.setFragmentResultListener("todo_edit", viewLifecycleOwner) { _, _ ->
+            viewModel.refreshTodaySchedule()
             refreshTodolist()
         }
 
         // 투두 삭제 성공 이벤트 수신
         parentFragmentManager.setFragmentResultListener("todo_delete", viewLifecycleOwner) { _, _ ->
+            viewModel.refreshTodaySchedule()
             refreshTodolist()
         }
 
