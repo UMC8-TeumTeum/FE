@@ -3,7 +3,6 @@ package com.example.teumteum.ui.signin
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -50,7 +49,7 @@ class LoginActivity : AppCompatActivity() {
                 }
                 is LoginResult.Error -> {
                     Log.d("KakaoLogin", "카카오 로그인 실패 ${result.message}")
-                    Toast.makeText(this, result.message ?: "로그인 실패", Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(this, result.message ?: "로그인 실패", Toast.LENGTH_SHORT).show()
                 }
             }
         }

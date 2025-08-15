@@ -10,7 +10,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
 import com.example.teumteum.databinding.BottomSheetFriend02AcceptBinding
@@ -63,7 +62,7 @@ class Friend02AcceptBottomSheetFragment : BottomSheetDialogFragment() {
 
             //  로그 & 토스트
             Log.d("ACCEPT_BOTTOM_SHEET", "responseId: $responseId, status: $status")
-            Toast.makeText(requireContext(), "응답: 함께할래요 (id: $responseId)", Toast.LENGTH_SHORT).show()
+//            Toast.makeText(requireContext(), "응답: 함께할래요 (id: $responseId)", Toast.LENGTH_SHORT).show()
 
             //  응답 처리
             viewModel.respondToTeum(responseId, status)

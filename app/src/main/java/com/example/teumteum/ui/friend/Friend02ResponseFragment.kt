@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentFriend02ResponseBinding
@@ -58,7 +57,7 @@ class Friend02ResponseFragment  : Fragment(){
             val bottomSheet = Friend02RejectBottomSheetFragment()
             bottomSheet.show(parentFragmentManager, bottomSheet.tag)
 
-            Toast.makeText(requireContext(), "거절 버튼이 눌렸습니다.", Toast.LENGTH_SHORT).show()
+//            Toast.makeText(requireContext(), "거절 버튼이 눌렸습니다.", Toast.LENGTH_SHORT).show()
         }
 
 
@@ -69,7 +68,7 @@ class Friend02ResponseFragment  : Fragment(){
             bottomSheet.show(parentFragmentManager, bottomSheet.tag)
 
             // Toast 메시지
-            Toast.makeText(requireContext(), "함께할래요 버튼이 눌렸습니다.", Toast.LENGTH_SHORT).show()
+//            Toast.makeText(requireContext(), "함께할래요 버튼이 눌렸습니다.", Toast.LENGTH_SHORT).show()
         }
     }
 

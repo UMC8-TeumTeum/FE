@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -167,7 +166,7 @@ class OnBoardingScheduleFragment : Fragment() {
                     navigateToNext()
                 }
                 is OnBoardingUiState.Error -> {
-                    Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
                     if (state.code == "ONBOARDING4001") {
                         Log.d("ScheduleFragment", "ONBOARDING4001 - 강제 이동")
                         navigateToNext()

@@ -100,7 +100,8 @@ class FriendMatchingPreviewDialog : DialogFragment() {
                     dismiss()
                 },
                 onError = { msg ->
-                    Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+                    Log.d("FRIEND_MATCHING_PREVIEW_DIALOG", msg.toString())
                 })
         }
     }
