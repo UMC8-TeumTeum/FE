@@ -16,69 +16,70 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import javax.inject.Singleton
-import kotlin.jvm.java
 
 @Module
 @InstallIn(SingletonComponent::class)
 class ApiModule {
 
+    // 인증이 필요한 API들 - @AuthRetrofit 사용
     @Provides
     @Singleton
-    fun provideTodoApi(retrofit: Retrofit): TodoService {
+    fun provideTodoApi(@AuthRetrofit retrofit: Retrofit): TodoService {
         return retrofit.create(TodoService::class.java)
     }
 
     @Provides
     @Singleton
-    fun provideWishApi(retrofit: Retrofit): WishService {
+    fun provideWishApi(@AuthRetrofit retrofit: Retrofit): WishService {
         return retrofit.create(WishService::class.java)
     }
 
     @Provides
     @Singleton
-    fun provideAlarmApi(retrofit: Retrofit): AlarmRetrofitInterface {
+    fun provideAlarmApi(@AuthRetrofit retrofit: Retrofit): AlarmRetrofitInterface {
         return retrofit.create(AlarmRetrofitInterface::class.java)
     }
 
     @Provides
     @Singleton
-    fun provideCalendarApi(retrofit: Retrofit): CalendarService {
+    fun provideCalendarApi(@AuthRetrofit retrofit: Retrofit): CalendarService {
         return retrofit.create(CalendarService::class.java)
     }
 
     @Provides
     @Singleton
-    fun provideFriendApi(retrofit: Retrofit): FriendService {
+    fun provideFriendApi(@AuthRetrofit retrofit: Retrofit): FriendService {
         return retrofit.create(FriendService::class.java)
     }
 
     @Provides
     @Singleton
-    fun provideHomeApi(retrofit: Retrofit): HomeService {
+    fun provideHomeApi(@AuthRetrofit retrofit: Retrofit): HomeService {
         return retrofit.create(HomeService::class.java)
     }
 
     @Provides
     @Singleton
-    fun provideOnBoardingApi(retrofit: Retrofit): OnBoardingService {
+    fun provideOnBoardingApi(@AuthRetrofit retrofit: Retrofit): OnBoardingService {
         return retrofit.create(OnBoardingService::class.java)
     }
 
     @Provides
     @Singleton
-    fun provideMyPageApi(retrofit: Retrofit): MyPageService {
+    fun provideMyPageApi(@AuthRetrofit retrofit: Retrofit): MyPageService {
         return retrofit.create(MyPageService::class.java)
     }
 
     @Provides
     @Singleton
-    fun provideActivityApi(retrofit: Retrofit): ActivityService {
+    fun provideActivityApi(@AuthRetrofit retrofit: Retrofit): ActivityService {
         return retrofit.create(ActivityService::class.java)
     }
 
+    // 인증이 필요 없는 API - @NoAuthRetrofit 사용
     @Provides
     @Singleton
-    fun provideLoginApi(retrofit: Retrofit): AuthService {
+    fun provideLoginApi(@NoAuthRetrofit retrofit: Retrofit): AuthService {
         return retrofit.create(AuthService::class.java)
     }
 }
