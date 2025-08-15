@@ -4,13 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="70dp"
-    tools:context=".ui.wish.FillingSetting03Fragment">
+    tools:context=".ui.activity.FillingSetting03Fragment">
 
     <ImageView
         android:id="@+id/back_arrow_iv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="70dp"
         android:layout_marginStart="16dp"
         android:src="@drawable/ic_arrow_back"
         app:layout_constraintStart_toStartOf="parent"
@@ -20,8 +20,9 @@
         android:id="@+id/assign_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="66dp"
         android:layout_marginStart="12dp"
-        android:layout_marginTop="-18dp"
+        android:includeFontPadding="false"
         android:text="채움 활동"
         android:fontFamily="@font/noto_sans_kr_medium"
         android:textColor="@color/text_primary"

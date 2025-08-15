@@ -4,13 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="70dp"
     tools:context=".ui.alarm.AlarmFragment">
 
     <ImageView
         android:id="@+id/back_arrow_iv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="70dp"
         android:layout_marginStart="16dp"
         android:src="@drawable/ic_arrow_back"
         app:layout_constraintStart_toStartOf="parent"
@@ -20,8 +20,8 @@
         android:id="@+id/alarm_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="66dp"
         android:layout_marginStart="12dp"
-        android:layout_marginTop="-5dp"
         android:text="알림"
         android:includeFontPadding="false"
         android:fontFamily="@font/noto_sans_kr_medium"
