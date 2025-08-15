@@ -165,7 +165,10 @@ class FriendViewModel @Inject constructor(
     private val _friendProfile = MutableLiveData<FriendProfileResult>()
     val friendProfile: LiveData<FriendProfileResult> get() = _friendProfile
 
-    fun getFriendProfile(userId: Int, onResult: (FriendProfileResult) -> Unit) {
+    fun getFriendProfile(
+        userId: Int,
+        onResult: (FriendProfileResult) -> Unit = {}
+    ) {
         viewModelScope.launch {
             repository.getFriendProfile(userId)
                 .onSuccess { profile ->
@@ -178,6 +181,7 @@ class FriendViewModel @Inject constructor(
                 }
         }
     }
+
 
     private val _teumRequestTitle = MutableLiveData<String>("")
     val teumRequestTitle: LiveData<String> get() = _teumRequestTitle

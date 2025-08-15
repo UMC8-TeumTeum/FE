@@ -56,7 +56,7 @@ class FriendProfileFollowingFragment : Fragment() {
             .into(binding.profileIv)
 
         if (targetUserId != -1) {
-            viewModel.getFriendProfile(targetUserId) { /* 필요 시 콜백 사용 */ } // <-- 추가
+            viewModel.getFriendProfile(targetUserId)
             viewModel.loadFriendTeumTime(targetUserId)
             viewModel.loadSharedTeumTime(targetUserId)
             viewModel.fetchRecentPublicTodos(targetUserId)
