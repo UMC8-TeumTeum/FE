@@ -97,16 +97,17 @@ class OnBoardingScheduleFragment : Fragment() {
         }
 
         binding.fabAddIv.setOnClickListener {
-            val list = viewModel.scheduleMap.getOrPut(selectedDayIndex) { mutableListOf() }
+            val existing = viewModel.scheduleMap[selectedDayIndex]?.toList() ?: emptyList()
             val bottomSheet = BottomSheetScheduleFragment(
                 selectedDayIndex,
-                list.toList()
+                existing
             )
             bottomSheet.show(parentFragmentManager, "BottomSheetScheduleFragment")
         }
 
         binding.nextBtn.setOnClickListener {
-            if (viewModel.scheduleMap.isNotEmpty()) {
+            val hasAnySchedule = viewModel.scheduleMap.values.any { it.isNotEmpty() }
+            if (hasAnySchedule) {
                 val request = getScheduleRequest()
                 viewModel.postSchedule(request)
             } else {
