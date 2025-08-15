@@ -19,7 +19,7 @@ class TodoRVAdapter(
     private val fragmentManager: FragmentManager,
     private var todoList: List<TodoListResult>,
     private val onToggleAlarm: (id: Long, toActive: Boolean) -> Unit,
-//    private val scheduleType: ScheduleType?
+    private val scheduleType: ScheduleType?
 ) : RecyclerView.Adapter<TodoRVAdapter.ViewHolder>() {
 
     inner class ViewHolder(val binding: ItemTodolistBinding) : RecyclerView.ViewHolder(binding.root)
@@ -57,17 +57,15 @@ class TodoRVAdapter(
             )
         }
 
-//        binding.root.setOnClickListener {
-//            val bottomSheet = TodoEditFragment().apply {
-//                arguments = Bundle().apply {
-//                    putString(
-//                        "schedule_type",
-//                        (scheduleType ?: item.type).name
-//                    )
-//                }
-//            }
-//            bottomSheet.show(fragmentManager, bottomSheet.tag)
-//        }
+        binding.root.setOnClickListener {
+            val bottomSheet = TodoEditFragment().apply {
+                arguments = Bundle().apply {
+                    putLong("todo_id", item.id)
+                    putString("schedule_type", scheduleType.toString())
+                }
+            }
+            bottomSheet.show(fragmentManager, bottomSheet.tag)
+        }
 
         if (item.alarmStatus == AlarmStatus.NONE) {
             binding.ivAlarm.visibility = View.GONE

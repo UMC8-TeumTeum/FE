@@ -30,6 +30,7 @@ import java.time.format.DateTimeFormatter
 
 import com.example.teumteum.data.remote.todo.model.TodoListResult
 import com.example.teumteum.data.remote.todo.model.enums.AlarmStatus
+import com.example.teumteum.data.remote.todo.model.enums.ScheduleType
 import com.example.teumteum.ui.todo.viewModel.TodoViewModel
 import com.example.teumteum.ui.clock.ChartUtils
 import com.example.teumteum.ui.clock.IconPieChartRenderer
@@ -58,7 +59,6 @@ class HomeFragment : Fragment(), IDateClickListener {
     private var isAM: Boolean = true
 
     private val TODO_SHEET_TAG = "TodoRegisterSheet"
-    private var scheduleType : String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -68,7 +68,6 @@ class HomeFragment : Fragment(), IDateClickListener {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
         selectedDate = today
-        scheduleType = arguments?.getString("schedule_type")
 
         binding.homeCalendarPreviousDateIv.setOnClickListener {
             if (binding.homeWeeklyCalendarWeekVp.isVisible) {
@@ -137,15 +136,23 @@ class HomeFragment : Fragment(), IDateClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        adapter = TodoRVAdapter(parentFragmentManager, todolistItems) { id, toActive ->
-            val status = if (toActive) AlarmStatus.ACTIVE else AlarmStatus.INACTIVE
-            todoViewModel.patchAlarmStatus(
-                AlarmStatusRequest(
-                    todoId = id,
-                    alarmStatus = status
+        val scheduleTypeArg: ScheduleType? =
+            arguments?.getString("schedule_type")
+                ?.let { runCatching { ScheduleType.valueOf(it) }.getOrNull() }
+
+        adapter = TodoRVAdapter(parentFragmentManager,
+            todolistItems,
+            { id, toActive ->
+                val status = if (toActive) AlarmStatus.ACTIVE else AlarmStatus.INACTIVE
+                todoViewModel.patchAlarmStatus(
+                    AlarmStatusRequest(
+                        todoId = id,
+                        alarmStatus = status
+                    )
                 )
-            )
-        }
+        },
+            scheduleTypeArg
+        )
         binding.todolistRv.adapter = adapter
 
         val date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))

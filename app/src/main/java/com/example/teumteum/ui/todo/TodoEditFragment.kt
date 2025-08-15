@@ -80,7 +80,6 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
     private var isStartDateSelected = true
 
     private val viewModel: TodoViewModel by activityViewModels()
-    private val myHomeViewModel: MyHomeViewModel by activityViewModels()
     private val friendViewModel: FriendViewModel by activityViewModels()
 //    private val homeViewModel: HomeViewModel by activityViewModels()
 
@@ -123,11 +122,11 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
             }
         }
 
-        val type: ScheduleType = arguments?.getString("schedule_type")
+        val scheduleType: ScheduleType = arguments?.getString("schedule_type")
             ?.let { runCatching { ScheduleType.valueOf(it) }.getOrNull() }
             ?: ScheduleType.TODO
 
-        val label = when (type) {
+        val label = when (scheduleType) {
             ScheduleType.TODO    -> "투두"
             ScheduleType.AI      -> "AI 콘텐츠"
             ScheduleType.TEUM    -> "틈 약속"
