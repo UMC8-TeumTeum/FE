@@ -80,8 +80,6 @@ class OnBoardingScheduleFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (activity as? SignUpActivity)?.setProgressBar(80)
-
         observeViewModel()
 
         dayTextViews = listOf(
@@ -124,19 +122,29 @@ class OnBoardingScheduleFragment : Fragment() {
 
     private fun updateDayHighlight(selectedIndex: Int) {
         dayTextViews[selectedDayIndex].background = null
-        dayTextViews[selectedDayIndex].setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+        dayTextViews[selectedDayIndex].setTextColor(
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.black
+            )
+        )
 
-        dayTextViews[selectedIndex].background = ContextCompat.getDrawable(requireContext(), R.drawable.bg_day_selected)
-        dayTextViews[selectedIndex].setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+        dayTextViews[selectedIndex].background =
+            ContextCompat.getDrawable(requireContext(), R.drawable.bg_day_selected)
+        dayTextViews[selectedIndex].setTextColor(
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.white
+            )
+        )
 
         selectedDayIndex = selectedIndex
-//        scheduleAdapter.submitList(viewModel.scheduleMap[selectedDayIndex] ?: emptyList())
-
         viewModel.updateCurrentDaySchedule(selectedDayIndex)
     }
 
     private fun getScheduleRequest(): ScheduleRequest {
-        val allSchedules = mutableListOf<com.example.teumteum.data.remote.onboarding.model.Schedule>()
+        val allSchedules =
+            mutableListOf<com.example.teumteum.data.remote.onboarding.model.Schedule>()
         val weekMap = mapOf(
             0 to Week.SUNDAY, 1 to Week.MONDAY, 2 to Week.TUESDAY,
             3 to Week.WEDNESDAY, 4 to Week.THURSDAY, 5 to Week.FRIDAY, 6 to Week.SATURDAY
@@ -166,6 +174,7 @@ class OnBoardingScheduleFragment : Fragment() {
                 is OnBoardingUiState.Success -> {
                     navigateToNext()
                 }
+
                 is OnBoardingUiState.Error -> {
                     Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
                     if (state.code == "ONBOARDING4001") {
@@ -173,6 +182,7 @@ class OnBoardingScheduleFragment : Fragment() {
                         navigateToNext()
                     }
                 }
+
                 else -> Unit
             }
         }
@@ -183,11 +193,9 @@ class OnBoardingScheduleFragment : Fragment() {
     }
 
     private fun navigateToNext() {
-        parentFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, OnBoardingRemindFragment())
-            .addToBackStack(null)
-            .commit()
-
+        // SignUpActivity의 메서드를 통해 다음 단계로 이동
+        (activity as? SignUpActivity)?.proceedToNextOnboardingStep(this)
         viewModel.resetState()
     }
+
 }

@@ -48,7 +48,7 @@ class OnBoardingProfileFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        (activity as? SignUpActivity)?.setProgressBar(25)
+        super.onViewCreated(view, savedInstanceState)
 
         val nickname = viewModel.nickname.value
         binding.titleTv.text = "$nickname 님"
@@ -96,11 +96,7 @@ class OnBoardingProfileFragment : Fragment() {
     }
 
     private fun navigateToNext() {
-        parentFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, OnBoardingSleepPatternFragment())
-            .addToBackStack(null)
-            .commit()
-
+        (activity as? SignUpActivity)?.proceedToNextOnboardingStep(this)
         viewModel.resetState()
     }
 }
