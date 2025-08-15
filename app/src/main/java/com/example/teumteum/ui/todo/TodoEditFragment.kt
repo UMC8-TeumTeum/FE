@@ -40,6 +40,7 @@ import com.example.teumteum.databinding.DialogConfirmTodoDeleteBinding
 import com.example.teumteum.databinding.DialogConfirmTodoEditBinding
 import com.example.teumteum.ui.calendar.IDateClickListener
 import com.example.teumteum.ui.calendar.MonthlyCalendarFragment
+import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.example.teumteum.ui.main.HomeFragment
 import com.example.teumteum.ui.main.data.TimeBlock
 import com.example.teumteum.ui.main.viewModel.HomeViewModel
@@ -80,6 +81,7 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
 
     private val viewModel: TodoViewModel by activityViewModels()
     private val myHomeViewModel: MyHomeViewModel by activityViewModels()
+    private val friendViewModel: FriendViewModel by activityViewModels()
 //    private val homeViewModel: HomeViewModel by activityViewModels()
 
     private val alarmLabelToMinutes = mapOf(
@@ -638,7 +640,14 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
 //            dismiss()
             dialogBinding.todoConfirmTv.isEnabled = false // 중복 클릭 방지
             dialog.dismiss() // 확인 다이얼로그만 닫기
-            viewModel.deleteTodo(todoId) // 삭제 요청만 보냄
+            val type = viewModel.todo.value?.type
+            if (type == ScheduleType.TEUM) {
+                // 친구와 약속된 TEUM이면 다른 API 호출
+                friendViewModel.cancelTeumSchedule(todoId.toInt())
+            } else {
+                // 기존 투두 삭제 API
+                viewModel.deleteTodo(todoId)
+            }
         }
 
         dialogBinding.todoCancelTv.setOnClickListener {
@@ -792,7 +801,6 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
 
             val urls: List<String> = todo.profileUrl ?: emptyList()
             profileAdapter.submitList(urls)
-            Log.d("profiles", urls.toString())
             binding.profileImageRc.isVisible = urls.isNotEmpty()
 
             todo.remindAlarm?.forEach { remindAlarm ->
