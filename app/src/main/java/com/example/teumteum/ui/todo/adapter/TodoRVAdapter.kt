@@ -1,5 +1,6 @@
 package com.example.teumteum.ui.todo.adapter
 
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,11 +13,13 @@ import com.example.teumteum.data.remote.todo.model.enums.AlarmStatus
 import com.example.teumteum.data.remote.todo.model.enums.ScheduleType
 import com.example.teumteum.databinding.ItemTodolistBinding
 import com.example.teumteum.ui.todo.TodoEditFragment
+import com.example.teumteum.ui.wish.WishSetting01Fragment
 
 class TodoRVAdapter(
     private val fragmentManager: FragmentManager,
     private var todoList: List<TodoListResult>,
-    private val onToggleAlarm: (id: Long, toActive: Boolean) -> Unit
+    private val onToggleAlarm: (id: Long, toActive: Boolean) -> Unit,
+//    private val scheduleType: ScheduleType?
 ) : RecyclerView.Adapter<TodoRVAdapter.ViewHolder>() {
 
     inner class ViewHolder(val binding: ItemTodolistBinding) : RecyclerView.ViewHolder(binding.root)
@@ -54,10 +57,17 @@ class TodoRVAdapter(
             )
         }
 
-        binding.root.setOnClickListener {
-            val bottomSheet = TodoEditFragment.newInstance(item.id)
-            bottomSheet.show(fragmentManager, bottomSheet.tag)
-        }
+//        binding.root.setOnClickListener {
+//            val bottomSheet = TodoEditFragment().apply {
+//                arguments = Bundle().apply {
+//                    putString(
+//                        "schedule_type",
+//                        (scheduleType ?: item.type).name
+//                    )
+//                }
+//            }
+//            bottomSheet.show(fragmentManager, bottomSheet.tag)
+//        }
 
         if (item.alarmStatus == AlarmStatus.NONE) {
             binding.ivAlarm.visibility = View.GONE

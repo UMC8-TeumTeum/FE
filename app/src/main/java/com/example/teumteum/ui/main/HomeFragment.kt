@@ -58,7 +58,7 @@ class HomeFragment : Fragment(), IDateClickListener {
     private var isAM: Boolean = true
 
     private val TODO_SHEET_TAG = "TodoRegisterSheet"
-    private val type : String? = null
+    private var scheduleType : String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -68,6 +68,7 @@ class HomeFragment : Fragment(), IDateClickListener {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
         selectedDate = today
+        scheduleType = arguments?.getString("schedule_type")
 
         binding.homeCalendarPreviousDateIv.setOnClickListener {
             if (binding.homeWeeklyCalendarWeekVp.isVisible) {

@@ -123,15 +123,18 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
             }
         }
 
-        val type = arguments?.getString("schedule_type")
+        val type: ScheduleType = arguments?.getString("schedule_type")
+            ?.let { runCatching { ScheduleType.valueOf(it) }.getOrNull() }
+            ?: ScheduleType.TODO
 
-        binding.btnTodo.text = when (type) {
-            ScheduleType.TODO.toString() -> "투두"
-            ScheduleType.AI.toString() -> "AI 콘텐츠"
-            ScheduleType.TEUM.toString() -> "틈 약속"
-            ScheduleType.ROUTINE.toString() -> "투두"
-            else -> "투두"
+        val label = when (type) {
+            ScheduleType.TODO    -> "투두"
+            ScheduleType.AI      -> "AI 콘텐츠"
+            ScheduleType.TEUM    -> "틈 약속"
+            ScheduleType.ROUTINE -> "투두"
         }
+
+        binding.btnTodo.text = label
 
         binding.profileImageRc.apply {
             layoutManager = LinearLayoutManager(
