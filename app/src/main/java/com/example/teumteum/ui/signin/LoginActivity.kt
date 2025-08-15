@@ -11,6 +11,7 @@ import com.example.teumteum.ui.signup.SignUpActivity
 import com.example.teumteum.databinding.ActivityLoginBinding
 import com.example.teumteum.ui.signin.data.LoginResult
 import com.example.teumteum.ui.signin.viewModel.LoginViewModel
+import com.example.teumteum.utils.NextStep
 import com.kakao.sdk.user.UserApiClient
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -41,16 +42,21 @@ class LoginActivity : AppCompatActivity() {
     private fun observeViewModel() {
         viewModel.loginResult.observe(this) { result ->
             when (result) {
-                is LoginResult.Loading -> {
-                    // TODO: 로딩 처리
-                }
+                is LoginResult.Loading -> { /* 로딩 표시 */ }
                 is LoginResult.Success -> {
-                    val intent = Intent(this, SignUpActivity::class.java)
-                    startActivity(intent)
+                    when (result.nextStep) {
+                        NextStep.AGREEMENT, NextStep.ONBOARDING -> {
+                            startActivity(Intent(this, SignUpActivity::class.java))
+                        }
+                        NextStep.MAIN -> {
+                            startActivity(Intent(this, com.example.teumteum.ui.main.MainActivity::class.java))
+                        }
+                    }
+                    finish()
                 }
                 is LoginResult.Error -> {
                     Log.d("KakaoLogin", "카카오 로그인 실패 ${result.message}")
-                    Toast.makeText(this, result.message ?: "로그인 실패", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, result.message, Toast.LENGTH_SHORT).show()
                 }
             }
         }
