@@ -22,6 +22,6 @@ interface ActivityService {
     @POST("/api/wishes/{wishId}/assign")
     suspend fun assignWish(@Path("wishId") wishId: Long, @Body request: AssignWishRequest): Response<ApiResponse<Unit>>
 
-    @POST("/api/activies/ai/assign")
+    @POST("/api/activities/ai/assign")
     suspend fun assignAi(@Body request: AssignAiRequest): Response<ApiResponse<Unit>>
 }
