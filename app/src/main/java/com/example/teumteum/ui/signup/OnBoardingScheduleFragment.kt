@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -96,16 +95,17 @@ class OnBoardingScheduleFragment : Fragment() {
         }
 
         binding.fabAddIv.setOnClickListener {
-            val list = viewModel.scheduleMap.getOrPut(selectedDayIndex) { mutableListOf() }
+            val existing = viewModel.scheduleMap[selectedDayIndex]?.toList() ?: emptyList()
             val bottomSheet = BottomSheetScheduleFragment(
                 selectedDayIndex,
-                list.toList()
+                existing
             )
             bottomSheet.show(parentFragmentManager, "BottomSheetScheduleFragment")
         }
 
         binding.nextBtn.setOnClickListener {
-            if (viewModel.scheduleMap.isNotEmpty()) {
+            val hasAnySchedule = viewModel.scheduleMap.values.any { it.isNotEmpty() }
+            if (hasAnySchedule) {
                 val request = getScheduleRequest()
                 viewModel.postSchedule(request)
             } else {
@@ -176,7 +176,7 @@ class OnBoardingScheduleFragment : Fragment() {
                 }
 
                 is OnBoardingUiState.Error -> {
-                    Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
                     if (state.code == "ONBOARDING4001") {
                         Log.d("ScheduleFragment", "ONBOARDING4001 - 강제 이동")
                         navigateToNext()

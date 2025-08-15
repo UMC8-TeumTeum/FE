@@ -2,10 +2,10 @@ package com.example.teumteum.ui.wish
 
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
@@ -183,7 +183,8 @@ class WishlistFragment() : Fragment() {
         }
 
         viewModel.errorMessage.observe(viewLifecycleOwner) { error ->
-            Toast.makeText(requireContext(), "위시리스트 조회 실패: $error", Toast.LENGTH_SHORT).show()
+//            Toast.makeText(requireContext(), "위시리스트 조회 실패: $error", Toast.LENGTH_SHORT).show()
+            Log.e("WISH_LIST_FRAGMENT","위시리스트 조회 실패: $error")
         }
     }
 

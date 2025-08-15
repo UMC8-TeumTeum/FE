@@ -105,7 +105,8 @@ class FriendProfileFollowFragment : Fragment() {
                     // 팔로우 성공 시 전환
                     navigateToFollowing(viewModel.friendProfile.value!!)
                 } else {
-                    Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+                    Log.d("FRIEND_PROFILE_FRAGMENT", msg.toString())
                 }
             }
         }
@@ -114,7 +115,7 @@ class FriendProfileFollowFragment : Fragment() {
         // 실패 메시지 처리
         viewModel.errorMessage.observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let { msg ->
-                Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+//                Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
                 Log.e("FRIEND_PROFILE_FRAGMENT", msg)
 
                 if (msg.contains("자기 자신의 프로필") || msg.contains("존재하지 않는 유저")) {
@@ -173,7 +174,7 @@ class FriendProfileFollowFragment : Fragment() {
                 //  뒤로가기 스택에 안 쌓음 → 바로 friendFragment로 돌아감
                 .commit()
         } else {
-            Toast.makeText(requireContext(), "프로필 정보를 불러오는 중입니다.", Toast.LENGTH_SHORT).show()
+//            Toast.makeText(requireContext(), "프로필 정보를 불러오는 중입니다.", Toast.LENGTH_SHORT).show()
         }
     }
 

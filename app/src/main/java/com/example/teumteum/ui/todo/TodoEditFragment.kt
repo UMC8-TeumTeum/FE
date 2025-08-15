@@ -912,7 +912,7 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
                     }
                 }
 
-                Toast.makeText(requireContext(), "반복일정은 편집할 수 없습니다.", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(requireContext(), "반복일정은 편집할 수 없습니다.", Toast.LENGTH_SHORT).show()
             }
 
             //약속된 틈은 일부 수정 가능(공개 설정, 빈틈시간 기록 포함, 상세 내용)
@@ -980,7 +980,8 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
 
         viewModel.editSuccess.observe(viewLifecycleOwner) {
             if (it == true) {
-                Toast.makeText(requireContext(), "투두가 성공적으로 수정되었습니다.", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(requireContext(), "투두가 성공적으로 수정되었습니다.", Toast.LENGTH_SHORT).show()
+                Log.d("TODO_EDIT_FRAGMENT", "투두가 성공적으로 수정되었습니다.")
                 parentFragmentManager.setFragmentResult("todo_edit", Bundle())
                 dismiss()  // 현재 바텀시트만 닫기
             }
@@ -989,7 +990,8 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
         // 삭제 성공 시
         viewModel.deleteSuccess.observe(viewLifecycleOwner) {
             if (it == true) {
-                Toast.makeText(requireContext(), "투두가 성공적으로 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(requireContext(), "투두가 성공적으로 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+                Log.d("TODO_EDIT_FRAGMENT", "투두가 성공적으로 삭제되었습니다.")
                 parentFragmentManager.setFragmentResult("todo_delete", Bundle())
 //                homeViewModel.refreshTodaySchedule()
                 dismiss()  // 현재 바텀시트만 닫기
@@ -998,13 +1000,9 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
 
         }
 
-        viewModel.errorMessage.observe(viewLifecycleOwner) { errorMsg ->
-            Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_SHORT).show()
-        }
-
         // 실패 메시지는 LiveData 그대로
         viewModel.errorMessage.observe(viewLifecycleOwner) { errorMsg ->
-            Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_SHORT).show()
+//            Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_SHORT).show()
         }
 
     }

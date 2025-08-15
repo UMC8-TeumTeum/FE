@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
@@ -178,7 +177,7 @@ class AgreementFragment : Fragment() {
                         Log.d("AgreementFragment", "ONBOARDING4001 - 강제 이동")
                         navigateToNext()
                     } else {
-                        Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
+//                        Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
                         binding.nextBtn.isEnabled = true
                     }
                 }

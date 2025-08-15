@@ -1,17 +1,14 @@
 package com.example.teumteum.ui.friend
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
-
 import com.bumptech.glide.Glide
 import com.example.teumteum.R
-import com.example.teumteum.data.remote.friend.model.FriendProfileResult
 import com.example.teumteum.data.remote.friend.model.PublicTodoResult
 import com.example.teumteum.databinding.FragmentFriendProfileFollowingBinding
 import com.example.teumteum.ui.friend.viewModel.FriendViewModel
@@ -196,7 +193,8 @@ class FriendProfileFollowingFragment : Fragment() {
         // 에러 메시지
         viewModel.errorMessage.observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let { msg ->
-                Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+//                Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+                Log.d("FRIEND_PROFILE_FOLLOWING_FRAGMENT", msg.toString())
             }
         }
     }

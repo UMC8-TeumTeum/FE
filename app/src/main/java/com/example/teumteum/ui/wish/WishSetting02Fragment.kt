@@ -9,7 +9,6 @@ import android.view.WindowManager
 import android.widget.Button
 import android.widget.NumberPicker
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import com.example.teumteum.R
@@ -210,7 +209,7 @@ class WishSetting02Fragment : Fragment() {
             .create()
 
         dialogBinding.wishConfirmTv.setOnClickListener {
-            Toast.makeText(requireContext(), "등록되었습니다.", Toast.LENGTH_SHORT).show()
+//            Toast.makeText(requireContext(), "등록되었습니다.", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
             parentFragmentManager.beginTransaction()
                 .replace(R.id.main_frm, HomeFragment())
