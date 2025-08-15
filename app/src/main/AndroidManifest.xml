@@ -41,7 +41,8 @@
 
         <activity
             android:name=".ui.main.MainActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"/>
 
         <receiver android:name=".receiver.ScreenOnReceiver"
             android:exported="true">
