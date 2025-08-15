@@ -42,7 +42,9 @@ class FillingSetting03Fragment : Fragment() {
 
     private var aiId: String? = null
     private var wishId: Long? = null
-    private var scheduleType: String? = null
+
+    private enum class AssignMode { AI, WISH }
+    private var mode: AssignMode? = null
 
     private val viewModel: ActivityViewModel by activityViewModels()
 
@@ -64,7 +66,20 @@ class FillingSetting03Fragment : Fragment() {
         setTime(time.toString())
 
         aiId = arguments?.getString("ai_id")
-        wishId = arguments?.getLong("wish_id")
+        wishId = arguments?.getLong("wish_id", -1L)
+            ?.takeIf { it > 0L }
+
+        mode = when {
+            aiId != null -> AssignMode.AI
+            wishId != null -> AssignMode.WISH
+            else -> null
+        }
+
+        if (mode == null) {
+            Toast.makeText(requireContext(), "ID가 없습니다.", Toast.LENGTH_SHORT).show()
+            parentFragmentManager.popBackStack()
+            return
+        }
 
         // 바텀 내비게이션 숨기기
         val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
@@ -107,10 +122,10 @@ class FillingSetting03Fragment : Fragment() {
         }
 
         binding.registerBtn.setOnClickListener {
-            if (arguments?.containsKey("wish_id") == true || wishId != null) {
-                wishId?.let { it1 -> viewModel.assignWish(it1, assignWishRequest(false)) }
-            } else if ((arguments?.containsKey("ai_id") == true || aiId != null)) {
-                viewModel.assignAi(assignAiRequest(false))
+            when (mode) {
+                AssignMode.AI   -> viewModel.assignAi(assignAiRequest(false))
+                AssignMode.WISH -> viewModel.assignWish(requireNotNull(wishId), assignWishRequest(false))
+                else -> Unit
             }
         }
         setupObservers()
@@ -260,10 +275,10 @@ class FillingSetting03Fragment : Fragment() {
             .create()
 
         dialogBinding.assignConfirmTv.setOnClickListener {
-            if (arguments?.containsKey("wish_id") == true || wishId != null) {
-                wishId?.let { it1 -> viewModel.assignWish(it1, assignWishRequest(true)) }
-            } else if ((arguments?.containsKey("ai_id") == true || aiId != null)) {
-                viewModel.assignAi(assignAiRequest(true))
+            when (mode) {
+                AssignMode.AI   -> viewModel.assignAi(assignAiRequest(true))
+                AssignMode.WISH -> viewModel.assignWish(requireNotNull(wishId), assignWishRequest(true))
+                else -> Unit
             }
             dialog.dismiss()
         }

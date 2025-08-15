@@ -2,10 +2,10 @@ package com.example.teumteum.ui.main
 
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -422,7 +422,8 @@ class HomeFragment : Fragment(), IDateClickListener {
         }
 
         todoViewModel.errorMessage.observe(viewLifecycleOwner) { error ->
-            Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show()
+//            Toast.makeText(requireContext(), "투두리스트 조회 실패: $error", Toast.LENGTH_SHORT).show()
+            Log.e("HOME_FRAGMENT", error.toString())
         }
     }
 

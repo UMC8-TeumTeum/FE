@@ -6,8 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.teumteum.data.Contents
-import com.example.teumteum.data.Feed
+import com.example.teumteum.ui.feed.data.Contents
+import com.example.teumteum.ui.feed.data.Feed
 import com.example.teumteum.databinding.FragmentFeedContentBinding
 import dagger.hilt.android.AndroidEntryPoint
 

@@ -56,6 +56,18 @@ class BottomSheetScheduleFragment(
 
         setupPickers()
 
+        if(startTime == null){
+            binding.startTimeTv.text = "시작 시간"
+        }else{
+            binding.startTimeTv.text = startTime.toString()
+        }
+
+        if(endTime == null ){
+            binding.endTimeTv.text = "종료 시간"
+        }else{
+            binding.endTimeTv.text = endTime.toString()
+        }
+
         binding.startTimeTv.setOnClickListener {
             val visible = binding.timePickerStartContainer.isVisible
             if (visible) applySelectedTime(isStart = true)

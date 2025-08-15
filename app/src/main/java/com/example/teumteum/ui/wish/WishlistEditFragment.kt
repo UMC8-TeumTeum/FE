@@ -1,6 +1,7 @@
 package com.example.teumteum.ui.wish
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -75,7 +76,8 @@ class WishlistEditFragment() : Fragment() {
         binding.btnWishDelete.setOnClickListener {
             val deletedCount = adapter.markCheckedItemsAsDeleted()
             if (deletedCount > 0) {
-                Toast.makeText(requireContext(), "${deletedCount}개 위시가 삭제되었어요.", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(requireContext(), "${deletedCount}개 위시가 삭제되었어요.", Toast.LENGTH_SHORT).show()
+                Log.d("WISH_LIST_EDIT_FRAGMENT", "${deletedCount}개 위시가 삭제되었어요.")
             } else {
                 Toast.makeText(requireContext(), "삭제할 위시를 선택해주세요.", Toast.LENGTH_SHORT).show()
             }
@@ -83,7 +85,7 @@ class WishlistEditFragment() : Fragment() {
 
         binding.btnWishCancel.setOnClickListener {
             adapter.cancelAllCheckedItems()
-            Toast.makeText(requireContext(), "선택이 모두 해제되었어요.", Toast.LENGTH_SHORT).show()
+//            Toast.makeText(requireContext(), "선택이 모두 해제되었어요.", Toast.LENGTH_SHORT).show()
         }
 
         binding.completeTv.setOnClickListener {
@@ -129,8 +131,9 @@ class WishlistEditFragment() : Fragment() {
             }
         }
 
-        viewModel.errorMessage.observe(viewLifecycleOwner) { errorMsg ->
-            Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_SHORT).show()
+        viewModel.errorMessage.observe(viewLifecycleOwner) { error ->
+//            Toast.makeText(requireContext(), "삭제 실패: $error", Toast.LENGTH_SHORT).show()
+            Log.e("WISH_LIST_EDIT_FRAGMENT", "삭제 실패: $error")
         }
     }
 }

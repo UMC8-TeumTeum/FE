@@ -81,7 +81,7 @@ class Friend02SuggestFragment : Fragment() {
             // 현재 보여주는 요청(카드) 기준 정보
             val currentItem = teumList.firstOrNull { it.responseId == responseId } ?: teumList.firstOrNull()
             if (currentItem == null) {
-                Toast.makeText(requireContext(), "요청 정보를 찾지 못했습니다.", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(requireContext(), "요청 정보를 찾지 못했습니다.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -113,7 +113,7 @@ class Friend02SuggestFragment : Fragment() {
         val currentItem = teumList.firstOrNull { it.responseId == responseId } ?: teumList.firstOrNull()
         val requesterId = currentItem?.senderUser?.userId
         if (requesterId == null) {
-            Toast.makeText(requireContext(), "요청자 정보를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
+//            Toast.makeText(requireContext(), "요청자 정보를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
             return
         }
 

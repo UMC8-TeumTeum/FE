@@ -133,4 +133,7 @@ dependencies {
 
     //shimmer
     implementation("com.facebook.shimmer:shimmer:0.5.0")
+
+    // EncryptedSharedPreferences
+    implementation ("androidx.security:security-crypto:1.1.0")
 }

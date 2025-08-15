@@ -212,7 +212,7 @@ class WishRegisterFragment : BottomSheetDialogFragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.registerSuccess.collect {
-                    Toast.makeText(requireContext(), "위시가 성공적으로 등록되었습니다.", Toast.LENGTH_SHORT).show()
+                    Log.d("WISH_REGISTER_FRAGMENT","위시가 성공적으로 등록되었습니다.")
                     parentFragmentManager.setFragmentResult("wish_register", Bundle())
 
                     // 모든 바텀시트 닫기

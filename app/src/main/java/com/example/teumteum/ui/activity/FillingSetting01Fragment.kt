@@ -59,7 +59,8 @@ class FillingSetting01Fragment : Fragment() {
         setTime(time.toString())
 
         aiId = arguments?.getString("ai_id")
-        wishId = arguments?.getLong("wish_id")
+        wishId = arguments?.getLong("wish_id", -1L)
+            ?.takeIf { it > 0L }
 
         scheduleType = arguments?.getString("schedule_type")
 

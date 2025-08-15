@@ -2,13 +2,14 @@ package com.example.teumteum.ui.feed
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.teumteum.R
-import com.example.teumteum.data.Contents
-import com.example.teumteum.data.Feed
+import com.example.teumteum.ui.feed.data.Contents
+import com.example.teumteum.ui.feed.data.Feed
 import com.example.teumteum.databinding.ItemContentsCardBinding
 import com.example.teumteum.databinding.ItemFeedBinding
 
@@ -92,7 +93,13 @@ class FeedContentAdapter(
             bookmarkIv.setOnClickListener {
                 onBookmarkClick(item)
             }
-
+            profileIv.setImageResource(item.userProfileImage)
+            if (item.contentsImage != 0) {
+                feedBorderImage.isVisible = true
+                feedBorderImage.setImageResource(item.contentsImage)
+            } else {
+                feedBorderImage.isVisible = false
+            }
         }
     }
 

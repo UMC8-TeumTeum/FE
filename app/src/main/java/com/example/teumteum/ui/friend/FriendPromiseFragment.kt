@@ -2,16 +2,12 @@ package com.example.teumteum.ui.friend
 
 import android.os.Bundle
 import android.view.*
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.bumptech.glide.Glide
-import com.example.teumteum.R
 import com.example.teumteum.data.remote.friend.model.TeumScheduleDetailResult
 import com.example.teumteum.databinding.FragmentFriendPromiseBinding
 import com.example.teumteum.ui.calendar.IDateClickListener
 import com.example.teumteum.ui.calendar.FriendMonthlyCalendarFragment
-import com.example.teumteum.ui.calendar.MonthlyCalendarFragment
 import com.example.teumteum.ui.friend.adapter.TeumEventAdapter
 import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.example.teumteum.ui.main.MainActivity

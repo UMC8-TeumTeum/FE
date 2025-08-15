@@ -606,7 +606,8 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.registerSuccess.collect {
-                    Toast.makeText(requireContext(), "투두가 성공적으로 등록되었습니다.", Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(requireContext(), "투두가 성공적으로 등록되었습니다.", Toast.LENGTH_SHORT).show()
+                    Log.d("TODO_REGISTER_FRAMENT", "투두가 성공적으로 등록되었습니다.")
                     parentFragmentManager.setFragmentResult("todo_register", Bundle())
 
                     // 모든 바텀시트 닫기
@@ -620,7 +621,8 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
         }
 
         viewModel.errorMessage.observe(viewLifecycleOwner) { errorMsg ->
-            Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_SHORT).show()
+//            Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_SHORT).show()
+            Log.e("TODO_REGISTER_FRAGMENT", errorMsg.toString())
         }
 
 //        viewLifecycleOwner.lifecycleScope.launch {

@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentOnBoardingNicknameBinding
@@ -34,8 +33,6 @@ class OnBoardingNicknameFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (activity as? SignUpActivity)?.setProgressBar(20)
-
         observeViewModel()
         setupUI()
     }
@@ -72,6 +69,7 @@ class OnBoardingNicknameFragment : Fragment() {
         binding.nicknameEt.addTextChangedListener(textWatcher)
         binding.fieldEt.addTextChangedListener(textWatcher)
 
+        // 기존에 입력된 데이터가 있으면 복원
         binding.nicknameEt.setText(viewModel.nickname.value)
         binding.fieldEt.setText(viewModel.field.value)
     }
@@ -114,7 +112,8 @@ class OnBoardingNicknameFragment : Fragment() {
                         Log.d("NicknameFragment", "ONBOARDING4001 - 강제 이동")
                         navigateToNext()
                     } else {
-                        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+//                        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+
                     }
                 }
                 else -> Unit
@@ -123,13 +122,7 @@ class OnBoardingNicknameFragment : Fragment() {
     }
 
     private fun navigateToNext() {
-        val fragment = OnBoardingProfileFragment()
-
-        parentFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, fragment)
-            .addToBackStack(null)
-            .commit()
-
+        (activity as? SignUpActivity)?.proceedToNextOnboardingStep(this)
         viewModel.resetState()
     }
 }

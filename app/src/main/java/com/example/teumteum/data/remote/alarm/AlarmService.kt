@@ -37,7 +37,7 @@ class AlarmService @Inject constructor(
 
                     if (getAlarmListResponse != null && getAlarmListResponse.code == "COMMON200") {
                         val alarmList = response.body()?.result?.alarmList ?: emptyList()
-                        alarmListView.onGetAlarmListSuccess(alarmList)
+//                        alarmListView.onGetAlarmListSuccess(alarmList)
                     } else {
                         alarmListView.onGetAlarmListFailure(
                             getAlarmListResponse?.code ?: "UNKNOWN",

@@ -126,7 +126,7 @@ class WishEditFragment : BottomSheetDialogFragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.editSuccess.collect {
-                    Toast.makeText(requireContext(), "위시가 성공적으로 수정되었습니다.", Toast.LENGTH_SHORT).show()
+                    Log.d("WISH_EDIT_FRAGMENT", "위시가 성공적으로 수정되었습니다.")
                     parentFragmentManager.setFragmentResult("wish_edit", Bundle())
 
                     // 모든 바텀시트 닫기
@@ -143,7 +143,7 @@ class WishEditFragment : BottomSheetDialogFragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.deleteSuccess.collect {
-                    Toast.makeText(requireContext(), "위시가 성공적으로 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+                    Log.d("WISH_EDIT_FRAGMENT", "위시가 성공적으로 삭제되었습니다.")
                     parentFragmentManager.setFragmentResult("wish_delete", Bundle())
 
                     // 모든 바텀시트 닫기
@@ -156,8 +156,11 @@ class WishEditFragment : BottomSheetDialogFragment() {
             }
         }
 
-        viewModel.errorMessage.observe(viewLifecycleOwner) { errorMsg ->
-            Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_SHORT).show()
+        viewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
+            errorMessage?.let {
+//                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+                Log.e("WishError", it)
+            }
         }
     }
 

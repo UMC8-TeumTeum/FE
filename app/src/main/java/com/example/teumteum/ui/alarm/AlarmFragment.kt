@@ -58,7 +58,7 @@ class AlarmFragment : Fragment(), AlarmListView {
     }
 
     override fun onGetAlarmListSuccess(alarmList: List<Alarm>) {
-        Toast.makeText(requireContext(), "알림이 성공적으로 조회되었습니다.", Toast.LENGTH_SHORT).show()
+//        Toast.makeText(requireContext(), "알림이 성공적으로 조회되었습니다.", Toast.LENGTH_SHORT).show()
     }
 
     override fun onGetAlarmListFailure(code: String, message: String?) {

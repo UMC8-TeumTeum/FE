@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.NumberPicker
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.onboarding.model.SleepPatternRequest
@@ -40,7 +39,7 @@ class OnBoardingSleepPatternFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        (activity as? SignUpActivity)?.setProgressBar(60)
+        super.onViewCreated(view, savedInstanceState)
 
         selectedStartTime = viewModel.sleepStartTime.value
         selectedEndTime = viewModel.sleepEndTime.value
@@ -130,11 +129,8 @@ class OnBoardingSleepPatternFragment : Fragment() {
     }
 
     private fun navigateToNext() {
-        parentFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, OnBoardingScheduleFragment())
-            .addToBackStack(null)
-            .commit()
-
+        // SignUpActivity의 메서드를 통해 다음 단계로 이동
+        (activity as? SignUpActivity)?.proceedToNextOnboardingStep(this)
         viewModel.resetState()
     }
 

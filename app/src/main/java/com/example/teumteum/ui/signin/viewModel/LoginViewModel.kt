@@ -8,6 +8,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.teumteum.data.remote.login.repository.LoginRepository
 import com.example.teumteum.ui.signin.data.LoginResult
+import com.example.teumteum.utils.FlowPrefs
+import com.example.teumteum.utils.TokenProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
@@ -16,6 +18,8 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val repository: LoginRepository,
+    private val tokenProvider: TokenProvider,
+    private val flowPrefs: FlowPrefs,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
@@ -33,12 +37,11 @@ class LoginViewModel @Inject constructor(
 
     private fun getJwtFromServer(kakaoAccessToken: String) {
         viewModelScope.launch {
-            Log.d("requestKakaoToken", kakaoAccessToken)
             repository.loginWithKakaoAccessToken(kakaoAccessToken)
-                .onSuccess { jwt ->
-                    Log.d("JwtToken", "AccessToken ${jwt.accessToken}, RefreshToken ${jwt.refreshToken}")
-                    saveTokens(jwt.accessToken, jwt.refreshToken)
-                    _loginResult.value = LoginResult.Success(jwt.accessToken)
+                .onSuccess { res ->
+                    tokenProvider.saveTokens(res.accessToken, res.refreshToken)
+                    flowPrefs.setLastStep(res.nextStep)
+                    _loginResult.value = LoginResult.Success(res.nextStep)
                 }
                 .onFailure { e ->
                     _loginResult.value = LoginResult.Error("서버 로그인 실패: ${e.message}")
@@ -46,12 +49,4 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    private fun saveTokens(accessToken: String, refreshToken: String) {
-        val prefs = context.getSharedPreferences("auth", Context.MODE_PRIVATE)
-        prefs.edit().apply {
-            putString("accessToken", accessToken)
-            putString("refreshToken", refreshToken)
-            apply()
-        }
-    }
 }

@@ -1,4 +1,4 @@
-package com.example.teumteum.data
+package com.example.teumteum.ui.feed.data
 
 data class Feed(
     val username: String,
@@ -9,5 +9,7 @@ data class Feed(
     val borderTitle: String,
     val borderLink: String,
     val isBookMarked: Boolean,
-    val isFromFollowedUser: Boolean
+    val isFromFollowedUser: Boolean,
+    val userProfileImage: Int,
+    val contentsImage: Int
 )

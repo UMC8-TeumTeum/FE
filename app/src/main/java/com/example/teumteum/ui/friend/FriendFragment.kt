@@ -6,11 +6,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.friend.model.TeumReceivedItem
@@ -251,13 +249,15 @@ class FriendFragment : Fragment() {
 
         viewModel.successMessage.observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let { msg ->
-                Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+//                Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+                Log.d("FriendFragment", msg.toString())
             }
         }
 
         viewModel.errorMessage.observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let { msg ->
-                Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+//                Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+                Log.d("FriendFragment", msg.toString())
             }
         }
 

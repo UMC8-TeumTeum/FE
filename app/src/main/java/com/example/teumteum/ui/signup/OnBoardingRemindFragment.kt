@@ -24,21 +24,18 @@ class OnBoardingRemindFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentOnBoardingRemindBinding.inflate(inflater,container,false)
+    ): View {
+        binding = FragmentOnBoardingRemindBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (activity as? SignUpActivity)?.setProgressBar(100)
-
         observeViewModel()
 
         binding.nextBtn.setOnClickListener {
@@ -62,31 +59,24 @@ class OnBoardingRemindFragment : Fragment() {
         binding.remind30mSwitch.setOnCheckedChangeListener { _, isChecked ->
             viewModel.toggleReminder(30, isChecked)
         }
-
     }
-
 
     private fun observeViewModel() {
         viewModel.state.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is OnBoardingUiState.Success -> {
-                    navigateToMain()
+                    // 온보딩 완료 - SignUpActivity의 메서드를 통해 메인으로 이동
+                    (activity as? SignUpActivity)?.completeOnboarding()
                 }
                 is OnBoardingUiState.Error -> {
                     if (state.code.contains("ONBOARDING4001")) {
                         Log.d("RemindFragment", "ONBOARDING4001 - 강제 이동")
-                        navigateToMain()
+                        // 온보딩 완료 처리
+                        (activity as? SignUpActivity)?.completeOnboarding()
                     }
                 }
                 else -> Unit
             }
         }
     }
-
-    private fun navigateToMain() {
-        val intent = Intent(requireContext(), MainActivity::class.java)
-        startActivity(intent)
-        requireActivity().finish()
-    }
-
 }
