@@ -10,6 +10,9 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.wish.model.RegisterWishRequest
 import com.example.teumteum.databinding.FragmentWishRegisterBinding
@@ -20,6 +23,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class WishRegisterFragment : BottomSheetDialogFragment() {
@@ -204,27 +208,25 @@ class WishRegisterFragment : BottomSheetDialogFragment() {
     }
 
     private fun setupObservers() {
-//        viewModel.wishCategories.observe(viewLifecycleOwner) { categoryList ->
-//            setupCategoryButtons(categoryList)
-//        }
 
-        viewModel.registerSuccess.observe(viewLifecycleOwner) { isSuccess ->
-            if (isSuccess) {
-//                Toast.makeText(requireContext(), "위시가 등록되었습니다.", Toast.LENGTH_SHORT).show()
-                Log.d("WISH_REGISTER_FRAGMENT","위시가 등록되었습니다.")
-                parentFragmentManager.setFragmentResult("wish_register", Bundle())
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.registerSuccess.collect {
+                    Log.d("WISH_REGISTER_FRAGMENT","위시가 성공적으로 등록되었습니다.")
+                    parentFragmentManager.setFragmentResult("wish_register", Bundle())
 
-                // 모든 바텀시트 닫기
-                (requireActivity().supportFragmentManager.fragments).forEach { fragment ->
-                    if (fragment is BottomSheetDialogFragment) {
-                        fragment.dismissAllowingStateLoss()
+                    // 모든 바텀시트 닫기
+                    (requireActivity().supportFragmentManager.fragments).forEach { fragment ->
+                        if (fragment is BottomSheetDialogFragment) {
+                            fragment.dismissAllowingStateLoss()
+                        }
                     }
                 }
             }
         }
 
-        viewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
-            Log.e("WishRegister", "위시 등록 실패: $errorMessage")
+        viewModel.errorMessage.observe(viewLifecycleOwner) { errorMsg ->
+            Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_SHORT).show()
         }
     }
 

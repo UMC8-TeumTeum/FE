@@ -1,6 +1,7 @@
 package com.example.teumteum.ui.activity
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -12,13 +13,24 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.teumteum.R
+import com.example.teumteum.data.remote.activity.model.AssignAiRequest
+import com.example.teumteum.data.remote.activity.model.AssignWishRequest
+import com.example.teumteum.data.remote.todo.model.enums.ScheduleType
 import com.example.teumteum.databinding.DialogConfirmRegisterBinding
 import com.example.teumteum.databinding.FragmentFillingSetting02Binding
+import com.example.teumteum.ui.activity.viewModel.ActivityViewModel
 import com.example.teumteum.ui.main.HomeFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @AndroidEntryPoint
 class FillingSetting02Fragment : Fragment() {
@@ -27,6 +39,17 @@ class FillingSetting02Fragment : Fragment() {
 
     private var selectedStartTime: String? = null
     private var selectedEndTime: String? = null
+    private var selectedDate: String? = null
+
+    private var aiId: String? = null
+    private var wishId: Long? = null
+
+    private enum class AssignMode { AI, WISH }
+    private var mode: AssignMode? = null
+
+    private var scheduleType: String? = null
+
+    private val viewModel: ActivityViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,21 +62,43 @@ class FillingSetting02Fragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        // 바텀 내비게이션 숨기기
-        val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
-        bottomNav?.visibility = View.GONE
-
         val title = arguments?.getString("title")
         setTitle(title.toString())
 
         val time = arguments?.getString("time")
         setTime(time.toString())
 
+        aiId = arguments?.getString("ai_id")
+        wishId = arguments?.getLong("wish_id", -1L)
+            ?.takeIf { it > 0L }
+
+        mode = when {
+            aiId != null -> AssignMode.AI
+            wishId != null -> AssignMode.WISH
+            else -> null
+        }
+
+        if (mode == null) {
+            Toast.makeText(requireContext(), "ID가 없습니다.", Toast.LENGTH_SHORT).show()
+            parentFragmentManager.popBackStack()
+            return
+        }
+
+        scheduleType = arguments?.getString("schedule_type")
+
+        // 바텀 내비게이션 숨기기
+        val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
+        bottomNav?.visibility = View.GONE
+
+        // 오늘 날짜로 폴백
+        selectedDate = arguments?.getString("selected_date")
+            ?: LocalDate.now().format(DateTimeFormatter.ISO_DATE)
+
         val selectedTime = arguments?.getString("selected_time")
         val startTime = arguments?.getString("startTime")
         val endTime = arguments?.getString("endTime")
 
-        binding.fillActivityTimeSettingTv.text = selectedTime
+        binding.assignTimeSettingTv.text = selectedTime
 
         if (!startTime.isNullOrEmpty() && !endTime.isNullOrEmpty()) {
             binding.startChoiceTv.text = startTime
@@ -62,11 +107,11 @@ class FillingSetting02Fragment : Fragment() {
             selectedEndTime = endTime
         }
 
-        binding.fillActivityStartContainer.setOnClickListener {
+        binding.assignStartContainer.setOnClickListener {
             showCustomTimePicker(binding.startChoiceTv)
         }
 
-        binding.fillActivityEndContainer.setOnClickListener {
+        binding.assignEndContainer.setOnClickListener {
             showCustomTimePicker(binding.endChoiceTv)
         }
 
@@ -91,8 +136,13 @@ class FillingSetting02Fragment : Fragment() {
         }
 
         binding.registerBtn.setOnClickListener {
-            showWishRegisterDialog()
+            when (mode) {
+                AssignMode.AI   -> viewModel.assignAi(assignAiRequest(false))
+                AssignMode.WISH -> viewModel.assignWish(requireNotNull(wishId), assignWishRequest(false))
+                else -> Unit
+            }
         }
+        setupObservers()
     }
 
     private fun showCustomTimePicker(targetTextView: TextView) {
@@ -151,12 +201,6 @@ class FillingSetting02Fragment : Fragment() {
                 selectedEndTime = timeText
             }
 
-            // 선택한 시간대 반영
-            if (!selectedStartTime.isNullOrEmpty() && !selectedEndTime.isNullOrEmpty()) {
-                val timeRangeText = getString(R.string.time_range_format, selectedStartTime, selectedEndTime)
-                binding.fillActivityTimeSettingTv.text = timeRangeText
-            }
-
             dialog.dismiss()
         }
 
@@ -194,30 +238,65 @@ class FillingSetting02Fragment : Fragment() {
     }
 
     private fun setTitle(title: String){
-        binding.fillActivityTitleTv.text = title
+        binding.assignTitleTv.text = title
     }
 
     private fun setTime(time: String){
-        binding.fillActivityTimeTv.text = time
+        binding.assignTimeTv.text = time
     }
 
-    private fun showWishRegisterDialog() {
+    private fun combineDateTime(date: String, timeHHmm: String): String {
+        return "${date}T$timeHHmm"
+    }
+
+    private fun assignAiRequest(isForce: Boolean): AssignAiRequest {
+        val startHHmm = binding.startChoiceTv.text.toString()
+        val endHHmm = binding.endChoiceTv.text.toString()
+
+        val date = selectedDate ?: LocalDate.now().format(DateTimeFormatter.ISO_DATE)
+        val startIso = combineDateTime(date, startHHmm)
+        val endIso = combineDateTime(date, endHHmm)
+
+        return AssignAiRequest(
+            id = requireNotNull(aiId),
+            startTime = startIso,
+            endTime = endIso,
+            isForce = isForce
+        )
+    }
+
+    private fun assignWishRequest(isForce: Boolean): AssignWishRequest {
+        val startHHmm = binding.startChoiceTv.text.toString()
+        val endHHmm = binding.endChoiceTv.text.toString()
+
+        val date = selectedDate ?: LocalDate.now().format(DateTimeFormatter.ISO_DATE)
+        val startIso = combineDateTime(date, startHHmm)
+        val endIso = combineDateTime(date, endHHmm)
+
+        return AssignWishRequest(
+            startTime = startIso,
+            endTime = endIso,
+            isForce = isForce
+        )
+    }
+
+    private fun showRegisterDialog() {
         val dialogBinding = DialogConfirmRegisterBinding.inflate(layoutInflater)
 
         val dialog = AlertDialog.Builder(requireContext(), R.style.RoundedAlertDialog)
             .setView(dialogBinding.root)
             .create()
 
-        dialogBinding.wishConfirmTv.setOnClickListener {
-            Toast.makeText(requireContext(), "등록되었습니다.", Toast.LENGTH_SHORT).show()
+        dialogBinding.assignConfirmTv.setOnClickListener {
+            when (mode) {
+                AssignMode.AI   -> viewModel.assignAi(assignAiRequest(true))
+                AssignMode.WISH -> viewModel.assignWish(requireNotNull(wishId), assignWishRequest(true))
+                else -> Unit
+            }
             dialog.dismiss()
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, HomeFragment())
-                .addToBackStack(null)
-                .commit()
         }
 
-        dialogBinding.wishCancelTv.setOnClickListener {
+        dialogBinding.assignCancelTv.setOnClickListener {
             dialog.dismiss()
         }
 
@@ -239,5 +318,43 @@ class FillingSetting02Fragment : Fragment() {
         }
 
         dialog.show()
+    }
+
+    private fun setupObservers() {
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.assignSuccess.collect {
+                    Log.d("ASSIGN_FRAMENT", "빈틈채우기에 성공하였습니다.")
+                    parentFragmentManager.setFragmentResult("assign", Bundle())
+
+                    val fragment = HomeFragment().apply {
+                        arguments = Bundle().apply {
+                            putString("schedule_type", ScheduleType.AI.toString())
+                        }
+                    }
+
+                    parentFragmentManager.beginTransaction()
+                        .replace(R.id.main_frm, fragment)
+                        .addToBackStack(null)
+                        .commit()
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.assignError.collect { err ->
+                    when (err.code) {
+                        "HOME4092" -> showRegisterDialog()
+                        "CONFLICT4094", "CONFLICT4092" ->
+                            Toast.makeText(requireContext(), err.message, Toast.LENGTH_SHORT).show()
+                        else -> err.message.let {
+                            Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
+        }
     }
 }

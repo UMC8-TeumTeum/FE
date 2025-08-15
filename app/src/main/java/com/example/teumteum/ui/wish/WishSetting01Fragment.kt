@@ -14,13 +14,11 @@ import com.example.teumteum.ui.clock.IconPieChartRenderer
 import com.example.teumteum.ui.main.viewModel.HomeViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
-import kotlin.getValue
 
 @AndroidEntryPoint
 class WishSetting01Fragment : Fragment() {
 
-    private var _binding: FragmentWishSetting01Binding? = null
-    private val binding get() = _binding!!
+    private lateinit var binding: FragmentWishSetting01Binding
 
     private var selectedButtonId: Int? = null
 
@@ -31,13 +29,14 @@ class WishSetting01Fragment : Fragment() {
     private val homeViewModel: HomeViewModel by activityViewModels()
 
     private var isAM: Boolean = true
+    private var wishId: Long? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentWishSetting01Binding.inflate(inflater, container, false)
+        binding = FragmentWishSetting01Binding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -54,11 +53,11 @@ class WishSetting01Fragment : Fragment() {
         val time = arguments?.getString("time")
         setTime(time.toString())
 
+        wishId = arguments?.getLong("wish_id")
+
         // 바텀 내비게이션 숨기기
         val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
         bottomNav?.visibility = View.GONE
-
-        homeViewModel
 
         fun resetButtons() {
             listOf(
@@ -143,6 +142,9 @@ class WishSetting01Fragment : Fragment() {
                 R.id.select_01_button -> {
                     val fragment = WishSetting03Fragment().apply {
                         arguments = Bundle().apply {
+                            if (wishId != null) {
+                                putLong("wish_id", wishId!!)
+                            }
                             putString("title", title)
                             putString("time", time)
                             putString("selected_time", selectedTimeText)
@@ -157,6 +159,9 @@ class WishSetting01Fragment : Fragment() {
                 R.id.select_02_button, R.id.select_03_button, R.id.select_04_button -> {
                     val fragment = WishSetting02Fragment().apply {
                         arguments = Bundle().apply {
+                            if (wishId != null) {
+                                putLong("wish_id", wishId!!)
+                            }
                             putString("title", title)
                             putString("time", time)
                             putString("selected_time", selectedTimeText)
@@ -253,5 +258,4 @@ class WishSetting01Fragment : Fragment() {
     private fun dpToPx(dp: Int): Int {
         return (dp * resources.displayMetrics.density).toInt()
     }
-
 }

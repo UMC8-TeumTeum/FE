@@ -1,6 +1,7 @@
 package com.example.teumteum.ui.wish
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -9,31 +10,44 @@ import android.view.WindowManager
 import android.widget.Button
 import android.widget.NumberPicker
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.teumteum.R
+import com.example.teumteum.data.remote.activity.model.AssignWishRequest
 import com.example.teumteum.databinding.DialogConfirmRegisterBinding
 import com.example.teumteum.databinding.FragmentWishSetting03Binding
 import com.example.teumteum.ui.main.HomeFragment
+import com.example.teumteum.ui.wish.viewModel.WishViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @AndroidEntryPoint
 class WishSetting03Fragment : Fragment() {
 
-    private var _binding: FragmentWishSetting03Binding? = null
-    private val binding get() = _binding!!
+    private lateinit var binding: FragmentWishSetting03Binding
 
     private var selectedStartTime: String? = null
     private var selectedEndTime: String? = null
+    private var selectedDate: String? = null
+
+    private var wishId: Long? = null
+    private val viewModel: WishViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentWishSetting03Binding.inflate(inflater, container, false)
+        binding = FragmentWishSetting03Binding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -45,12 +59,19 @@ class WishSetting03Fragment : Fragment() {
         val time = arguments?.getString("time")
         setTime(time.toString())
 
-        val selectedTime = arguments?.getString("selected_time")
-        binding.wishTimeSettingTv.text = selectedTime
+        wishId = arguments?.getLong("wish_id")
 
         // 바텀 내비게이션 숨기기
         val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
         bottomNav?.visibility = View.GONE
+
+        // 오늘 날짜로 폴백
+        selectedDate = arguments?.getString("selected_date")
+            ?: LocalDate.now().format(DateTimeFormatter.ISO_DATE)
+
+        val selectedTime = arguments?.getString("selected_time")
+
+        binding.wishTimeSettingTv.text = selectedTime
 
         binding.wishStartContainer.setOnClickListener {
             showCustomTimePicker(binding.startChoiceTv)
@@ -81,8 +102,11 @@ class WishSetting03Fragment : Fragment() {
         }
 
         binding.registerBtn.setOnClickListener {
-            showWishRegisterDialog()
+            if (wishId != null) {
+                viewModel.assignWish(wishId!!, assignWishRequest(false))
+            }
         }
+        setupObservers()
     }
 
     private fun showCustomTimePicker(targetTextView: TextView) {
@@ -142,7 +166,6 @@ class WishSetting03Fragment : Fragment() {
             }
 
             enableNextButton()
-
             dialog.dismiss()
         }
 
@@ -187,23 +210,40 @@ class WishSetting03Fragment : Fragment() {
         binding.wishTimeTv.text = time
     }
 
-    private fun showWishRegisterDialog() {
+    private fun combineDateTime(date: String, timeHHmm: String): String {
+        return "${date}T$timeHHmm"
+    }
+
+    private fun assignWishRequest(isForce: Boolean): AssignWishRequest {
+        val startHHmm = binding.startChoiceTv.text.toString()
+        val endHHmm = binding.endChoiceTv.text.toString()
+
+        val date = selectedDate ?: LocalDate.now().format(DateTimeFormatter.ISO_DATE)
+        val startIso = combineDateTime(date, startHHmm)
+        val endIso = combineDateTime(date, endHHmm)
+
+        return AssignWishRequest(
+            startTime = startIso,
+            endTime = endIso,
+            isForce = isForce
+        )
+    }
+
+    private fun showRegisterDialog() {
         val dialogBinding = DialogConfirmRegisterBinding.inflate(layoutInflater)
 
         val dialog = AlertDialog.Builder(requireContext(), R.style.RoundedAlertDialog)
             .setView(dialogBinding.root)
             .create()
 
-        dialogBinding.wishConfirmTv.setOnClickListener {
-//            Toast.makeText(requireContext(), "등록되었습니다.", Toast.LENGTH_SHORT).show()
+        dialogBinding.assignConfirmTv.setOnClickListener {
+            if (wishId != null) {
+                viewModel.assignWish(wishId!!, assignWishRequest(true))
+            }
             dialog.dismiss()
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, HomeFragment())
-                .addToBackStack(null)
-                .commit()
         }
 
-        dialogBinding.wishCancelTv.setOnClickListener {
+        dialogBinding.assignCancelTv.setOnClickListener {
             dialog.dismiss()
         }
 
@@ -244,5 +284,37 @@ class WishSetting03Fragment : Fragment() {
             else
                 requireContext().getColor(R.color.text_primary)
         )
+    }
+
+    private fun setupObservers() {
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.assignSuccess.collect {
+                    Log.d("ASSIGN_FRAMENT", "빈틈채우기에 성공하였습니다.")
+                    parentFragmentManager.setFragmentResult("assign", Bundle())
+
+                    parentFragmentManager.beginTransaction()
+                        .replace(R.id.main_frm, HomeFragment())
+                        .addToBackStack(null)
+                        .commit()
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.assignError.collect { err ->
+                    when (err.code) {
+                        "HOME4092" -> showRegisterDialog()
+                        "CONFLICT4094", "CONFLICT4092" ->
+                            Toast.makeText(requireContext(), err.message, Toast.LENGTH_SHORT).show()
+                        else -> err.message.let {
+                            Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
+        }
     }
 }

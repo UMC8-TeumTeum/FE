@@ -13,6 +13,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.wish.model.DeleteWishesRequest
 import com.example.teumteum.data.remote.wish.model.EditWishRequest
@@ -26,6 +29,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class WishEditFragment : BottomSheetDialogFragment() {
@@ -118,22 +122,37 @@ class WishEditFragment : BottomSheetDialogFragment() {
             originalCategoryIds = wish.categories.map { it.categoryId }.sorted()
         }
 
-        viewModel.editSuccess.observe(viewLifecycleOwner) {
-            if (it == true) {
-//                Toast.makeText(requireContext(), "위시가 성공적으로 수정되었습니다.", Toast.LENGTH_SHORT).show()
-                Log.d("WISH_EDIT_FRAGMENT", "위시가 성공적으로 수정되었습니다.")
-                parentFragmentManager.setFragmentResult("wish_edit", Bundle())
-                dismiss()  // 현재 바텀시트만 닫기
+        // 수정 성공 시
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.editSuccess.collect {
+                    Log.d("WISH_EDIT_FRAGMENT", "위시가 성공적으로 수정되었습니다.")
+                    parentFragmentManager.setFragmentResult("wish_edit", Bundle())
+
+                    // 모든 바텀시트 닫기
+                    (requireActivity().supportFragmentManager.fragments).forEach { fragment ->
+                        if (fragment is BottomSheetDialogFragment) {
+                            fragment.dismissAllowingStateLoss()
+                        }
+                    }
+                }
             }
         }
 
         // 삭제 성공 시
-        viewModel.deleteSuccess.observe(viewLifecycleOwner) {
-            if (it == true) {
-//                Toast.makeText(requireContext(), "위시가 성공적으로 삭제되었습니다.", Toast.LENGTH_SHORT).show()
-                Log.d("WISH_EDIT_FRAGMENT", "위시가 성공적으로 삭제되었습니다.")
-                parentFragmentManager.setFragmentResult("wish_delete", Bundle())
-                dismiss()  // 현재 바텀시트만 닫기
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.deleteSuccess.collect {
+                    Log.d("WISH_EDIT_FRAGMENT", "위시가 성공적으로 삭제되었습니다.")
+                    parentFragmentManager.setFragmentResult("wish_delete", Bundle())
+
+                    // 모든 바텀시트 닫기
+                    (requireActivity().supportFragmentManager.fragments).forEach { fragment ->
+                        if (fragment is BottomSheetDialogFragment) {
+                            fragment.dismissAllowingStateLoss()
+                        }
+                    }
+                }
             }
         }
 

@@ -1,6 +1,7 @@
 package com.example.teumteum.data.remote.wish.repository
 
 import android.util.Log
+import com.example.teumteum.data.remote.activity.model.AssignWishRequest
 import com.example.teumteum.data.remote.wish.model.DeleteWishesRequest
 import com.example.teumteum.data.remote.wish.model.EditWishRequest
 import com.example.teumteum.data.remote.wish.model.RegisterWishRequest
@@ -49,5 +50,12 @@ class WishRepository @Inject constructor(
         val response = wishService.getWishlist(duration, page)
         Log.d("GetWishlist", "response = ${response.body()}")
         handleApiResponse(response)
+    }
+
+    // 위시 빈틈 채우기
+    suspend fun assignWish(wishId: Long, request: AssignWishRequest): Result<Unit> = runCatching {
+        val response = wishService.assignWish(wishId, request)
+        Log.d("AssignWish", "response = ${response.body()}")
+        handleApiResponseUnit(response)
     }
 }

@@ -8,8 +8,14 @@ import com.example.teumteum.data.remote.activity.model.ActivityAiRequest
 import com.example.teumteum.data.remote.activity.model.ActivityAiResult
 import com.example.teumteum.data.remote.activity.model.ActivityWishRequest
 import com.example.teumteum.data.remote.activity.model.ActivityWishResult
+import com.example.teumteum.data.remote.activity.model.AssignAiRequest
+import com.example.teumteum.data.remote.activity.model.AssignWishRequest
 import com.example.teumteum.data.remote.activity.repository.ActivityRepository
+import com.example.teumteum.utils.ApiException
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -17,6 +23,12 @@ import javax.inject.Inject
 class ActivityViewModel @Inject constructor(
     private val activityRepository: ActivityRepository
 ) : ViewModel() {
+
+    private val _errorState = MutableLiveData<ApiException>()
+    val errorState: LiveData<ApiException> = _errorState
+
+    private val _errorCode = MutableLiveData<String?>()
+    val errorCode: LiveData<String?> = _errorCode
 
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> get() = _errorMessage
@@ -32,6 +44,12 @@ class ActivityViewModel @Inject constructor(
 
     private val _activityAiContents = MutableLiveData<List<ActivityAiResult>>()
     val activityAiContents: LiveData<List<ActivityAiResult>> get() = _activityAiContents
+
+    private val _assignSuccess = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    val assignSuccess: SharedFlow<Unit> = _assignSuccess.asSharedFlow()
+
+    private val _assignError = MutableSharedFlow<ApiException>(replay = 0, extraBufferCapacity = 1)
+    val assignError: SharedFlow<ApiException> = _assignError.asSharedFlow()
 
     private val _loading = MutableLiveData(false)
     val loading: LiveData<Boolean> = _loading
@@ -53,7 +71,7 @@ class ActivityViewModel @Inject constructor(
                 val result = activityRepository.activityWish(request)
                 result.onSuccess { response ->
                     _activityWishSuccess.value = true
-                    _activityWishes.value = response.result?.wishes
+                    _activityWishes.value = response.wishes
                         ?.filter { it.title.isNotBlank() }
                         .orEmpty()
                 }
@@ -74,7 +92,7 @@ class ActivityViewModel @Inject constructor(
                 val result = activityRepository.activityAi(request)
                 result.onSuccess { response ->
                     _activityAiSuccess.value = true
-                    _activityAiContents.value = response.result?.aiContents
+                    _activityAiContents.value = response.aiContents
                         ?.filter { it.title.isNotBlank() }
                         .orEmpty()
                 }
@@ -87,4 +105,45 @@ class ActivityViewModel @Inject constructor(
         }
     }
 
+    // 위시 빈틈 채우기
+    fun assignWish(wishId: Long, request: AssignWishRequest) {
+        viewModelScope.launch {
+            val result = activityRepository.assignWish(wishId, request)
+            result.onSuccess {
+                _assignSuccess.tryEmit(Unit)
+            }
+            result.onFailure { e ->
+                val apiEx = e as? ApiException
+                val code = apiEx?.code
+                val msg = apiEx?.message ?: e.localizedMessage ?: "위시 빈틈채우기에 실패했습니다."
+
+                _errorCode.value = code
+                _errorMessage.value = msg
+                _errorState.value = code?.let { ApiException(it, msg) }
+
+                _assignError.tryEmit(ApiException(code ?: "UNKNOWN", msg))
+            }
+        }
+    }
+
+    // ai컨텐츠 빈틈 채우기
+    fun assignAi(request: AssignAiRequest) {
+        viewModelScope.launch {
+            val result = activityRepository.assignAi(request)
+            result.onSuccess {
+                _assignSuccess.tryEmit(Unit)
+            }
+            result.onFailure { e ->
+                val apiEx = e as? ApiException
+                val code = apiEx?.code
+                val msg = apiEx?.message ?: e.localizedMessage ?: "ai컨텐츠 빈틈채우기에 실패했습니다."
+
+                _errorCode.value = code
+                _errorMessage.value = msg
+                _errorState.value = code?.let { ApiException(it, msg) }
+
+                _assignError.tryEmit(ApiException(code ?: "UNKNOWN", msg))
+            }
+        }
+    }
 }

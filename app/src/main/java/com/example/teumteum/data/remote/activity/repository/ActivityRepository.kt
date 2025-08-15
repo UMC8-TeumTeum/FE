@@ -5,9 +5,11 @@ import com.example.teumteum.data.remote.activity.model.ActivityAiRequest
 import com.example.teumteum.data.remote.activity.model.ActivityAiResponse
 import com.example.teumteum.data.remote.activity.model.ActivityWishRequest
 import com.example.teumteum.data.remote.activity.model.ActivityWishResponse
+import com.example.teumteum.data.remote.activity.model.AssignAiRequest
+import com.example.teumteum.data.remote.activity.model.AssignWishRequest
 import com.example.teumteum.data.remote.activity.service.ActivityService
-import com.example.teumteum.utils.ApiResponse
-import java.io.IOException
+import com.example.teumteum.utils.handleApiResponse
+import com.example.teumteum.utils.handleApiResponseUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -16,52 +18,30 @@ class ActivityRepository @Inject constructor(
     private val activityService: ActivityService
 ) {
     // 채움활동 위시리스트 불러오기
-    suspend fun activityWish(request: ActivityWishRequest): Result<ApiResponse<ActivityWishResponse>> {
-        return try {
-            val response = activityService.activityWish(request)
-            Log.d("ActivityWish", "response = ${response.body()}")
-
-            if (response.isSuccessful) {
-                val apiResponse = response.body()
-                    ?: return Result.failure(Exception("서버 응답이 비어 있습니다."))
-
-                if (apiResponse.isSuccess && apiResponse.result != null) {
-                    Result.success(apiResponse)
-                } else {
-                    Result.failure(Exception(apiResponse.message))
-                }
-            } else {
-                Result.failure(Exception("서버 오류 발생"))
-            }
-        } catch (e: IOException) {
-            Result.failure(Exception("네트워크 연결에 실패했습니다. 인터넷을 확인하세요."))
-        } catch (e: Exception) {
-            Result.failure(Exception("알 수 없는 오류 발생: ${e.localizedMessage}"))
-        }
+    suspend fun activityWish(request: ActivityWishRequest): Result<ActivityWishResponse> = runCatching {
+        val response = activityService.activityWish(request)
+        Log.d("ActivityWish", "response = ${response.body()}")
+        handleApiResponse(response)
     }
 
     // 채움활동 ai컨텐츠 불러오기
-    suspend fun activityAi(request: ActivityAiRequest): Result<ApiResponse<ActivityAiResponse>> {
-        return try {
-            val response = activityService.activityAi(request)
-            Log.d("ActivityAi", "response = ${response.body()}")
+    suspend fun activityAi(request: ActivityAiRequest): Result<ActivityAiResponse> = runCatching {
+        val response = activityService.activityAi(request)
+        Log.d("ActivityAi", "response = ${response.body()}")
+        handleApiResponse(response)
+    }
 
-            if (response.isSuccessful) {
-                val apiResponse = response.body()
-                    ?: return Result.failure(Exception("서버 응답이 비어 있습니다."))
+    // 위시 빈틈 채우기
+    suspend fun assignWish(wishId: Long, request: AssignWishRequest): Result<Unit> = runCatching {
+        val response = activityService.assignWish(wishId, request)
+        Log.d("AssignWish", "response = ${response.body()}")
+        handleApiResponseUnit(response)
+    }
 
-                if (apiResponse.isSuccess && apiResponse.result != null) {
-                    Result.success(apiResponse)
-                } else {
-                    Result.failure(Exception(apiResponse.message))
-                }
-            } else {
-                Result.failure(Exception("서버 오류 발생"))
-            }
-        } catch (e: IOException) {
-            Result.failure(Exception("네트워크 연결에 실패했습니다. 인터넷을 확인하세요."))
-        } catch (e: Exception) {
-            Result.failure(Exception("알 수 없는 오류 발생: ${e.localizedMessage}"))
-        }
+    // ai컨텐츠 빈틈 채우기
+    suspend fun assignAi(request: AssignAiRequest): Result<Unit> = runCatching {
+        val response = activityService.assignAi(request)
+        Log.d("AssignAi", "response = ${response.body()}")
+        handleApiResponseUnit(response)
     }
 }

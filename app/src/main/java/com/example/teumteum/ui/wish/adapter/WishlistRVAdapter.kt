@@ -34,6 +34,7 @@ class WishlistRVAdapter(private var wishlist: List<WishlistItem>, private val fr
         binding.fillButton.setOnClickListener {
             val fragment = WishSetting01Fragment().apply {
                 arguments = Bundle().apply {
+                    putLong("wish_id", item.id)
                     putString("title", binding.wishTitleTv.text.toString())
                     putString("time", binding.wishTimeTv.text.toString())
                 }

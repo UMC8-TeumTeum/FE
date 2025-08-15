@@ -30,7 +30,6 @@ import java.time.format.DateTimeFormatter
 
 import com.example.teumteum.data.remote.todo.model.TodoListResult
 import com.example.teumteum.data.remote.todo.model.enums.AlarmStatus
-import com.example.teumteum.ui.calendar.viewModel.CalendarViewModel
 import com.example.teumteum.ui.todo.viewModel.TodoViewModel
 import com.example.teumteum.ui.clock.ChartUtils
 import com.example.teumteum.ui.clock.IconPieChartRenderer
@@ -59,6 +58,7 @@ class HomeFragment : Fragment(), IDateClickListener {
     private var isAM: Boolean = true
 
     private val TODO_SHEET_TAG = "TodoRegisterSheet"
+    private val type : String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -202,6 +202,12 @@ class HomeFragment : Fragment(), IDateClickListener {
 
         // 투두 삭제 성공 이벤트 수신
         parentFragmentManager.setFragmentResultListener("todo_delete", viewLifecycleOwner) { _, _ ->
+            viewModel.refreshTodaySchedule()
+            refreshTodolist()
+        }
+
+        // 빈틈 채우기 이벤트 수신
+        parentFragmentManager.setFragmentResultListener("assign", viewLifecycleOwner) { _, _ ->
             viewModel.refreshTodaySchedule()
             refreshTodolist()
         }
@@ -426,5 +432,4 @@ class HomeFragment : Fragment(), IDateClickListener {
         super.onDestroyView()
         _binding = null
     }
-
 }

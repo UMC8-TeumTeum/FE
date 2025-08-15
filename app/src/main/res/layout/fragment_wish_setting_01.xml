@@ -60,41 +60,41 @@
             android:layout_height="wrap_content"
             android:padding="5dp">
 
-        <LinearLayout
-            android:id="@+id/wish_time_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
+            <LinearLayout
+                android:id="@+id/wish_time_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <TextView
+                    android:id="@+id/wish_time_tv"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="10dp"
+                    android:gravity="center"
+                    tools:text="30m"
+                    android:textColor="@color/text_tertiary"
+                    android:background="@drawable/circle_white"
+                    android:fontFamily="@font/pretendard_semibold"
+                    android:textSize="11sp" />
+            </LinearLayout>
 
             <TextView
-                android:id="@+id/wish_time_tv"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:id="@+id/wish_title_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:gravity="center"
-                tools:text="30m"
-                android:textColor="@color/text_tertiary"
-                android:background="@drawable/circle_white"
-                android:fontFamily="@font/pretendard_semibold"
-                android:textSize="11sp" />
-        </LinearLayout>
+                tools:text="방 구조 바꾸기"
+                android:fontFamily="@font/noto_sans_kr_regular"
+                android:textSize="15sp"
+                android:textColor="@color/white"
+                app:layout_constraintStart_toEndOf="@id/wish_time_layout"
+                app:layout_constraintTop_toTopOf="parent"/>
 
-        <TextView
-            android:id="@+id/wish_title_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            tools:text="방 구조 바꾸기"
-            android:fontFamily="@font/noto_sans_kr_regular"
-            android:textSize="15sp"
-            android:textColor="@color/white"
-            app:layout_constraintStart_toEndOf="@id/wish_time_layout"
-            app:layout_constraintTop_toTopOf="parent"/>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>
 

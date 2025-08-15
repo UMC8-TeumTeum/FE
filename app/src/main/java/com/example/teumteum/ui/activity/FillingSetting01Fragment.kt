@@ -8,8 +8,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
-import com.example.teumteum.ui.main.data.TimeBlock
-import com.example.teumteum.ui.main.data.TimeType
+import com.example.teumteum.data.remote.todo.model.enums.ScheduleType
 import com.example.teumteum.databinding.FragmentFillingSetting01Binding
 import com.example.teumteum.ui.clock.ChartUtils
 import com.example.teumteum.ui.clock.IconPieChartRenderer
@@ -32,6 +31,11 @@ class FillingSetting01Fragment : Fragment() {
 
     private var isAM: Boolean = true
 
+    private var aiId: String? = null
+    private var wishId: Long? = null
+
+    private var scheduleType: String? = null
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -53,6 +57,12 @@ class FillingSetting01Fragment : Fragment() {
 
         val time = arguments?.getString("time")
         setTime(time.toString())
+
+        aiId = arguments?.getString("ai_id")
+        wishId = arguments?.getLong("wish_id", -1L)
+            ?.takeIf { it > 0L }
+
+        scheduleType = arguments?.getString("schedule_type")
 
         // 바텀 내비게이션 숨기기
         val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
@@ -141,6 +151,9 @@ class FillingSetting01Fragment : Fragment() {
                 R.id.select_01_button -> {
                     val fragment = FillingSetting03Fragment().apply {
                         arguments = Bundle().apply {
+                            putString("schedule_type", ScheduleType.AI.toString())
+                            aiId?.let   { putString("ai_id", it) }
+                            wishId?.let { putLong("wish_id", it) }
                             putString("title", title)
                             putString("time", time)
                             putString("selected_time", selectedTimeText)
@@ -155,6 +168,9 @@ class FillingSetting01Fragment : Fragment() {
                 R.id.select_02_button, R.id.select_03_button, R.id.select_04_button -> {
                     val fragment = FillingSetting02Fragment().apply {
                         arguments = Bundle().apply {
+                            putString("schedule_type", ScheduleType.AI.toString())
+                            aiId?.let   { putString("ai_id", it) }
+                            wishId?.let { putLong("wish_id", it) }
                             putString("title", title)
                             putString("time", time)
                             putString("selected_time", selectedTimeText)
@@ -203,11 +219,11 @@ class FillingSetting01Fragment : Fragment() {
     }
 
     private fun setTitle(title: String){
-        binding.fillingActivityTitleTv.text = title
+        binding.assignTitleTv.text = title
     }
 
     private fun setTime(time: String){
-        binding.fillingActivityTimeTv.text = time
+        binding.assignTimeTv.text = time
     }
 
     private fun updateTimeChart(isAM: Boolean) {

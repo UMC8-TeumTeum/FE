@@ -16,10 +16,15 @@ data class ActivityAiRequest(
     @SerializedName("customCategory") val customCategory: String? = null
 )
 
-data class FillAiRequest(
-    @SerializedName("aiContentId") val aiContentId: Long,
-    @SerializedName("date") val date: String,
+data class AssignWishRequest(
     @SerializedName("startTime") val startTime: String,
     @SerializedName("endTime") val endTime: String,
-    @SerializedName("isForce") val isForce: Boolean? = null
+    @SerializedName("isForce") val isForce: Boolean
+)
+
+data class AssignAiRequest(
+    @SerializedName("id") val id: String,
+    @SerializedName("startTime") val startTime: String,
+    @SerializedName("endTime") val endTime: String,
+    @SerializedName("isForce") val isForce: Boolean
 )
