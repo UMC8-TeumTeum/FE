@@ -58,6 +58,7 @@ class HomeFragment : Fragment(), IDateClickListener {
     private var isAM: Boolean = true
 
     private val TODO_SHEET_TAG = "TodoRegisterSheet"
+    private val type : String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
