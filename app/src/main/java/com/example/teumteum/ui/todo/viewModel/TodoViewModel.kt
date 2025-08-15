@@ -10,6 +10,7 @@ import com.example.teumteum.data.remote.todo.model.GetTodoResult
 import com.example.teumteum.data.remote.todo.model.RegisterTodoRequest
 import com.example.teumteum.data.remote.todo.model.TodoListResult
 import com.example.teumteum.data.remote.todo.repository.TodoRepository
+import com.example.teumteum.utils.ApiException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -21,6 +22,9 @@ import javax.inject.Inject
 class TodoViewModel @Inject constructor(
     private val todoRepository: TodoRepository
 ) : ViewModel() {
+
+    private val _errorState = MutableLiveData<ApiException>()
+    val errorState: LiveData<ApiException> = _errorState
 
     private val _errorCode = MutableLiveData<String?>()
     val errorCode: LiveData<String?> = _errorCode
@@ -43,6 +47,9 @@ class TodoViewModel @Inject constructor(
     private val _registerSuccess = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
     val registerSuccess: SharedFlow<Unit> = _registerSuccess.asSharedFlow()
 
+    private val _registerError = MutableSharedFlow<ApiException>(replay = 0, extraBufferCapacity = 1)
+    val registerError: SharedFlow<ApiException> = _registerError.asSharedFlow()
+
     private val _editSuccess = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
     val editSuccess: SharedFlow<Unit> = _editSuccess.asSharedFlow()
 
@@ -57,8 +64,15 @@ class TodoViewModel @Inject constructor(
                 _registerSuccess.tryEmit(Unit)
             }
             result.onFailure { e ->
-                _errorMessage.value = e.localizedMessage ?: "투두 등록에 실패했습니다."
-                _errorMessage.value = null
+                val apiEx = e as? ApiException
+                val code = apiEx?.code
+                val msg = apiEx?.message ?: e.localizedMessage ?: "투두 등록에 실패했습니다."
+
+                _errorCode.value = code
+                _errorMessage.value = msg
+                _errorState.value = code?.let { ApiException(it, msg) }
+
+                _registerError.tryEmit(ApiException(code ?: "UNKNOWN", msg))
             }
         }
     }
@@ -97,8 +111,15 @@ class TodoViewModel @Inject constructor(
                 _editSuccess.tryEmit(Unit)
             }
             result.onFailure { e ->
-                _errorMessage.value = e.localizedMessage ?: "투두 수정에 실패했습니다."
-                _errorMessage.value = null
+                val apiEx = e as? ApiException
+                val code = apiEx?.code
+                val msg = apiEx?.message ?: e.localizedMessage ?: "투두 수정에 실패했습니다."
+
+                _errorCode.value = code
+                _errorMessage.value = msg
+                _errorState.value = code?.let { ApiException(it, msg) }
+
+                _registerError.tryEmit(ApiException(code ?: "UNKNOWN", msg))
             }
         }
     }

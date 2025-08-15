@@ -363,6 +363,5 @@ class FillingSetting02Fragment : Fragment() {
                 }
             }
         }
-
     }
 }

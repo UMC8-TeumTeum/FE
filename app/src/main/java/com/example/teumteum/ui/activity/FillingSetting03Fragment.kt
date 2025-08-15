@@ -13,6 +13,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.activity.model.AssignAiRequest
 import com.example.teumteum.data.remote.activity.model.AssignWishRequest
@@ -23,6 +26,7 @@ import com.example.teumteum.ui.main.HomeFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -276,7 +280,7 @@ class FillingSetting03Fragment : Fragment() {
         )
     }
 
-    private fun showWishRegisterDialog() {
+    private fun showRegisterDialog() {
         val dialogBinding = DialogConfirmRegisterBinding.inflate(layoutInflater)
 
         val dialog = AlertDialog.Builder(requireContext(), R.style.RoundedAlertDialog)
@@ -295,14 +299,6 @@ class FillingSetting03Fragment : Fragment() {
                 viewModel.assignAi(assignAiRequest(true))
             }
             dialog.dismiss()
-
-            Toast.makeText(requireContext(), "빈틈채우기에 성공하였습니다.", Toast.LENGTH_SHORT).show()
-            parentFragmentManager.setFragmentResult("assign", Bundle())
-
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, HomeFragment())
-                .addToBackStack(null)
-                .commit()
         }
 
         dialogBinding.assignCancelTv.setOnClickListener {
@@ -350,24 +346,33 @@ class FillingSetting03Fragment : Fragment() {
 
     private fun setupObservers() {
 
-        viewModel.errorState.observe(viewLifecycleOwner) { err ->
-            val code = err.code
-            val msg = err.message
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.assignSuccess.collect {
+                    Toast.makeText(requireContext(), "빈틈채우기에 성공하였습니다.", Toast.LENGTH_SHORT).show()
+                    parentFragmentManager.setFragmentResult("assign", Bundle())
 
-            when (code) {
-                "HOME4092" -> {
-                    showWishRegisterDialog()
+                    parentFragmentManager.beginTransaction()
+                        .replace(R.id.main_frm, HomeFragment())
+                        .addToBackStack(null)
+                        .commit()
                 }
-                "CONFLICT4094", "CONFLICT4092" -> {
-                    Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
-                }
-                else -> {
-                    if (msg.isNotBlank()) {
-                        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.assignError.collect { err ->
+                    when (err.code) {
+                        "HOME4092" -> showRegisterDialog()
+                        "CONFLICT4094", "CONFLICT4092" ->
+                            Toast.makeText(requireContext(), err.message, Toast.LENGTH_SHORT).show()
+                        else -> err.message.let {
+                            Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
             }
-            viewModel.clearError()
         }
     }
 }

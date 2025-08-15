@@ -82,11 +82,6 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
     private val viewModel: TodoViewModel by activityViewModels()
     private val myHomeViewModel: MyHomeViewModel by activityViewModels()
 
-    private var sleepStart: LocalTime? = null
-    private var sleepEnd: LocalTime? = null
-
-    private var sleepBlocks: List<TimeBlock> = emptyList()
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -96,22 +91,8 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
         return binding.root
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            sleepBlocks = it.getParcelableArrayList("sleepBlocks") ?: emptyList()
-        }
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        arguments?.let {
-            val start = it.getString("sleepStart")
-            val end = it.getString("sleepEnd")
-            sleepStart = start?.let { LocalTime.parse(it) }
-            sleepEnd = end?.let { LocalTime.parse(it) }
-        }
 
         val today = getTodayFormatted()
 
@@ -527,7 +508,7 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
 
         if (map.isEmpty()) return null
 
-        // 정렬하여 ReminderAlarm 리스트로 변환ㅎ
+        // 정렬하여 ReminderAlarm 리스트로 변환
         return map.entries
             .sortedBy { it.key }
             .map { (min, st) -> ReminderAlarm(alarm = min, status = st) }
@@ -575,30 +556,9 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
             return
         }
 
-        val startTime = combineDateTime(binding.startDateTv, binding.startTimeTv)
-        val endTime = combineDateTime(binding.endDateTv, binding.endTimeTv)
-        val startLocalTime = LocalTime.parse(startTime.substring(11)) // HH:mm
-        val endLocalTime = LocalTime.parse(endTime.substring(11))
-        val startMin = startLocalTime.hour * 60 + startLocalTime.minute
-        val endMin = endLocalTime.hour * 60 + endLocalTime.minute
-
-        if (isOverlappingWithSleep(startMin, endMin)) {
-            Toast.makeText(requireContext(), "해당 시간에는 수면 패턴이 존재합니다.", Toast.LENGTH_SHORT).show()
-            return
-        }
-
         val request = getTodoRequest()
         Log.d("RegisterTodoRequest", gson.toJson(request))
         viewModel.registerTodo(request)
-    }
-
-    private fun isOverlappingWithSleep(startMin: Int, endMin: Int): Boolean {
-        return sleepBlocks.any { sleep ->
-            val sleepStart = sleep.startTime
-            val sleepEnd = sleep.endTime
-            // 겹치는 경우
-            startMin < sleepEnd && endMin > sleepStart
-        }
     }
 
 //    private fun resetAlarmUI() {
@@ -659,10 +619,20 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
             }
         }
 
-        // 실패 메시지는 LiveData 그대로
         viewModel.errorMessage.observe(viewLifecycleOwner) { errorMsg ->
             Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_SHORT).show()
         }
+
+//        viewLifecycleOwner.lifecycleScope.launch {
+//            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+//                viewModel.errorCode { err ->
+//                    when (err.code) {
+//                        "CONFLICT4094", "CONFLICT4092" ->
+//                            Toast.makeText(requireContext(), err.message, Toast.LENGTH_SHORT).show()
+//                    }
+//                }
+//            }
+//        }
     }
 
     override fun onDestroyView() {

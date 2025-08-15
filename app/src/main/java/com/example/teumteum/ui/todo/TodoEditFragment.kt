@@ -1,6 +1,5 @@
 package com.example.teumteum.ui.todo
 
-import android.R.string.ok
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
@@ -39,9 +38,6 @@ import com.example.teumteum.databinding.DialogConfirmTodoDeleteBinding
 import com.example.teumteum.databinding.DialogConfirmTodoEditBinding
 import com.example.teumteum.ui.calendar.IDateClickListener
 import com.example.teumteum.ui.calendar.MonthlyCalendarFragment
-import com.example.teumteum.ui.main.HomeFragment
-import com.example.teumteum.ui.main.data.TimeBlock
-import com.example.teumteum.ui.main.viewModel.HomeViewModel
 import com.example.teumteum.ui.myhome.viewModel.MyHomeViewModel
 import com.example.teumteum.ui.todo.viewModel.TodoViewModel
 import com.example.teumteum.utils.combineDateTime
@@ -51,7 +47,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -94,17 +89,9 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
     private var originalIncludeTeum: Boolean = false
     private var originalRemindAlarm: List<Int> = emptyList()
 
-    private var sleepStart: LocalTime? = null
-    private var sleepEnd: LocalTime? = null
-
-    private var sleepBlocks: List<TimeBlock> = emptyList()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         todoId = arguments?.getLong("todo_id") ?: -1L
-        arguments?.let {
-            sleepBlocks = it.getParcelableArrayList("sleepBlocks") ?: emptyList()
-        }
     }
 
     override fun onCreateView(
@@ -123,13 +110,6 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
             } else {
                 null
             }
-        }
-
-        arguments?.let {
-            val start = it.getString("sleepStart")
-            val end = it.getString("sleepEnd")
-            sleepStart = start?.let { LocalTime.parse(it) }
-            sleepEnd = end?.let { LocalTime.parse(it) }
         }
 
         // isAlarmOn 값에 따른 알림 바텀시트 변경
@@ -258,30 +238,8 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
             return
         }
 
-        val startTime = combineDateTime(binding.startDateTv, binding.startTimeTv)
-        val endTime = combineDateTime(binding.endDateTv, binding.endTimeTv)
-        val startLocalTime = LocalTime.parse(startTime.substring(11)) // HH:mm
-        val endLocalTime = LocalTime.parse(endTime.substring(11))
-
-        val startMin = startLocalTime.hour * 60 + startLocalTime.minute
-        val endMin = endLocalTime.hour * 60 + endLocalTime.minute
-
-        if (isOverlappingWithSleep(startMin, endMin)) {
-            Toast.makeText(requireContext(), "해당 시간에는 수면 패턴이 존재합니다.", Toast.LENGTH_SHORT).show()
-            return
-        }
-
         val request = getTodoRequest()
         viewModel.editTodo(todoId, request)
-    }
-
-    private fun isOverlappingWithSleep(startMin: Int, endMin: Int): Boolean {
-        return sleepBlocks.any { sleep ->
-            val sleepStart = sleep.startTime
-            val sleepEnd = sleep.endTime
-            // 겹치는 경우
-            startMin < sleepEnd && endMin > sleepStart
-        }
     }
 
     // 온보딩 리마인드 알림 조회 api 연동 시 수정 예정
@@ -745,6 +703,14 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
         }
     }
 
+    private fun dismissAllSheets() {
+        (requireActivity().supportFragmentManager.fragments).forEach { fragment ->
+            if (fragment is BottomSheetDialogFragment) {
+                fragment.dismissAllowingStateLoss()
+            }
+        }
+    }
+
     private fun setupObservers() {
         viewModel.todo.observe(viewLifecycleOwner) { todo ->
             if (todo == null) return@observe
@@ -890,39 +856,24 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.editSuccess.collect {
-                    Toast.makeText(requireContext(), "투두가 성공적으로 수정되었습니다.", Toast.LENGTH_SHORT).show()
-                    parentFragmentManager.setFragmentResult("todo_edit", Bundle())
+                // 수정 성공
+                launch {
+                    viewModel.editSuccess.collect {
+                        Toast.makeText(requireContext(), "투두가 성공적으로 수정되었습니다.", Toast.LENGTH_SHORT).show()
+                        parentFragmentManager.setFragmentResult("todo_edit", Bundle())
+                        dismissAllSheets()
+                    }
+                }
 
-                    // 모든 바텀시트 닫기
-                    (requireActivity().supportFragmentManager.fragments).forEach { fragment ->
-                        if (fragment is BottomSheetDialogFragment) {
-                            fragment.dismissAllowingStateLoss()
-                        }
+                // 삭제 성공
+                launch {
+                    viewModel.deleteSuccess.collect {
+                        Toast.makeText(requireContext(), "투두가 성공적으로 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+                        parentFragmentManager.setFragmentResult("todo_delete", Bundle())
+                        dismissAllSheets()
                     }
                 }
             }
-        }
-
-        // 삭제 성공 시
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.deleteSuccess.collect {
-                    Toast.makeText(requireContext(), "투두가 성공적으로 삭제되었습니다.", Toast.LENGTH_SHORT).show()
-                    parentFragmentManager.setFragmentResult("todo_delete", Bundle())
-
-                    // 모든 바텀시트 닫기
-                    (requireActivity().supportFragmentManager.fragments).forEach { fragment ->
-                        if (fragment is BottomSheetDialogFragment) {
-                            fragment.dismissAllowingStateLoss()
-                        }
-                    }
-                }
-            }
-        }
-
-        viewModel.errorMessage.observe(viewLifecycleOwner) { errorMsg ->
-            Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_SHORT).show()
         }
 
         // 실패 메시지는 LiveData 그대로

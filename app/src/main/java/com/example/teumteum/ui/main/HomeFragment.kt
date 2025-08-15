@@ -2,7 +2,6 @@ package com.example.teumteum.ui.main
 
 import android.content.res.ColorStateList
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,7 +30,6 @@ import java.time.format.DateTimeFormatter
 
 import com.example.teumteum.data.remote.todo.model.TodoListResult
 import com.example.teumteum.data.remote.todo.model.enums.AlarmStatus
-import com.example.teumteum.ui.calendar.viewModel.CalendarViewModel
 import com.example.teumteum.ui.todo.viewModel.TodoViewModel
 import com.example.teumteum.ui.clock.ChartUtils
 import com.example.teumteum.ui.clock.IconPieChartRenderer
@@ -424,7 +422,7 @@ class HomeFragment : Fragment(), IDateClickListener {
         }
 
         todoViewModel.errorMessage.observe(viewLifecycleOwner) { error ->
-            Toast.makeText(requireContext(), "투두리스트 조회 실패: $error", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -432,5 +430,4 @@ class HomeFragment : Fragment(), IDateClickListener {
         super.onDestroyView()
         _binding = null
     }
-
 }

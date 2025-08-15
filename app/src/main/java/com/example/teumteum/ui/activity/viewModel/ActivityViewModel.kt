@@ -51,7 +51,6 @@ class ActivityViewModel @Inject constructor(
     private val _assignError = MutableSharedFlow<ApiException>(replay = 0, extraBufferCapacity = 1)
     val assignError: SharedFlow<ApiException> = _assignError.asSharedFlow()
 
-
     private val _loading = MutableLiveData(false)
     val loading: LiveData<Boolean> = _loading
 
@@ -146,10 +145,5 @@ class ActivityViewModel @Inject constructor(
                 _assignError.tryEmit(ApiException(code ?: "UNKNOWN", msg))
             }
         }
-    }
-
-    fun clearError() {
-        _errorCode.value = null
-        _errorMessage.value = null
     }
 }
