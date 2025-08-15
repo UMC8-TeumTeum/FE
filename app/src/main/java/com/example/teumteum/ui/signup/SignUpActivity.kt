@@ -38,8 +38,8 @@ class SignUpActivity : AppCompatActivity() {
             NextStep.AGREEMENT -> {
                 // 약관 동의 화면부터 시작
                 setProgressBarVisible(true)
-                setProgressBar(50)
-                loadFragment(CompleteFragment())
+                setProgressBar(0)
+                loadFragment(AgreementFragment())
             }
             NextStep.ONBOARDING -> {
                 // 온보딩 첫 번째 단계부터 시작
