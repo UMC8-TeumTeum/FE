@@ -26,6 +26,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentTodoEditBinding
@@ -43,6 +44,7 @@ import com.example.teumteum.ui.main.HomeFragment
 import com.example.teumteum.ui.main.data.TimeBlock
 import com.example.teumteum.ui.main.viewModel.HomeViewModel
 import com.example.teumteum.ui.myhome.viewModel.MyHomeViewModel
+import com.example.teumteum.ui.todo.adapter.TeumProfileAdapter
 import com.example.teumteum.ui.todo.viewModel.TodoViewModel
 import com.example.teumteum.utils.combineDateTime
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -64,6 +66,8 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
     private var currentTargetTextView: TextView? = null
 
     private var todoId: Long = -1
+
+    private val profileAdapter by lazy { TeumProfileAdapter() }
 
     private val selectedItems = mutableSetOf<String>()
     private val alarmOptions = listOf("30분 전", "10분 전", "5분 전", "3분 전", "1분 전")
@@ -130,6 +134,15 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
             val end = it.getString("sleepEnd")
             sleepStart = start?.let { LocalTime.parse(it) }
             sleepEnd = end?.let { LocalTime.parse(it) }
+        }
+
+        binding.profileImageRc.apply {
+            layoutManager = LinearLayoutManager(
+                requireContext(),
+                LinearLayoutManager.HORIZONTAL,
+                false
+            )
+            adapter = profileAdapter
         }
 
         // isAlarmOn 값에 따른 알림 바텀시트 변경
@@ -203,17 +216,17 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
             toggleCalendarVisibility()
         }
 
-        myHomeViewModel.profileImageUrl.observe(viewLifecycleOwner) { imageUrl ->
-            if (!imageUrl.isNullOrBlank()) {
-                Glide.with(this)
-                    .load(imageUrl)
-                    .placeholder(R.drawable.gray_teum) // 기본 이미지 리소스
-                    .error(R.drawable.gray_teum)       // 에러 시 이미지
-                    .into(binding.profileIv)
-            } else {
-                binding.profileIv.setImageResource(R.drawable.gray_teum)
-            }
-        }
+//        myHomeViewModel.profileImageUrl.observe(viewLifecycleOwner) { imageUrl ->
+//            if (!imageUrl.isNullOrBlank()) {
+//                Glide.with(this)
+//                    .load(imageUrl)
+//                    .placeholder(R.drawable.gray_teum) // 기본 이미지 리소스
+//                    .error(R.drawable.gray_teum)       // 에러 시 이미지
+//                    .into(binding.profileIv)
+//            } else {
+//                binding.profileIv.setImageResource(R.drawable.gray_teum)
+//            }
+//        }
 
         setupObservers()
 
@@ -777,6 +790,11 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
             binding.alarmLayoutContainer.removeAllViews()
             selectedItems.clear()
 
+            val urls: List<String> = todo.profileUrl ?: emptyList()
+            profileAdapter.submitList(urls)
+            Log.d("profiles", urls.toString())
+            binding.profileImageRc.isVisible = urls.isNotEmpty()
+
             todo.remindAlarm?.forEach { remindAlarm ->
                 val minutes = remindAlarm.alarm
                 val isOn = (remindAlarm.status == AlarmStatus.ACTIVE)
@@ -916,5 +934,6 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
         viewModel.errorMessage.observe(viewLifecycleOwner) { errorMsg ->
             Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_SHORT).show()
         }
+
     }
 }
