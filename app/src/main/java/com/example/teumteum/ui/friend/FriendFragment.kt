@@ -2,14 +2,17 @@
 package com.example.teumteum.ui.friend
 
 import android.graphics.Color
+import android.graphics.Rect
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.util.Log
+import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.friend.model.TeumReceivedItem
 import com.example.teumteum.databinding.FragmentFriendBinding
@@ -32,6 +35,9 @@ class FriendFragment : Fragment() {
     private lateinit var recommendAdapter: RecommendAdapter
     private lateinit var followingAdapter: FollowingAdapter
     private lateinit var followerAdapter: FollowerAdapter
+
+    private val Int.dp: Int get() =
+        (this * resources.displayMetrics.density + 0.5f).toInt()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -72,6 +78,37 @@ class FriendFragment : Fragment() {
                     .commit()
             }
         )
+
+        val lm = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        binding.recommendRecyclerView.layoutManager = lm
+
+        // 중복 추가 방지: 기존 데코 제거
+        while (binding.recommendRecyclerView.itemDecorationCount > 0) {
+            binding.recommendRecyclerView.removeItemDecorationAt(0)
+        }
+
+        // 아이템 간격 12dp (마지막 제외), RTL 대응
+        binding.recommendRecyclerView.addItemDecoration(object : RecyclerView.ItemDecoration() {
+            override fun getItemOffsets(
+                outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State
+            ) {
+                val pos = parent.getChildAdapterPosition(view)
+                if (pos == RecyclerView.NO_POSITION) return
+
+                val isRtl = ViewCompat.getLayoutDirection(parent) == ViewCompat.LAYOUT_DIRECTION_RTL
+                val isLast = pos == state.itemCount - 1
+
+                val space = 12.dp
+
+                // 아이템 사이 간격만 부여
+                if (!isLast) {
+                    if (isRtl) outRect.left = space else outRect.right = space
+                } else {
+                    // 마지막 아이템은 간격 없음 (오른쪽 21dp 패딩이 ‘끝 여백’ 역할)
+                    outRect.set(0, 0, 0, 0)
+                }
+            }
+        })
 
         followingAdapter = FollowingAdapter(
             data = emptyList(),
