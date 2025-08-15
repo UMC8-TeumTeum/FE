@@ -5,7 +5,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="145dp"
     android:layout_height="146dp"
-    android:layout_marginEnd="12dp"
     app:cardBackgroundColor="#FFFFFF"
     app:cardCornerRadius="15dp"
     app:cardElevation="1dp">
