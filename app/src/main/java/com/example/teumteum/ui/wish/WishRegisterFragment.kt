@@ -53,7 +53,6 @@ class WishRegisterFragment : BottomSheetDialogFragment() {
 
         isFromWish = arguments?.getBoolean("isFromWish") ?: false
 
-//        viewModel.getWishCategories()
         setupUI()
         setupObservers()
     }

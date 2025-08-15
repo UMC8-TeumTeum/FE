@@ -21,7 +21,7 @@ import com.example.teumteum.R
 import com.example.teumteum.data.remote.activity.model.AssignWishRequest
 import com.example.teumteum.data.remote.todo.model.enums.ScheduleType
 import com.example.teumteum.databinding.DialogConfirmRegisterBinding
-import com.example.teumteum.databinding.FragmentFillingSetting02Binding
+import com.example.teumteum.databinding.FragmentWishSetting02Binding
 import com.example.teumteum.ui.main.HomeFragment
 import com.example.teumteum.ui.wish.viewModel.WishViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -34,7 +34,7 @@ import java.time.format.DateTimeFormatter
 @AndroidEntryPoint
 class WishSetting02Fragment : Fragment() {
 
-    private lateinit var binding: FragmentFillingSetting02Binding
+    private lateinit var binding: FragmentWishSetting02Binding
 
     private var selectedStartTime: String? = null
     private var selectedEndTime: String? = null
@@ -48,7 +48,7 @@ class WishSetting02Fragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentFillingSetting02Binding.inflate(inflater, container, false)
+        binding = FragmentWishSetting02Binding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -74,7 +74,7 @@ class WishSetting02Fragment : Fragment() {
         val startTime = arguments?.getString("startTime")
         val endTime = arguments?.getString("endTime")
 
-        binding.assignTimeSettingTv.text = selectedTime
+        binding.wishTimeSettingTv.text = selectedTime
 
         if (!startTime.isNullOrEmpty() && !endTime.isNullOrEmpty()) {
             binding.startChoiceTv.text = startTime
@@ -83,11 +83,11 @@ class WishSetting02Fragment : Fragment() {
             selectedEndTime = endTime
         }
 
-        binding.assignStartContainer.setOnClickListener {
+        binding.wishStartContainer.setOnClickListener {
             showCustomTimePicker(binding.startChoiceTv)
         }
 
-        binding.assignEndContainer.setOnClickListener {
+        binding.wishEndContainer.setOnClickListener {
             showCustomTimePicker(binding.endChoiceTv)
         }
 
@@ -213,11 +213,11 @@ class WishSetting02Fragment : Fragment() {
     }
 
     private fun setTitle(title: String){
-        binding.assignTitleTv.text = title
+        binding.wishTitleTv.text = title
     }
 
     private fun setTime(time: String){
-        binding.assignTimeTv.text = time
+        binding.wishTimeTv.text = time
     }
 
     private fun combineDateTime(date: String, timeHHmm: String): String {
