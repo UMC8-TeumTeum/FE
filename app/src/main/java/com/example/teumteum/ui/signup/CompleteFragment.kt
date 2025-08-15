@@ -26,6 +26,9 @@ class CompleteFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // 프로그래스바 설정
+        (activity as? SignUpActivity)?.setProgressBar(100)
+
         binding.completeBtn.setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, OnBoardingNicknameFragment())
