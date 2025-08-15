@@ -1,6 +1,7 @@
 package com.example.teumteum.ui.wish
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -290,7 +291,7 @@ class WishSetting03Fragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.assignSuccess.collect {
-                    Toast.makeText(requireContext(), "빈틈채우기에 성공하였습니다.", Toast.LENGTH_SHORT).show()
+                    Log.d("ASSIGN_FRAMENT", "빈틈채우기에 성공하였습니다.")
                     parentFragmentManager.setFragmentResult("assign", Bundle())
 
                     parentFragmentManager.beginTransaction()
