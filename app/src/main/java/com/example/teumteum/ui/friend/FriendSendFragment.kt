@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentFriendSendBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -43,9 +44,9 @@ class FriendSendFragment : Fragment() {
 
         // 버튼 클릭 시 FriendFragment로 이동
         binding.btnGoHome.setOnClickListener {
+            parentFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
             parentFragmentManager.beginTransaction()
                 .replace(R.id.main_frm, FriendFragment())
-                .addToBackStack(null)
                 .commit()
         }
     }
