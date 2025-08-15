@@ -26,7 +26,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentTodoEditBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -41,10 +40,6 @@ import com.example.teumteum.ui.calendar.IDateClickListener
 import com.example.teumteum.ui.calendar.MonthlyCalendarFragment
 
 import com.example.teumteum.ui.friend.viewModel.FriendViewModel
-import com.example.teumteum.ui.main.HomeFragment
-import com.example.teumteum.ui.main.data.TimeBlock
-import com.example.teumteum.ui.main.viewModel.HomeViewModel
-import com.example.teumteum.ui.myhome.viewModel.MyHomeViewModel
 import com.example.teumteum.ui.todo.adapter.TeumProfileAdapter
 import com.example.teumteum.ui.todo.viewModel.TodoViewModel
 import com.example.teumteum.utils.combineDateTime
@@ -874,7 +869,6 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
                 binding.publicToggle01Iv.isEnabled = false
                 binding.includeToggle01Iv.isEnabled = false
 
-//                binding.btnTodoDelete.isEnabled = false
                 binding.btnTodoSave.isEnabled = false
 
                 for (i in 0 until binding.alarmLayoutContainer.childCount) {
@@ -907,36 +901,12 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
                 binding.startTimeTv.setTextColor(deactiveColor)
                 binding.endDateTv.setTextColor(deactiveColor)
                 binding.endTimeTv.setTextColor(deactiveColor)
-//                binding.alarmIconIv.setColorFilter(deactiveColor)
-//                binding.alarmSet01Tv.setTextColor(deactiveColor)
-//                binding.alarmSet02Tv.setTextColor(deactiveColor)
-//                binding.addAlarmTv.setTextColor(deactiveColor)
-//                binding.publicIconIv.setColorFilter(deactiveColor)
-//                binding.publicSettingTv.setTextColor(deactiveColor)
-//                binding.includeIconIv.setColorFilter(deactiveColor)
-//                binding.includeReportTv.setTextColor(deactiveColor)
-//                binding.detailTextIv.setColorFilter(deactiveColor)
-//                binding.detailTextEt.setTextColor(deactiveColor)
-//                binding.detailTextEt.setHintTextColor(deactiveColor)
 
                 binding.todoTitleEt.isEnabled = false
                 binding.startDateTv.isEnabled = false
                 binding.startTimeTv.isEnabled = false
                 binding.endDateTv.isEnabled = false
                 binding.endTimeTv.isEnabled = false
-//                binding.alarmSet01Tv.isEnabled = false
-//                binding.alarmSet02Tv.isEnabled = false
-//                binding.addAlarmTv.isEnabled = false
-//                binding.btnPlus.isEnabled = false
-//                binding.detailTextEt.isEnabled = false
-
-//                binding.alarmToggle01Iv.isEnabled = false
-//                binding.alarmToggle02Iv.isEnabled = false
-//                binding.publicToggle01Iv.isEnabled = false
-//                binding.includeToggle01Iv.isEnabled = false
-
-//                binding.btnTodoDelete.isEnabled = false
-//                binding.btnTodoSave.isEnabled = false
 
                 for (i in 0 until binding.alarmLayoutContainer.childCount) {
                     val alarmView = binding.alarmLayoutContainer.getChildAt(i)
@@ -965,7 +935,7 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
                 // 수정 성공
                 launch {
                     viewModel.editSuccess.collect {
-                        Toast.makeText(requireContext(), "투두가 성공적으로 수정되었습니다.", Toast.LENGTH_SHORT).show()
+                        Log.d("TODO_EDIT_FRAMENT", "투두가 성공적으로 수정되었습니다.")
                         parentFragmentManager.setFragmentResult("todo_edit", Bundle())
                         dismissAllSheets()
                     }
@@ -974,7 +944,7 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
                 // 삭제 성공
                 launch {
                     viewModel.deleteSuccess.collect {
-                        Toast.makeText(requireContext(), "투두가 성공적으로 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+                        Log.d("TODO_EDIT_FRAMENT", "투두가 성공적으로 삭제되었습니다.")
                         parentFragmentManager.setFragmentResult("todo_delete", Bundle())
                         dismissAllSheets()
                     }
