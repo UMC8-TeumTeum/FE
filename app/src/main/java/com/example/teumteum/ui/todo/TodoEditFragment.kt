@@ -56,6 +56,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 import java.util.Locale
 
 @AndroidEntryPoint
@@ -773,8 +774,10 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
 
             binding.todoTitleEt.setText(todo.title)
 
-            val startDateTime = LocalDateTime.parse(todo.startTime)
-            val endDateTime = LocalDateTime.parse(todo.endTime)
+//            val startDateTime = LocalDateTime.parse(todo.startTime)
+//            val endDateTime = LocalDateTime.parse(todo.endTime)
+            val startDateTime = parseApiDateTime(todo.startTime)
+            val endDateTime   = parseApiDateTime(todo.endTime)
 
             val dateFormatter = DateTimeFormatter.ofPattern("M월 d일 (E)", Locale.KOREAN)
             val timeFormatter = DateTimeFormatter.ofPattern("a h:mm", Locale.KOREAN)
@@ -851,6 +854,7 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
             originalIncludeTeum = todo.includeTeum
             originalRemindAlarm = (todo.remindAlarm ?: emptyList()).map { it.alarm }
 
+            //반복일정은 삭제만 가능
             if (todo.type == ScheduleType.ROUTINE) {
                 val deactiveColor = ContextCompat.getColor(requireContext(), R.color.teumteum_deactive)
 
@@ -888,7 +892,7 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
                 binding.publicToggle01Iv.isEnabled = false
                 binding.includeToggle01Iv.isEnabled = false
 
-                binding.btnTodoDelete.isEnabled = false
+//                binding.btnTodoDelete.isEnabled = false
                 binding.btnTodoSave.isEnabled = false
 
                 for (i in 0 until binding.alarmLayoutContainer.childCount) {
@@ -909,6 +913,66 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
                 }
 
                 Toast.makeText(requireContext(), "반복일정은 편집할 수 없습니다.", Toast.LENGTH_SHORT).show()
+            }
+
+            //약속된 틈은 일부 수정 가능(공개 설정, 빈틈시간 기록 포함, 상세 내용)
+            if (todo.type == ScheduleType.TEUM) {
+                val deactiveColor = ContextCompat.getColor(requireContext(), R.color.teumteum_deactive)
+
+                binding.todoTitleEt.setTextColor(deactiveColor)
+                binding.timerIconIv.setColorFilter(deactiveColor)
+                binding.startDateTv.setTextColor(deactiveColor)
+                binding.startTimeTv.setTextColor(deactiveColor)
+                binding.endDateTv.setTextColor(deactiveColor)
+                binding.endTimeTv.setTextColor(deactiveColor)
+//                binding.alarmIconIv.setColorFilter(deactiveColor)
+//                binding.alarmSet01Tv.setTextColor(deactiveColor)
+//                binding.alarmSet02Tv.setTextColor(deactiveColor)
+//                binding.addAlarmTv.setTextColor(deactiveColor)
+//                binding.publicIconIv.setColorFilter(deactiveColor)
+//                binding.publicSettingTv.setTextColor(deactiveColor)
+//                binding.includeIconIv.setColorFilter(deactiveColor)
+//                binding.includeReportTv.setTextColor(deactiveColor)
+//                binding.detailTextIv.setColorFilter(deactiveColor)
+//                binding.detailTextEt.setTextColor(deactiveColor)
+//                binding.detailTextEt.setHintTextColor(deactiveColor)
+
+                binding.todoTitleEt.isEnabled = false
+                binding.startDateTv.isEnabled = false
+                binding.startTimeTv.isEnabled = false
+                binding.endDateTv.isEnabled = false
+                binding.endTimeTv.isEnabled = false
+//                binding.alarmSet01Tv.isEnabled = false
+//                binding.alarmSet02Tv.isEnabled = false
+//                binding.addAlarmTv.isEnabled = false
+//                binding.btnPlus.isEnabled = false
+//                binding.detailTextEt.isEnabled = false
+
+//                binding.alarmToggle01Iv.isEnabled = false
+//                binding.alarmToggle02Iv.isEnabled = false
+//                binding.publicToggle01Iv.isEnabled = false
+//                binding.includeToggle01Iv.isEnabled = false
+
+//                binding.btnTodoDelete.isEnabled = false
+//                binding.btnTodoSave.isEnabled = false
+
+                for (i in 0 until binding.alarmLayoutContainer.childCount) {
+                    val alarmView = binding.alarmLayoutContainer.getChildAt(i)
+
+                    if (alarmView is ViewGroup) {
+                        for (j in 0 until alarmView.childCount) {
+                            val child = alarmView.getChildAt(j)
+
+                            (child as? TextView)?.setTextColor(deactiveColor)
+                            (child as? SwitchCompat)?.apply {
+                                isEnabled = false
+                                trackDrawable = ContextCompat.getDrawable(context, R.drawable.style_toggle_disabled_btn)
+                                thumbDrawable = ContextCompat.getDrawable(context, R.drawable.style_toggle_disabled_thumb)
+                            }
+                        }
+                    }
+                }
+
             }
 
             parentFragmentManager.setFragmentResult("todo_get", Bundle())
@@ -943,5 +1007,20 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
             Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_SHORT).show()
         }
 
+    }
+
+    private fun parseApiDateTime(raw: String): LocalDateTime {
+        return try {
+            LocalDateTime.parse(raw) // 정상(0~23시)인 경우
+        } catch (e: DateTimeParseException) {
+            // 24:MM[:SS] 대응 (예: 2025-08-14T24:00 또는 2025-08-14T24:00:00)
+            val m = Regex("""^(\d{4}-\d{2}-\d{2})T(\d{2}):(\d{2})(?::(\d{2}))?$""").matchEntire(raw)
+                ?: throw e
+            val date = LocalDate.parse(m.groupValues[1])
+            val hour = m.groupValues[2].toInt()
+            val minute = m.groupValues[3].toInt()
+            val second = m.groupValues.getOrNull(4)?.takeIf { it.isNotEmpty() }?.toInt() ?: 0
+            if (hour == 24) date.plusDays(1).atTime(0, minute, second) else throw e
+        }
     }
 }
