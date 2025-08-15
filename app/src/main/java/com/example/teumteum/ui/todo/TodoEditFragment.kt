@@ -71,7 +71,6 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
 
     private val viewModel: TodoViewModel by activityViewModels()
     private val myHomeViewModel: MyHomeViewModel by activityViewModels()
-//    private val homeViewModel: HomeViewModel by activityViewModels()
 
     private val alarmLabelToMinutes = mapOf(
         "30분 전" to 30,
@@ -110,6 +109,16 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
             } else {
                 null
             }
+        }
+
+        val type = arguments?.getString("schedule_type")
+
+        binding.btnTodo.text = when (type) {
+            ScheduleType.TODO.toString() -> "투두"
+            ScheduleType.AI.toString() -> "AI 콘텐츠"
+            ScheduleType.TEUM.toString() -> "틈 약속"
+            ScheduleType.ROUTINE.toString() -> "투두"
+            else -> "투두"
         }
 
         // isAlarmOn 값에 따른 알림 바텀시트 변경

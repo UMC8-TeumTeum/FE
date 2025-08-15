@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.activity.model.ActivityAiResult
+import com.example.teumteum.data.remote.todo.model.enums.ScheduleType
 import com.example.teumteum.databinding.ItemWishlistBinding
 import com.example.teumteum.ui.activity.FillingSetting01Fragment
 
@@ -30,8 +31,8 @@ class AiRecommendRVAdapter( private var aiList: List<ActivityAiResult>, private 
         binding.fillButton.setOnClickListener {
             val fragment = FillingSetting01Fragment().apply {
                 arguments = Bundle().apply {
-                    putString("source", "FillingActivity")
-                    putString("id", item.id)
+                    putString("schedule_type", ScheduleType.AI.toString())
+                    putString("ai_id", item.id)
                     putString("title", binding.wishTitleTv.text.toString())
                     putString("time", binding.wishTimeTv.text.toString())
                 }

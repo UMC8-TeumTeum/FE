@@ -19,6 +19,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.activity.model.AssignAiRequest
 import com.example.teumteum.data.remote.activity.model.AssignWishRequest
+import com.example.teumteum.data.remote.todo.model.enums.ScheduleType
 import com.example.teumteum.databinding.DialogConfirmRegisterBinding
 import com.example.teumteum.databinding.FragmentFillingSetting03Binding
 import com.example.teumteum.ui.activity.viewModel.ActivityViewModel
@@ -39,8 +40,9 @@ class FillingSetting03Fragment : Fragment() {
     private var selectedEndTime: String? = null
     private var selectedDate: String? = null
 
-    private var idStr: String? = null
-    private val wishId: Long? get() = idStr?.toLongOrNull()
+    private var aiId: String? = null
+    private var wishId: Long? = null
+    private var scheduleType: String? = null
 
     private val viewModel: ActivityViewModel by activityViewModels()
 
@@ -61,33 +63,8 @@ class FillingSetting03Fragment : Fragment() {
         val time = arguments?.getString("time")
         setTime(time.toString())
 
-        val source = arguments?.getString("source")
-
-        binding.assignTv.text = when (source) {
-            "FillingActivity" -> "채움활동"
-            "Wishlist" -> "위시리스트"
-            else -> "채움활동"
-        }
-
-        binding.assignSelectTv.text = when (source) {
-            "FillingActivity" -> "선택한 시간에 활동을 등록할까요?"
-            "Wishlist" -> "선택한 시간에 위시를 등록할까요?"
-            else -> "선택한 시간에 활동을 등록할까요?"
-        }
-
-        binding.assignRegisterTv.text = when (source) {
-            "FillingActivity" -> "활동을 등록하면 오늘의 투두리스트에 추가돼요"
-            "Wishlist" -> "위시를 등록하면 오늘의 투두리스트에 추가돼요"
-            else -> "활동을 등록하면 오늘의 투두리스트에 추가돼요"
-        }
-
-        val rawId = arguments?.get("id") ?: arguments?.get("wishId")
-        idStr = when (rawId) {
-            is String -> rawId
-            is Long   -> rawId.toString()
-            is Int    -> rawId.toString()
-            else      -> null
-        }
+        aiId = arguments?.getString("ai_id")
+        wishId = arguments?.getLong("wish_id")
 
         // 바텀 내비게이션 숨기기
         val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
@@ -130,17 +107,12 @@ class FillingSetting03Fragment : Fragment() {
         }
 
         binding.registerBtn.setOnClickListener {
-            if (arguments?.containsKey("wishId") == true) {
-                val id = wishId ?: run {
-                    Toast.makeText(requireContext(), "위시 id가 없습니다.", Toast.LENGTH_SHORT).show()
-                    return@setOnClickListener
-                }
-                viewModel.assignWish(id, assignWishRequest(false))
-            } else {
+            if (arguments?.containsKey("wish_id") == true || wishId != null) {
+                wishId?.let { it1 -> viewModel.assignWish(it1, assignWishRequest(false)) }
+            } else if ((arguments?.containsKey("ai_id") == true || aiId != null)) {
                 viewModel.assignAi(assignAiRequest(false))
             }
         }
-
         setupObservers()
     }
 
@@ -249,6 +221,22 @@ class FillingSetting03Fragment : Fragment() {
         return "${date}T$timeHHmm"
     }
 
+    private fun assignAiRequest(isForce: Boolean): AssignAiRequest {
+        val startHHmm = binding.startChoiceTv.text.toString()
+        val endHHmm = binding.endChoiceTv.text.toString()
+
+        val date = selectedDate ?: LocalDate.now().format(DateTimeFormatter.ISO_DATE)
+        val startIso = combineDateTime(date, startHHmm)
+        val endIso = combineDateTime(date, endHHmm)
+
+        return AssignAiRequest(
+            id = aiId!!,
+            startTime = startIso,
+            endTime = endIso,
+            isForce = isForce
+        )
+    }
+
     private fun assignWishRequest(isForce: Boolean): AssignWishRequest {
         val startHHmm = binding.startChoiceTv.text.toString()
         val endHHmm = binding.endChoiceTv.text.toString()
@@ -264,22 +252,6 @@ class FillingSetting03Fragment : Fragment() {
         )
     }
 
-    private fun assignAiRequest(isForce: Boolean): AssignAiRequest {
-        val startHHmm = binding.startChoiceTv.text.toString()
-        val endHHmm = binding.endChoiceTv.text.toString()
-
-        val date = selectedDate ?: LocalDate.now().format(DateTimeFormatter.ISO_DATE)
-        val startIso = combineDateTime(date, startHHmm)
-        val endIso = combineDateTime(date, endHHmm)
-
-        return AssignAiRequest(
-            id = idStr ?: "",
-            startTime = startIso,
-            endTime = endIso,
-            isForce = isForce
-        )
-    }
-
     private fun showRegisterDialog() {
         val dialogBinding = DialogConfirmRegisterBinding.inflate(layoutInflater)
 
@@ -288,14 +260,9 @@ class FillingSetting03Fragment : Fragment() {
             .create()
 
         dialogBinding.assignConfirmTv.setOnClickListener {
-            if (arguments?.containsKey("wishId") == true) {
-                val id = wishId ?: run {
-                    Toast.makeText(requireContext(), "위시 ID가 없습니다.", Toast.LENGTH_SHORT).show()
-                    dialog.dismiss()
-                    return@setOnClickListener
-                }
-                viewModel.assignWish(id, assignWishRequest(true))
-            } else {
+            if (arguments?.containsKey("wish_id") == true || wishId != null) {
+                wishId?.let { it1 -> viewModel.assignWish(it1, assignWishRequest(true)) }
+            } else if ((arguments?.containsKey("ai_id") == true || aiId != null)) {
                 viewModel.assignAi(assignAiRequest(true))
             }
             dialog.dismiss()
@@ -352,8 +319,14 @@ class FillingSetting03Fragment : Fragment() {
                     Toast.makeText(requireContext(), "빈틈채우기에 성공하였습니다.", Toast.LENGTH_SHORT).show()
                     parentFragmentManager.setFragmentResult("assign", Bundle())
 
+                    val fragment = HomeFragment().apply {
+                        arguments = Bundle().apply {
+                            putString("schedule_type", ScheduleType.AI.toString())
+                        }
+                    }
+
                     parentFragmentManager.beginTransaction()
-                        .replace(R.id.main_frm, HomeFragment())
+                        .replace(R.id.main_frm, fragment)
                         .addToBackStack(null)
                         .commit()
                 }

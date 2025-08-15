@@ -1,4 +1,4 @@
-package com.example.teumteum.ui.activity
+package com.example.teumteum.ui.wish
 
 import android.os.Bundle
 import android.view.Gravity
@@ -17,13 +17,11 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.teumteum.R
-import com.example.teumteum.data.remote.activity.model.AssignAiRequest
 import com.example.teumteum.data.remote.activity.model.AssignWishRequest
-import com.example.teumteum.data.remote.todo.model.enums.ScheduleType
 import com.example.teumteum.databinding.DialogConfirmRegisterBinding
-import com.example.teumteum.databinding.FragmentFillingSetting02Binding
-import com.example.teumteum.ui.activity.viewModel.ActivityViewModel
+import com.example.teumteum.databinding.FragmentWishSetting03Binding
 import com.example.teumteum.ui.main.HomeFragment
+import com.example.teumteum.ui.wish.viewModel.WishViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
@@ -32,27 +30,23 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @AndroidEntryPoint
-class FillingSetting02Fragment : Fragment() {
+class WishSetting03Fragment : Fragment() {
 
-    private lateinit var binding: FragmentFillingSetting02Binding
+    private lateinit var binding: FragmentWishSetting03Binding
 
     private var selectedStartTime: String? = null
     private var selectedEndTime: String? = null
     private var selectedDate: String? = null
 
-    private var aiId: String? = null
     private var wishId: Long? = null
-
-    private var scheduleType: String? = null
-
-    private val viewModel: ActivityViewModel by activityViewModels()
+    private val viewModel: WishViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentFillingSetting02Binding.inflate(inflater, container, false)
+        binding = FragmentWishSetting03Binding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -64,10 +58,7 @@ class FillingSetting02Fragment : Fragment() {
         val time = arguments?.getString("time")
         setTime(time.toString())
 
-        aiId = arguments?.getString("ai_id")
         wishId = arguments?.getLong("wish_id")
-
-        scheduleType = arguments?.getString("schedule_type")
 
         // 바텀 내비게이션 숨기기
         val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
@@ -78,23 +69,14 @@ class FillingSetting02Fragment : Fragment() {
             ?: LocalDate.now().format(DateTimeFormatter.ISO_DATE)
 
         val selectedTime = arguments?.getString("selected_time")
-        val startTime = arguments?.getString("startTime")
-        val endTime = arguments?.getString("endTime")
 
-        binding.assignTimeSettingTv.text = selectedTime
+        binding.wishTimeSettingTv.text = selectedTime
 
-        if (!startTime.isNullOrEmpty() && !endTime.isNullOrEmpty()) {
-            binding.startChoiceTv.text = startTime
-            binding.endChoiceTv.text = endTime
-            selectedStartTime = startTime
-            selectedEndTime = endTime
-        }
-
-        binding.assignStartContainer.setOnClickListener {
+        binding.wishStartContainer.setOnClickListener {
             showCustomTimePicker(binding.startChoiceTv)
         }
 
-        binding.assignEndContainer.setOnClickListener {
+        binding.wishEndContainer.setOnClickListener {
             showCustomTimePicker(binding.endChoiceTv)
         }
 
@@ -119,10 +101,8 @@ class FillingSetting02Fragment : Fragment() {
         }
 
         binding.registerBtn.setOnClickListener {
-            if (arguments?.containsKey("wish_id") == true || wishId != null) {
-                wishId?.let { it1 -> viewModel.assignWish(it1, assignWishRequest(false)) }
-            } else if ((arguments?.containsKey("ai_id") == true || aiId != null)) {
-                viewModel.assignAi(assignAiRequest(false))
+            if (wishId != null) {
+                viewModel.assignWish(wishId!!, assignWishRequest(false))
             }
         }
         setupObservers()
@@ -184,6 +164,7 @@ class FillingSetting02Fragment : Fragment() {
                 selectedEndTime = timeText
             }
 
+            enableNextButton()
             dialog.dismiss()
         }
 
@@ -221,31 +202,15 @@ class FillingSetting02Fragment : Fragment() {
     }
 
     private fun setTitle(title: String){
-        binding.assignTitleTv.text = title
+        binding.wishTitleTv.text = title
     }
 
     private fun setTime(time: String){
-        binding.assignTimeTv.text = time
+        binding.wishTimeTv.text = time
     }
 
     private fun combineDateTime(date: String, timeHHmm: String): String {
         return "${date}T$timeHHmm"
-    }
-
-    private fun assignAiRequest(isForce: Boolean): AssignAiRequest {
-        val startHHmm = binding.startChoiceTv.text.toString()
-        val endHHmm = binding.endChoiceTv.text.toString()
-
-        val date = selectedDate ?: LocalDate.now().format(DateTimeFormatter.ISO_DATE)
-        val startIso = combineDateTime(date, startHHmm)
-        val endIso = combineDateTime(date, endHHmm)
-
-        return AssignAiRequest(
-            id = aiId!!,
-            startTime = startIso,
-            endTime = endIso,
-            isForce = isForce
-        )
     }
 
     private fun assignWishRequest(isForce: Boolean): AssignWishRequest {
@@ -271,10 +236,8 @@ class FillingSetting02Fragment : Fragment() {
             .create()
 
         dialogBinding.assignConfirmTv.setOnClickListener {
-            if (arguments?.containsKey("wish_id") == true || wishId != null) {
-                wishId?.let { it1 -> viewModel.assignWish(it1, assignWishRequest(true)) }
-            } else if ((arguments?.containsKey("ai_id") == true || aiId != null)) {
-                viewModel.assignAi(assignAiRequest(true))
+            if (wishId != null) {
+                viewModel.assignWish(wishId!!, assignWishRequest(true))
             }
             dialog.dismiss()
         }
@@ -303,6 +266,25 @@ class FillingSetting02Fragment : Fragment() {
         dialog.show()
     }
 
+    private fun enableNextButton() {
+        val allSet = selectedStartTime != null && selectedEndTime != null
+        binding.registerBtn.isEnabled = allSet
+
+        binding.registerBtn.setBackgroundColor(
+            if (allSet)
+                requireContext().getColor(R.color.text_primary)
+            else
+                requireContext().getColor(R.color.teumteum_bg)
+        )
+
+        binding.registerBtn.setTextColor(
+            if (allSet)
+                requireContext().getColor(R.color.white)
+            else
+                requireContext().getColor(R.color.text_primary)
+        )
+    }
+
     private fun setupObservers() {
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -311,14 +293,8 @@ class FillingSetting02Fragment : Fragment() {
                     Toast.makeText(requireContext(), "빈틈채우기에 성공하였습니다.", Toast.LENGTH_SHORT).show()
                     parentFragmentManager.setFragmentResult("assign", Bundle())
 
-                    val fragment = HomeFragment().apply {
-                        arguments = Bundle().apply {
-                            putString("schedule_type", ScheduleType.AI.toString())
-                        }
-                    }
-
                     parentFragmentManager.beginTransaction()
-                        .replace(R.id.main_frm, fragment)
+                        .replace(R.id.main_frm, HomeFragment())
                         .addToBackStack(null)
                         .commit()
                 }

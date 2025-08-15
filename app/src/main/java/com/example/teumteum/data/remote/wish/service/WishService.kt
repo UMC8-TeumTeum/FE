@@ -40,5 +40,5 @@ interface WishService {
     suspend fun getWishCategories(): Response<ApiResponse<List<WishCategories>>>
 
     @POST("/api/wishes/{wishId}/assign")
-    suspend fun fillWish(@Path("wishId") wishId: Long, @Body request: AssignWishRequest): Response<ApiResponse<FillWishResponse>>
+    suspend fun assignWish(@Path("wishId") wishId: Long, @Body request: AssignWishRequest): Response<ApiResponse<Unit>>
 }
