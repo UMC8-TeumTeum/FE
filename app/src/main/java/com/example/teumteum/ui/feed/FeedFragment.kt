@@ -9,8 +9,8 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.teumteum.R
-import com.example.teumteum.data.Contents
-import com.example.teumteum.data.Feed
+import com.example.teumteum.ui.feed.data.Contents
+import com.example.teumteum.ui.feed.data.Feed
 import com.example.teumteum.databinding.FragmentFeedBinding
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.tabs.TabLayout
@@ -186,7 +186,9 @@ class FeedFragment : Fragment() {
                 borderLink = "https://www.youtube.com/watch",
                 time = 10,
                 isBookMarked = true,
-                isFromFollowedUser = true
+                isFromFollowedUser = true,
+                userProfileImage = R.drawable.profile_minary,
+                contentsImage = R.drawable.content_car_wash
             ),
             Feed(
                 username = "애플",
@@ -198,7 +200,9 @@ class FeedFragment : Fragment() {
                 borderLink = "https://www.youtube.com/watch",
                 time = 20,
                 isBookMarked = false,
-                isFromFollowedUser = true
+                isFromFollowedUser = true,
+                userProfileImage = R.drawable.profile_apple,
+                contentsImage = R.drawable.content_apple_new_features
             ),
             Feed(
                 username = "해빗",
@@ -209,7 +213,9 @@ class FeedFragment : Fragment() {
                 borderLink = "https://www.youtube.com/watch",
                 time = 20,
                 isBookMarked = false,
-                isFromFollowedUser = true
+                isFromFollowedUser = true,
+                userProfileImage = R.drawable.profile_habit,
+                contentsImage = R.drawable.content_global_warming
             ),
             Feed(
                 username = "지니",
@@ -220,7 +226,9 @@ class FeedFragment : Fragment() {
                 borderLink = "https://www.youtube.com/watch",
                 time = 10,
                 isBookMarked = true,
-                isFromFollowedUser = false
+                isFromFollowedUser = false,
+                userProfileImage = R.drawable.profile_jini,
+                contentsImage = R.drawable.content_jini
             )
         )
     }
@@ -231,13 +239,17 @@ class FeedFragment : Fragment() {
                 username = "나루",
                 userField = "개발자",
                 title = "개발 용어 모음집",
-                time = 10
+                time = 10,
+                userProfileImage = R.drawable.profile_naru,
+                contentsImage = R.drawable.content_development_glossary
             ),
             Contents(
                 username = "결이",
                 userField = "개발자",
                 title = "디자이너와 소통하는 법",
-                time = 10
+                time = 10,
+                userProfileImage = R.drawable.profile_gyeoli,
+                contentsImage = R.drawable.content_designer_communication
             )
         )
     }
