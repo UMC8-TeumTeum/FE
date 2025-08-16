@@ -223,8 +223,10 @@ class FriendRoommateTimeFragment : Fragment() {
             Log.d("DEBUG", "after filterNotNull: ${cards.size}개")
 
             if (cards.isEmpty()) {
+                binding.possibleTime.text = "이때는 가능한 빈틈이 없어요"
                 currentFullDayBlocks = listOf(TimeBlock(0, 1440, TimeType.TODO))
             } else {
+                binding.possibleTime.text = "가능한 빈틈이 있어요"
                 currentFullDayBlocks = ChartUtils.buildBlocksFromTimeCardItems(cards)
             }
 
