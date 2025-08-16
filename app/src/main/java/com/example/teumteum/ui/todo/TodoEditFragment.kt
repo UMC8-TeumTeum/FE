@@ -34,6 +34,8 @@ import com.example.teumteum.data.remote.todo.model.EditTodoRequest
 import com.example.teumteum.data.remote.todo.model.ReminderAlarm
 import com.example.teumteum.data.remote.todo.model.enums.AlarmStatus
 import com.example.teumteum.data.remote.todo.model.enums.ScheduleType
+import com.example.teumteum.databinding.DialogConfirmAiContentDeleteBinding
+import com.example.teumteum.databinding.DialogConfirmTeumDeleteBinding
 import com.example.teumteum.databinding.DialogConfirmTodoDeleteBinding
 import com.example.teumteum.databinding.DialogConfirmTodoEditBinding
 import com.example.teumteum.ui.calendar.IDateClickListener
@@ -197,8 +199,14 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
         }
 
         binding.btnTodoDelete.setOnClickListener {
-            showTodoDummyDeleteDialog()
+            when (scheduleType) {
+                ScheduleType.TODO    -> showTodoDeleteDialog()
+                ScheduleType.TEUM    -> showTeumDeleteDialog()
+                ScheduleType.AI      -> showAiDeleteDialog()
+                else                 -> showTodoDeleteDialog()
+            }
         }
+
 
         binding.startDateTv.setOnClickListener {
             isStartDateSelected = true
@@ -597,51 +605,72 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
         return endTotalMinutes > startTotalMinutes
     }
 
-    private fun showTodoDummyDeleteDialog() {
+    private fun showTodoDeleteDialog() {
         val dialogBinding = DialogConfirmTodoDeleteBinding.inflate(layoutInflater)
-
         val dialog = AlertDialog.Builder(requireContext(), R.style.RoundedAlertDialog)
             .setView(dialogBinding.root)
             .create()
 
         dialogBinding.todoConfirmTv.setOnClickListener {
-//            viewModel.deleteTodo(todoId)
-//            dialog.dismiss()
-//            dismiss()
-            dialogBinding.todoConfirmTv.isEnabled = false // 중복 클릭 방지
-            dialog.dismiss() // 확인 다이얼로그만 닫기
-            val type = viewModel.todo.value?.type
-            if (type == ScheduleType.TEUM) {
-                // 친구와 약속된 TEUM이면 다른 API 호출
-                friendViewModel.cancelTeumSchedule(todoId.toInt())
-            } else {
-                // 기존 투두 삭제 API
-                viewModel.deleteTodo(todoId)
-            }
-        }
-
-        dialogBinding.todoCancelTv.setOnClickListener {
+            dialogBinding.todoConfirmTv.isEnabled = false
             dialog.dismiss()
+            viewModel.deleteTodo(todoId)
         }
+        dialogBinding.todoCancelTv.setOnClickListener { dialog.dismiss() }
 
+        applyDialogWindow(dialog)
+        dialog.show()
+    }
+
+    private fun showTeumDeleteDialog() {
+        val dialogBinding = DialogConfirmTeumDeleteBinding.inflate(layoutInflater)
+        val dialog = AlertDialog.Builder(requireContext(), R.style.RoundedAlertDialog)
+            .setView(dialogBinding.root)
+            .create()
+
+        dialogBinding.todoConfirmTv.setOnClickListener {
+            dialogBinding.todoConfirmTv.isEnabled = false
+            dialog.dismiss()
+            friendViewModel.cancelTeumSchedule(todoId.toInt())
+        }
+        dialogBinding.todoCancelTv.setOnClickListener { dialog.dismiss() }
+
+        applyDialogWindow(dialog)
+        dialog.show()
+    }
+
+    private fun showAiDeleteDialog() {
+        val dialogBinding = DialogConfirmAiContentDeleteBinding.inflate(layoutInflater)
+        val dialog = AlertDialog.Builder(requireContext(), R.style.RoundedAlertDialog)
+            .setView(dialogBinding.root)
+            .create()
+
+        dialogBinding.todoConfirmTv.setOnClickListener {
+            dialogBinding.todoConfirmTv.isEnabled = false
+            dialog.dismiss()
+            viewModel.deleteTodo(todoId)
+        }
+        dialogBinding.todoCancelTv.setOnClickListener { dialog.dismiss() }
+
+        applyDialogWindow(dialog)
+        dialog.show()
+    }
+
+    private fun applyDialogWindow(dialog: AlertDialog) {
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-
         dialog.setOnShowListener {
             dialog.window?.let { window ->
                 val layoutParams = window.attributes
-                layoutParams.width = (resources.displayMetrics.widthPixels * 0.85).toInt()
+                layoutParams.width  = (resources.displayMetrics.widthPixels * 0.85).toInt()
                 layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
                 layoutParams.gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
                 layoutParams.y = (resources.displayMetrics.heightPixels * 0.37).toInt()
                 layoutParams.dimAmount = 0.5f
                 window.attributes = layoutParams
-
                 window.setDimAmount(0.5f)
                 window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
             }
         }
-
-        dialog.show()
     }
 
     private fun showTodoCancelEditDialog() {
