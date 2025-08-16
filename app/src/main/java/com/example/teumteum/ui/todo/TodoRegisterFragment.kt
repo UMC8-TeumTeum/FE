@@ -94,11 +94,26 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val today = getTodayFormatted()
+        // HomeFragment에서 넘겨준 인자 읽기
+        val argDateStr = arguments?.getString("defaultDate")
 
-        // 시작/종료 날짜를 오늘 날짜로 초기화
-        binding.startDateTv.text = today
-        binding.endDateTv.text = today
+        // SharedPreferences에 저장된 선택 날짜(백업 경로)
+        val spDateStr = requireContext()
+            .getSharedPreferences("CALENDAR-APP", Context.MODE_PRIVATE)
+            .getString("SELECTED-DATE", null)
+
+        // 변환: arguments > sharedPref > 오늘(LocalDate.now())
+        val baseDate: LocalDate = listOfNotNull(argDateStr, spDateStr)
+            .firstOrNull()
+            ?.let { kotlin.runCatching { LocalDate.parse(it) }.getOrNull() }
+            ?: LocalDate.now()
+
+        val formatter = DateTimeFormatter.ofPattern("M월 d일 (E)", Locale.KOREAN)
+        val baseDateText = baseDate.format(formatter)
+
+        // 시작/종료 날짜 기본값 세팅
+        binding.startDateTv.text = baseDateText
+        binding.endDateTv.text = baseDateText
 
         selectedItems.forEach { label ->
             addAlarmItem(label)
