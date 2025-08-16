@@ -7,5 +7,5 @@ data class FollowingResult(
     @SerializedName("nickname") val nickname: String,
     @SerializedName("job") val job: String,
     @SerializedName("profileImageUrl") val profileImageUrl: String,
-    @SerializedName("isfavorite") val isFavorite: Boolean
+    @SerializedName("isFavorite") val isFavorite: Boolean
 )
