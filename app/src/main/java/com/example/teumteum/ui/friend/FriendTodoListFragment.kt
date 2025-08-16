@@ -93,16 +93,29 @@ class FriendTodoListFragment : Fragment() {
     private fun setupCalendarNavigation() {
         binding.homeCalendarPreviousDateIv.setOnClickListener {
             currentMonthOffset--
+            todoAdapter.submitList(emptyList())
             setupHeader()
             setupCalendarFragment()
             fetchDotDates()
+
+            // 원래 달로 복귀하면 리스트 자동 복구
+            if (currentMonthOffset == 0) {
+                selectedDate = today
+                onDateSelected(selectedDate)
+            }
         }
 
         binding.homeCalendarNextDateIv.setOnClickListener {
             currentMonthOffset++
+            todoAdapter.submitList(emptyList())
             setupHeader()
             setupCalendarFragment()
             fetchDotDates()
+
+            if (currentMonthOffset == 0) {
+                selectedDate = today
+                onDateSelected(selectedDate)
+            }
         }
     }
 

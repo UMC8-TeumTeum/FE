@@ -91,13 +91,25 @@ class FriendTeumRequestFragment : Fragment() {
     private fun setupNavigationButtons() {
         binding.homeCalendarPreviousDateIv.setOnClickListener {
             currentMonthOffset--
+            adapter.submitList(emptyList())
             fetchDotsForCurrentMonth()
             updateCalendarFragment()
+
+            if (currentMonthOffset == 0) {
+                selectedDate = today
+                onDateSelected(selectedDate)
+            }
         }
         binding.homeCalendarNextDateIv.setOnClickListener {
             currentMonthOffset++
+            adapter.submitList(emptyList())
             fetchDotsForCurrentMonth()
             updateCalendarFragment()
+
+            if (currentMonthOffset == 0) {
+                selectedDate = today
+                onDateSelected(selectedDate)
+            }
         }
     }
 

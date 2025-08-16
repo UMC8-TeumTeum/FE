@@ -93,16 +93,28 @@ class FriendPromiseFragment : Fragment() {
     private fun setupCalendarNavigation() {
         binding.homeCalendarPreviousDateIv.setOnClickListener {
             currentMonthOffset--
+            eventAdapter.updateData(emptyList())
             setupHeader()
             setupCalendarFragment()
             fetchDotDates()
+
+            if (currentMonthOffset == 0) {
+                selectedDate = today
+                onDateSelected(selectedDate)
+            }
         }
 
         binding.homeCalendarNextDateIv.setOnClickListener {
             currentMonthOffset++
+            eventAdapter.updateData(emptyList())
             setupHeader()
             setupCalendarFragment()
             fetchDotDates()
+
+            if (currentMonthOffset == 0) {
+                selectedDate = today
+                onDateSelected(selectedDate)
+            }
         }
     }
 
