@@ -119,20 +119,19 @@ class FriendRoommateTimeFragment : Fragment() {
             if (friend.userId > 0) viewModel.addSelectedFriend(friend)
         }
 
-        // 어댑터 연결
-        // [CHANGED] 어댑터 콜백에서 "제외 토글"을 호출하도록 변경 (adapter가 userId를 콜백으로 받는 버전 기준)
-        val adapter = FriendProfileAdapter(profileList) { userId -> // [CHANGED]
-            viewModel.toggleExclude(userId)                          // [ADDED]
+        // 어댑터 콜백에서 제외 토글을 호출하도록 변경
+        val adapter = FriendProfileAdapter(profileList) { userId ->
+            viewModel.toggleExclude(userId)
         }
         binding.friendProfileRv.layoutManager = LinearLayoutManager(requireContext())
         binding.friendProfileRv.adapter = adapter
 
-        // [ADDED] 제외 집합 변경 시 아이콘 싱크
+        // 제외 집합 변경 시 아이콘 싱크
         viewModel.excludedUserIds.observe(viewLifecycleOwner) { set ->
             adapter.setExcludedIds(set ?: emptySet())
         }
 
-        // [ADDED] 화면 진입 시 "고정 날짜" 1회 세팅 (ViewModel이 즉시 재조회 수행)
+        // 화면 진입 시 고정 날짜 세팅
         viewModel.setFixedDate(convertDateFormat(receivedDate))
 
         // PieChart 설정
