@@ -89,7 +89,10 @@ class Friend01SearchFragment : Fragment() {
 
     //  최근 검색어 리스트 업데이트
     private fun updateSearchList(keywords: List<String>) {
+        applyRecentSearchEmptyState(keywords.isEmpty())
         binding.recentSearchList.removeAllViews()
+
+        if (keywords.isEmpty()) return
 
         for (keyword in keywords) {
             val textView = TextView(requireContext()).apply {
@@ -117,6 +120,16 @@ class Friend01SearchFragment : Fragment() {
                 setBackgroundColor(Color.parseColor("#EAEAEA"))
             }
             binding.recentSearchList.addView(divider)
+        }
+    }
+
+    private fun applyRecentSearchEmptyState(isEmpty: Boolean) {
+        if (isEmpty) {
+            binding.recentSearchNotExistsCl.visibility = View.VISIBLE
+            binding.recentSearchList.visibility = View.GONE
+        } else {
+            binding.recentSearchNotExistsCl.visibility = View.GONE
+            binding.recentSearchList.visibility = View.VISIBLE
         }
     }
 
