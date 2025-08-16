@@ -702,6 +702,16 @@ class FriendViewModel @Inject constructor(
         getPossibleTimeWithFriend(body)
     }
 
+    // 제외 상태 초기화
+    fun clearExclusions() {
+        _excludedUserIds.value = mutableSetOf()
+    }
+
+    // 선택 친구 목록 초기화
+    fun clearSelectedFriends() {
+        _selectedFriends.value = mutableListOf()
+    }
+
     //틈 재요청
     fun resendTeumRequest(
         requestId: Int,

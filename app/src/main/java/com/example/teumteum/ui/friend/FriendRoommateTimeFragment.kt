@@ -67,9 +67,12 @@ class FriendRoommateTimeFragment : Fragment() {
         // 날짜 표시
         binding.date.text = receivedDate
 
+        // 화면 진입 시 매번 상태 초기화 (토글/선택 모두 리셋)
+        viewModel.clearExclusions()
+        viewModel.clearSelectedFriends()
+
         // RecyclerView에 들어갈 리스트
         val profileList = mutableListOf<FriendProfileResult>()
-
         val addedFriends = arguments?.getParcelableArrayList<FriendProfileResult>("addedFriends") ?: emptyList()
 
         // 1. 나
