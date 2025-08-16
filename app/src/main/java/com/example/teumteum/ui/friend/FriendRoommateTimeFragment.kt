@@ -99,33 +99,38 @@ class FriendRoommateTimeFragment : Fragment() {
         // 선택한 친구들 추가
         profileList.addAll(addedFriends)
 
+        // [ADDED] ViewModel의 "선택 친구" 목록에 대상들 등록 (내 자신 -1은 제외)
+        if (targetUserId > 0) {
+            viewModel.addSelectedFriend(
+                FriendProfileResult(
+                    userId = targetUserId,
+                    name = targetNickname,
+                    profileImageUrl = targetProfileUrl,
+                    field = "",
+                    following = false,
+                    favorite = false
+                )
+            )
+        }
+        addedFriends.forEach { friend ->
+            if (friend.userId > 0) viewModel.addSelectedFriend(friend)
+        }
+
         // 어댑터 연결
-        val adapter = FriendProfileAdapter(profileList) { profile ->
-            // sendButton 클릭 시 동작
+        // [CHANGED] 어댑터 콜백에서 "제외 토글"을 호출하도록 변경 (adapter가 userId를 콜백으로 받는 버전 기준)
+        val adapter = FriendProfileAdapter(profileList) { userId -> // [CHANGED]
+            viewModel.toggleExclude(userId)                          // [ADDED]
         }
         binding.friendProfileRv.layoutManager = LinearLayoutManager(requireContext())
         binding.friendProfileRv.adapter = adapter
 
+        // [ADDED] 제외 집합 변경 시 아이콘 싱크
+        viewModel.excludedUserIds.observe(viewLifecycleOwner) { set ->
+            adapter.setExcludedIds(set ?: emptySet())
+        }
 
-        //시간표 조회를 위한 요청 생성
-        val userIds: List<Int> = buildList {
-            if (targetUserId > 0) add(targetUserId)
-            addedFriends.asSequence()
-                .map { it.userId }
-                .filter { it > 0 }
-                .forEach { add(it) }
-        }.distinct()
-
-        // 요청 객체 생성
-        val request = PossibleTimeRequest(
-            userIds = userIds,
-            date = convertDateFormat(receivedDate)
-        )
-
-        Log.d("TIME_REQUEST", request.toString())
-        // 호출
-        viewModel.getPossibleTimeWithFriend(request)
-
+        // [ADDED] 화면 진입 시 "고정 날짜" 1회 세팅 (ViewModel이 즉시 재조회 수행)
+        viewModel.setFixedDate(convertDateFormat(receivedDate))
 
         // PieChart 설정
         ChartUtils.setupPieChart(binding.clockChart)
