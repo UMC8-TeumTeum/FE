@@ -117,13 +117,8 @@ class WishlistEditFragment() : Fragment() {
                             ?: emptyList()
                     viewModel.updateWishlistItems(updatedList)
 
-                    // 삭제 결과 전달
                     parentFragmentManager.setFragmentResult("wish_delete", Bundle())
-
-                    // 위시리스트 화면으로 이동
-                    parentFragmentManager.beginTransaction()
-                        .replace(R.id.main_frm, WishlistFragment())
-                        .commit()
+                    parentFragmentManager.popBackStack()
                 }
             }
         }
