@@ -83,6 +83,9 @@ class FriendTeumRequestFragment : Fragment() {
 
         // 최초 달력 그리기
         updateCalendarFragment()
+
+        // 진입 시 오늘 데이터 로드
+        onDateSelected(selectedDate)
     }
 
     private fun setupNavigationButtons() {
@@ -109,11 +112,7 @@ class FriendTeumRequestFragment : Fragment() {
     // 날짜 클릭 리스너: 선택 강조만 (리스트는 API 준비되면 연결)
     private val onClickListener = object : IDateClickListener {
         override fun onClickDate(date: LocalDate) {
-            selectedDate = date
-            updateCalendarFragment()
-
-            val dateStr = date.format(java.time.format.DateTimeFormatter.ISO_DATE)
-            viewModel.loadTeumRequestsByDate(dateStr) // 날짜별 요청 API 호출
+            onDateSelected(date)
         }
     }
 
@@ -139,8 +138,17 @@ class FriendTeumRequestFragment : Fragment() {
             .commit()
     }
 
+    private fun onDateSelected(date: LocalDate) {
+        selectedDate = date
+        updateCalendarFragment()
+
+        val dateStr = date.format(java.time.format.DateTimeFormatter.ISO_DATE)
+        viewModel.loadTeumRequestsByDate(dateStr)
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
+
 }

@@ -73,6 +73,8 @@ class FriendPromiseFragment : Fragment() {
                 showPromiseDetailBottomSheet(it, lastClickedScheduleId, isPast) //  스케줄 ID 함께 전달
             }
         }
+
+        onDateSelected(selectedDate)
     }
 
     private fun setupHeader() {
@@ -110,9 +112,7 @@ class FriendPromiseFragment : Fragment() {
             position = Int.MAX_VALUE / 2 + currentMonthOffset,
             onClickListener = object : IDateClickListener {
                 override fun onClickDate(date: LocalDate) {
-                    selectedDate = date
-                    val dateStr = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-                    viewModel.fetchScheduledTeumList(dateStr)
+                    onDateSelected(selectedDate)
                 }
             },
             showDot = true,
@@ -128,6 +128,12 @@ class FriendPromiseFragment : Fragment() {
         childFragmentManager.beginTransaction()
             .replace(binding.calendarContainer.id, calendarFragment)
             .commit()
+    }
+
+    private fun onDateSelected(date: LocalDate) {
+        selectedDate = date
+        val dateStr = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        viewModel.fetchScheduledTeumList(dateStr)
     }
 
     private fun fetchDotDates() {
