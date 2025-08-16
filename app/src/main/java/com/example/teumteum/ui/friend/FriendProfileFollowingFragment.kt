@@ -55,10 +55,11 @@ class FriendProfileFollowingFragment : Fragment() {
             .error(R.drawable.gray_teum)
             .into(binding.profileIv)
 
-        //  빈틈 시간 조회
         if (targetUserId != -1) {
+            viewModel.getFriendProfile(targetUserId)
             viewModel.loadFriendTeumTime(targetUserId)
-            viewModel.loadSharedTeumTime(targetUserId)   //  서로의(함께한) 시간 추가
+            viewModel.loadSharedTeumTime(targetUserId)
+            viewModel.fetchRecentPublicTodos(targetUserId)
         }
 
         //  빈틈 시간 옵저브
@@ -69,11 +70,6 @@ class FriendProfileFollowingFragment : Fragment() {
         // 서로의 빈틈(함께한) 시간
         viewModel.sharedTeumTimeText.observe(viewLifecycleOwner) { text ->
             binding.nicknameTv?.text = text
-        }
-
-        // 프로필/시간 조회 아래에 붙이기
-        if (targetUserId != -1) {
-            viewModel.fetchRecentPublicTodos(targetUserId)
         }
 
         // 뒤로가기 버튼 클릭 시
@@ -91,7 +87,7 @@ class FriendProfileFollowingFragment : Fragment() {
             }
         }
 
-        // star_btn 클릭 처리
+        // star_btn 클릭 처리 (ViewModel 공용 토글 사용)
         binding.starBtn.setOnClickListener {
             if (targetUserId != -1) {
                 viewModel.toggleFavorite(targetUserId)
@@ -177,12 +173,19 @@ class FriendProfileFollowingFragment : Fragment() {
             }
         }
 
-        // favoriteMap 관찰해서 버튼 아이콘 바꾸기
-        viewModel.favoriteMap.observe(viewLifecycleOwner) { map ->
-            val isFav = map[targetUserId] ?: false
-            binding.starBtn.setImageResource(
-                if (isFav) R.drawable.friend_profile_fill_star else R.drawable.friend_profile_star
-            )
+        // 프로필 LiveData도 관찰해서 서버 favorite 수신 시 반영
+        viewModel.friendProfile.observe(viewLifecycleOwner) { profile ->
+            if (profile.userId == targetUserId) {
+                binding.profileNicknameTv.text = profile.name
+                binding.profileFieldTv.text = profile.field
+                Glide.with(requireContext()).load(profile.profileImageUrl)
+                updateStarIcon() // 아래 함수
+            }
+        }
+
+        // favoriteMap(오버라이드) 변경시에도 별 갱신
+        viewModel.favoriteMap.observe(viewLifecycleOwner) {
+            updateStarIcon()
         }
 
         //  최근 공개 투두 관찰
@@ -197,6 +200,22 @@ class FriendProfileFollowingFragment : Fragment() {
                 Log.d("FRIEND_PROFILE_FOLLOWING_FRAGMENT", msg.toString())
             }
         }
+    }
+
+    // 최종 표시값 계산: 오버라이드 > 서버값 > 기본(false)
+    private fun updateStarIcon() {
+        val serverFav = viewModel.friendProfile.value
+            ?.takeIf { it.userId == targetUserId }
+            ?.favorite
+
+        val overrideFav = viewModel.favoriteMap.value?.get(targetUserId)
+
+        val displayFav = overrideFav ?: serverFav ?: false
+
+        binding.starBtn.setImageResource(
+            if (displayFav) R.drawable.friend_profile_fill_star
+            else R.drawable.friend_profile_star
+        )
     }
 
     //  화면 내에 추가

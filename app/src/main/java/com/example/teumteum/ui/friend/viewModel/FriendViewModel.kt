@@ -165,7 +165,10 @@ class FriendViewModel @Inject constructor(
     private val _friendProfile = MutableLiveData<FriendProfileResult>()
     val friendProfile: LiveData<FriendProfileResult> get() = _friendProfile
 
-    fun getFriendProfile(userId: Int, onResult: (FriendProfileResult) -> Unit) {
+    fun getFriendProfile(
+        userId: Int,
+        onResult: (FriendProfileResult) -> Unit = {}
+    ) {
         viewModelScope.launch {
             repository.getFriendProfile(userId)
                 .onSuccess { profile ->
@@ -178,6 +181,7 @@ class FriendViewModel @Inject constructor(
                 }
         }
     }
+
 
     private val _teumRequestTitle = MutableLiveData<String>("")
     val teumRequestTitle: LiveData<String> get() = _teumRequestTitle
@@ -495,59 +499,53 @@ class FriendViewModel @Inject constructor(
     val favoriteMessage: LiveData<String> get() = _favoriteMessage
 
     fun toggleFavorite(userId: Int) {
-        val before = _favoriteMap.value?.get(userId) ?: false
-        val after = !before
+        // 1) 지금 화면에 보이는 값을 기준으로 before 산정
+        val current = _followingUsers.value
+            ?.firstOrNull { it.userId == userId }
+            ?.isFavorite ?: false
+        val after = !current
 
-        // 즐겨찾기 맵 즉시 반영
+        // 2) 낙관적 UI 업데이트 (리스트 갱신 + 정렬)
+        val collator = Collator.getInstance(Locale.KOREAN).apply { strength = Collator.PRIMARY }
+        _followingUsers.value = _followingUsers.value
+            ?.map { if (it.userId == userId) it.copy(isFavorite = after) else it }
+            ?.sortedWith(Comparator { a, b ->
+                if (a.isFavorite != b.isFavorite) {
+                    if (a.isFavorite) -1 else 1
+                } else {
+                    collator.compare(a.nickname, b.nickname)
+                }
+            })
+
+        // 3) 오버라이드 맵 갱신: "사용자가 바꾼 값만" 저장
         _favoriteMap.value = _favoriteMap.value.orEmpty().toMutableMap().apply {
             put(userId, after)
         }
 
-        // 즐겨찾기 → 닉네임 가나다 정렬 (한글 Collator 사용)
-        val collator = Collator.getInstance(Locale.KOREAN).apply { strength = Collator.PRIMARY }
-        _followingUsers.value = _followingUsers.value
-            ?.map { item -> if (item.userId == userId) item.copy(isFavorite = after) else item }
-            ?.sortedWith(Comparator { a, b ->
-                if (a.isFavorite != b.isFavorite) {
-                    if (a.isFavorite) -1 else 1
-                } else {
-                    collator.compare(a.nickname, b.nickname)
-                }
-            })
-
+        // 4) 서버 반영
         viewModelScope.launch {
             repository.setFavorite(userId, after)
                 .onSuccess { resp ->
-                    if (resp.userId == userId && resp.isFavorite == after) {
-                        _favoriteMessage.value = if (after) {
-                            Log.d("FAVORITE_FRAGMENT", "즐겨찾기 성공 → userId=$userId")
-                            "즐겨찾기에 추가했습니다."
-                        } else {
-                            Log.d("FAVORITE_FRAGMENT", "즐겨찾기 해제 성공 → userId=$userId")
-                            "즐겨찾기를 해제했습니다."
-                        }
+                    val ok = resp.userId == userId && resp.isFavorite == after
+                    if (ok) {
+                        _favoriteMessage.value = if (after) "즐겨찾기에 추가했습니다." else "즐겨찾기를 해제했습니다."
                     } else {
-                        rollbackFavorite(userId, before)
+                        rollbackFavorite(userId, current)   // 실패 시 복구
                         _favoriteMessage.value = "즐겨찾기 변경 실패"
-                        Log.e("FAVORITE_FRAGMENT", "비정상 응답 → userId=$userId")
                     }
                 }
                 .onFailure { e ->
-                    rollbackFavorite(userId, before)
+                    rollbackFavorite(userId, current)
                     _favoriteMessage.value = "즐겨찾기 변경 실패 (${e.message})"
-                    Log.e("FAVORITE_FRAGMENT", "서버 요청 실패 → userId=$userId", e)
                 }
         }
     }
 
-    private fun rollbackFavorite(userId: Int, before: Boolean) {
-        _favoriteMap.value = _favoriteMap.value.orEmpty().toMutableMap().apply {
-            put(userId, before)
-        }
-
+    private fun rollbackFavorite(userId: Int, oldValue: Boolean) {
+        // 리스트 되돌리기
         val collator = Collator.getInstance(Locale.KOREAN).apply { strength = Collator.PRIMARY }
         _followingUsers.value = _followingUsers.value
-            ?.map { item -> if (item.userId == userId) item.copy(isFavorite = before) else item }
+            ?.map { if (it.userId == userId) it.copy(isFavorite = oldValue) else it }
             ?.sortedWith(Comparator { a, b ->
                 if (a.isFavorite != b.isFavorite) {
                     if (a.isFavorite) -1 else 1
@@ -555,7 +553,13 @@ class FriendViewModel @Inject constructor(
                     collator.compare(a.nickname, b.nickname)
                 }
             })
+
+        // 오버라이드 맵도 되돌리기
+        _favoriteMap.value = _favoriteMap.value.orEmpty().toMutableMap().apply {
+            put(userId, oldValue)
+        }
     }
+
 
     // 14. 팔로워 목록 조회
     private val _followerUsers = MutableLiveData<List<FollowerResult>>()
