@@ -11,7 +11,7 @@ class ClockVPAdapter(
     private val onBindPage: (chart: PieChart, half: ClockHalf) -> Unit
 ) : RecyclerView.Adapter<ClockVPAdapter.ViewHolder>() {
 
-    private val halves = listOf(ClockHalf.PM, ClockHalf.AM) // 0=PM, 1=AM
+    private val halves = listOf(ClockHalf.AM, ClockHalf.PM) // 0=AM, 1=PM
 
     inner class ViewHolder(val binding: ItemClockPageBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -31,7 +31,7 @@ class ClockVPAdapter(
     override fun getItemCount(): Int = halves.size
 
     // 주어진 Half의 페이지 인덱스
-    fun positionOf(half: ClockHalf): Int = if (half == ClockHalf.AM) 1 else 0
+    fun positionOf(half: ClockHalf): Int = if (half == ClockHalf.AM) 0 else 1
 
     fun refresh(half: ClockHalf) {
         notifyItemChanged(positionOf(half))

@@ -244,8 +244,8 @@ class HomeFragment : Fragment(), IDateClickListener {
         binding.clockPager.adapter = clockAdapter
         binding.clockPager.offscreenPageLimit = 1
 
-        val amPos = clockAdapter.positionOf(ClockHalf.AM) // 1
-        val pmPos = clockAdapter.positionOf(ClockHalf.PM) // 0
+        val amPos = clockAdapter.positionOf(ClockHalf.AM) // 0
+        val pmPos = clockAdapter.positionOf(ClockHalf.PM) // 1
 
         binding.clockPager.setCurrentItem(amPos, false)
 

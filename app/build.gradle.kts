@@ -71,9 +71,6 @@ dependencies {
     // 친구 인디케이터
     implementation ("com.tbuonomo:dotsindicator:4.3")
 
-    // 달력
-    implementation ("com.jakewharton.threetenabp:threetenabp:1.4.5")
-
     // 프로필
     implementation ("com.google.android.flexbox:flexbox:3.0.0")
 
