@@ -25,9 +25,9 @@ class FriendTeumRequestFragment : Fragment() {
 
     private val viewModel: FriendViewModel by activityViewModels()
 
-    private var selectedDate: LocalDate? = null
+    private var selectedDate: LocalDate = LocalDate.now()
     private val today: LocalDate = LocalDate.now()
-    private val baseDate: LocalDate by lazy { getSavedDateOrToday(requireContext()) }
+    private val baseDate: LocalDate = LocalDate.now()
     private var currentMonthOffset = 0
 
     private var requestDotDates: HashSet<LocalDate> = hashSetOf()

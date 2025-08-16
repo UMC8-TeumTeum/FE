@@ -28,12 +28,12 @@ class FriendTodoListFragment : Fragment() {
 
     private val viewModel: FriendViewModel by viewModels()
 
-    private val baseDate: LocalDate by lazy { getSavedDateOrToday(requireContext()) }
+    private val baseDate: LocalDate = LocalDate.now()
     private var currentMonthOffset = 0
     private val today = LocalDate.now()
 
     private lateinit var todoAdapter: PublicTodoAdapter
-    private var selectedDate: LocalDate? = null
+    private var selectedDate: LocalDate = LocalDate.now()
     private var friendUserId: Int = -1
 
     override fun onCreateView(

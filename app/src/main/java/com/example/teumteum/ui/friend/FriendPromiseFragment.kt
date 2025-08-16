@@ -11,7 +11,6 @@ import com.example.teumteum.ui.calendar.FriendMonthlyCalendarFragment
 import com.example.teumteum.ui.friend.adapter.TeumEventAdapter
 import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.example.teumteum.ui.main.MainActivity
-import com.example.teumteum.utils.getSavedDateOrToday
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -25,12 +24,12 @@ class FriendPromiseFragment : Fragment() {
 
     private val viewModel: FriendViewModel by viewModels()
 
-    private val baseDate: LocalDate by lazy { getSavedDateOrToday(requireContext()) }
+    private val baseDate: LocalDate = LocalDate.now()
     private var currentMonthOffset = 0
     private val today = LocalDate.now()
 
     private lateinit var eventAdapter: TeumEventAdapter
-    private var selectedDate: LocalDate? = null
+    private var selectedDate: LocalDate = LocalDate.now()
     private var lastClickedScheduleId: Int = -1 //  클릭한 스케줄 ID 저장
 
     override fun onCreateView(

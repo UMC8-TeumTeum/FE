@@ -22,11 +22,12 @@ class FriendMonthlyCalendarFragment : Fragment() {
     private lateinit var selectedDate: LocalDate
     private var dotDates: List<LocalDate> = emptyList()
 
-
     private var position: Int = 0
     private lateinit var onClickListener: IDateClickListener
-
     private var showDot: Boolean = true
+
+    private lateinit var displayMonthDate: LocalDate
+    private lateinit var today: LocalDate
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,21 +35,19 @@ class FriendMonthlyCalendarFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentMonthlyCalendarBinding.inflate(inflater, container, false)
-
-        val baseDate = getSavedDateOrToday(requireContext())
-        val startPosition = Int.MAX_VALUE / 2
-        val monthOffset = position - startPosition
-        val displayMonthDate = baseDate.plusMonths(monthOffset.toLong())
-
-        selectedDate = getSavedDateOrToday(requireContext())
         setupCalendar(displayMonthDate)
-
         return binding.root
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         showDot = arguments?.getBoolean("showDot", true) ?: true
+
+        val args = requireArguments()
+        displayMonthDate = args.getSerializable("displayDate") as LocalDate
+        selectedDate = (args.getSerializable("selectedDate") as? LocalDate)
+            ?: (args.getSerializable("today") as LocalDate)
+        today = args.getSerializable("today") as LocalDate
     }
 
     private fun setupCalendar(displayMonthDate: LocalDate) {
@@ -81,7 +80,6 @@ class FriendMonthlyCalendarFragment : Fragment() {
 
     private fun renderCalendar(displayMonthDate: LocalDate) {
         val inflater = LayoutInflater.from(context)
-        val today = LocalDate.now()
         val currentMonth = displayMonthDate.monthValue
 
         binding.monthlyCalendarGrid.removeAllViews()
@@ -99,6 +97,8 @@ class FriendMonthlyCalendarFragment : Fragment() {
                 dotView.visibility = View.INVISIBLE
             } else {
                 dayText.text = date.dayOfMonth.toString()
+
+                // 초기 렌더링에서도 선택/오늘 스타일 바로 적용
                 updateDayUi(requireContext(), dayText, date, selectedDate, today)
 
                 if (date.monthValue != currentMonth) {
@@ -108,10 +108,8 @@ class FriendMonthlyCalendarFragment : Fragment() {
                 dotView.visibility =
                     if (showDot && dotDates.any { it.isEqual(date) }) View.VISIBLE else View.INVISIBLE
 
-
                 dayText.setOnClickListener {
                     selectedDate = date
-                    saveSelectedDate(requireContext(), date)
                     renderCalendar(displayMonthDate)
                     onClickListener.onClickDate(date)
                 }
@@ -125,24 +123,25 @@ class FriendMonthlyCalendarFragment : Fragment() {
                 setMargins(0, 6, 1, 6)
             }
             cellView.layoutParams = params
-
             binding.monthlyCalendarGrid.addView(cellView)
         }
     }
 
     companion object {
-        fun newInstance(position: Int, onClickListener: IDateClickListener, showDot: Boolean = true, dotDates: List<LocalDate> = emptyList()
+        fun newInstance(
+            position: Int,
+            onClickListener: IDateClickListener,
+            showDot: Boolean = true,
+            dotDates: List<LocalDate> = emptyList()
         ): FriendMonthlyCalendarFragment {
-            val fragment = FriendMonthlyCalendarFragment()
-            fragment.position = position
-            fragment.onClickListener = onClickListener
-            fragment.dotDates = dotDates
-            fragment.arguments = Bundle().apply {
-                putBoolean("showDot", showDot)
+            return FriendMonthlyCalendarFragment().also { fragment ->
+                fragment.position = position
+                fragment.onClickListener = onClickListener
+                fragment.dotDates = dotDates
+                fragment.arguments = Bundle().apply {
+                    putBoolean("showDot", showDot)
+                }
             }
-            return fragment
         }
     }
-
-
 }
