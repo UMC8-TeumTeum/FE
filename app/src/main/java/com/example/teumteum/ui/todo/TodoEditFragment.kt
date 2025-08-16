@@ -96,6 +96,9 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
     private var originalIncludeTeum: Boolean = false
     private var originalRemindAlarm: List<Int> = emptyList()
 
+    private var _normalTextColor: Int? = null
+    private var _normalHintColor: Int? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         todoId = arguments?.getLong("todo_id") ?: -1L
@@ -470,8 +473,14 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
             else -> {
                 val layout = layoutInflater.inflate(R.layout.item_alarm, binding.alarmLayoutContainer, false)
                 val labelText = layout.findViewById<TextView>(R.id.alarm_set_tv)
+                val toggle = layout.findViewById<SwitchCompat>(R.id.alarm_toggle_tv)
+
                 labelText.text = label
                 layout.tag = label
+
+                toggle.trackDrawable = ContextCompat.getDrawable(toggle.context, R.drawable.style_toggle_btn)?.mutate()
+                toggle.thumbDrawable = ContextCompat.getDrawable(toggle.context, R.drawable.style_toggle_thumb)?.mutate()
+
                 binding.alarmLayoutContainer.addView(layout)
             }
         }
@@ -778,10 +787,74 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
         viewModel.todo.observe(viewLifecycleOwner) { todo ->
             if (todo == null) return@observe
 
+            // 기본 색 저장
+            if (_normalTextColor == null) {
+                _normalTextColor = binding.todoTitleEt.currentTextColor
+                _normalHintColor = binding.detailTextEt.currentHintTextColor
+            }
+
+            run {
+                listOf(
+                    binding.todoTitleEt, binding.startDateTv, binding.startTimeTv,
+                    binding.endDateTv, binding.endTimeTv, binding.alarmSet01Tv,
+                    binding.alarmSet02Tv, binding.addAlarmTv, binding.btnPlus,
+                    binding.detailTextEt, binding.btnTodoSave
+                ).forEach { v ->
+                    v.isEnabled = true
+                    v.alpha = 1f
+                }
+
+                // 텍스트/힌트 색 저장
+                val nt = _normalTextColor ?: binding.todoTitleEt.currentTextColor
+                val nh = _normalHintColor ?: binding.detailTextEt.currentHintTextColor
+
+                binding.timerIconIv.clearColorFilter()
+                binding.alarmIconIv.clearColorFilter()
+                binding.publicIconIv.clearColorFilter()
+                binding.includeIconIv.clearColorFilter()
+                binding.detailTextIv.clearColorFilter()
+
+                binding.todoTitleEt.setTextColor(nt)
+                binding.startDateTv.setTextColor(nt)
+                binding.startTimeTv.setTextColor(nt)
+                binding.endDateTv.setTextColor(nt)
+                binding.endTimeTv.setTextColor(nt)
+                binding.alarmSet01Tv.setTextColor(nt)
+                binding.alarmSet02Tv.setTextColor(nt)
+                binding.addAlarmTv.setTextColor(nt)
+                binding.publicSettingTv.setTextColor(nt)
+                binding.includeReportTv.setTextColor(nt)
+                binding.detailTextEt.setTextColor(nt)
+                binding.detailTextEt.setHintTextColor(nh)
+
+                // 토글 저장
+                listOf(
+                    binding.alarmToggle01Iv, binding.alarmToggle02Iv,
+                    binding.publicToggle01Iv, binding.includeToggle01Iv
+                ).forEach { t ->
+                    t.isEnabled = true
+                    t.trackDrawable = ContextCompat.getDrawable(t.context, R.drawable.style_toggle_btn)?.mutate()
+                    t.thumbDrawable = ContextCompat.getDrawable(t.context, R.drawable.style_toggle_thumb)?.mutate()
+                }
+
+                // 동적 알람 뷰들 저장
+                for (i in 0 until binding.alarmLayoutContainer.childCount) {
+                    val vg = binding.alarmLayoutContainer.getChildAt(i) as? ViewGroup ?: continue
+                    for (j in 0 until vg.childCount) {
+                        when (val child = vg.getChildAt(j)) {
+                            is TextView -> child.setTextColor(nt)
+                            is SwitchCompat -> {
+                                child.isEnabled = true
+                                child.trackDrawable = ContextCompat.getDrawable(child.context, R.drawable.style_toggle_btn)?.mutate()
+                                child.thumbDrawable = ContextCompat.getDrawable(child.context, R.drawable.style_toggle_thumb)?.mutate()
+                            }
+                        }
+                    }
+                }
+            }
+
             binding.todoTitleEt.setText(todo.title)
 
-//            val startDateTime = LocalDateTime.parse(todo.startTime)
-//            val endDateTime = LocalDateTime.parse(todo.endTime)
             val startDateTime = parseApiDateTime(todo.startTime)
             val endDateTime   = parseApiDateTime(todo.endTime)
 
@@ -790,14 +863,11 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
 
             binding.startDateTv.text = startDateTime.toLocalDate().format(dateFormatter)
             binding.endDateTv.text = endDateTime.toLocalDate().format(dateFormatter)
-
             binding.startTimeTv.text = startDateTime.toLocalTime().format(timeFormatter)
             binding.endTimeTv.text = endDateTime.toLocalTime().format(timeFormatter)
 
             binding.detailTextEt.setText(todo.description)
-
             binding.publicToggle01Iv.isChecked = todo.isPublic
-
             binding.includeToggle01Iv.isChecked = todo.includeTeum
 
             // 기존 선택 UI 초기화
@@ -893,10 +963,14 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
                 binding.btnPlus.isEnabled = false
                 binding.detailTextEt.isEnabled = false
 
-                binding.alarmToggle01Iv.isEnabled = false
-                binding.alarmToggle02Iv.isEnabled = false
-                binding.publicToggle01Iv.isEnabled = false
-                binding.includeToggle01Iv.isEnabled = false
+                listOf(
+                    binding.alarmToggle01Iv, binding.alarmToggle02Iv,
+                    binding.publicToggle01Iv, binding.includeToggle01Iv
+                ).forEach { t ->
+                    t.isEnabled = false
+                    t.trackDrawable = ContextCompat.getDrawable(t.context, R.drawable.style_toggle_disabled_btn)?.mutate()
+                    t.thumbDrawable = ContextCompat.getDrawable(t.context, R.drawable.style_toggle_disabled_thumb)?.mutate()
+                }
 
                 binding.btnTodoSave.isEnabled = false
 
@@ -910,8 +984,8 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
                             (child as? TextView)?.setTextColor(deactiveColor)
                             (child as? SwitchCompat)?.apply {
                                 isEnabled = false
-                                trackDrawable = ContextCompat.getDrawable(context, R.drawable.style_toggle_disabled_btn)
-                                thumbDrawable = ContextCompat.getDrawable(context, R.drawable.style_toggle_disabled_thumb)
+                                child.trackDrawable = ContextCompat.getDrawable(child.context, R.drawable.style_toggle_disabled_btn)?.mutate()
+                                child.thumbDrawable = ContextCompat.getDrawable(child.context, R.drawable.style_toggle_disabled_thumb)?.mutate()
                             }
                         }
                     }
@@ -947,13 +1021,12 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
                             (child as? TextView)?.setTextColor(deactiveColor)
                             (child as? SwitchCompat)?.apply {
                                 isEnabled = false
-                                trackDrawable = ContextCompat.getDrawable(context, R.drawable.style_toggle_disabled_btn)
-                                thumbDrawable = ContextCompat.getDrawable(context, R.drawable.style_toggle_disabled_thumb)
+                                child.trackDrawable = ContextCompat.getDrawable(child.context, R.drawable.style_toggle_disabled_btn)?.mutate()
+                                child.thumbDrawable = ContextCompat.getDrawable(child.context, R.drawable.style_toggle_disabled_thumb)?.mutate()
                             }
                         }
                     }
                 }
-
             }
 
             parentFragmentManager.setFragmentResult("todo_get", Bundle())
