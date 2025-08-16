@@ -112,7 +112,7 @@ class FriendPromiseFragment : Fragment() {
             position = Int.MAX_VALUE / 2 + currentMonthOffset,
             onClickListener = object : IDateClickListener {
                 override fun onClickDate(date: LocalDate) {
-                    onDateSelected(selectedDate)
+                    onDateSelected(date)
                 }
             },
             showDot = true,
