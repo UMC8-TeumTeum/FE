@@ -5,13 +5,23 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.teumteum.R
+import com.example.teumteum.data.AppUserManager
 import com.example.teumteum.data.remote.friend.model.FriendProfileResult
 import com.example.teumteum.databinding.ItemFriendProfileCardBinding
 
 class FriendProfileAdapter(
     private val profiles: List<FriendProfileResult>,
-    private val onSendClick: (FriendProfileResult) -> Unit
+    private val onToggleExclude: (userId: Int) -> Unit
 ) : RecyclerView.Adapter<FriendProfileAdapter.FriendProfileViewHolder>() {
+
+    // ViewModel에서 내려준 제외된 ID 집합을 들고 있다가 바인딩에 반영
+    private var excludedIds: Set<Int> = emptySet()
+
+    // 외부에서 제외 집합을 갱신해주면 전체 싱크
+    fun setExcludedIds(newSet: Set<Int>) {
+        excludedIds = newSet
+        notifyDataSetChanged()
+    }
 
     inner class FriendProfileViewHolder(val binding: ItemFriendProfileCardBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -26,10 +36,39 @@ class FriendProfileAdapter(
                 .circleCrop()
                 .into(binding.profileImageView)
 
+            val isExcluded = excludedIds.contains(profile.userId)
+            val isSelf = profile.userId == AppUserManager.userId
+
+            applyEyeUi(isExcluded, isSelf)
+            applyDimUi(isExcluded)
+
             binding.sendButton.setOnClickListener {
-                onSendClick(profile)
+                if (isSelf) return@setOnClickListener
+                onToggleExclude(profile.userId)
             }
         }
+
+        private fun applyEyeUi(isExcluded: Boolean, isSelf: Boolean) {
+            binding.sendButton.setImageResource(
+                if (isExcluded) R.drawable.eyes_off else R.drawable.eyes_on
+            )
+            // 본인은 클릭 불가 + 아이콘만 살짝 흐리게(0.4f)
+            binding.sendButton.isEnabled = !isSelf
+            binding.sendButton.isClickable = !isSelf
+            binding.sendButton.alpha = if (isSelf) 0.4f else 1f
+        }
+
+        // 제외된 유저면 카드/프로필/텍스트를 흐리게 보여주기
+        private fun applyDimUi(isExcluded: Boolean) {
+            val alphaWhenExcluded = 0.4f
+            val alphaNormal = 1f
+
+            val targetAlpha = if (isExcluded) alphaWhenExcluded else alphaNormal
+
+            // 카드 전체(루트) 흐림
+            binding.root.alpha = targetAlpha
+        }
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FriendProfileViewHolder {

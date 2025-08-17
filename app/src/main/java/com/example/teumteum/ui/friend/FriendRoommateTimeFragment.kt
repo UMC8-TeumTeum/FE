@@ -67,9 +67,12 @@ class FriendRoommateTimeFragment : Fragment() {
         // 날짜 표시
         binding.date.text = receivedDate
 
+        // 화면 진입 시 매번 상태 초기화 (토글/선택 모두 리셋)
+        viewModel.clearExclusions()
+        viewModel.clearSelectedFriends()
+
         // RecyclerView에 들어갈 리스트
         val profileList = mutableListOf<FriendProfileResult>()
-
         val addedFriends = arguments?.getParcelableArrayList<FriendProfileResult>("addedFriends") ?: emptyList()
 
         // 1. 나
@@ -99,33 +102,37 @@ class FriendRoommateTimeFragment : Fragment() {
         // 선택한 친구들 추가
         profileList.addAll(addedFriends)
 
-        // 어댑터 연결
-        val adapter = FriendProfileAdapter(profileList) { profile ->
-            // sendButton 클릭 시 동작
+        // [ADDED] ViewModel의 "선택 친구" 목록에 대상들 등록 (내 자신 -1은 제외)
+        if (targetUserId > 0) {
+            viewModel.addSelectedFriend(
+                FriendProfileResult(
+                    userId = targetUserId,
+                    name = targetNickname,
+                    profileImageUrl = targetProfileUrl,
+                    field = "",
+                    following = false,
+                    favorite = false
+                )
+            )
+        }
+        addedFriends.forEach { friend ->
+            if (friend.userId > 0) viewModel.addSelectedFriend(friend)
+        }
+
+        // 어댑터 콜백에서 제외 토글을 호출하도록 변경
+        val adapter = FriendProfileAdapter(profileList) { userId ->
+            viewModel.toggleExclude(userId)
         }
         binding.friendProfileRv.layoutManager = LinearLayoutManager(requireContext())
         binding.friendProfileRv.adapter = adapter
 
+        // 제외 집합 변경 시 아이콘 싱크
+        viewModel.excludedUserIds.observe(viewLifecycleOwner) { set ->
+            adapter.setExcludedIds(set ?: emptySet())
+        }
 
-        //시간표 조회를 위한 요청 생성
-        val userIds: List<Int> = buildList {
-            if (targetUserId > 0) add(targetUserId)
-            addedFriends.asSequence()
-                .map { it.userId }
-                .filter { it > 0 }
-                .forEach { add(it) }
-        }.distinct()
-
-        // 요청 객체 생성
-        val request = PossibleTimeRequest(
-            userIds = userIds,
-            date = convertDateFormat(receivedDate)
-        )
-
-        Log.d("TIME_REQUEST", request.toString())
-        // 호출
-        viewModel.getPossibleTimeWithFriend(request)
-
+        // 화면 진입 시 고정 날짜 세팅
+        viewModel.setFixedDate(convertDateFormat(receivedDate))
 
         // PieChart 설정
         ChartUtils.setupPieChart(binding.clockChart)
@@ -216,8 +223,10 @@ class FriendRoommateTimeFragment : Fragment() {
             Log.d("DEBUG", "after filterNotNull: ${cards.size}개")
 
             if (cards.isEmpty()) {
+                binding.possibleTime.text = "이때는 가능한 빈틈이 없어요"
                 currentFullDayBlocks = listOf(TimeBlock(0, 1440, TimeType.TODO))
             } else {
+                binding.possibleTime.text = "가능한 빈틈이 있어요"
                 currentFullDayBlocks = ChartUtils.buildBlocksFromTimeCardItems(cards)
             }
 

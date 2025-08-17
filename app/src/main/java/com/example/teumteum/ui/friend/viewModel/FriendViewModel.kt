@@ -652,30 +652,68 @@ class FriendViewModel @Inject constructor(
         }
     }
 
-    // 틈 요청자와 함께 가능한 빈틈(시간) 리스트
     private val _possibleTimeList = MutableLiveData<List<TimeCardItem?>>()
     val possibleTimeList: LiveData<List<TimeCardItem?>> get() = _possibleTimeList
 
+    private val _excludedUserIds = MutableLiveData<MutableSet<Int>>(mutableSetOf()) // [ADDED]
+    val excludedUserIds: LiveData<MutableSet<Int>> get() = _excludedUserIds         // [ADDED]
+
+    // 고정 날짜 세팅
+    private var fixedDate: String? = null // [ADDED]
+
+    fun setFixedDate(date: String) {
+        fixedDate = date
+        refreshPossibleTimeIfPossible()
+    }
+
+    // 가능한 시간대 조회
     fun getPossibleTimeWithFriend(request: PossibleTimeRequest) {
         viewModelScope.launch {
             repository.getPossibleTime(request)
                 .onSuccess { result ->
-                    val mappedList = result.availableTime.map { available ->
-                        TimeCardItem(
-                            startTime = available.startTime,
-                            endTime = available.endTime
-                        )
-                    }
-                    _possibleTimeList.value = mappedList
-                    _successMessage.value = Event("가능한 시간 조회 성공 (${mappedList.size}개)")
-                    Log.d("POSSIBLE_TIME", "조회 결과: $mappedList")
+                    val mapped = result.availableTime.map { TimeCardItem(it.startTime, it.endTime) }
+                    _possibleTimeList.value = mapped
                 }
-                .onFailure { e ->
+                .onFailure {
                     _possibleTimeList.value = emptyList()
-                    _errorMessage.value = Event("가능한 시간 조회 실패 (${e.message})")
-                    Log.e("POSSIBLE_TIME", "조회 실패: ${e.message}", e)
                 }
         }
+    }
+
+    // 버튼 눌러 제외/포함 토글
+    fun toggleExclude(userId: Int) {
+        val set = _excludedUserIds.value ?: mutableSetOf()
+        if (set.contains(userId)) set.remove(userId) else set.add(userId)
+        _excludedUserIds.value = set
+
+        // 날짜는 고정값 사용
+        refreshPossibleTimeIfPossible()
+    }
+
+    // 현재 고정 날짜 + (선택 - 제외)로 재조회
+    private fun refreshPossibleTimeIfPossible() {
+        val date = fixedDate ?: return
+        val selected = _selectedFriends.value?.map { it.userId } ?: emptyList()
+        val excluded = _excludedUserIds.value ?: mutableSetOf()
+        val included = selected.filterNot { excluded.contains(it) }
+
+        if (included.isEmpty()) {
+            _possibleTimeList.value = emptyList()
+            return
+        }
+
+        val body = PossibleTimeRequest(userIds = included, date = date)
+        getPossibleTimeWithFriend(body)
+    }
+
+    // 제외 상태 초기화
+    fun clearExclusions() {
+        _excludedUserIds.value = mutableSetOf()
+    }
+
+    // 선택 친구 목록 초기화
+    fun clearSelectedFriends() {
+        _selectedFriends.value = mutableListOf()
     }
 
     //틈 재요청
