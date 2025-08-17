@@ -580,16 +580,22 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
             Log.e("TODO_REGISTER_FRAGMENT", errorMsg.toString())
         }
 
-//        viewLifecycleOwner.lifecycleScope.launch {
-//            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-//                viewModel.errorCode { err ->
-//                    when (err.code) {
-//                        "CONFLICT4094", "CONFLICT4092" ->
-//                            Toast.makeText(requireContext(), err.message, Toast.LENGTH_SHORT).show()
-//                    }
-//                }
-//            }
-//        }
+        // 수면패턴 or 틈요청 충돌 + 시간 유효성 검사
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.registerError.collect { err ->
+                    when (err.code) {
+                        "CONFLICT4094", "CONFLICT4092" ->
+                            Toast.makeText(requireContext(), err.message, Toast.LENGTH_SHORT).show()
+                        "HOME4001" ->
+                            Toast.makeText(requireContext(), "종료시간은 시작시간을 앞설 수 없습니다.", Toast.LENGTH_SHORT).show()
+                        else -> err.message.let {
+                            Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
+        }
     }
 
     override fun onDestroyView() {
