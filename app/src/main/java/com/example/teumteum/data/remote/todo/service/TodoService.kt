@@ -34,7 +34,7 @@ interface TodoService {
     @DELETE("/api/home/todo/{todoId}")
     suspend fun deleteTodo(@Path("todoId") todoId: Long): Response<ApiResponse<Unit>>
 
-    @GET("/api/home/todo/user-reminds")
+    @GET("/api/home/user-reminds")
     suspend fun getOnboardingReminders(): Response<ApiResponse<GetOnboardingReminders>>
 
     @PATCH("/api/home/alarm")

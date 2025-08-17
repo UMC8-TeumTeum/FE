@@ -963,7 +963,7 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
                 // 수정 성공
                 launch {
                     viewModel.editSuccess.collect {
-                        Toast.makeText(requireContext(), "투두가 성공적으로 수정되었습니다.", Toast.LENGTH_SHORT).show()
+                        Log.d("TODO_EDIT_FRAGMENT", "투두가 성공적으로 수정되었습니다.")
                         parentFragmentManager.setFragmentResult("todo_edit", Bundle())
                         dismissAllSheets()
                     }
@@ -972,7 +972,7 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
                 // 삭제 성공
                 launch {
                     viewModel.deleteSuccess.collect {
-                        Toast.makeText(requireContext(), "투두가 성공적으로 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+                        Log.d("TODO_EDIT_FRAGMENT", "투두가 성공적으로 삭제되었습니다.")
                         parentFragmentManager.setFragmentResult("todo_delete", Bundle())
                         dismissAllSheets()
                     }

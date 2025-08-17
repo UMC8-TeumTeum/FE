@@ -58,19 +58,18 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
 
     private var currentTargetTextView: TextView? = null
     private var popupWindow: PopupWindow? = null
-    private val gson = Gson()
 
-    private val alarmLabelToMinutes = mapOf(
+    private val alarmLabelToMinutes = mutableMapOf(
         "30분 전" to 30,
         "10분 전" to 10,
         "5분 전" to 5,
         "3분 전" to 3,
         "1분 전" to 1
     )
-//    private val minutesToLabel = alarmLabelToMinutes.entries.associate { (k, v) -> v to k }
-    private val selectedItems = mutableSetOf("30분 전", "10분 전")
-//    private val selectedItems = mutableSetOf<String>()
-    private val alarmOptions = alarmLabelToMinutes.keys.toList()
+
+    private val minutesToLabel = alarmLabelToMinutes.entries.associate { (k, v) -> v to k }.toMutableMap()
+    private val selectedItems = mutableSetOf<String>()
+    private val alarmOptions = mutableListOf<String>().apply { addAll(alarmLabelToMinutes.keys) }
 
     private var isTodoSelected = true
 
@@ -100,20 +99,7 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
         binding.startDateTv.text = today
         binding.endDateTv.text = today
 
-        selectedItems.forEach { label ->
-            addAlarmItem(label)
-            when (label) {
-                "30분 전" -> binding.alarmToggle01Iv.isChecked = true
-                "10분 전" -> binding.alarmToggle02Iv.isChecked = true
-                else -> {
-                    val child = (0 until binding.alarmLayoutContainer.childCount)
-                        .map { binding.alarmLayoutContainer.getChildAt(it) }
-                        .firstOrNull { it.tag == label }
-                    child?.findViewById<SwitchCompat>(R.id.alarm_toggle_tv)?.isChecked = true
-                }
-            }
-        }
-
+        resetAlarmUI()
         setupPickers()
 
         binding.startTimeTv.setOnClickListener {
@@ -190,7 +176,7 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
         }
 
         setupObservers()
-//        viewModel.getOnboardingReminders()
+        viewModel.getOnboardingReminders()
     }
 
     private fun applyTextStyleToNumberPicker(picker: NumberPicker, context: Context) {
@@ -367,39 +353,41 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
     }
 
     private fun addAlarmItem(label: String) {
-        when (label) {
-            "30분 전" -> binding.alarmItem01Ll.visibility = View.VISIBLE
-            "10분 전" -> binding.alarmItem02Ll.visibility = View.VISIBLE
-            else -> {
-                val layout = layoutInflater.inflate(R.layout.item_alarm, binding.alarmLayoutContainer, false)
-                val labelText = layout.findViewById<TextView>(R.id.alarm_set_tv)
-                labelText.text = label
-                layout.tag = label
-                binding.alarmLayoutContainer.addView(layout)
-            }
-        }
+        // 이미 같은 라벨이 있으면 중복 추가 방지
+        val exists = (0 until binding.alarmLayoutContainer.childCount)
+            .asSequence()
+            .map { binding.alarmLayoutContainer.getChildAt(it) }
+            .any { it.tag == label }
+
+        if (exists) return
+
+        val layout = layoutInflater.inflate(R.layout.item_alarm, binding.alarmLayoutContainer, false)
+        val labelText = layout.findViewById<TextView>(R.id.alarm_set_tv)
+        labelText.text = label
+        layout.tag = label
+        binding.alarmLayoutContainer.addView(layout)
+
+        // 내림차순 정렬
+        val sortedChildren = (0 until binding.alarmLayoutContainer.childCount).map { i ->
+            val child = binding.alarmLayoutContainer.getChildAt(i)
+            val childLabel = child.tag as? String
+                ?: child.findViewById<TextView>(R.id.alarm_set_tv).text.toString()
+            val minute = alarmLabelToMinutes[childLabel] ?: Int.MIN_VALUE
+            minute to child
+        }.sortedByDescending { it.first }
+
+        binding.alarmLayoutContainer.removeAllViews()
+        sortedChildren.forEach { (_, child) -> binding.alarmLayoutContainer.addView(child) }
     }
 
     private fun removeAlarmItem(label: String) {
-        when (label) {
-            "30분 전" -> {
-                binding.alarmItem01Ll.visibility = View.GONE
-                binding.alarmToggle01Iv.isChecked = false
-            }
-            "10분 전" -> {
-                binding.alarmItem02Ll.visibility = View.GONE
-                binding.alarmToggle02Iv.isChecked = false
-            }
-            else -> {
-                for (i in 0 until binding.alarmLayoutContainer.childCount) {
-                    val child = binding.alarmLayoutContainer.getChildAt(i)
-                    if (child.tag == label) {
-                        val toggle = child.findViewById<SwitchCompat>(R.id.alarm_toggle_tv)
-                        toggle.isChecked = false
-                        binding.alarmLayoutContainer.removeView(child)
-                        break
-                    }
-                }
+        for (i in 0 until binding.alarmLayoutContainer.childCount) {
+            val child = binding.alarmLayoutContainer.getChildAt(i)
+            if (child.tag == label) {
+                val toggle = child.findViewById<SwitchCompat>(R.id.alarm_toggle_tv)
+                toggle.isChecked = false
+                binding.alarmLayoutContainer.removeView(child)
+                break
             }
         }
     }
@@ -486,16 +474,6 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
     private fun getSelectedRemindAlarms(): List<ReminderAlarm>? {
         val map = linkedMapOf<Int, AlarmStatus>()
 
-        if (binding.alarmItem01Ll.isVisible) {
-            map[30] = if (binding.alarmToggle01Iv.isChecked)
-                AlarmStatus.ACTIVE else AlarmStatus.INACTIVE
-        }
-
-        if (binding.alarmItem02Ll.isVisible) {
-            map[10] = if (binding.alarmToggle02Iv.isChecked)
-                AlarmStatus.ACTIVE else AlarmStatus.INACTIVE
-        }
-
         // 동적으로 추가된 알림들 모두 포함
         for (i in 0 until binding.alarmLayoutContainer.childCount) {
             val child = binding.alarmLayoutContainer.getChildAt(i)
@@ -557,57 +535,46 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
         }
 
         val request = getTodoRequest()
-        Log.d("RegisterTodoRequest", gson.toJson(request))
         viewModel.registerTodo(request)
     }
 
-//    private fun resetAlarmUI() {
-//        binding.alarmItem01Ll.visibility = View.GONE
-//        binding.alarmToggle01Iv.isChecked = false
-//
-//        binding.alarmItem02Ll.visibility = View.GONE
-//        binding.alarmToggle02Iv.isChecked = false
-//
-//        // 동적 항목 비우기
-//        binding.alarmLayoutContainer.removeAllViews()
-//
-//        selectedItems.clear()
-//    }
+    private fun resetAlarmUI() {
+        // 동적 항목 비우기
+        binding.alarmLayoutContainer.removeAllViews()
+        selectedItems.clear()
+    }
 
-//    private fun applyRemindersFromMinutes(minutes: List<Int>) {
-//        resetAlarmUI()
-//
-//        minutes.forEach { m ->
-//            val label = minutesToLabel[m] ?: return@forEach
-//            selectedItems.add(label)
-//
-//            when (label) {
-//                "30분 전" -> {
-//                    binding.alarmItem01Ll.visibility = View.VISIBLE
-//                    binding.alarmToggle01Iv.isChecked = true
-//                }
-//                "10분 전" -> {
-//                    binding.alarmItem02Ll.visibility = View.VISIBLE
-//                    binding.alarmToggle02Iv.isChecked = true
-//                }
-//                else -> {
-//                    addAlarmItem(label)
-//                    val child = (0 until binding.alarmLayoutContainer.childCount)
-//                        .map { binding.alarmLayoutContainer.getChildAt(it) }
-//                        .firstOrNull { it.tag == label }
-//                    child?.findViewById<SwitchCompat>(R.id.alarm_toggle_tv)?.isChecked = true
-//                }
-//            }
-//        }
-//    }
+    private fun applyRemindersFromMinutes(minutes: List<Int>) {
+        resetAlarmUI()
+
+        val allowed = setOf(1, 3, 5, 10, 30)
+
+        // 중복 제거 + 내림차순 정렬
+        val sorted = minutes.filter { it in allowed }.distinct().sortedDescending()
+        sorted.forEach { m ->
+            val label = minutesToLabel[m] ?: return@forEach
+            selectedItems.add(label)
+
+            addAlarmItem(label)
+
+            val child = (0 until binding.alarmLayoutContainer.childCount)
+                .map { binding.alarmLayoutContainer.getChildAt(it) }
+                .firstOrNull { it.tag == label }
+            child?.findViewById<SwitchCompat>(R.id.alarm_toggle_tv)?.isChecked = true
+        }
+    }
 
     private fun setupObservers() {
+
+        viewModel.onBoardingReminders.observe(viewLifecycleOwner) { minutes: List<Int> ->
+            applyRemindersFromMinutes(minutes)
+        }
+
         // 성공 이벤트는 Flow 수집으로 1회성 처리
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.registerSuccess.collect {
-//                    Toast.makeText(requireContext(), "투두가 성공적으로 등록되었습니다.", Toast.LENGTH_SHORT).show()
-                    Log.d("TODO_REGISTER_FRAMENT", "투두가 성공적으로 등록되었습니다.")
+                    Log.d("TODO_REGISTER_FRAGMENT", "투두가 성공적으로 등록되었습니다.")
                     parentFragmentManager.setFragmentResult("todo_register", Bundle())
 
                     // 모든 바텀시트 닫기
@@ -621,7 +588,6 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
         }
 
         viewModel.errorMessage.observe(viewLifecycleOwner) { errorMsg ->
-//            Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_SHORT).show()
             Log.e("TODO_REGISTER_FRAGMENT", errorMsg.toString())
         }
 
