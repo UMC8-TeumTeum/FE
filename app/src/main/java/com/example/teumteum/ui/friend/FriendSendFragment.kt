@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.todo.model.enums.ScheduleType
 import com.example.teumteum.databinding.FragmentFriendSendBinding
@@ -20,8 +21,6 @@ class FriendSendFragment : Fragment() {
 
     private var _binding: FragmentFriendSendBinding? = null
     private val binding get() = _binding!!
-
-    private var scheduleType: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -45,18 +44,11 @@ class FriendSendFragment : Fragment() {
         )
         binding.textTitle.text = spannable
 
-        scheduleType = arguments?.getString("schedule_type")
-
-        // 버튼 클릭 시 타입 처리 및 FriendFragment로 이동
+        // 버튼 클릭 시 FriendFragment로 이동
         binding.btnGoHome.setOnClickListener {
-            val fragment = FriendFragment().apply {
-                arguments = Bundle().apply {
-                    putString("schedule_type", ScheduleType.TEUM.toString())
-                }
-            }
             parentFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
             parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, fragment)
+                .replace(R.id.main_frm, FriendFragment())
                 .commit()
         }
     }

@@ -64,6 +64,11 @@ class HomeFragment : Fragment(), IDateClickListener {
 
     private lateinit var clockAdapter: ClockVPAdapter
 
+    // 콜백 필드
+    private lateinit var clockPageChangeCallback: ViewPager2.OnPageChangeCallback
+    private lateinit var weeklyPageChangeCallback: ViewPager2.OnPageChangeCallback
+    private lateinit var monthlyPageChangeCallback: ViewPager2.OnPageChangeCallback
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -133,10 +138,6 @@ class HomeFragment : Fragment(), IDateClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        val scheduleTypeArg: ScheduleType? =
-            arguments?.getString("schedule_type")
-                ?.let { runCatching { ScheduleType.valueOf(it) }.getOrNull() }
-
         adapter = TodoRVAdapter(parentFragmentManager,
             todolistItems,
             { id, toActive ->
@@ -147,8 +148,7 @@ class HomeFragment : Fragment(), IDateClickListener {
                         alarmStatus = status
                     )
                 )
-        },
-            scheduleTypeArg
+        }
         )
         binding.todolistRv.adapter = adapter
 
@@ -158,6 +158,7 @@ class HomeFragment : Fragment(), IDateClickListener {
         viewModel.getTeumTime()
 
         binding.fabAddIv.post {
+            val binding = _binding ?: return@post
             applyBlurShadow(
                 sourceView = binding.fabAddIv,
                 targetImageView = binding.fabShadowIv
@@ -220,6 +221,27 @@ class HomeFragment : Fragment(), IDateClickListener {
 
         setupObservers()
 
+//        filterVM.typeLive.observe(viewLifecycleOwner) { t ->
+//            t ?: return@observe
+//
+//            adapter.setType(t)
+//            refreshTodolist()
+//
+//            when (t) {
+//                ScheduleType.TEUM -> {
+//                    binding.chipTeum.isChecked = true
+//                    // 필요하면 텍스트/스타일 변경
+//                }
+//                ScheduleType.AI -> {
+//                    binding.chipAi.isChecked = true
+//                }
+//                ScheduleType.TODO -> {
+//                    binding.chipTodo.isChecked = true
+//                }
+//                else -> { /* enum에 따라 추가 */ }
+//            }
+//        }
+
     }
 
     override fun onResume() {
@@ -228,7 +250,12 @@ class HomeFragment : Fragment(), IDateClickListener {
         bottomNav?.visibility = View.VISIBLE
     }
 
-    private fun setupClockPager() {
+    private inline fun withBinding(block: FragmentHomeBinding.() -> Unit) {
+        val b = _binding ?: return
+        block(b)
+    }
+
+    private fun setupClockPager() = withBinding {
         clockAdapter = ClockVPAdapter { chart, half ->
             ChartUtils.setupPieChart(chart)
             val sleepBitmap = ChartUtils.getBitmapFromVector(requireContext(), R.drawable.ic_sleep_sv)
@@ -248,24 +275,27 @@ class HomeFragment : Fragment(), IDateClickListener {
 
         binding.clockPager.setCurrentItem(amPos, false)
 
-        binding.clockPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+        clockPageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
-                updateIndicator(position == amPos)
+                val b = _binding ?: return
+                b.apply { updateIndicator(position == amPos) }
             }
-        })
+        }
+        clockPager.registerOnPageChangeCallback(clockPageChangeCallback)
 
-        binding.amPmTv.setOnClickListener {
-            val next = if (binding.clockPager.currentItem == amPos) pmPos else amPos
-            binding.clockPager.setCurrentItem(next, true)
+        amPmTv.setOnClickListener {
+            val b = _binding ?: return@setOnClickListener
+            val next = if (b.clockPager.currentItem == amPos) pmPos else amPos
+            b.clockPager.setCurrentItem(next, true)
         }
 
         updateIndicator(binding.clockPager.currentItem == amPos)
     }
 
     // 주간 달력 연결
-    private fun setWeeklyCalendarViewPager() {
+    private fun setWeeklyCalendarViewPager() = withBinding {
         saveSelectedDate(today)
-        val calendarAdapter = CalendarVPAdapter(requireActivity(), CalendarMode.WEEKLY,this)
+        val calendarAdapter = CalendarVPAdapter(requireActivity(), CalendarMode.WEEKLY,this@HomeFragment)
         binding.homeWeeklyCalendarWeekVp.adapter = calendarAdapter
 
         val startPosition = Int.MAX_VALUE / 2
@@ -274,42 +304,41 @@ class HomeFragment : Fragment(), IDateClickListener {
         selectedDate = today
         binding.homeSelectedDateTv.text = dateFormat(today)
 
-        binding.homeWeeklyCalendarWeekVp.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+        weeklyPageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
+                val b = _binding ?: return
                 val weekOffset = position - startPosition
-
-                // 오늘 날짜에서 weekOffset만큼 이동
                 val referenceDate = today.plusWeeks(weekOffset.toLong())
-
-                // 해당 주의 요일 (1: 월요일 ~ 7: 일요일)
                 val dayOfWeekValue = referenceDate.dayOfWeek.value % 7
-
                 val saturday = referenceDate.plusDays((6 - dayOfWeekValue).toLong())
 
                 selectedDate = saturday
-                binding.homeSelectedDateTv.text = dateFormat(saturday)
+                b.homeSelectedDateTv.text = dateFormat(saturday)
             }
-        })
+        }
+        homeWeeklyCalendarWeekVp.registerOnPageChangeCallback(weeklyPageChangeCallback)
 
     }
 
     // 월간 달력 연결
-    private fun setMonthlyCalendarViewPager() {
+    private fun setMonthlyCalendarViewPager() = withBinding {
         saveSelectedDate(today)
-        val calendarAdapter = CalendarVPAdapter(requireActivity(), CalendarMode.MONTHLY, this)
+        val calendarAdapter = CalendarVPAdapter(requireActivity(), CalendarMode.MONTHLY, this@HomeFragment)
         binding.homeMonthlyCalendarMonthVp.adapter = calendarAdapter
 
         val startPosition = Int.MAX_VALUE / 2
         binding.homeMonthlyCalendarMonthVp.setCurrentItem(startPosition, false)
 
-        binding.homeMonthlyCalendarMonthVp.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+        monthlyPageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
+                val b = _binding ?: return
                 val monthOffset = position - startPosition
                 val newSelectedDate = today.plusMonths(monthOffset.toLong())
                 selectedDate = newSelectedDate
-                binding.homeSelectedDateTv.text = dateFormat(newSelectedDate)
+                b.homeSelectedDateTv.text = dateFormat(newSelectedDate)
             }
-        })
+        }
+        homeMonthlyCalendarMonthVp.registerOnPageChangeCallback(monthlyPageChangeCallback)
     }
 
     // 주간/월간 토글 버튼 클릭 이벤트 설정
@@ -454,7 +483,20 @@ class HomeFragment : Fragment(), IDateClickListener {
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
+        _binding?.let { b ->
+            runCatching {
+                if (this::clockPageChangeCallback.isInitialized) {
+                    b.clockPager.unregisterOnPageChangeCallback(clockPageChangeCallback)
+                }
+                if (this::weeklyPageChangeCallback.isInitialized) {
+                    b.homeWeeklyCalendarWeekVp.unregisterOnPageChangeCallback(weeklyPageChangeCallback)
+                }
+                if (this::monthlyPageChangeCallback.isInitialized) {
+                    b.homeMonthlyCalendarMonthVp.unregisterOnPageChangeCallback(monthlyPageChangeCallback)
+                }
+            }
+        }
         _binding = null
+        super.onDestroyView()
     }
 }

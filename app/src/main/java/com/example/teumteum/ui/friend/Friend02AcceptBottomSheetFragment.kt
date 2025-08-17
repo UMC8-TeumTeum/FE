@@ -63,7 +63,6 @@ class Friend02AcceptBottomSheetFragment : BottomSheetDialogFragment() {
 
             //  로그 & 토스트
             Log.d("ACCEPT_BOTTOM_SHEET", "responseId: $responseId, status: $status")
-//            Toast.makeText(requireContext(), "응답: 함께할래요 (id: $responseId)", Toast.LENGTH_SHORT).show()
 
             //  응답 처리
             viewModel.respondToTeum(responseId, status)
@@ -71,15 +70,9 @@ class Friend02AcceptBottomSheetFragment : BottomSheetDialogFragment() {
             // 바텀시트 닫기
             dismiss()
 
-            // 타입 처리 및 화면 전환
-            val fragment = FriendSendFragment().apply {
-                arguments = Bundle().apply {
-                    putString("schedule_type", ScheduleType.TEUM.toString())
-                }
-            }
-
+            // 화면 전환
             parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, fragment)
+                .replace(R.id.main_frm, FriendSendFragment())
                 .addToBackStack(null)
                 .commit()
         }

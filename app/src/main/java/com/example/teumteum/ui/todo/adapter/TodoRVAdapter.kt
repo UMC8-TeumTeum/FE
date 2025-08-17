@@ -19,7 +19,6 @@ class TodoRVAdapter(
     private val fragmentManager: FragmentManager,
     private var todoList: List<TodoListResult>,
     private val onToggleAlarm: (id: Long, toActive: Boolean) -> Unit,
-    private val scheduleType: ScheduleType?
 ) : RecyclerView.Adapter<TodoRVAdapter.ViewHolder>() {
 
     inner class ViewHolder(val binding: ItemTodolistBinding) : RecyclerView.ViewHolder(binding.root)
@@ -32,57 +31,47 @@ class TodoRVAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = todoList[position]
-        val binding = holder.binding
-        binding.tvTodoTitle.text = item.title
-        binding.tvStartTime.text = convertTo24HourFormat(item.startTime)
-        binding.tvEndTime.text = convertTo24HourFormat(item.endTime)
+        val b = holder.binding
+        b.tvTodoTitle.text = item.title
+        b.tvStartTime.text = convertTo24HourFormat(item.startTime)
+        b.tvEndTime.text = convertTo24HourFormat(item.endTime)
 
-        binding.ivLock.setImageResource(
+        b.ivLock.setImageResource(
             if (item.isPublic) R.drawable.ic_unlock_sv else R.drawable.ic_lock_sv
         )
 
-        if (item.type == ScheduleType.ROUTINE) {
-            binding.root.setCardBackgroundColor(
-                ContextCompat.getColor(
-                    binding.root.context,
-                    R.color.main_2
-                )
+        b.root.setCardBackgroundColor(
+            ContextCompat.getColor(
+                b.root.context,
+                if (item.type == ScheduleType.ROUTINE) R.color.main_2 else R.color.white
             )
-        } else {
-            binding.root.setCardBackgroundColor(
-                ContextCompat.getColor(
-                    binding.root.context,
-                    R.color.white
-                )
-            )
-        }
+        )
 
-        binding.root.setOnClickListener {
-            val bottomSheet = TodoEditFragment().apply {
-                arguments = Bundle().apply {
-                    putLong("todo_id", item.id)
-                    putString("schedule_type", scheduleType.toString())
-                }
+        b.root.setOnClickListener {
+            val args = Bundle().apply {
+                putLong("todo_id", item.id)
+                putString("schedule_type", item.type.toString())
             }
-            bottomSheet.show(fragmentManager, bottomSheet.tag)
+            TodoEditFragment().apply { arguments = args }
+                .show(fragmentManager, "TodoEditBottomSheet")
         }
 
         if (item.alarmStatus == AlarmStatus.NONE) {
-            binding.ivAlarm.visibility = View.GONE
-            binding.ivAlarm.setOnClickListener(null)
+            b.ivAlarm.visibility = View.GONE
+            b.ivAlarm.setOnClickListener(null)
         } else {
-            binding.ivAlarm.visibility = View.VISIBLE
-            binding.ivAlarm.setImageResource(
+            b.ivAlarm.visibility = View.VISIBLE
+            b.ivAlarm.setImageResource(
                 if (item.alarmStatus == AlarmStatus.ACTIVE) R.drawable.ic_alarm_on_sv
                 else R.drawable.ic_alarm_off_sv
             )
 
-            binding.ivAlarm.setOnClickListener {
+            b.ivAlarm.setOnClickListener {
                 // 토글 후 상태
                 val toActive = (item.alarmStatus != AlarmStatus.ACTIVE)
                 item.alarmStatus = if (toActive) AlarmStatus.ACTIVE else AlarmStatus.INACTIVE
 
-                binding.ivAlarm.setImageResource(
+                b.ivAlarm.setImageResource(
                     if (toActive) R.drawable.ic_alarm_on_sv else R.drawable.ic_alarm_off_sv
                 )
 

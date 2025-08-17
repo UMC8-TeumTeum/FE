@@ -31,7 +31,6 @@ class WishRecommendRVAdapter(private var wishList: List<ActivityWishResult>, pri
         binding.fillButton.setOnClickListener {
             val fragment = FillingSetting01Fragment().apply {
                 arguments = Bundle().apply {
-                    putString("schedule_type", ScheduleType.AI.toString())
                     putLong("wish_id", item.id)
                     putString("title", binding.wishTitleTv.text.toString())
                     putString("time", binding.wishTimeTv.text.toString())
