@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.bumptech.glide.Glide
@@ -43,15 +44,15 @@ class FriendRoommateDateFragment : Fragment() {
             selectedDate = date
             updateCalendarFragment()
 
-            // 선택된 날짜가 오늘 이후일 때 버튼 활성화
-            if (date.isAfter(today)) {
+            // 오늘 이전이 아니면 활성화
+            if (!date.isBefore(today)) {
                 binding.nextBtn.isEnabled = true
-                binding.nextBtn.setBackgroundColor(Color.parseColor("#000000"))  // 검정색
-                binding.nextBtn.setTextColor(Color.parseColor("#FFFFFF"))        // 흰 글씨
+                binding.nextBtn.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.black))
+                binding.nextBtn.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
             } else {
                 binding.nextBtn.isEnabled = false
-                binding.nextBtn.setBackgroundColor(Color.parseColor("#F6F6F6"))  // 비활성 색
-                binding.nextBtn.setTextColor(Color.parseColor("#0F0F0F"))        // 회색 글씨
+                binding.nextBtn.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.teumteum_bg))
+                binding.nextBtn.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
             }
         }
     }
