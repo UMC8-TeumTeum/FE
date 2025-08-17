@@ -50,37 +50,30 @@
     <!-- 최근 검색어 -->
     <LinearLayout
         android:id="@+id/recentSearchLayout"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:lineSpacingExtra="0dp"
+        android:includeFontPadding="false"
         android:orientation="horizontal"
         app:layout_constraintTop_toBottomOf="@id/searchBarLayout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="24dp"
-            android:text="검색 결과"
-            android:textSize="14sp"
-            android:textColor="#788084"
-            android:fontFamily="@font/noto_sans_kr_regular"/>
+    <TextView
+        android:id="@+id/recentSearchTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minHeight="50dp"
+        android:layout_marginStart="24dp"
+        android:text="검색 결과"
+        android:textSize="14sp"
+        android:textColor="#788084"
+        android:fontFamily="@font/noto_sans_kr_regular"
+        app:layout_constraintTop_toBottomOf="@id/searchBarLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-        <Button
-            android:id="@+id/btnDeleteRecent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minWidth="48dp"
-            android:layout_marginEnd="14dp"
-            android:text="삭제"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            android:textColor="#788084"
-            android:textSize="14sp"
-            android:fontFamily="@font/noto_sans_kr_regular"
-            android:background="@android:color/transparent"
-            android:gravity="center_vertical"/>
     </LinearLayout>
 
     <!-- 최근 검색어 아래 구분선 -->
@@ -96,7 +89,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-
     <!-- 검색 결과 RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/searchResultRecyclerView"
@@ -110,5 +102,36 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         tools:listitem="@layout/item_search_user" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/search_result_not_exists_cl"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/search_result_not_exists_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_teum_char_sleep_sv"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <TextView
+            android:id="@+id/search_result_not_exists_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/noto_sans_kr_medium"
+            android:includeFontPadding="false"
+            android:text="검색 결과가 없어요"
+            android:textColor="@color/teumteum_gray"
+            android:textSize="15sp"
+            app:layout_constraintTop_toBottomOf="@id/search_result_not_exists_iv"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

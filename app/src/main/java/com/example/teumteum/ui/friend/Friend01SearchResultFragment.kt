@@ -57,7 +57,9 @@ class Friend01SearchResultFragment : Fragment() {
 
         // 검색 결과 관찰
         viewModel.searchResults.observe(viewLifecycleOwner) { results ->
-            adapter.updateData(results)
+            val list = results.orEmpty()
+            applySearchResultEmptyState(list.isEmpty())
+            adapter.updateData(list)
         }
 
         // 메시지 (성공/실패) 관찰
@@ -73,6 +75,7 @@ class Friend01SearchResultFragment : Fragment() {
                 // Toast로 띄우거나 Log 출력
                 // Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
                 Log.e("SEARCH_RESULT_FRAGMENT", "오류: $msg")
+                applySearchResultEmptyState(true)
             }
         }
 
@@ -92,6 +95,16 @@ class Friend01SearchResultFragment : Fragment() {
             .replace(R.id.main_frm, fragment)
             .addToBackStack(null)
             .commit()
+    }
+
+    private fun applySearchResultEmptyState(isEmpty: Boolean) {
+        if (isEmpty) {
+            binding.searchResultNotExistsCl.visibility = View.VISIBLE
+            binding.searchResultRecyclerView.visibility = View.GONE
+        } else {
+            binding.searchResultNotExistsCl.visibility = View.GONE
+            binding.searchResultRecyclerView.visibility = View.VISIBLE
+        }
     }
 
     override fun onDestroyView() {
