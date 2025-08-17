@@ -1,18 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="@android:color/white">
 
     <!-- 상단 뒤로가기 + 검색창 -->
     <LinearLayout
+        android:id="@+id/searchBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="58dp"
         android:orientation="horizontal"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <ImageButton
             android:id="@+id/backButton"
@@ -22,7 +26,6 @@
             android:background="@android:color/transparent"
             android:src="@drawable/ic_arrow_back"
             android:scaleType="centerInside" />
-
 
         <EditText
             android:id="@+id/searchEditText"
@@ -48,17 +51,21 @@
 
     <!-- 최근 검색어 -->
     <LinearLayout
+        android:id="@+id/recentSearchLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:lineSpacingExtra="0dp"
         android:includeFontPadding="false"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/searchBarLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginLeft="24dp"
+            android:layout_marginStart="24dp"
             android:text="최근 검색어"
             android:textSize="14sp"
             android:textColor="#788084"
@@ -69,7 +76,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:minWidth="48dp"
-            android:layout_marginRight="14dp"
+            android:layout_marginEnd="14dp"
             android:text="삭제"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
@@ -85,12 +92,16 @@
 
     <!-- 🔽 여기에 추가 -->
     <View
+        android:id="@+id/dividerView"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginTop="-9dp"
         android:layout_marginEnd="20dp"
         android:layout_marginStart="20dp"
-        android:background="#EAEAEA" />
+        android:background="#EAEAEA"
+        app:layout_constraintTop_toBottomOf="@id/recentSearchLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <!-- 최근 검색어 리스트 -->
     <LinearLayout
@@ -100,51 +111,39 @@
         android:orientation="vertical"
         android:layout_marginTop="-3dp"
         android:paddingStart="20dp"
-        android:paddingEnd="20dp">
+        android:paddingEnd="20dp"
+        app:layout_constraintTop_toBottomOf="@id/dividerView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/recent_search_not_exists_cl"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
 
+        <ImageView
+            android:id="@+id/recent_search_not_exists_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_teum_char_sleep_sv"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
-        <!--        <TextView-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:text="미나리"-->
-<!--            android:textSize="16sp"-->
-<!--            android:paddingVertical="3dp"-->
-<!--            android:textColor="#0F0F0F"-->
-<!--            android:fontFamily="@font/noto_sans_kr_medium" />-->
+        <TextView
+            android:id="@+id/recent_search_not_exists_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/noto_sans_kr_medium"
+            android:includeFontPadding="false"
+            android:text="최근 검색어 내역이 없어요"
+            android:textColor="@color/teumteum_gray"
+            android:textSize="15sp"
+            app:layout_constraintTop_toBottomOf="@id/recent_search_not_exists_iv"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
 
-<!--        <View-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="1dp"-->
-<!--            android:background="#EAEAEA"/>-->
-
-<!--        <TextView-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:text="애플"-->
-<!--            android:textSize="16sp"-->
-<!--            android:paddingVertical="3dp"-->
-<!--            android:textColor="#0F0F0F"-->
-<!--            android:fontFamily="@font/noto_sans_kr_medium" />-->
-
-<!--        <View-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="1dp"-->
-<!--            android:background="#EAEAEA"/>-->
-
-<!--        <TextView-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:text="벨라"-->
-<!--            android:textSize="16sp"-->
-<!--            android:paddingVertical="3dp"-->
-<!--            android:textColor="#0F0F0F"-->
-<!--            android:fontFamily="@font/noto_sans_kr_medium" />-->
-
-<!--        <View-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="1dp"-->
-<!--            android:background="#EAEAEA"/>-->
-    </LinearLayout>
-
-</LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

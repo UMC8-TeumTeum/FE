@@ -26,7 +26,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentTodoEditBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -35,16 +34,14 @@ import com.example.teumteum.data.remote.todo.model.EditTodoRequest
 import com.example.teumteum.data.remote.todo.model.ReminderAlarm
 import com.example.teumteum.data.remote.todo.model.enums.AlarmStatus
 import com.example.teumteum.data.remote.todo.model.enums.ScheduleType
+import com.example.teumteum.databinding.DialogConfirmAiContentDeleteBinding
+import com.example.teumteum.databinding.DialogConfirmTeumDeleteBinding
 import com.example.teumteum.databinding.DialogConfirmTodoDeleteBinding
 import com.example.teumteum.databinding.DialogConfirmTodoEditBinding
 import com.example.teumteum.ui.calendar.IDateClickListener
 import com.example.teumteum.ui.calendar.MonthlyCalendarFragment
 
 import com.example.teumteum.ui.friend.viewModel.FriendViewModel
-import com.example.teumteum.ui.main.HomeFragment
-import com.example.teumteum.ui.main.data.TimeBlock
-import com.example.teumteum.ui.main.viewModel.HomeViewModel
-import com.example.teumteum.ui.myhome.viewModel.MyHomeViewModel
 import com.example.teumteum.ui.todo.adapter.TeumProfileAdapter
 import com.example.teumteum.ui.todo.viewModel.TodoViewModel
 import com.example.teumteum.utils.combineDateTime
@@ -80,7 +77,6 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
     private var isStartDateSelected = true
 
     private val viewModel: TodoViewModel by activityViewModels()
-    private val myHomeViewModel: MyHomeViewModel by activityViewModels()
     private val friendViewModel: FriendViewModel by activityViewModels()
 //    private val homeViewModel: HomeViewModel by activityViewModels()
 
@@ -99,6 +95,9 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
     private var originalIsPublic: Boolean = false
     private var originalIncludeTeum: Boolean = false
     private var originalRemindAlarm: List<Int> = emptyList()
+
+    private var _normalTextColor: Int? = null
+    private var _normalHintColor: Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -123,15 +122,18 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
             }
         }
 
-        val type = arguments?.getString("schedule_type")
+        val scheduleType: ScheduleType = arguments?.getString("schedule_type")
+            ?.let { runCatching { ScheduleType.valueOf(it) }.getOrNull() }
+            ?: ScheduleType.TODO
 
-        binding.btnTodo.text = when (type) {
-            ScheduleType.TODO.toString() -> "투두"
-            ScheduleType.AI.toString() -> "AI 콘텐츠"
-            ScheduleType.TEUM.toString() -> "틈 약속"
-            ScheduleType.ROUTINE.toString() -> "투두"
-            else -> "투두"
+        val label = when (scheduleType) {
+            ScheduleType.TODO    -> "투두"
+            ScheduleType.AI      -> "AI 콘텐츠"
+            ScheduleType.TEUM    -> "틈 약속"
+            ScheduleType.ROUTINE -> "투두"
         }
+
+        binding.btnTodo.text = label
 
         binding.profileImageRc.apply {
             layoutManager = LinearLayoutManager(
@@ -200,8 +202,14 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
         }
 
         binding.btnTodoDelete.setOnClickListener {
-            showTodoDummyDeleteDialog()
+            when (scheduleType) {
+                ScheduleType.TODO    -> showTodoDeleteDialog()
+                ScheduleType.TEUM    -> showTeumDeleteDialog()
+                ScheduleType.AI      -> showAiDeleteDialog()
+                else                 -> showTodoDeleteDialog()
+            }
         }
+
 
         binding.startDateTv.setOnClickListener {
             isStartDateSelected = true
@@ -465,8 +473,14 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
             else -> {
                 val layout = layoutInflater.inflate(R.layout.item_alarm, binding.alarmLayoutContainer, false)
                 val labelText = layout.findViewById<TextView>(R.id.alarm_set_tv)
+                val toggle = layout.findViewById<SwitchCompat>(R.id.alarm_toggle_tv)
+
                 labelText.text = label
                 layout.tag = label
+
+                toggle.trackDrawable = ContextCompat.getDrawable(toggle.context, R.drawable.style_toggle_btn)?.mutate()
+                toggle.thumbDrawable = ContextCompat.getDrawable(toggle.context, R.drawable.style_toggle_thumb)?.mutate()
+
                 binding.alarmLayoutContainer.addView(layout)
             }
         }
@@ -600,51 +614,72 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
         return endTotalMinutes > startTotalMinutes
     }
 
-    private fun showTodoDummyDeleteDialog() {
+    private fun showTodoDeleteDialog() {
         val dialogBinding = DialogConfirmTodoDeleteBinding.inflate(layoutInflater)
-
         val dialog = AlertDialog.Builder(requireContext(), R.style.RoundedAlertDialog)
             .setView(dialogBinding.root)
             .create()
 
         dialogBinding.todoConfirmTv.setOnClickListener {
-//            viewModel.deleteTodo(todoId)
-//            dialog.dismiss()
-//            dismiss()
-            dialogBinding.todoConfirmTv.isEnabled = false // 중복 클릭 방지
-            dialog.dismiss() // 확인 다이얼로그만 닫기
-            val type = viewModel.todo.value?.type
-            if (type == ScheduleType.TEUM) {
-                // 친구와 약속된 TEUM이면 다른 API 호출
-                friendViewModel.cancelTeumSchedule(todoId.toInt())
-            } else {
-                // 기존 투두 삭제 API
-                viewModel.deleteTodo(todoId)
-            }
-        }
-
-        dialogBinding.todoCancelTv.setOnClickListener {
+            dialogBinding.todoConfirmTv.isEnabled = false
             dialog.dismiss()
+            viewModel.deleteTodo(todoId)
         }
+        dialogBinding.todoCancelTv.setOnClickListener { dialog.dismiss() }
 
+        applyDialogWindow(dialog)
+        dialog.show()
+    }
+
+    private fun showTeumDeleteDialog() {
+        val dialogBinding = DialogConfirmTeumDeleteBinding.inflate(layoutInflater)
+        val dialog = AlertDialog.Builder(requireContext(), R.style.RoundedAlertDialog)
+            .setView(dialogBinding.root)
+            .create()
+
+        dialogBinding.todoConfirmTv.setOnClickListener {
+            dialogBinding.todoConfirmTv.isEnabled = false
+            dialog.dismiss()
+            friendViewModel.cancelTeumSchedule(todoId.toInt())
+        }
+        dialogBinding.todoCancelTv.setOnClickListener { dialog.dismiss() }
+
+        applyDialogWindow(dialog)
+        dialog.show()
+    }
+
+    private fun showAiDeleteDialog() {
+        val dialogBinding = DialogConfirmAiContentDeleteBinding.inflate(layoutInflater)
+        val dialog = AlertDialog.Builder(requireContext(), R.style.RoundedAlertDialog)
+            .setView(dialogBinding.root)
+            .create()
+
+        dialogBinding.todoConfirmTv.setOnClickListener {
+            dialogBinding.todoConfirmTv.isEnabled = false
+            dialog.dismiss()
+            viewModel.deleteTodo(todoId)
+        }
+        dialogBinding.todoCancelTv.setOnClickListener { dialog.dismiss() }
+
+        applyDialogWindow(dialog)
+        dialog.show()
+    }
+
+    private fun applyDialogWindow(dialog: AlertDialog) {
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-
         dialog.setOnShowListener {
             dialog.window?.let { window ->
                 val layoutParams = window.attributes
-                layoutParams.width = (resources.displayMetrics.widthPixels * 0.85).toInt()
+                layoutParams.width  = (resources.displayMetrics.widthPixels * 0.85).toInt()
                 layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
                 layoutParams.gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
                 layoutParams.y = (resources.displayMetrics.heightPixels * 0.37).toInt()
                 layoutParams.dimAmount = 0.5f
                 window.attributes = layoutParams
-
                 window.setDimAmount(0.5f)
                 window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
             }
         }
-
-        dialog.show()
     }
 
     private fun showTodoCancelEditDialog() {
@@ -752,10 +787,74 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
         viewModel.todo.observe(viewLifecycleOwner) { todo ->
             if (todo == null) return@observe
 
+            // 기본 색 저장
+            if (_normalTextColor == null) {
+                _normalTextColor = binding.todoTitleEt.currentTextColor
+                _normalHintColor = binding.detailTextEt.currentHintTextColor
+            }
+
+            run {
+                listOf(
+                    binding.todoTitleEt, binding.startDateTv, binding.startTimeTv,
+                    binding.endDateTv, binding.endTimeTv, binding.alarmSet01Tv,
+                    binding.alarmSet02Tv, binding.addAlarmTv, binding.btnPlus,
+                    binding.detailTextEt, binding.btnTodoSave
+                ).forEach { v ->
+                    v.isEnabled = true
+                    v.alpha = 1f
+                }
+
+                // 텍스트/힌트 색 저장
+                val nt = _normalTextColor ?: binding.todoTitleEt.currentTextColor
+                val nh = _normalHintColor ?: binding.detailTextEt.currentHintTextColor
+
+                binding.timerIconIv.clearColorFilter()
+                binding.alarmIconIv.clearColorFilter()
+                binding.publicIconIv.clearColorFilter()
+                binding.includeIconIv.clearColorFilter()
+                binding.detailTextIv.clearColorFilter()
+
+                binding.todoTitleEt.setTextColor(nt)
+                binding.startDateTv.setTextColor(nt)
+                binding.startTimeTv.setTextColor(nt)
+                binding.endDateTv.setTextColor(nt)
+                binding.endTimeTv.setTextColor(nt)
+                binding.alarmSet01Tv.setTextColor(nt)
+                binding.alarmSet02Tv.setTextColor(nt)
+                binding.addAlarmTv.setTextColor(nt)
+                binding.publicSettingTv.setTextColor(nt)
+                binding.includeReportTv.setTextColor(nt)
+                binding.detailTextEt.setTextColor(nt)
+                binding.detailTextEt.setHintTextColor(nh)
+
+                // 토글 저장
+                listOf(
+                    binding.alarmToggle01Iv, binding.alarmToggle02Iv,
+                    binding.publicToggle01Iv, binding.includeToggle01Iv
+                ).forEach { t ->
+                    t.isEnabled = true
+                    t.trackDrawable = ContextCompat.getDrawable(t.context, R.drawable.style_toggle_btn)?.mutate()
+                    t.thumbDrawable = ContextCompat.getDrawable(t.context, R.drawable.style_toggle_thumb)?.mutate()
+                }
+
+                // 동적 알람 뷰들 저장
+                for (i in 0 until binding.alarmLayoutContainer.childCount) {
+                    val vg = binding.alarmLayoutContainer.getChildAt(i) as? ViewGroup ?: continue
+                    for (j in 0 until vg.childCount) {
+                        when (val child = vg.getChildAt(j)) {
+                            is TextView -> child.setTextColor(nt)
+                            is SwitchCompat -> {
+                                child.isEnabled = true
+                                child.trackDrawable = ContextCompat.getDrawable(child.context, R.drawable.style_toggle_btn)?.mutate()
+                                child.thumbDrawable = ContextCompat.getDrawable(child.context, R.drawable.style_toggle_thumb)?.mutate()
+                            }
+                        }
+                    }
+                }
+            }
+
             binding.todoTitleEt.setText(todo.title)
 
-//            val startDateTime = LocalDateTime.parse(todo.startTime)
-//            val endDateTime = LocalDateTime.parse(todo.endTime)
             val startDateTime = parseApiDateTime(todo.startTime)
             val endDateTime   = parseApiDateTime(todo.endTime)
 
@@ -764,14 +863,11 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
 
             binding.startDateTv.text = startDateTime.toLocalDate().format(dateFormatter)
             binding.endDateTv.text = endDateTime.toLocalDate().format(dateFormatter)
-
             binding.startTimeTv.text = startDateTime.toLocalTime().format(timeFormatter)
             binding.endTimeTv.text = endDateTime.toLocalTime().format(timeFormatter)
 
             binding.detailTextEt.setText(todo.description)
-
             binding.publicToggle01Iv.isChecked = todo.isPublic
-
             binding.includeToggle01Iv.isChecked = todo.includeTeum
 
             // 기존 선택 UI 초기화
@@ -867,12 +963,15 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
                 binding.btnPlus.isEnabled = false
                 binding.detailTextEt.isEnabled = false
 
-                binding.alarmToggle01Iv.isEnabled = false
-                binding.alarmToggle02Iv.isEnabled = false
-                binding.publicToggle01Iv.isEnabled = false
-                binding.includeToggle01Iv.isEnabled = false
+                listOf(
+                    binding.alarmToggle01Iv, binding.alarmToggle02Iv,
+                    binding.publicToggle01Iv, binding.includeToggle01Iv
+                ).forEach { t ->
+                    t.isEnabled = false
+                    t.trackDrawable = ContextCompat.getDrawable(t.context, R.drawable.style_toggle_disabled_btn)?.mutate()
+                    t.thumbDrawable = ContextCompat.getDrawable(t.context, R.drawable.style_toggle_disabled_thumb)?.mutate()
+                }
 
-//                binding.btnTodoDelete.isEnabled = false
                 binding.btnTodoSave.isEnabled = false
 
                 for (i in 0 until binding.alarmLayoutContainer.childCount) {
@@ -885,8 +984,8 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
                             (child as? TextView)?.setTextColor(deactiveColor)
                             (child as? SwitchCompat)?.apply {
                                 isEnabled = false
-                                trackDrawable = ContextCompat.getDrawable(context, R.drawable.style_toggle_disabled_btn)
-                                thumbDrawable = ContextCompat.getDrawable(context, R.drawable.style_toggle_disabled_thumb)
+                                child.trackDrawable = ContextCompat.getDrawable(child.context, R.drawable.style_toggle_disabled_btn)?.mutate()
+                                child.thumbDrawable = ContextCompat.getDrawable(child.context, R.drawable.style_toggle_disabled_thumb)?.mutate()
                             }
                         }
                     }
@@ -905,36 +1004,12 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
                 binding.startTimeTv.setTextColor(deactiveColor)
                 binding.endDateTv.setTextColor(deactiveColor)
                 binding.endTimeTv.setTextColor(deactiveColor)
-//                binding.alarmIconIv.setColorFilter(deactiveColor)
-//                binding.alarmSet01Tv.setTextColor(deactiveColor)
-//                binding.alarmSet02Tv.setTextColor(deactiveColor)
-//                binding.addAlarmTv.setTextColor(deactiveColor)
-//                binding.publicIconIv.setColorFilter(deactiveColor)
-//                binding.publicSettingTv.setTextColor(deactiveColor)
-//                binding.includeIconIv.setColorFilter(deactiveColor)
-//                binding.includeReportTv.setTextColor(deactiveColor)
-//                binding.detailTextIv.setColorFilter(deactiveColor)
-//                binding.detailTextEt.setTextColor(deactiveColor)
-//                binding.detailTextEt.setHintTextColor(deactiveColor)
 
                 binding.todoTitleEt.isEnabled = false
                 binding.startDateTv.isEnabled = false
                 binding.startTimeTv.isEnabled = false
                 binding.endDateTv.isEnabled = false
                 binding.endTimeTv.isEnabled = false
-//                binding.alarmSet01Tv.isEnabled = false
-//                binding.alarmSet02Tv.isEnabled = false
-//                binding.addAlarmTv.isEnabled = false
-//                binding.btnPlus.isEnabled = false
-//                binding.detailTextEt.isEnabled = false
-
-//                binding.alarmToggle01Iv.isEnabled = false
-//                binding.alarmToggle02Iv.isEnabled = false
-//                binding.publicToggle01Iv.isEnabled = false
-//                binding.includeToggle01Iv.isEnabled = false
-
-//                binding.btnTodoDelete.isEnabled = false
-//                binding.btnTodoSave.isEnabled = false
 
                 for (i in 0 until binding.alarmLayoutContainer.childCount) {
                     val alarmView = binding.alarmLayoutContainer.getChildAt(i)
@@ -946,13 +1021,12 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
                             (child as? TextView)?.setTextColor(deactiveColor)
                             (child as? SwitchCompat)?.apply {
                                 isEnabled = false
-                                trackDrawable = ContextCompat.getDrawable(context, R.drawable.style_toggle_disabled_btn)
-                                thumbDrawable = ContextCompat.getDrawable(context, R.drawable.style_toggle_disabled_thumb)
+                                child.trackDrawable = ContextCompat.getDrawable(child.context, R.drawable.style_toggle_disabled_btn)?.mutate()
+                                child.thumbDrawable = ContextCompat.getDrawable(child.context, R.drawable.style_toggle_disabled_thumb)?.mutate()
                             }
                         }
                     }
                 }
-
             }
 
             parentFragmentManager.setFragmentResult("todo_get", Bundle())
@@ -963,7 +1037,7 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
                 // 수정 성공
                 launch {
                     viewModel.editSuccess.collect {
-                        Toast.makeText(requireContext(), "투두가 성공적으로 수정되었습니다.", Toast.LENGTH_SHORT).show()
+                        Log.d("TODO_EDIT_FRAMENT", "투두가 성공적으로 수정되었습니다.")
                         parentFragmentManager.setFragmentResult("todo_edit", Bundle())
                         dismissAllSheets()
                     }
@@ -972,7 +1046,7 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
                 // 삭제 성공
                 launch {
                     viewModel.deleteSuccess.collect {
-                        Toast.makeText(requireContext(), "투두가 성공적으로 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+                        Log.d("TODO_EDIT_FRAMENT", "투두가 성공적으로 삭제되었습니다.")
                         parentFragmentManager.setFragmentResult("todo_delete", Bundle())
                         dismissAllSheets()
                     }

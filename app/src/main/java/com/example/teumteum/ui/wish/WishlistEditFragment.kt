@@ -76,7 +76,6 @@ class WishlistEditFragment() : Fragment() {
         binding.btnWishDelete.setOnClickListener {
             val deletedCount = adapter.markCheckedItemsAsDeleted()
             if (deletedCount > 0) {
-//                Toast.makeText(requireContext(), "${deletedCount}개 위시가 삭제되었어요.", Toast.LENGTH_SHORT).show()
                 Log.d("WISH_LIST_EDIT_FRAGMENT", "${deletedCount}개 위시가 삭제되었어요.")
             } else {
                 Toast.makeText(requireContext(), "삭제할 위시를 선택해주세요.", Toast.LENGTH_SHORT).show()
@@ -85,7 +84,6 @@ class WishlistEditFragment() : Fragment() {
 
         binding.btnWishCancel.setOnClickListener {
             adapter.cancelAllCheckedItems()
-//            Toast.makeText(requireContext(), "선택이 모두 해제되었어요.", Toast.LENGTH_SHORT).show()
         }
 
         binding.completeTv.setOnClickListener {
@@ -96,9 +94,8 @@ class WishlistEditFragment() : Fragment() {
                 viewModel.deleteWishes(request)
             }
 
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, WishlistFragment())
-                .commit()
+            parentFragmentManager.setFragmentResult("wish_delete", Bundle())
+            parentFragmentManager.popBackStack()
         }
 
         binding.backArrowIv.setOnClickListener {
@@ -120,13 +117,8 @@ class WishlistEditFragment() : Fragment() {
                             ?: emptyList()
                     viewModel.updateWishlistItems(updatedList)
 
-                    // 삭제 결과 전달
                     parentFragmentManager.setFragmentResult("wish_delete", Bundle())
-
-                    // 위시리스트 화면으로 이동
-                    parentFragmentManager.beginTransaction()
-                        .replace(R.id.main_frm, WishlistFragment())
-                        .commit()
+                    parentFragmentManager.popBackStack()
                 }
             }
         }

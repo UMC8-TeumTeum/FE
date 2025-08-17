@@ -30,8 +30,11 @@ import java.time.format.DateTimeFormatter
 
 import com.example.teumteum.data.remote.todo.model.TodoListResult
 import com.example.teumteum.data.remote.todo.model.enums.AlarmStatus
+import com.example.teumteum.data.remote.todo.model.enums.ScheduleType
 import com.example.teumteum.ui.todo.viewModel.TodoViewModel
 import com.example.teumteum.ui.clock.ChartUtils
+import com.example.teumteum.ui.clock.ClockHalf
+import com.example.teumteum.ui.clock.ClockVPAdapter
 import com.example.teumteum.ui.clock.IconPieChartRenderer
 import com.example.teumteum.ui.main.data.TimeType
 import com.example.teumteum.ui.main.viewModel.HomeViewModel
@@ -58,7 +61,8 @@ class HomeFragment : Fragment(), IDateClickListener {
     private var isAM: Boolean = true
 
     private val TODO_SHEET_TAG = "TodoRegisterSheet"
-    private val type : String? = null
+
+    private lateinit var clockAdapter: ClockVPAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -136,30 +140,29 @@ class HomeFragment : Fragment(), IDateClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        adapter = TodoRVAdapter(parentFragmentManager, todolistItems) { id, toActive ->
-            val status = if (toActive) AlarmStatus.ACTIVE else AlarmStatus.INACTIVE
-            todoViewModel.patchAlarmStatus(
-                AlarmStatusRequest(
-                    todoId = id,
-                    alarmStatus = status
+        val scheduleTypeArg: ScheduleType? =
+            arguments?.getString("schedule_type")
+                ?.let { runCatching { ScheduleType.valueOf(it) }.getOrNull() }
+
+        adapter = TodoRVAdapter(parentFragmentManager,
+            todolistItems,
+            { id, toActive ->
+                val status = if (toActive) AlarmStatus.ACTIVE else AlarmStatus.INACTIVE
+                todoViewModel.patchAlarmStatus(
+                    AlarmStatusRequest(
+                        todoId = id,
+                        alarmStatus = status
+                    )
                 )
-            )
-        }
+        },
+            scheduleTypeArg
+        )
         binding.todolistRv.adapter = adapter
 
         val date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 
         viewModel.getTodayScheduleIfNeeded()
         viewModel.getTeumTime()
-
-        viewModel.teumTimeDays.observe(viewLifecycleOwner) { updateTeumTime() }
-        viewModel.teumTimeHours.observe(viewLifecycleOwner) { updateTeumTime() }
-        viewModel.teumTimeMinutes.observe(viewLifecycleOwner) { updateTeumTime() }
-
-        viewModel.scheduleList.observe(viewLifecycleOwner) {
-            updateTimeChart(isAM)
-            updateIndicator(isAM)
-        }
 
         binding.fabAddIv.post {
             applyBlurShadow(
@@ -168,24 +171,13 @@ class HomeFragment : Fragment(), IDateClickListener {
             )
         }
 
-        ChartUtils.setupPieChart(binding.clockChart)
-
-        val sleepBitmap = ChartUtils.getBitmapFromVector(requireContext(), R.drawable.ic_sleep_sv)
-
-        binding.clockChart.renderer = IconPieChartRenderer(
-            binding.clockChart,
-            binding.clockChart.animator,
-            binding.clockChart.viewPortHandler,
-            sleepBitmap
-        )
-
-        updateTimeChart(isAM)
-        updateIndicator(isAM)
+        setupClockPager()
 
         binding.amPmTv.setOnClickListener {
-            isAM = !isAM
-            updateTimeChart(isAM)
-            updateIndicator(isAM)
+            val amPos = clockAdapter.positionOf(ClockHalf.AM)
+            val pmPos = clockAdapter.positionOf(ClockHalf.PM)
+            val next = if (binding.clockPager.currentItem == amPos) pmPos else amPos
+            binding.clockPager.setCurrentItem(next, true)
         }
 
         // 투두 등록 성공 이벤트 수신
@@ -215,13 +207,60 @@ class HomeFragment : Fragment(), IDateClickListener {
         todoViewModel.getTodoList(date)
         myHomeViewModel.getMyInfo()
 
+        viewModel.scheduleList.observe(viewLifecycleOwner) {
+            clockAdapter.refreshAll()
+            val amPos = clockAdapter.positionOf(ClockHalf.AM)
+            isAM = (binding.clockPager.currentItem == amPos)
+            updateIndicator(isAM)
+        }
+
+        // 누적 시간 표시
+        viewModel.teumTimeDays.observe(viewLifecycleOwner) { updateTeumTime() }
+        viewModel.teumTimeHours.observe(viewLifecycleOwner) { updateTeumTime() }
+        viewModel.teumTimeMinutes.observe(viewLifecycleOwner) { updateTeumTime() }
+
         setupObservers()
+
     }
 
     override fun onResume() {
         super.onResume()
         val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
         bottomNav?.visibility = View.VISIBLE
+    }
+
+    private fun setupClockPager() {
+        clockAdapter = ClockVPAdapter { chart, half ->
+            ChartUtils.setupPieChart(chart)
+            val sleepBitmap = ChartUtils.getBitmapFromVector(requireContext(), R.drawable.ic_sleep_sv)
+            chart.renderer = IconPieChartRenderer(chart, chart.animator, chart.viewPortHandler, sleepBitmap)
+
+            // AM/PM 데이터 바인딩
+            val blocks = viewModel.scheduleList.value.orEmpty()
+            val halfBlocks = ChartUtils.splitAndFillTimeBlocks(blocks, half == ClockHalf.AM)
+            ChartUtils.setTimePieChartData(requireContext(), chart, halfBlocks)
+        }
+
+        binding.clockPager.adapter = clockAdapter
+        binding.clockPager.offscreenPageLimit = 1
+
+        val amPos = clockAdapter.positionOf(ClockHalf.AM) // 0
+        val pmPos = clockAdapter.positionOf(ClockHalf.PM) // 1
+
+        binding.clockPager.setCurrentItem(amPos, false)
+
+        binding.clockPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                updateIndicator(position == amPos)
+            }
+        })
+
+        binding.amPmTv.setOnClickListener {
+            val next = if (binding.clockPager.currentItem == amPos) pmPos else amPos
+            binding.clockPager.setCurrentItem(next, true)
+        }
+
+        updateIndicator(binding.clockPager.currentItem == amPos)
     }
 
     // 주간 달력 연결
@@ -254,7 +293,6 @@ class HomeFragment : Fragment(), IDateClickListener {
         })
 
     }
-
 
     // 월간 달력 연결
     private fun setMonthlyCalendarViewPager() {
@@ -349,19 +387,11 @@ class HomeFragment : Fragment(), IDateClickListener {
         todoViewModel.getTodoList(dateStr)
     }
 
-
-    private fun updateTimeChart(isAM: Boolean) {
-        val blocks = viewModel.scheduleList.value ?: return
-        val halfDayBlocks = ChartUtils.splitAndFillTimeBlocks(blocks, isAM)
-        ChartUtils.setTimePieChartData(requireContext(), binding.clockChart, halfDayBlocks)
-    }
-
     private fun updateIndicator(isAM: Boolean) {
         val leftView = binding.leftView
         val rightView = binding.rightView
 
         if (isAM) {
-            //왼쪽이 막대, 오른쪽이 점
             leftView.layoutParams.width = dpToPx(28)
             leftView.layoutParams.height = dpToPx(4)
             leftView.background = ContextCompat.getDrawable(requireContext(), R.drawable.clock_indicator_bar)
@@ -370,9 +400,8 @@ class HomeFragment : Fragment(), IDateClickListener {
             rightView.layoutParams.height = dpToPx(4)
             rightView.background = ContextCompat.getDrawable(requireContext(), R.drawable.clock_indicator_dot)
 
-            binding.amPmTv.text="AM"
+            binding.amPmTv.text = "AM"
         } else {
-            //왼쪽이 점, 오른쪽이 막대
             leftView.layoutParams.width = dpToPx(4)
             leftView.layoutParams.height = dpToPx(4)
             leftView.background = ContextCompat.getDrawable(requireContext(), R.drawable.clock_indicator_dot)
@@ -381,13 +410,11 @@ class HomeFragment : Fragment(), IDateClickListener {
             rightView.layoutParams.height = dpToPx(4)
             rightView.background = ContextCompat.getDrawable(requireContext(), R.drawable.clock_indicator_bar)
 
-            binding.amPmTv.text="PM"
+            binding.amPmTv.text = "PM"
         }
 
         leftView.requestLayout()
         rightView.requestLayout()
-
-
     }
 
     private fun dpToPx(dp: Int): Int {
@@ -423,7 +450,6 @@ class HomeFragment : Fragment(), IDateClickListener {
         }
 
         todoViewModel.errorMessage.observe(viewLifecycleOwner) { error ->
-//            Toast.makeText(requireContext(), "투두리스트 조회 실패: $error", Toast.LENGTH_SHORT).show()
             Log.e("HOME_FRAGMENT", error.toString())
         }
     }
