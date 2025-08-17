@@ -5,14 +5,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentMyAccountSettingBinding
 import com.example.teumteum.ui.main.MainActivity
 import com.example.teumteum.ui.signin.LoginActivity
 import com.example.teumteum.utils.FlowPrefs
+import com.example.teumteum.utils.LogoutManager
 import com.example.teumteum.utils.TokenProvider
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -21,8 +25,9 @@ class MyAccountSettingFragment : Fragment() {
     private var _binding: FragmentMyAccountSettingBinding? = null
     private val binding get() = _binding!!
 
-    @Inject lateinit var tokenProvider: TokenProvider
-    @Inject lateinit var flowPrefs: FlowPrefs
+    @Inject lateinit var logoutManager: LogoutManager
+
+    private var loggingOut = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,21 +49,23 @@ class MyAccountSettingFragment : Fragment() {
         }
 
         binding.logoutLl.setOnClickListener {
-            performLogout()
-        }
-    }
+            if (loggingOut) return@setOnClickListener
+            loggingOut = true
+            binding.logoutLl.isEnabled = false
 
-    private fun performLogout() {
-        // 토큰과 플로우 상태 초기화
-        tokenProvider.clearTokens()
-        flowPrefs.clear()
-
-        // 로그인 화면으로 이동 (백스택 클리어)
-        val intent = Intent(requireContext(), LoginActivity::class.java).apply {
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            viewLifecycleOwner.lifecycleScope.launch {
+                try {
+                    // 서버 로그아웃 → 로컬 정리 → 로그인 화면 전환
+                    logoutManager.logout()
+                } catch (_: Exception) {
+                    Toast.makeText(requireContext(), "로그아웃 중 문제가 발생했어요.", Toast.LENGTH_SHORT).show()
+                } finally {
+                    loggingOut = false
+                    if (isAdded) binding.logoutLl.isEnabled = true
+                }
+            }
         }
-        startActivity(intent)
-        requireActivity().finish()
+
     }
 
     override fun onDestroyView() {
