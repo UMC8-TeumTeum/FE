@@ -53,6 +53,9 @@ class TodoViewModel @Inject constructor(
     private val _editSuccess = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
     val editSuccess: SharedFlow<Unit> = _editSuccess.asSharedFlow()
 
+    private val _editError = MutableSharedFlow<ApiException>(replay = 0, extraBufferCapacity = 1)
+    val editError: SharedFlow<ApiException> = _editError.asSharedFlow()
+
     private val _deleteSuccess = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
     val deleteSuccess: SharedFlow<Unit> = _deleteSuccess.asSharedFlow()
 

@@ -40,17 +40,17 @@ class TodoRVAdapter(
             if (item.isPublic) R.drawable.ic_unlock_sv else R.drawable.ic_lock_sv
         )
 
+        val isRoutine = runCatching { item.type == ScheduleType.ROUTINE }.getOrDefault(false)
         b.root.setCardBackgroundColor(
-            ContextCompat.getColor(
-                b.root.context,
-                if (item.type == ScheduleType.ROUTINE) R.color.main_2 else R.color.white
-            )
+            ContextCompat.getColor(b.root.context, if (isRoutine) R.color.main_2 else R.color.white)
         )
 
         b.root.setOnClickListener {
+            val scheduleTypeName = runCatching { item.type.name }
+                .getOrDefault(ScheduleType.TODO.name) // 기본값 투두
             val args = Bundle().apply {
                 putLong("todo_id", item.id)
-                putString("schedule_type", item.type.toString())
+                putString("schedule_type", scheduleTypeName)
             }
             TodoEditFragment().apply { arguments = args }
                 .show(fragmentManager, "TodoEditBottomSheet")

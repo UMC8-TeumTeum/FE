@@ -191,18 +191,6 @@ class HomeFragment : Fragment(), IDateClickListener {
             refreshTodolist()
         }
 
-        // 빈틈 채우기 이벤트 수신
-        parentFragmentManager.setFragmentResultListener("assign", viewLifecycleOwner) { _, _ ->
-            viewModel.refreshTodaySchedule()
-            refreshTodolist()
-        }
-
-        // 틈 요청 수락 이벤트 수신
-        parentFragmentManager.setFragmentResultListener("teum_accept", viewLifecycleOwner) { _, _ ->
-            viewModel.refreshTodaySchedule()
-            refreshTodolist()
-        }
-
         todoViewModel.getTodoList(date)
         myHomeViewModel.getMyInfo()
 

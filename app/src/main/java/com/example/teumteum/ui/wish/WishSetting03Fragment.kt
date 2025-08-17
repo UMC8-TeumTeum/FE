@@ -292,7 +292,6 @@ class WishSetting03Fragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.assignSuccess.collect {
                     Log.d("ASSIGN_FRAMENT", "빈틈채우기에 성공하였습니다.")
-                    parentFragmentManager.setFragmentResult("assign", Bundle())
 
                     parentFragmentManager.beginTransaction()
                         .replace(R.id.main_frm, HomeFragment())

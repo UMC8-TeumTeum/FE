@@ -115,6 +115,12 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val today = getTodayFormatted()
+
+        // 시작/종료 날짜를 오늘 날짜로 초기화
+        binding.startDateTv.text = today
+        binding.endDateTv.text = today
+
         val scheduleType: ScheduleType = arguments?.getString("schedule_type")
             ?.let { runCatching { ScheduleType.valueOf(it) }.getOrNull() }
             ?: ScheduleType.TODO
@@ -262,51 +268,6 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
         return if (result.isEmpty()) null else result
     }
 
-    override fun onStart() {
-        super.onStart()
-
-        dialog?.let { dialog ->
-            val bottomSheet = dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
-            bottomSheet?.let {
-                val screenHeight = resources.displayMetrics.heightPixels
-                val desiredHeight = (screenHeight * 0.84).toInt()
-
-                it.layoutParams.height = desiredHeight
-                it.requestLayout()
-
-                val behavior = BottomSheetBehavior.from(it)
-                behavior.peekHeight = desiredHeight
-                behavior.state = BottomSheetBehavior.STATE_COLLAPSED
-                behavior.isDraggable = false // 확장 불가능
-            }
-        }
-    }
-
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
-
-        dialog.setOnShowListener { dialogInterface ->
-            val bottomSheet = (dialogInterface as BottomSheetDialog)
-                .findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
-            bottomSheet?.setBackgroundResource(R.drawable.calendar_background)
-        }
-
-        dialog.setOnKeyListener { _, keyCode, event ->
-            if (keyCode == android.view.KeyEvent.KEYCODE_BACK && event.action == android.view.KeyEvent.ACTION_UP) {
-                if (isModified()) {
-                    showTodoCancelEditDialog()
-                } else {
-                    dismiss() // 수정 없으면 바로 닫기
-                }
-                true
-            } else {
-                false
-            }
-        }
-
-        return dialog
-    }
-
     private fun isModified(): Boolean {
         val currentTitle = binding.todoTitleEt.text.toString().trim()
 
@@ -335,6 +296,85 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
                 currentIsPublic != originalIsPublic ||
                 currentIncludeTeum != originalIncludeTeum ||
                 currentRemindAlarm != originalRemindAlarm
+    }
+
+    private fun applyTextStyleToNumberPicker(picker: NumberPicker, context: Context) {
+        try {
+            val count = picker.childCount
+            for (i in 0 until count) {
+                val child = picker.getChildAt(i)
+                if (child is EditText) {
+                    child.setTextColor(ContextCompat.getColor(context, R.color.text_primary))
+                    child.textSize = 15f
+                    child.typeface = ResourcesCompat.getFont(context, R.font.noto_sans_kr_regular)
+                    child.includeFontPadding = false
+
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun setupPickers() {
+        binding.ampmPicker01Np.apply {
+            minValue = 0
+            maxValue = 1
+            displayedValues = arrayOf("오전", "오후")
+            post { applyTextStyleToNumberPicker(this, context) }
+        }
+        binding.hourPicker01Np.apply {
+            minValue = 1
+            maxValue = 12
+            wrapSelectorWheel = true
+            post { applyTextStyleToNumberPicker(this, context) }
+        }
+        binding.minutePicker01Np.apply {
+            minValue = 0
+            maxValue = 5
+            displayedValues = arrayOf("00", "10", "20", "30", "40", "50")
+            wrapSelectorWheel = true
+            post { applyTextStyleToNumberPicker(this, context) }
+        }
+
+        binding.ampmPicker02Np.apply {
+            minValue = 0
+            maxValue = 1
+            displayedValues = arrayOf("오전", "오후")
+            post { applyTextStyleToNumberPicker(this, context) }
+        }
+        binding.hourPicker02Np.apply {
+            minValue = 1
+            maxValue = 12
+            wrapSelectorWheel = true
+            post { applyTextStyleToNumberPicker(this, context) }
+        }
+        binding.minutePicker02Np.apply {
+            minValue = 0
+            maxValue = 5
+            displayedValues = arrayOf("00", "10", "20", "30", "40", "50")
+            wrapSelectorWheel = true
+            post { applyTextStyleToNumberPicker(this, context) }
+        }
+    }
+
+    private fun applySelectedTime(isStart: Boolean) {
+        val ampmPicker = if (isStart) binding.ampmPicker01Np else binding.ampmPicker02Np
+        val hourPicker = if (isStart) binding.hourPicker01Np else binding.hourPicker02Np
+        val minutePicker = if (isStart) binding.minutePicker01Np else binding.minutePicker02Np
+
+        val ampm = ampmPicker.value
+        val hour = hourPicker.value
+        val minute = arrayOf("00", "10", "20", "30", "40", "50")[minutePicker.value]
+        val timeText = "${if (ampm == 0) "오전" else "오후"} $hour:$minute"
+
+        if (isStart) {
+            binding.startTimeTv.text = timeText
+            binding.timePickerStartContainer.isVisible = false
+        } else {
+            binding.endTimeTv.text = timeText
+            binding.timePickerEndContainer.isVisible = false
+        }
     }
 
     private fun showAlarmPopupWindow(anchor: View) {
@@ -434,117 +474,54 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+
+        dialog?.let { dialog ->
+            val bottomSheet = dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+            bottomSheet?.let {
+                val screenHeight = resources.displayMetrics.heightPixels
+                val desiredHeight = (screenHeight * 0.84).toInt()
+
+                it.layoutParams.height = desiredHeight
+                it.requestLayout()
+
+                val behavior = BottomSheetBehavior.from(it)
+                behavior.peekHeight = desiredHeight
+                behavior.state = BottomSheetBehavior.STATE_COLLAPSED
+                behavior.isDraggable = false // 확장 불가능
+            }
+        }
+    }
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
+
+        dialog.setOnShowListener { dialogInterface ->
+            val bottomSheet = (dialogInterface as BottomSheetDialog)
+                .findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+            bottomSheet?.setBackgroundResource(R.drawable.calendar_background)
+        }
+
+        dialog.setOnKeyListener { _, keyCode, event ->
+            if (keyCode == android.view.KeyEvent.KEYCODE_BACK && event.action == android.view.KeyEvent.ACTION_UP) {
+                if (isModified()) {
+                    showTodoCancelEditDialog()
+                } else {
+                    dismiss() // 수정 없으면 바로 닫기
+                }
+                true
+            } else {
+                false
+            }
+        }
+
+        return dialog
+    }
+
     private fun resetAlarmUI() {
         binding.alarmLayoutContainer.removeAllViews()
         selectedItems.clear()
-    }
-
-    private fun applyTextStyleToNumberPicker(picker: NumberPicker, context: Context) {
-        try {
-            val count = picker.childCount
-            for (i in 0 until count) {
-                val child = picker.getChildAt(i)
-                if (child is EditText) {
-                    child.setTextColor(ContextCompat.getColor(context, R.color.text_primary))
-                    child.textSize = 15f
-                    child.typeface = ResourcesCompat.getFont(context, R.font.noto_sans_kr_regular)
-                    child.includeFontPadding = false
-
-                }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
-    private fun setupPickers() {
-        binding.ampmPicker01Np.apply {
-            minValue = 0
-            maxValue = 1
-            displayedValues = arrayOf("오전", "오후")
-            post { applyTextStyleToNumberPicker(this, context) }
-        }
-        binding.hourPicker01Np.apply {
-            minValue = 1
-            maxValue = 12
-            wrapSelectorWheel = true
-            post { applyTextStyleToNumberPicker(this, context) }
-        }
-        binding.minutePicker01Np.apply {
-            minValue = 0
-            maxValue = 5
-            displayedValues = arrayOf("00", "10", "20", "30", "40", "50")
-            wrapSelectorWheel = true
-            post { applyTextStyleToNumberPicker(this, context) }
-        }
-
-        binding.ampmPicker02Np.apply {
-            minValue = 0
-            maxValue = 1
-            displayedValues = arrayOf("오전", "오후")
-            post { applyTextStyleToNumberPicker(this, context) }
-        }
-        binding.hourPicker02Np.apply {
-            minValue = 1
-            maxValue = 12
-            wrapSelectorWheel = true
-            post { applyTextStyleToNumberPicker(this, context) }
-        }
-        binding.minutePicker02Np.apply {
-            minValue = 0
-            maxValue = 5
-            displayedValues = arrayOf("00", "10", "20", "30", "40", "50")
-            wrapSelectorWheel = true
-            post { applyTextStyleToNumberPicker(this, context) }
-        }
-    }
-
-    private fun applySelectedTime(isStart: Boolean) {
-        val ampmPicker = if (isStart) binding.ampmPicker01Np else binding.ampmPicker02Np
-        val hourPicker = if (isStart) binding.hourPicker01Np else binding.hourPicker02Np
-        val minutePicker = if (isStart) binding.minutePicker01Np else binding.minutePicker02Np
-
-        val ampm = ampmPicker.value
-        val hour = hourPicker.value
-        val minute = arrayOf("00", "10", "20", "30", "40", "50")[minutePicker.value]
-        val timeText = "${if (ampm == 0) "오전" else "오후"} $hour:$minute"
-
-        if (isStart) {
-            binding.startTimeTv.text = timeText
-            binding.timePickerStartContainer.isVisible = false
-        } else {
-            if (!validateEndTime()) {
-                android.app.AlertDialog.Builder(requireContext())
-                    .setTitle("시간 오류")
-                    .setMessage("종료 시간을 시작 시간 이후로 설정해주세요.")
-                    .setPositiveButton("확인") { _, _ ->
-                        binding.timePickerEndContainer.isVisible = true // 다시 종료 시간 피커 열기
-                    }
-                    .setCancelable(false)
-                    .show()
-                return
-            }
-            binding.endTimeTv.text = timeText
-            binding.timePickerEndContainer.isVisible = false
-        }
-    }
-
-    private fun validateEndTime(): Boolean {
-        // 시작 시간
-        val startAmpm = binding.ampmPicker01Np.value // 0: 오전, 1: 오후
-        val startHour = binding.hourPicker01Np.value
-        val startMinute = binding.minutePicker01Np.value * 10
-
-        // 종료 시간
-        val endAmpm = binding.ampmPicker02Np.value
-        val endHour = binding.hourPicker02Np.value
-        val endMinute = binding.minutePicker02Np.value * 10
-
-        // 24시간제로 변환
-        val startTotalMinutes = ((if (startAmpm == 1 && startHour != 12) startHour + 12 else if (startAmpm == 0 && startHour == 12) 0 else startHour) * 60) + startMinute
-        val endTotalMinutes = ((if (endAmpm == 1 && endHour != 12) endHour + 12 else if (endAmpm == 0 && endHour == 12) 0 else endHour) * 60) + endMinute
-
-        return endTotalMinutes > startTotalMinutes
     }
 
     private fun showTodoDeleteDialog() {
@@ -736,6 +713,12 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
 
                 selectedItems.add(label)
             }
+    }
+
+    private fun getTodayFormatted(): String {
+        val today = LocalDate.now()
+        val formatter = DateTimeFormatter.ofPattern("M월 d일 (E)", Locale.KOREAN)
+        return today.format(formatter)
     }
 
     private fun setupObservers() {
@@ -947,6 +930,27 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
                         parentFragmentManager.setFragmentResult("todo_delete_home", Bundle())
                         parentFragmentManager.setFragmentResult("todo_delete_calendar", Bundle())
                         dismissAllSheets()
+                    }
+                }
+            }
+        }
+
+        viewModel.errorMessage.observe(viewLifecycleOwner) { errorMsg ->
+            Log.e("TODO_EDIT_FRAGMENT", errorMsg.toString())
+        }
+
+        // 수면패턴 or 틈요청 충돌 + 시간 유효성 검사
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.registerError.collect { err ->
+                    when (err.code) {
+                        "CONFLICT4094", "CONFLICT4092" ->
+                            Toast.makeText(requireContext(), err.message, Toast.LENGTH_SHORT).show()
+                        "HOME4001" ->
+                            Toast.makeText(requireContext(), "종료시간은 시작시간을 앞설 수 없습니다.", Toast.LENGTH_SHORT).show()
+                        else -> err.message.let {
+                            Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
             }
