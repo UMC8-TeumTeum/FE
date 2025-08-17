@@ -353,14 +353,6 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
     }
 
     private fun addAlarmItem(label: String) {
-        // 이미 같은 라벨이 있으면 중복 추가 방지
-        val exists = (0 until binding.alarmLayoutContainer.childCount)
-            .asSequence()
-            .map { binding.alarmLayoutContainer.getChildAt(it) }
-            .any { it.tag == label }
-
-        if (exists) return
-
         val layout = layoutInflater.inflate(R.layout.item_alarm, binding.alarmLayoutContainer, false)
         val labelText = layout.findViewById<TextView>(R.id.alarm_set_tv)
         labelText.text = label
@@ -547,10 +539,7 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
     private fun applyRemindersFromMinutes(minutes: List<Int>) {
         resetAlarmUI()
 
-        val allowed = setOf(1, 3, 5, 10, 30)
-
-        // 중복 제거 + 내림차순 정렬
-        val sorted = minutes.filter { it in allowed }.distinct().sortedDescending()
+        val sorted = minutes.sortedDescending()
         sorted.forEach { m ->
             val label = minutesToLabel[m] ?: return@forEach
             selectedItems.add(label)
