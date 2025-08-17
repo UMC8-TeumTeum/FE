@@ -148,8 +148,7 @@ class HomeFragment : Fragment(), IDateClickListener {
                         alarmStatus = status
                     )
                 )
-        }
-        )
+            })
         binding.todolistRv.adapter = adapter
 
         val date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
@@ -220,28 +219,6 @@ class HomeFragment : Fragment(), IDateClickListener {
         viewModel.teumTimeMinutes.observe(viewLifecycleOwner) { updateTeumTime() }
 
         setupObservers()
-
-//        filterVM.typeLive.observe(viewLifecycleOwner) { t ->
-//            t ?: return@observe
-//
-//            adapter.setType(t)
-//            refreshTodolist()
-//
-//            when (t) {
-//                ScheduleType.TEUM -> {
-//                    binding.chipTeum.isChecked = true
-//                    // 필요하면 텍스트/스타일 변경
-//                }
-//                ScheduleType.AI -> {
-//                    binding.chipAi.isChecked = true
-//                }
-//                ScheduleType.TODO -> {
-//                    binding.chipTodo.isChecked = true
-//                }
-//                else -> { /* enum에 따라 추가 */ }
-//            }
-//        }
-
     }
 
     override fun onResume() {
