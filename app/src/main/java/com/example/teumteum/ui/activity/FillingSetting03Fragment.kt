@@ -47,6 +47,8 @@ class FillingSetting03Fragment : Fragment() {
     private enum class AssignMode { AI, WISH }
     private var mode: AssignMode? = null
 
+    private var scheduleType: String? = null
+
     private val viewModel: ActivityViewModel by activityViewModels()
 
     override fun onCreateView(
@@ -81,6 +83,8 @@ class FillingSetting03Fragment : Fragment() {
             parentFragmentManager.popBackStack()
             return
         }
+
+        scheduleType = arguments?.getString("schedule_type")
 
         // 바텀 내비게이션 숨기기
         val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)

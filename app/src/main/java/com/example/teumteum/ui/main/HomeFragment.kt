@@ -58,7 +58,6 @@ class HomeFragment : Fragment(), IDateClickListener {
     private var isAM: Boolean = true
 
     private val TODO_SHEET_TAG = "TodoRegisterSheet"
-    private val type : String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -208,6 +207,12 @@ class HomeFragment : Fragment(), IDateClickListener {
 
         // 빈틈 채우기 이벤트 수신
         parentFragmentManager.setFragmentResultListener("assign", viewLifecycleOwner) { _, _ ->
+            viewModel.refreshTodaySchedule()
+            refreshTodolist()
+        }
+
+        // 틈 요청 수락 이벤트 수신
+        parentFragmentManager.setFragmentResultListener("teum_accept", viewLifecycleOwner) { _, _ ->
             viewModel.refreshTodaySchedule()
             refreshTodolist()
         }

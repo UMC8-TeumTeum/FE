@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
+import com.example.teumteum.data.remote.todo.model.enums.ScheduleType
 import com.example.teumteum.databinding.BottomSheetFriend02AcceptBinding
 import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -67,10 +68,18 @@ class Friend02AcceptBottomSheetFragment : BottomSheetDialogFragment() {
             //  응답 처리
             viewModel.respondToTeum(responseId, status)
 
-            //  바텀시트 닫기 + 화면 전환
+            // 바텀시트 닫기
             dismiss()
-            requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, FriendSendFragment())
+
+            // 타입 처리 및 화면 전환
+            val fragment = FriendSendFragment().apply {
+                arguments = Bundle().apply {
+                    putString("schedule_type", ScheduleType.TEUM.toString())
+                }
+            }
+
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, fragment)
                 .addToBackStack(null)
                 .commit()
         }

@@ -80,9 +80,7 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
     private var isStartDateSelected = true
 
     private val viewModel: TodoViewModel by activityViewModels()
-    private val myHomeViewModel: MyHomeViewModel by activityViewModels()
     private val friendViewModel: FriendViewModel by activityViewModels()
-//    private val homeViewModel: HomeViewModel by activityViewModels()
 
     private val alarmLabelToMinutes = mapOf(
         "30분 전" to 30,

@@ -66,7 +66,16 @@ class WeeklyCalendarFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         setPrevSelectedDate()
-        refreshWeek()
+
+        // 투두 등록 성공 이벤트 수신
+        parentFragmentManager.setFragmentResultListener("todo_register", viewLifecycleOwner) { _, _ ->
+            refreshWeek()
+        }
+
+        // 투두 삭제 성공 이벤트 수신
+        parentFragmentManager.setFragmentResultListener("todo_delete", viewLifecycleOwner) { _, _ ->
+            refreshWeek()
+        }
     }
 
     override fun onPause() {
