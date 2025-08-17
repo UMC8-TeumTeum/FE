@@ -64,12 +64,12 @@ class MonthlyCalendarFragment : Fragment() {
         setupObservers()
 
         // 투두 등록 성공 이벤트 수신
-        parentFragmentManager.setFragmentResultListener("todo_register", viewLifecycleOwner) { _, _ ->
+        parentFragmentManager.setFragmentResultListener("todo_register_calendar", viewLifecycleOwner) { _, _ ->
             refreshMonth()
         }
 
         // 투두 삭제 성공 이벤트 수신
-        parentFragmentManager.setFragmentResultListener("todo_delete", viewLifecycleOwner) { _, _ ->
+        parentFragmentManager.setFragmentResultListener("todo_delete_calendar", viewLifecycleOwner) { _, _ ->
             refreshMonth()
         }
     }

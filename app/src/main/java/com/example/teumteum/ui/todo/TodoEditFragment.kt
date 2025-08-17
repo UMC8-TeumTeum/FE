@@ -1037,7 +1037,8 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
                 launch {
                     viewModel.editSuccess.collect {
                         Log.d("TODO_EDIT_FRAGMENT", "투두가 성공적으로 수정되었습니다.")
-                        parentFragmentManager.setFragmentResult("todo_edit", Bundle())
+                        parentFragmentManager.setFragmentResult("todo_edit_home", Bundle())
+                        parentFragmentManager.setFragmentResult("todo_edit_calendar", Bundle())
                         dismissAllSheets()
                     }
                 }
@@ -1046,7 +1047,8 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
                 launch {
                     viewModel.deleteSuccess.collect {
                         Log.d("TODO_EDIT_FRAGMENT", "투두가 성공적으로 삭제되었습니다.")
-                        parentFragmentManager.setFragmentResult("todo_delete", Bundle())
+                        parentFragmentManager.setFragmentResult("todo_delete_home", Bundle())
+                        parentFragmentManager.setFragmentResult("todo_delete_calendar", Bundle())
                         dismissAllSheets()
                     }
                 }

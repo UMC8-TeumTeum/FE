@@ -99,14 +99,7 @@ class HomeFragment : Fragment(), IDateClickListener {
                 sheet.dismissAllowingStateLoss() // 인스턴스 정리
             }
 
-            val scheduleList = viewModel.scheduleList.value ?: emptyList()
-            val sleepBlocks = scheduleList.filter { it.type == TimeType.SLEEP }
-
-            TodoRegisterFragment().apply {
-                arguments = Bundle().apply {
-                    putParcelableArrayList("sleepBlocks", ArrayList(sleepBlocks))
-                }
-            }.show(parentFragmentManager, TODO_SHEET_TAG)
+            TodoRegisterFragment().show(parentFragmentManager, TODO_SHEET_TAG)
         }
 
         binding.btnLoadWishlistTv.setOnClickListener {
@@ -181,19 +174,19 @@ class HomeFragment : Fragment(), IDateClickListener {
         }
 
         // 투두 등록 성공 이벤트 수신
-        parentFragmentManager.setFragmentResultListener("todo_register", viewLifecycleOwner) { _, _ ->
+        parentFragmentManager.setFragmentResultListener("todo_register_home", viewLifecycleOwner) { _, _ ->
             viewModel.refreshTodaySchedule()
             refreshTodolist()
         }
 
         // 투두 수정 성공 이벤트 수신
-        parentFragmentManager.setFragmentResultListener("todo_edit", viewLifecycleOwner) { _, _ ->
+        parentFragmentManager.setFragmentResultListener("todo_edit_home", viewLifecycleOwner) { _, _ ->
             viewModel.refreshTodaySchedule()
             refreshTodolist()
         }
 
         // 투두 삭제 성공 이벤트 수신
-        parentFragmentManager.setFragmentResultListener("todo_delete", viewLifecycleOwner) { _, _ ->
+        parentFragmentManager.setFragmentResultListener("todo_delete_home", viewLifecycleOwner) { _, _ ->
             viewModel.refreshTodaySchedule()
             refreshTodolist()
         }
