@@ -70,7 +70,7 @@ class NetworkModule {
             .build()
     }
 
-    // 토큰 없이 사용할 Retrofit 인스턴스 (필요한 경우)
+    // 토큰 없이 사용할 Retrofit 인스턴스
     @Provides
     @Singleton
     @NoAuthRetrofit
@@ -82,31 +82,5 @@ class NetworkModule {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
-}
 
-// 기존 함수들 (호환성을 위해 유지)
-const val BASE_URL = BuildConfig.BASE_URL
-
-fun getRetrofit(): Retrofit {
-    return Retrofit.Builder()
-        .baseUrl(BASE_URL)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-}
-
-fun getRetrofitWithToken(): Retrofit {
-    val client = OkHttpClient.Builder()
-        .addInterceptor { chain ->
-            val request = chain.request().newBuilder()
-                .addHeader("Authorization", "Bearer ${BuildConfig.TEMP_ACCESS_TOKEN}")
-                .build()
-            chain.proceed(request)
-        }
-        .build()
-
-    return Retrofit.Builder()
-        .baseUrl(BASE_URL)
-        .client(client)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
 }
