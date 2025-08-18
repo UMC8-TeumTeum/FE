@@ -16,7 +16,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="선택한 시간에"
+            android:text="틈 약속을"
             android:textSize="18sp"
             android:fontFamily="@font/noto_sans_kr_medium"
             android:textColor="@color/text_primary" />
@@ -24,23 +24,32 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=" 이미 투두가 있어요!"
+            android:text=" 삭제"
             android:textSize="18sp"
             android:fontFamily="@font/noto_sans_kr_medium"
             android:textColor="@color/main_1" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="할까요?"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/noto_sans_kr_medium"
+            android:textColor="@color/text_primary" />
     </LinearLayout>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="투두와 겹치게 등록할까요?"
+        android:text="삭제 시, 1:1의 경우 틈 약속이 취소되고\n단체의 경우 내 이름만 빠져요"
         android:textSize="15sp"
         android:fontFamily="@font/noto_sans_kr_regular"
         android:textColor="@color/text_secondary"
         android:gravity="center"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="10dp" />
+        android:includeFontPadding="false"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="5dp" />
 
     <ImageView
         android:id="@+id/teum_char_iv"
@@ -58,25 +67,23 @@
         android:layout_marginBottom="10dp">
 
         <TextView
-            android:id="@+id/assign_confirm_tv"
+            android:id="@+id/todo_confirm_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="네"
             android:fontFamily="@font/noto_sans_kr_medium"
             android:textSize="15sp"
             android:textColor="@color/text_primary"
-            android:padding="12dp"
-            android:includeFontPadding="false"/>
+            android:padding="12dp" />
 
         <TextView
-            android:id="@+id/assign_cancel_tv"
+            android:id="@+id/todo_cancel_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="아니오"
             android:fontFamily="@font/noto_sans_kr_medium"
             android:textSize="15sp"
             android:textColor="@color/main_1"
-            android:padding="12dp"
-            android:includeFontPadding="false"/>
+            android:padding="12dp" />
     </LinearLayout>
 </LinearLayout>

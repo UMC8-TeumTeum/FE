@@ -37,7 +37,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 import com.example.teumteum.ui.calendar.IDateClickListener
 import com.example.teumteum.ui.calendar.MonthlyCalendarFragment
-import com.example.teumteum.ui.main.data.TimeBlock
 import com.example.teumteum.ui.myhome.viewModel.MyHomeViewModel
 import com.example.teumteum.ui.todo.viewModel.TodoViewModel
 import com.example.teumteum.utils.combineDateTime
@@ -46,7 +45,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 import java.time.LocalDate
-import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -621,7 +619,6 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.registerSuccess.collect {
-//                    Toast.makeText(requireContext(), "투두가 성공적으로 등록되었습니다.", Toast.LENGTH_SHORT).show()
                     Log.d("TODO_REGISTER_FRAMENT", "투두가 성공적으로 등록되었습니다.")
                     parentFragmentManager.setFragmentResult("todo_register", Bundle())
 
@@ -636,7 +633,6 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
         }
 
         viewModel.errorMessage.observe(viewLifecycleOwner) { errorMsg ->
-//            Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_SHORT).show()
             Log.e("TODO_REGISTER_FRAGMENT", errorMsg.toString())
         }
 

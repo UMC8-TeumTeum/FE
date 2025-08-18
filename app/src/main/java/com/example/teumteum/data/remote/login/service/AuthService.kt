@@ -19,4 +19,7 @@ interface AuthService {
     @POST("/api/auth/reissue")
     suspend fun reissue( @Body request: ReissueRequest ): Response<ApiResponse<JwtTokenResponse>>
 
+    @POST("/api/auth/logout")
+    suspend fun logout(): Response<ApiResponse<Unit>>
+
 }
