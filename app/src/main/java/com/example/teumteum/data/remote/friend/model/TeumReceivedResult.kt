@@ -29,7 +29,10 @@ data class TeumReceivedItem(
     @SerializedName("receiverCount") val receiverCount: Int,
     @SerializedName("date") val date: String,
     @SerializedName("timeSlot") val timeSlot: TeumTimeSlot,
-    @SerializedName("read") val read: Boolean
+    @SerializedName("originalDate") val originalDate: String?,
+    @SerializedName("originalTimeSlot") val originalTimeSlot: TeumTimeSlot?,
+    @SerializedName("read") val read: Boolean,
+    @SerializedName("resend") val resend: Boolean
 ) : Parcelable
 
 @Parcelize
