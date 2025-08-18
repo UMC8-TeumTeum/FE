@@ -3,6 +3,7 @@ package com.example.teumteum.ui.main
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -14,6 +15,7 @@ import com.example.teumteum.ui.myhome.MyHomeFragment
 import com.example.teumteum.R
 import com.example.teumteum.receiver.ScreenOnReceiver
 import com.example.teumteum.databinding.ActivityMainBinding
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -43,6 +45,14 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, 0, systemBars.right, 0)
             insets
         }
+
+        FirebaseMessaging.getInstance().token
+            .addOnSuccessListener { token ->
+                Log.d("FCM", "FCM Token: $token")
+            }
+            .addOnFailureListener { e ->
+                Log.e("FCM", "Failed to fetch FCM token", e)
+            }
     }
 
     private fun initBottomNavigation() {
