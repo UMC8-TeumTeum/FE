@@ -1,4 +1,3 @@
-// utils/AuthInterceptor.kt
 package com.example.teumteum.utils
 
 import android.util.Log
