@@ -2,8 +2,6 @@ package com.example.teumteum.utils
 
 import android.content.Context
 import android.content.Intent
-import android.util.Log
-import com.example.teumteum.data.remote.alarm.FcmRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -16,7 +14,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.concurrent.atomic.AtomicBoolean
 import retrofit2.Retrofit
-import retrofit2.Response
 import javax.inject.Provider
 
 @Singleton
