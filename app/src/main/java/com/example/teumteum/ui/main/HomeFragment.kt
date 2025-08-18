@@ -105,6 +105,7 @@ class HomeFragment : Fragment(), IDateClickListener {
             TodoRegisterFragment().apply {
                 arguments = Bundle().apply {
                     putParcelableArrayList("sleepBlocks", ArrayList(sleepBlocks))
+                    putString("defaultDate", selectedDate.toString())
                 }
             }.show(parentFragmentManager, TODO_SHEET_TAG)
         }

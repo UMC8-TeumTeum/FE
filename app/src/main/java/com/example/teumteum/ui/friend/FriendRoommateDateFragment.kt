@@ -34,9 +34,9 @@ class FriendRoommateDateFragment : Fragment() {
     private var targetNickname: String? = null
     private var targetProfileUrl: String? = null
 
-    private var selectedDate: LocalDate? = null
+    private var selectedDate: LocalDate = LocalDate.now()
     private val today: LocalDate = LocalDate.now()
-    private val baseDate: LocalDate by lazy { getSavedDateOrToday(requireContext()) }
+    private val baseDate: LocalDate = LocalDate.now()
     private var currentMonthOffset = 0
 
     private val onClickListener = object : IDateClickListener {

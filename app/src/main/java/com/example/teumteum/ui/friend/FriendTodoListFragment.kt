@@ -28,12 +28,12 @@ class FriendTodoListFragment : Fragment() {
 
     private val viewModel: FriendViewModel by viewModels()
 
-    private val baseDate: LocalDate by lazy { getSavedDateOrToday(requireContext()) }
+    private val baseDate: LocalDate = LocalDate.now()
     private var currentMonthOffset = 0
     private val today = LocalDate.now()
 
     private lateinit var todoAdapter: PublicTodoAdapter
-    private var selectedDate: LocalDate? = null
+    private var selectedDate: LocalDate = LocalDate.now()
     private var friendUserId: Int = -1
 
     override fun onCreateView(
@@ -75,6 +75,8 @@ class FriendTodoListFragment : Fragment() {
             todoAdapter.submitList(list)
             binding.rvEventList.isVisible = list.isNotEmpty()
         }
+
+        onDateSelected(selectedDate)
     }
 
     private fun setupHeader() {
@@ -91,16 +93,29 @@ class FriendTodoListFragment : Fragment() {
     private fun setupCalendarNavigation() {
         binding.homeCalendarPreviousDateIv.setOnClickListener {
             currentMonthOffset--
+            todoAdapter.submitList(emptyList())
             setupHeader()
             setupCalendarFragment()
             fetchDotDates()
+
+            // 원래 달로 복귀하면 리스트 자동 복구
+            if (currentMonthOffset == 0) {
+                selectedDate = today
+                onDateSelected(selectedDate)
+            }
         }
 
         binding.homeCalendarNextDateIv.setOnClickListener {
             currentMonthOffset++
+            todoAdapter.submitList(emptyList())
             setupHeader()
             setupCalendarFragment()
             fetchDotDates()
+
+            if (currentMonthOffset == 0) {
+                selectedDate = today
+                onDateSelected(selectedDate)
+            }
         }
     }
 
@@ -110,11 +125,7 @@ class FriendTodoListFragment : Fragment() {
             position = Int.MAX_VALUE / 2 + currentMonthOffset,
             onClickListener = object : IDateClickListener {
                 override fun onClickDate(date: LocalDate) {
-                    selectedDate = date
-                    val dateStr = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-                    if (friendUserId != -1) {
-                        viewModel.fetchFriendPublicTodosByDate(friendUserId, dateStr)
-                    }
+                    onDateSelected(date)
                 }
             },
             showDot = true,
@@ -132,6 +143,14 @@ class FriendTodoListFragment : Fragment() {
             .commit()
     }
 
+    private fun onDateSelected(date: LocalDate) {
+        selectedDate = date
+        val dateStr = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        if (friendUserId != -1) {
+            viewModel.fetchFriendPublicTodosByDate(friendUserId, dateStr)
+        }
+    }
+
     private fun fetchDotDates() {
         if (friendUserId == -1) return
         val displayDate = baseDate.plusMonths(currentMonthOffset.toLong())
@@ -143,5 +162,6 @@ class FriendTodoListFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
 }
 
