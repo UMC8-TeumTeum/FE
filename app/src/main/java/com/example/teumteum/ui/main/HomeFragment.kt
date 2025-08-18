@@ -104,7 +104,15 @@ class HomeFragment : Fragment(), IDateClickListener {
                 sheet.dismissAllowingStateLoss() // 인스턴스 정리
             }
 
-            TodoRegisterFragment().show(parentFragmentManager, TODO_SHEET_TAG)
+            val scheduleList = viewModel.scheduleList.value ?: emptyList()
+            val sleepBlocks = scheduleList.filter { it.type == TimeType.SLEEP }
+
+            TodoRegisterFragment().apply {
+                arguments = Bundle().apply {
+                    putParcelableArrayList("sleepBlocks", ArrayList(sleepBlocks))
+                    putString("defaultDate", selectedDate.toString())
+                }
+            }.show(parentFragmentManager, TODO_SHEET_TAG)
         }
 
         binding.btnLoadWishlistTv.setOnClickListener {
