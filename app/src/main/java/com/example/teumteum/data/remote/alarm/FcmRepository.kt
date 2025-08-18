@@ -16,20 +16,17 @@ class FcmRepository @Inject constructor(
         require(token.isNotBlank()) { "Empty FCM token" }
         val response = fcmService.registerToken(FcmToken(token))
         handleApiResponseUnit(response)
-        Log.d("FcmRepository", "registerToken success")
     }
 
     suspend fun deactivateCurrentDeviceToken(): Result<Unit> = runCatching {
         val token = fcmTokenStore.load().orEmpty()
         if (token.isBlank()) {
-            Log.w("FcmRepository", "No local FCM token to deactivate; skipping")
-            return@runCatching Unit // 토큰 없음: 넘어가도 무방
+            return@runCatching Unit
         }
 
         val response = fcmService.deactivateToken(FcmToken(token))
         try {
             handleApiResponseUnit(response)
-            Log.d("FcmRepository", "deactivateToken success")
         } catch (e: Exception) {
             // 로그만 남기고 계속 진행
             val code = (response.body()?.code ?: "HTTP${response.code()}")
