@@ -1,6 +1,7 @@
 package com.example.teumteum.application
 
 import android.util.Log
+import com.example.teumteum.data.remote.alarm.FcmTokenStore
 import com.example.teumteum.utils.NotificationHelper
 import com.google.firebase.messaging.RemoteMessage
 import dagger.hilt.android.AndroidEntryPoint
@@ -12,7 +13,7 @@ import com.google.firebase.messaging.FirebaseMessagingService as BaseFms
 class MyFirebaseMessagingService : BaseFms() {
 
     @Inject lateinit var fcmRepository: com.example.teumteum.data.remote.alarm.FcmRepository
-    @Inject lateinit var fcmTokenStore: com.example.teumteum.utils.FcmTokenStore
+    @Inject lateinit var fcmTokenStore: FcmTokenStore
     @Inject lateinit var tokenProvider: com.example.teumteum.utils.TokenProvider
 
     override fun onNewToken(token: String) {

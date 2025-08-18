@@ -1,4 +1,4 @@
-package com.example.teumteum.utils
+package com.example.teumteum.data.remote.alarm
 
 import android.content.Context
 import androidx.security.crypto.EncryptedSharedPreferences

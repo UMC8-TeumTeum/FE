@@ -2,7 +2,6 @@ package com.example.teumteum.data.remote.alarm
 
 import android.util.Log
 import com.example.teumteum.data.remote.alarm.dto.FcmToken
-import com.example.teumteum.utils.FcmTokenStore
 import com.example.teumteum.utils.handleApiResponseUnit
 import javax.inject.Inject
 import javax.inject.Singleton

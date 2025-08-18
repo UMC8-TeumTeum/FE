@@ -1,4 +1,4 @@
-package com.example.teumteum.utils
+package com.example.teumteum.data.remote.login
 
 import android.content.Context
 import android.content.Intent
@@ -7,6 +7,9 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import com.example.teumteum.ui.signin.LoginActivity
 import com.example.teumteum.data.remote.login.service.AuthService
+import com.example.teumteum.utils.AuthRetrofit
+import com.example.teumteum.utils.FlowPrefs
+import com.example.teumteum.utils.TokenProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob

@@ -1,4 +1,4 @@
-package com.example.teumteum.utils
+package com.example.teumteum.data.remote.login
 
 import android.util.Log
 import com.example.teumteum.data.remote.alarm.FcmRepository
