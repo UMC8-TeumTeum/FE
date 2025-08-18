@@ -1,6 +1,5 @@
 package com.example.teumteum.ui.myhome
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,10 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentMyAccountSettingBinding
 import com.example.teumteum.ui.main.MainActivity
-import com.example.teumteum.ui.signin.LoginActivity
-import com.example.teumteum.utils.FlowPrefs
-import com.example.teumteum.utils.LogoutManager
-import com.example.teumteum.utils.TokenProvider
+import com.example.teumteum.utils.LogoutUseCase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -25,7 +21,7 @@ class MyAccountSettingFragment : Fragment() {
     private var _binding: FragmentMyAccountSettingBinding? = null
     private val binding get() = _binding!!
 
-    @Inject lateinit var logoutManager: LogoutManager
+    @Inject lateinit var logoutUseCase: LogoutUseCase
 
     private var loggingOut = false
 
@@ -55,8 +51,7 @@ class MyAccountSettingFragment : Fragment() {
 
             viewLifecycleOwner.lifecycleScope.launch {
                 try {
-                    // 서버 로그아웃 → 로컬 정리 → 로그인 화면 전환
-                    logoutManager.logout()
+                    logoutUseCase.deactivateFcmAndLogout()
                 } catch (_: Exception) {
                     Toast.makeText(requireContext(), "로그아웃 중 문제가 발생했어요.", Toast.LENGTH_SHORT).show()
                 } finally {

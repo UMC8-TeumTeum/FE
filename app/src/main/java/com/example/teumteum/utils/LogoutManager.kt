@@ -1,8 +1,9 @@
-// utils/LogoutManager.kt
 package com.example.teumteum.utils
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
+import com.example.teumteum.data.remote.alarm.FcmRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
