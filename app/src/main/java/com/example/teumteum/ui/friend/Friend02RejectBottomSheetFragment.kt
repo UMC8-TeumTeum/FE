@@ -11,6 +11,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
 import com.example.teumteum.databinding.BottomSheetFriend02RejectBinding
@@ -90,8 +91,16 @@ class Friend02RejectBottomSheetFragment : BottomSheetDialogFragment() {
                 Log.d("REJECT_BOTTOM_SHEET", "responseId: $responseId, status: $status")
 //                Toast.makeText(requireContext(), "응답: 시간이 안돼요 (id: $responseId)", Toast.LENGTH_SHORT).show()
 
+                Toast.makeText(requireContext(), "삭제되었습니다", Toast.LENGTH_SHORT).show()
+
                 //  응답 처리
                 viewModel.respondToTeum(responseId, status)
+
+                //  응답 완료 후 reject 전송 완료 화면으로 이동
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.main_frm, FriendRejectSendFragment())
+                    .addToBackStack(null)
+                    .commit()
 
                 //  바텀시트 닫기
                 dismiss()
