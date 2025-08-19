@@ -12,7 +12,8 @@ import com.example.teumteum.databinding.ItemHomeAlarmBinding
 import com.example.teumteum.utils.TimeUtils
 
 class AlarmRVAdapter(
-    private val items: MutableList<NotificationResponse>
+    private val items: MutableList<NotificationResponse>,
+    private val onItemClick: (NotificationResponse) -> Unit
 ) : RecyclerView.Adapter<AlarmRVAdapter.ViewHolder>() {
 
     inner class ViewHolder(val binding: ItemHomeAlarmBinding) :
@@ -71,8 +72,8 @@ class AlarmRVAdapter(
                 b.alarmContentTv.setTextColor(gray)
                 b.alarmTimeTv.setTextColor(gray)
                 b.profileIv.imageAlpha = 100
-                // TODO: 화면 전환
             }
+            onItemClick(item)
         }
     }
 
