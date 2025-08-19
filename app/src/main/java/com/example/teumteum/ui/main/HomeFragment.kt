@@ -184,18 +184,21 @@ class HomeFragment : Fragment(), IDateClickListener {
         // 투두 등록 성공 이벤트 수신
         parentFragmentManager.setFragmentResultListener("todo_register_home", viewLifecycleOwner) { _, _ ->
             viewModel.refreshTodaySchedule()
+            viewModel.getTeumTime()
             refreshTodolist()
         }
 
         // 투두 수정 성공 이벤트 수신
         parentFragmentManager.setFragmentResultListener("todo_edit_home", viewLifecycleOwner) { _, _ ->
             viewModel.refreshTodaySchedule()
+            viewModel.getTeumTime()
             refreshTodolist()
         }
 
         // 투두 삭제 성공 이벤트 수신
         parentFragmentManager.setFragmentResultListener("todo_delete_home", viewLifecycleOwner) { _, _ ->
             viewModel.refreshTodaySchedule()
+            viewModel.getTeumTime()
             refreshTodolist()
         }
 
