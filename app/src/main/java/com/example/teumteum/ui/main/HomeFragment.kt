@@ -31,6 +31,7 @@ import java.time.format.DateTimeFormatter
 import com.example.teumteum.data.remote.todo.model.TodoListResult
 import com.example.teumteum.data.remote.todo.model.enums.AlarmStatus
 import com.example.teumteum.data.remote.todo.model.enums.ScheduleType
+import com.example.teumteum.databinding.ItemClockPageBinding
 import com.example.teumteum.ui.todo.viewModel.TodoViewModel
 import com.example.teumteum.ui.clock.ChartUtils
 import com.example.teumteum.ui.clock.ClockHalf
@@ -40,6 +41,7 @@ import com.example.teumteum.ui.main.data.TimeType
 import com.example.teumteum.ui.main.viewModel.HomeViewModel
 import com.example.teumteum.ui.myhome.viewModel.MyHomeViewModel
 import com.example.teumteum.utils.applyBlurShadow
+import com.example.teumteum.utils.saveSelectedDate
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -62,7 +64,7 @@ class HomeFragment : Fragment(), IDateClickListener {
 
     private val TODO_SHEET_TAG = "TodoRegisterSheet"
 
-    private lateinit var clockAdapter: ClockVPAdapter
+    private lateinit var clockAdapter: ClockVPAdapter<ItemClockPageBinding>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -231,16 +233,20 @@ class HomeFragment : Fragment(), IDateClickListener {
     }
 
     private fun setupClockPager() {
-        clockAdapter = ClockVPAdapter { chart, half ->
-            ChartUtils.setupPieChart(chart)
-            val sleepBitmap = ChartUtils.getBitmapFromVector(requireContext(), R.drawable.ic_sleep_sv)
-            chart.renderer = IconPieChartRenderer(chart, chart.animator, chart.viewPortHandler, sleepBitmap)
+        clockAdapter = ClockVPAdapter(
+            inflate = ItemClockPageBinding::inflate,
+            chartOf = { it.clockChart },
+            onBindPage = { chart, half ->
+                ChartUtils.setupPieChart(chart)
+                val sleepBitmap = ChartUtils.getBitmapFromVector(requireContext(), R.drawable.ic_sleep_sv)
+                chart.renderer = IconPieChartRenderer(chart, chart.animator, chart.viewPortHandler, sleepBitmap)
 
-            // AM/PM 데이터 바인딩
-            val blocks = viewModel.scheduleList.value.orEmpty()
-            val halfBlocks = ChartUtils.splitAndFillTimeBlocks(blocks, half == ClockHalf.AM)
-            ChartUtils.setTimePieChartData(requireContext(), chart, halfBlocks)
-        }
+                // AM/PM 데이터 바인딩
+                val blocks = viewModel.scheduleList.value.orEmpty()
+                val halfBlocks = ChartUtils.splitAndFillTimeBlocks(blocks, half == ClockHalf.AM)
+                ChartUtils.setTimePieChartData(requireContext(), chart, halfBlocks)
+            }
+        )
 
         binding.clockPager.adapter = clockAdapter
         binding.clockPager.offscreenPageLimit = 1

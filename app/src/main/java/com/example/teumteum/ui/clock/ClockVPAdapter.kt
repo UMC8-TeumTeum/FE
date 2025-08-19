@@ -4,28 +4,33 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewbinding.ViewBinding
 import com.example.teumteum.databinding.ItemClockPageBinding
 import com.github.mikephil.charting.charts.PieChart
 
-class ClockVPAdapter(
+class ClockVPAdapter<VB : ViewBinding>(
+    private val inflate: (LayoutInflater, ViewGroup, Boolean) -> VB,
+    private val chartOf: (VB) -> PieChart,
     private val onBindPage: (chart: PieChart, half: ClockHalf) -> Unit
-) : RecyclerView.Adapter<ClockVPAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<ClockVPAdapter<VB>.ViewHolder>() {
 
     private val halves = listOf(ClockHalf.AM, ClockHalf.PM) // 0=AM, 1=PM
 
-    inner class ViewHolder(val binding: ItemClockPageBinding) : RecyclerView.ViewHolder(binding.root)
+    inner class ViewHolder(val binding: VB) : RecyclerView.ViewHolder(binding.root) {
+        val chart: PieChart = chartOf(binding)
+    }
 
-    override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
-        val binding: ItemClockPageBinding =
-            ItemClockPageBinding.inflate(LayoutInflater.from(viewGroup.context), viewGroup, false)
-
-        binding.root.layoutParams = RecyclerView.LayoutParams(MATCH_PARENT, MATCH_PARENT)
-
-        return ViewHolder(binding)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val vb = inflate(LayoutInflater.from(parent.context), parent, false)
+        vb.root.layoutParams = RecyclerView.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        )
+        return ViewHolder(vb)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        onBindPage(holder.binding.clockChart, halves[position])
+        onBindPage(holder.chart, halves[position])
     }
 
     override fun getItemCount(): Int = halves.size
