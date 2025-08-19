@@ -307,7 +307,7 @@ class WishSetting03Fragment : Fragment() {
                 viewModel.assignError.collect { err ->
                     when (err.code) {
                         "HOME4092" -> showRegisterDialog()
-                        "CONFLICT4094", "CONFLICT4092" ->
+                        "CONFLICT4094", "CONFLICT4092", "HOME4001" ->
                             Toast.makeText(requireContext(), err.message, Toast.LENGTH_SHORT).show()
                         else -> err.message.let {
                             Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
