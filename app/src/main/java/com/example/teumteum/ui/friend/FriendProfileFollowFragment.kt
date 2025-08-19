@@ -5,14 +5,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.bumptech.glide.Glide
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.friend.model.FriendProfileResult
+import com.example.teumteum.data.remote.friend.model.PublicTodoResult
 import com.example.teumteum.data.remote.friend.model.TeumTimeResult
 import com.example.teumteum.databinding.FragmentFriendProfileFollowBinding
 import com.example.teumteum.ui.friend.viewModel.FriendViewModel
@@ -26,10 +24,7 @@ class FriendProfileFollowFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: FriendViewModel by viewModels()
-    private var navigatedToFollowing = false // 자동 이동 중복 방지
-
-    private val _teumTimeText = MutableLiveData<String>()
-    val teumTimeText: LiveData<String> get() = _teumTimeText
+    private var navigatedToFollowing = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,7 +41,6 @@ class FriendProfileFollowFragment : Fragment() {
 
         val userId = arguments?.getInt("userId") ?: -1
         if (userId == -1) {
-//            Toast.makeText(requireContext(), "존재하지 않는 유저입니다.", Toast.LENGTH_SHORT).show()
             Log.e("FRIEND_PROFILE_FRAGMENT", "userId가 유효하지 않음")
             parentFragmentManager.popBackStack()
             return
@@ -54,7 +48,6 @@ class FriendProfileFollowFragment : Fragment() {
 
         // 프로필 정보 요청
         viewModel.getFriendProfile(userId) { profile ->
-            // 프로필 정보로 UI 세팅
             binding.profileNicknameTv.text = profile.name
             binding.profileFieldTv.text = profile.field
 
@@ -69,16 +62,57 @@ class FriendProfileFollowFragment : Fragment() {
 
         // 빈틈 시간 조회
         viewModel.loadFriendTeumTime(userId)
-
-        // 빈틈 시간 옵저브
         viewModel.teumTimeText.observe(viewLifecycleOwner) {
             binding.profileTimerTv.text = it
         }
 
-        // 성공 시 프로필 바인딩
-        viewModel.friendProfile.observe(viewLifecycleOwner) { result ->
-            Log.d("FRIEND_PROFILE_FRAGMENT", "프로필 조회 성공")
+        // 최근 공개 투두 조회
+        viewModel.fetchRecentPublicTodos(userId)
 
+        // 옵저버 등록
+        observeViewModel(userId)
+
+        // 뒤로가기 버튼
+        binding.backBtn.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, FriendFragment())
+                .commit()
+            (activity as? MainActivity)?.showBottomBar()
+        }
+
+        // 팔로우/팔로잉 버튼 클릭
+        binding.modifyProfileBtn.setOnClickListener {
+            val currentText = binding.modifyProfileBtn.text.toString()
+            val result = viewModel.friendProfile.value
+
+            if (currentText == "팔로우") {
+                viewModel.followUser(userId)
+            } else {
+                navigateToFollowing(result)
+            }
+        }
+
+        // 더보기 버튼 클릭 → FriendTodoListFragment로 이동
+        binding.seeMoreTv.setOnClickListener {
+            val nickname = binding.profileNicknameTv.text?.toString().orEmpty()
+
+            val frag = FriendTodoListFragment().apply {
+                arguments = Bundle().apply {
+                    putString("nickname", nickname)
+                    putInt("userId", userId)
+                }
+            }
+
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, frag)
+                .addToBackStack(null)
+                .commit()
+        }
+    }
+
+    private fun observeViewModel(userId: Int) {
+        // 프로필 LiveData
+        viewModel.friendProfile.observe(viewLifecycleOwner) { result ->
             binding.profileNicknameTv.text = result.name
             binding.profileFieldTv.text = result.field
 
@@ -91,67 +125,57 @@ class FriendProfileFollowFragment : Fragment() {
             binding.modifyProfileBtn.text = if (result.following) "팔로잉" else "팔로우"
 
             if (result.following) {
-                //  옵저버 해제 후 한 번만 실행
                 viewModel.friendProfile.removeObservers(viewLifecycleOwner)
                 navigateToFollowing(result)
             }
         }
 
+        // 최근 투두
+        viewModel.recentTodos.observe(viewLifecycleOwner) { list ->
+            bindRecentTodos(list)
+        }
 
-        // 팔로우 결과 처리
+        // 팔로우 성공 메시지
         viewModel.followMessage.observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let { msg ->
                 if (msg.contains("성공") || msg.contains("완료")) {
-                    // 팔로우 성공 시 전환
                     navigateToFollowing(viewModel.friendProfile.value!!)
-                } else {
-//                    Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
-                    Log.d("FRIEND_PROFILE_FRAGMENT", msg.toString())
                 }
             }
         }
 
-
-        // 실패 메시지 처리
+        // 에러 메시지
         viewModel.errorMessage.observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let { msg ->
-//                Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
                 Log.e("FRIEND_PROFILE_FRAGMENT", msg)
-
                 if (msg.contains("자기 자신의 프로필") || msg.contains("존재하지 않는 유저")) {
                     parentFragmentManager.popBackStack()
                     (activity as? MainActivity)?.showBottomBar()
                 }
             }
         }
+    }
 
-        // 뒤로가기 버튼
-        binding.backBtn.setOnClickListener {
-            // FriendFragment로 이동
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, FriendFragment())
-                .commit()
+    // 최근 공개 투두 2개만 UI 바인딩
+    private fun bindRecentTodos(list: List<PublicTodoResult>) {
+        val l = list.take(2)
 
-            (activity as? MainActivity)?.showBottomBar()
-        }
+        binding.scheduleCardContainer.visibility = if (l.isNotEmpty()) View.VISIBLE else View.GONE
+        if (l.isEmpty()) return
 
+        val first = l[0]
+        binding.schedule1TimeStartTv.text = first.startTime
+        binding.schedule1TimeEndTv.text   = first.endTime
+        binding.schedule1TitleTv.text     = first.title
 
-        // 설정 버튼
-        binding.settingBtn.setOnClickListener {
-            // TODO: 설정 화면으로 이동 예정
-        }
-
-        // 팔로우 or 팔로잉 버튼 클릭 시
-        binding.modifyProfileBtn.setOnClickListener {
-            val currentText = binding.modifyProfileBtn.text.toString()
-            val result = viewModel.friendProfile.value
-
-            if (currentText == "팔로우") {
-                viewModel.followUser(userId)
-            } else {
-                // 이미 팔로잉 상태면 바로 이동
-                navigateToFollowing(result)
-            }
+        if (l.size >= 2) {
+            val second = l[1]
+            binding.schedule2Cl.visibility = View.VISIBLE
+            binding.schedule2TimeStartTv.text = second.startTime
+            binding.schedule2TimeEndTv.text   = second.endTime
+            binding.schedule2TitleTv.text     = second.title
+        } else {
+            binding.schedule2Cl.visibility = View.GONE
         }
     }
 
@@ -171,10 +195,7 @@ class FriendProfileFollowFragment : Fragment() {
 
             parentFragmentManager.beginTransaction()
                 .replace(R.id.main_frm, followingFragment)
-                //  뒤로가기 스택에 안 쌓음 → 바로 friendFragment로 돌아감
                 .commit()
-        } else {
-//            Toast.makeText(requireContext(), "프로필 정보를 불러오는 중입니다.", Toast.LENGTH_SHORT).show()
         }
     }
 

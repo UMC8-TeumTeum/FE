@@ -2,6 +2,7 @@ package com.example.teumteum.utils
 
 import com.example.teumteum.data.remote.activity.service.ActivityService
 import com.example.teumteum.data.remote.alarm.AlarmRetrofitInterface
+import com.example.teumteum.data.remote.alarm.FcmService
 import com.example.teumteum.data.remote.calendar.service.CalendarService
 import com.example.teumteum.data.remote.friend.service.FriendService
 import com.example.teumteum.data.remote.mypage.service.MyPageService
@@ -74,6 +75,12 @@ class ApiModule {
     @Singleton
     fun provideActivityApi(@AuthRetrofit retrofit: Retrofit): ActivityService {
         return retrofit.create(ActivityService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideFcmApi(@AuthRetrofit retrofit: Retrofit): FcmService {
+        return retrofit.create(FcmService::class.java)
     }
 
     // 인증이 필요 없는 API - @NoAuthRetrofit 사용
