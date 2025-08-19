@@ -6,6 +6,7 @@ plugins {
     id("org.jetbrains.kotlin.kapt")
     id("dagger.hilt.android.plugin")
     id("kotlin-parcelize")
+    id("com.google.gms.google-services")
 }
 
 val properties = Properties().apply {
@@ -133,4 +134,8 @@ dependencies {
 
     // EncryptedSharedPreferences
     implementation ("androidx.security:security-crypto:1.1.0")
+
+    // Firebase
+    implementation(platform("com.google.firebase:firebase-bom:33.3.0"))
+    implementation("com.google.firebase:firebase-messaging")
 }
