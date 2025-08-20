@@ -6,18 +6,12 @@ import com.example.teumteum.data.remote.login.LogoutManager
 import com.example.teumteum.data.remote.login.model.ReissueRequest
 import com.example.teumteum.data.remote.login.service.AuthService
 import com.google.gson.Gson
-import kotlinx.coroutines.runBlocking
+import com.google.gson.reflect.TypeToken
 import okhttp3.Interceptor
 import okhttp3.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Inject
-
-data class ErrorResponse(
-    val isSuccess: Boolean,
-    val code: String,
-    val message: String
-)
 
 // 요청 단위 1회 재시도 가드용 마커
 private object RetryOnceTag
@@ -73,7 +67,6 @@ class AuthInterceptor @Inject constructor(
         val response = chain.proceed(requestWithToken)
 
         // 이미 재시도한 요청은 더 이상 재발급을 시도하지 않음
-        // RetryOnceTag를 붙여 무한 루프 및 중복 재발급 방지
         if (!hasRetried && isTokenExpired(response) && !refreshToken.isNullOrEmpty()) {
             response.close()
 
@@ -85,13 +78,12 @@ class AuthInterceptor @Inject constructor(
                     .build()
                 return chain.proceed(newRequest)
             } else {
-                // 재발급 실패 시에는 현재 응답을 그대로 반환
+                // 재발급 실패 시에는 기존 응답을 그대로 반환
                 return response
             }
         }
 
-        // 401이면 RT 만료/무효로 간주하고 즉시 로그아웃
-        // 재발급 API에서 401이 떨어지는 경우는 RT 만료 외에는 거의 없으므로 세션을 종료
+        // 401이면 RT 만료/무효로 간주하고 즉시 로그아웃 (만료 코드 제외 + 강제 로그아웃 코드만)
         if (response.code == HTTP_UNAUTHORIZED) {
             val code = extractErrorCode(response)
             if (code != null && code != JWT_EXPIRED_CODE && FORCE_LOGOUT_CODES.contains(code)) {
@@ -110,13 +102,10 @@ class AuthInterceptor @Inject constructor(
     private fun isTokenExpired(response: Response): Boolean {
         if (response.code != HTTP_UNAUTHORIZED) return false
         return try {
-            val source = response.body?.source()
-            source?.request(Long.MAX_VALUE)
-            val buffer = source?.buffer?.clone()
-            val responseBodyString = buffer?.readUtf8() ?: ""
-            if (responseBodyString.isNotEmpty()) {
-                val errorResponse = Gson().fromJson(responseBodyString, ErrorResponse::class.java)
-                errorResponse.code == JWT_EXPIRED_CODE
+            val bodyString = readBodyString(response)
+            if (bodyString.isNotEmpty()) {
+                val api = parseApiErrorBody(bodyString)
+                api?.code == JWT_EXPIRED_CODE
             } else {
                 true
             }
@@ -126,17 +115,31 @@ class AuthInterceptor @Inject constructor(
         }
     }
 
-    // 에러코드만 뽑아보기 (재발급 로직과 분리)
+    // 에러코드만 추출 (재발급 로직과 분리)
     private fun extractErrorCode(response: Response): String? = try {
-        val source = response.body?.source()
-        source?.request(Long.MAX_VALUE)
-        val buffer = source?.buffer?.clone()
-        val bodyString = buffer?.readUtf8() ?: ""
-        if (bodyString.isNotEmpty()) {
-            Gson().fromJson(bodyString, ErrorResponse::class.java)?.code
-        } else null
+        val bodyString = readBodyString(response)
+        if (bodyString.isNotEmpty()) parseApiErrorBody(bodyString)?.code else null
     } catch (e: Exception) {
-        Log.e("AuthInterceptor", "Error parsing code", e); null
+        Log.e("AuthInterceptor", "Error parsing code", e)
+        null
+    }
+
+    // peekBody로 본문을 소비하지 않고 미리보기 문자열 획득
+    private fun readBodyString(response: Response): String {
+        return try {
+            response.peekBody(1024 * 1024).string() // 1MB
+        } catch (e: Exception) {
+            Log.e("AuthInterceptor", "Error peeking body", e)
+            ""
+        }
+    }
+
+    // ApiResponse<Any?>로 에러 바디 파싱
+    private fun parseApiErrorBody(bodyString: String): ApiResponse<Any?>? = try {
+        val type = object : TypeToken<ApiResponse<Any?>>() {}.type
+        Gson().fromJson<ApiResponse<Any?>>(bodyString, type)
+    } catch (_: Exception) {
+        null
     }
 
     private fun refreshAccessToken(refreshToken: String): String? {
@@ -174,15 +177,11 @@ class AuthInterceptor @Inject constructor(
                 // 401이면 RT 만료/무효로 간주하고 즉시 로그아웃
                 if (reissueResponse.code() == HTTP_UNAUTHORIZED) {
                     val errBody = reissueResponse.errorBody()?.string()
-                    val errCode = try {
-                        if (!errBody.isNullOrEmpty())
-                            Gson().fromJson(errBody, ErrorResponse::class.java)?.code
-                        else null
-                    } catch (_: Exception) { null }
+                    val errCode = errBody?.let { parseApiErrorBody(it)?.code }
 
                     Log.e(
                         "AuthInterceptor",
-                        "Token refresh failed: 401${if (errCode != null) " (code=$errCode)" else ""}. Forcing logout."
+                        "Token refresh failed: 401${if (errCode != null) " (code=$errCode)" else ""} Forcing logout"
                     )
                     logoutManager.forceLogout()
                 } else {
