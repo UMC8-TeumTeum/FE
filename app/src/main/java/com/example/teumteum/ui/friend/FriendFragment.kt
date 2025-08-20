@@ -29,7 +29,6 @@ class FriendFragment : Fragment() {
     private var _binding: FragmentFriendBinding? = null
     private val binding get() = _binding!!
 
-    // ViewModel은 activityViewModels()로 공유
     private val viewModel: FriendViewModel by activityViewModels()
 
     private lateinit var recommendAdapter: RecommendAdapter
@@ -69,8 +68,8 @@ class FriendFragment : Fragment() {
                 viewModel.selectTeum(item)
                 val fragment = Friend02RequestFragment().apply {
                     arguments = Bundle().apply {
-                        putParcelableArrayList("teumList", ArrayList(viewModel.receivedTeums.value ?: emptyList()))
-                        putInt("selectedPosition", position)
+//                        putParcelableArrayList("teumList", ArrayList(viewModel.receivedTeums.value ?: emptyList()))
+//                        putInt("selectedPosition", position)
 //                        putInt("requestId", item.requestId)
                     }
                 }
