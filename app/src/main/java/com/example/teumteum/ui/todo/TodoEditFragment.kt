@@ -44,7 +44,8 @@ import com.example.teumteum.ui.calendar.MonthlyCalendarFragment
 import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.example.teumteum.ui.todo.adapter.TeumProfileAdapter
 import com.example.teumteum.ui.todo.viewModel.TodoViewModel
-import com.example.teumteum.utils.combineDateTime
+import com.example.teumteum.utils.TimeUtils
+import com.example.teumteum.utils.TimeUtils.combineDateTime
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint

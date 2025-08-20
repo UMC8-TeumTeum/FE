@@ -6,67 +6,84 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.teumteum.R
-import com.example.teumteum.data.entities.Alarm
-import com.example.teumteum.data.entities.AlarmItem
 import com.example.teumteum.databinding.FragmentHomeAlarmBinding
-import com.example.teumteum.ui.alarm.view.AlarmListView
+import com.example.teumteum.ui.alarm.viewmodel.NotificationViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class AlarmFragment : Fragment(), AlarmListView {
+class AlarmFragment : Fragment() {
 
     private lateinit var binding: FragmentHomeAlarmBinding
-
+    private val viewModel: NotificationViewModel by viewModels()
     private lateinit var adapter: AlarmRVAdapter
-
-    private var alarmDummyList = mutableListOf(
-        AlarmItem(1, "문혜원", "sample1", "새롭게 온 요청이 있어요!", "3분", false),
-        AlarmItem(2, "하수연", "sample2", "친구에게 보낸 요청이 수락됐어요", "3시간", false),
-        AlarmItem(3, "이솔민", "sample3", "친구에게 보낸 요청이 거절됐어요", "3주", false),
-        AlarmItem(4, "장채미", "sample4", "친구가 새로운 시간을 제안했어요", "10주", false),
-        AlarmItem(5, "하수연", "sample5", "친구와의 틈 약속이 취소됐어요", "33주", false),
-        AlarmItem(6, "장지니", "sample6", "친구가 새로운 시간을 제안했어요", "36주", false),
-        AlarmItem(7, "최원", "sample7", "친구에게 보낸 요청이 수락됐어요", "40주", false),
-        AlarmItem(8, "박애플", "sample8", "새롭게 온 요청이 있어요!", "58주", false),
-        AlarmItem(9, "김결", "sample9", "새롭게 온 요청이 있어요!", "70주", false),
-        AlarmItem(10, "양나루", "sample10", "친구에게 보낸 요청이 수락됐어요", "89주", false),
-        AlarmItem(11, "강현다", "sample11", "친구에게 보낸 요청이 수락됐어요", "91주", false)
-        )
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentHomeAlarmBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        activity?.findViewById<BottomNavigationView>(R.id.main_bnv)?.visibility = View.GONE
 
-        // 바텀 내비게이션 숨기기
-        val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
-        bottomNav?.visibility = View.GONE
+        // 어댑터 생성 시 콜백에서 네비게이터 + 트랜젝션 방식 적용
+        adapter = AlarmRVAdapter(mutableListOf()) { notification ->
+            val fragment = AlarmNavigator.createFragmentFor(this, notification)
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, fragment)
+                .addToBackStack(null)
+                .commit()
+        }
 
-        adapter = AlarmRVAdapter(parentFragmentManager, alarmDummyList)
+        val lm = LinearLayoutManager(requireContext())
+        binding.alarmRv.layoutManager = lm
         binding.alarmRv.adapter = adapter
 
-        binding.backArrowIv.setOnClickListener {
-            parentFragmentManager.popBackStack()
-        }
+        // 무한 스크롤: 끝에서 3개 남았을 때 다음 페이지 로드
+        binding.alarmRv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (dy <= 0) return
+                val total = lm.itemCount
+                val last = lm.findLastVisibleItemPosition()
+                val threshold = 3
+                if (total - last <= threshold) {
+                    viewModel.loadNext()
+                }
+            }
+        })
+
+        binding.backArrowIv.setOnClickListener { parentFragmentManager.popBackStack() }
+
+        observeViewModel()
+
+        // 최초 로드
+        viewModel.loadFirst()
     }
 
-    override fun onGetAlarmListSuccess(alarmList: List<Alarm>) {
-//        Toast.makeText(requireContext(), "알림이 성공적으로 조회되었습니다.", Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onGetAlarmListFailure(code: String, message: String?) {
-        val errorMessage = when (code) {
-            "NETWORK_ERROR" -> "네트워크 오류가 발생했습니다."
-            "PARSE_ERROR" -> "서버 응답을 해석할 수 없습니다."
-            else -> message ?: "조회에 실패했습니다. 다시 시도해주세요."
+    private fun observeViewModel() {
+        viewModel.items.observe(viewLifecycleOwner) { list ->
+            // 첫 페이지인지 아닌지에 따라 처리
+            if (adapter.itemCount == 0) {
+                adapter.replaceAll(list)
+            } else {
+                // 리스트가 누적 상태이므로, 어댑터의 사이즈보다 많아졌다면 append만
+                if (list.size > adapter.itemCount) {
+                    val newItems = list.subList(adapter.itemCount, list.size)
+                    adapter.append(newItems)
+                } else {
+                    adapter.replaceAll(list)
+                }
+            }
         }
-        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
+        viewModel.error.observe(viewLifecycleOwner) { msg ->
+            msg?.let { Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show() }
+        }
     }
 }

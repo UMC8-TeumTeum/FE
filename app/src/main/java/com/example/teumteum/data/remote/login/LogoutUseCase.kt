@@ -1,7 +1,7 @@
 package com.example.teumteum.data.remote.login
 
 import android.util.Log
-import com.example.teumteum.data.remote.alarm.FcmRepository
+import com.example.teumteum.data.remote.alarm.repository.FcmRepository
 import javax.inject.Inject
 import javax.inject.Singleton
 

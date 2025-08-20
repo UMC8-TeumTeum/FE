@@ -1,7 +1,7 @@
 package com.example.teumteum.application
 
 import android.util.Log
-import com.example.teumteum.data.remote.alarm.FcmRepository
+import com.example.teumteum.data.remote.alarm.repository.FcmRepository
 import com.example.teumteum.data.remote.alarm.FcmTokenStore
 import com.example.teumteum.utils.NotificationHelper
 import com.example.teumteum.utils.TokenProvider

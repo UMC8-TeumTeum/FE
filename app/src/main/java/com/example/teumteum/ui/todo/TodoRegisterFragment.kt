@@ -39,7 +39,8 @@ import com.example.teumteum.ui.calendar.IDateClickListener
 import com.example.teumteum.ui.calendar.MonthlyCalendarFragment
 import com.example.teumteum.ui.myhome.viewModel.MyHomeViewModel
 import com.example.teumteum.ui.todo.viewModel.TodoViewModel
-import com.example.teumteum.utils.combineDateTime
+import com.example.teumteum.utils.TimeUtils
+import com.example.teumteum.utils.TimeUtils.combineDateTime
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
