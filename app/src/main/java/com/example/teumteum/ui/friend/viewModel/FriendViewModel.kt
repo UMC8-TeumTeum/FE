@@ -161,6 +161,15 @@ class FriendViewModel @Inject constructor(
         }
     }
 
+    // 2-1. 틈 리스트에서 선택한 틈
+    private val _selectedTeum = MutableLiveData<TeumReceivedItem?>()
+    val selectedTeum: LiveData<TeumReceivedItem?> get() = _selectedTeum
+
+    fun selectTeum(item: TeumReceivedItem?) {
+        _selectedTeum.value = item
+    }
+    fun clearSelectedTeum() { _selectedTeum.value = null }
+
     // 3. 친구 프로필
     private val _friendProfile = MutableLiveData<FriendProfileResult>()
     val friendProfile: LiveData<FriendProfileResult> get() = _friendProfile

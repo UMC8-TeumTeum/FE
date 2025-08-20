@@ -5,13 +5,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.viewpager2.widget.ViewPager2
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.friend.model.TeumReceivedItem
 import com.example.teumteum.databinding.FragmentFriend02RequestBinding
+import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.example.teumteum.ui.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import kotlin.getValue
 
 @AndroidEntryPoint
 class Friend02RequestFragment : Fragment() {
@@ -20,6 +24,8 @@ class Friend02RequestFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var adapter: FriendRequestCardAdapter
+    private val viewModel: FriendViewModel by activityViewModels()
+
     var teumList: List<TeumReceivedItem> = emptyList()
 
     override fun onCreateView(
@@ -37,11 +43,12 @@ class Friend02RequestFragment : Fragment() {
         (activity as? MainActivity)?.hideBottomBar()
 
         val receivedList = arguments?.getParcelableArrayList<TeumReceivedItem>("teumList") ?: emptyList()
+//        val receivedList = viewModel.receivedTeums.value
         val selectedPosition = arguments?.getInt("selectedPosition") ?: 0
         val selectedItem = receivedList.getOrNull(selectedPosition)
 
         // 1. 유효한 요청만 필터링
-        val validList = filterValidTeumRequests(receivedList)
+        val validList = filterValidTeumRequests(receivedList!!)
 
         // 2. 정렬
         val sortedList = sortTeumList(validList)
@@ -59,6 +66,15 @@ class Friend02RequestFragment : Fragment() {
 
         // 5. 선택한 카드부터 시작
         binding.requestViewPager.setCurrentItem(0, false)
+        viewModel.selectTeum(teumList.getOrNull(0))
+
+        binding.requestViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                viewModel.selectTeum(teumList.getOrNull(position))
+                viewModel.readTeumRequest(viewModel.selectedTeum.value!!.responseId)
+            }
+        })
 
         // 6. 인디케이터
         binding.dotsIndicator.setViewPager2(binding.requestViewPager)
