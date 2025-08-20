@@ -29,7 +29,6 @@ class FriendFragment : Fragment() {
     private var _binding: FragmentFriendBinding? = null
     private val binding get() = _binding!!
 
-    // ViewModel은 activityViewModels()로 공유
     private val viewModel: FriendViewModel by activityViewModels()
 
     private lateinit var recommendAdapter: RecommendAdapter
@@ -64,16 +63,15 @@ class FriendFragment : Fragment() {
             onCardClick = { item: TeumReceivedItem, position: Int ->
                 //틈 읽음 처리
                 Log.d("CARD_CLICK", "카드 클릭됨, responseId=${item.responseId}")
-                viewModel.readTeumRequest(item.responseId)
-
-                val fragment = Friend02RequestFragment().apply {
-                    arguments = Bundle().apply {
-                        putParcelableArrayList("teumList", ArrayList(viewModel.receivedTeums.value ?: emptyList()))
-                        putInt("selectedPosition", position)
-                    }
+                if(item.read==false){
+                    viewModel.readTeumRequest(item.responseId)
                 }
+
+                //선택된 아이템 저장
+                viewModel.selectTeum(item)
+
                 parentFragmentManager.beginTransaction()
-                    .replace(R.id.main_frm, fragment)
+                    .replace(R.id.main_frm, Friend02RequestFragment())
                     .addToBackStack(null)
                     .commit()
             }

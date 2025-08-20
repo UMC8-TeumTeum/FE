@@ -5,11 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.friend.model.TeumReceivedItem
 import com.example.teumteum.databinding.FragmentFriend02PossibleTimeBinding
+import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.example.teumteum.ui.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlin.getValue
 
 @AndroidEntryPoint
 class Friend02PossibleTimeFragment : Fragment() {
@@ -20,6 +23,8 @@ class Friend02PossibleTimeFragment : Fragment() {
     private lateinit var adapter: FriendRequestCardAdapter
     private var teumList: List<TeumReceivedItem> = emptyList()
     private var responseId: Int = -1
+
+    private val viewModel: FriendViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -32,7 +37,15 @@ class Friend02PossibleTimeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         //  전달받은 데이터 받기
-        teumList = arguments?.getParcelableArrayList("teumList") ?: emptyList()
+//        teumList = arguments?.getParcelableArrayList("teumList") ?: emptyList()
+        val selected = viewModel.selectedTeum.value
+        if (selected == null) {
+            // 방어: 선택값이 없으면 종료
+            parentFragmentManager.popBackStack()
+            return
+        }
+
+        teumList = listOf(selected)
         responseId = arguments?.getInt("responseId") ?: -1
 
         //  어댑터 연결

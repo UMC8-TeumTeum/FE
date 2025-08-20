@@ -48,6 +48,12 @@ class Friend02AcceptBottomSheetFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val item = viewModel.selectedTeum.value
+        if (item == null) {
+            dismiss() // 방어: 선택값 없으면 닫기
+            return
+        }
+
         val fullText = "함께 할래요 멘트를 보낼까요?"
         val spannable = SpannableString(fullText).apply {
             setSpan(ForegroundColorSpan(Color.parseColor("#7770FE")), 0, 6, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
