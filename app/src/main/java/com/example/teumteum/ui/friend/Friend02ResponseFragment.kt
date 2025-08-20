@@ -37,7 +37,10 @@ class Friend02ResponseFragment  : Fragment(){
         (activity as? MainActivity)?.hideBottomBar()
 
         binding.backButton.setOnClickListener {
-            parentFragmentManager.popBackStack()
+            parentFragmentManager.popBackStack(null, androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE)
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, FriendFragment())
+                .commit()
         }
 
         // 넘겨받은 아이템

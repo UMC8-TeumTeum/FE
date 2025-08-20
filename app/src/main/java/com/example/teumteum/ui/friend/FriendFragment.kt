@@ -75,7 +75,11 @@ class FriendFragment : Fragment() {
                     //  원본 요청 카드면 Request 화면으로
                     Friend02RequestFragment().apply {
                         arguments = Bundle().apply {
-                            putParcelableArrayList("teumList", ArrayList(viewModel.receivedTeums.value ?: emptyList()))
+                            val originalRequests = viewModel.receivedTeums.value
+                                ?.filter { !it.resend }   // 재요청 제거
+                                ?: emptyList()
+
+                            putParcelableArrayList("teumList", ArrayList(originalRequests))
                             putInt("selectedPosition", position)
                         }
                     }
@@ -89,7 +93,7 @@ class FriendFragment : Fragment() {
                 viewModel.selectTeum(item)
 
                 parentFragmentManager.beginTransaction()
-                    .replace(R.id.main_frm, Friend02RequestFragment())
+                    .replace(R.id.main_frm, fragment)  // 선택된 fragment 사용
                     .addToBackStack(null)
                     .commit()
             }

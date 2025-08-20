@@ -58,10 +58,26 @@ class Friend02PossibleTimeFragment : Fragment() {
 
         //  뒤로가기
         binding.backButton.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, Friend02RequestFragment())
-                .addToBackStack(null)
-                .commit()
+            val selected = viewModel.selectedTeum.value
+
+            if (selected?.resend == true) {
+                //  재요청 카드였으면 Response 화면으로
+                val frag = Friend02ResponseFragment().apply {
+                    arguments = Bundle().apply {
+                        putParcelable("teumItem", selected)
+                    }
+                }
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.main_frm, frag)
+                    .addToBackStack(null)
+                    .commit()
+            } else {
+                // 원본 요청 카드였으면 Request 화면으로
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.main_frm, Friend02RequestFragment())
+                    .addToBackStack(null)
+                    .commit()
+            }
         }
 
         //  "찾기" 버튼 클릭 시 → Suggest로 넘어갈 때도 teumList, responseId 넘기기
