@@ -1,7 +1,6 @@
 package com.example.teumteum.utils
 
 import com.example.teumteum.data.remote.activity.service.ActivityService
-import com.example.teumteum.data.remote.alarm.AlarmRetrofitInterface
 import com.example.teumteum.data.remote.alarm.service.FcmService
 import com.example.teumteum.data.remote.alarm.service.NotificationService
 import com.example.teumteum.data.remote.calendar.service.CalendarService
@@ -34,12 +33,6 @@ class ApiModule {
     @Singleton
     fun provideWishApi(@AuthRetrofit retrofit: Retrofit): WishService {
         return retrofit.create(WishService::class.java)
-    }
-
-    @Provides
-    @Singleton
-    fun provideAlarmApi(@AuthRetrofit retrofit: Retrofit): AlarmRetrofitInterface {
-        return retrofit.create(AlarmRetrofitInterface::class.java)
     }
 
     @Provides
