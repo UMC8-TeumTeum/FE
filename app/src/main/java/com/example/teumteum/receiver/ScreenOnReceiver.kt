@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
-import com.example.teumteum.ui.lock.LockScreenPushActivity
+import com.example.teumteum.ui.alarm.LockScreenPushActivity
 
 class ScreenOnReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent?) {

@@ -1,4 +1,4 @@
-package com.example.teumteum.ui.lock
+package com.example.teumteum.ui.alarm
 
 import android.os.Bundle
 import android.view.WindowManager
