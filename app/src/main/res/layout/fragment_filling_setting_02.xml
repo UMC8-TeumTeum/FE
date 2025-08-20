@@ -144,11 +144,9 @@
         app:layout_constraintTop_toBottomOf="@id/assign_cv"
         app:layout_constraintStart_toStartOf="@id/assign_cv"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/register_btn"
         android:layout_marginTop="30dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="442dp"
         android:paddingTop="14dp"
         android:paddingStart="14dp"
         android:paddingBottom="9dp"
@@ -276,7 +274,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginStart="19dp"
         android:layout_marginEnd="19dp"
-        android:layout_marginBottom="19dp"
-        app:layout_constraintTop_toBottomOf="@id/assign_time_pick_layout"/>
+        android:layout_marginBottom="19dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
