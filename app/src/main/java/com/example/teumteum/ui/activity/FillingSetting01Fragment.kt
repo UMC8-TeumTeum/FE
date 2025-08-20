@@ -7,14 +7,19 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.viewpager2.widget.ViewPager2
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.todo.model.enums.ScheduleType
 import com.example.teumteum.databinding.FragmentFillingSetting01Binding
+import com.example.teumteum.databinding.ItemClockMiniPageBinding
 import com.example.teumteum.ui.clock.ChartUtils
+import com.example.teumteum.ui.clock.ClockHalf
+import com.example.teumteum.ui.clock.ClockVPAdapter
 import com.example.teumteum.ui.clock.IconPieChartRenderer
 import com.example.teumteum.ui.main.viewModel.HomeViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
+import kotlin.collections.orEmpty
 
 @AndroidEntryPoint
 class FillingSetting01Fragment : Fragment() {
@@ -33,6 +38,8 @@ class FillingSetting01Fragment : Fragment() {
 
     private var aiId: String? = null
     private var wishId: Long? = null
+
+    private lateinit var clockAdapter: ClockVPAdapter<ItemClockMiniPageBinding>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -185,25 +192,54 @@ class FillingSetting01Fragment : Fragment() {
             parentFragmentManager.popBackStack()
         }
 
-        ChartUtils.setupPieChart(binding.clockChart)
-
-        val sleepBitmap = ChartUtils.getBitmapFromVector(requireContext(), R.drawable.ic_sleep_sv)
-
-        binding.clockChart.renderer = IconPieChartRenderer(
-            binding.clockChart,
-            binding.clockChart.animator,
-            binding.clockChart.viewPortHandler,
-            sleepBitmap
-        )
-
-        updateTimeChart(isAM)
-        updateIndicator(isAM)
+        setupClockPager()
 
         binding.amPmTv.setOnClickListener {
-            isAM = !isAM
-            updateTimeChart(isAM)
-            updateIndicator(isAM)
+            val amPos = clockAdapter.positionOf(ClockHalf.AM)
+            val pmPos = clockAdapter.positionOf(ClockHalf.PM)
+            val next = if (binding.clockPager.currentItem == amPos) pmPos else amPos
+            binding.clockPager.setCurrentItem(next, true)
         }
+
+        updateIndicator(isAM)
+    }
+
+    private fun setupClockPager() {
+        clockAdapter = ClockVPAdapter(
+            inflate = ItemClockMiniPageBinding::inflate,
+            chartOf = { it.clockChart },
+            onBindPage = { chart, half ->
+                ChartUtils.setupPieChart(chart)
+                val sleepBitmap = ChartUtils.getBitmapFromVector(requireContext(), R.drawable.ic_sleep_sv)
+                chart.renderer = IconPieChartRenderer(chart, chart.animator, chart.viewPortHandler, sleepBitmap)
+
+                // AM/PM 데이터 바인딩
+                val blocks = homeViewModel.scheduleList.value.orEmpty()
+                val halfBlocks = ChartUtils.splitAndFillTimeBlocks(blocks, half == ClockHalf.AM)
+                ChartUtils.setTimePieChartData(requireContext(), chart, halfBlocks)
+
+            }
+        )
+
+        binding.clockPager.adapter = clockAdapter
+        binding.clockPager.offscreenPageLimit = 1
+
+        val amPos = clockAdapter.positionOf(ClockHalf.AM) // 0
+        val pmPos = clockAdapter.positionOf(ClockHalf.PM) // 1
+
+        binding.clockPager.setCurrentItem(amPos, false)
+
+        binding.clockPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                updateIndicator(position == amPos)
+            }
+        })
+
+        binding.amPmTv.setOnClickListener {
+            val next = if (binding.clockPager.currentItem == amPos) pmPos else amPos
+            binding.clockPager.setCurrentItem(next, true)
+        }
+
     }
 
     private fun enableNextButton() {
@@ -220,11 +256,6 @@ class FillingSetting01Fragment : Fragment() {
         binding.assignTimeTv.text = time
     }
 
-    private fun updateTimeChart(isAM: Boolean) {
-        val blocks = homeViewModel.scheduleList.value ?: return
-        val halfDayBlocks = ChartUtils.splitAndFillTimeBlocks(blocks, isAM)
-        ChartUtils.setTimePieChartData(requireContext(), binding.clockChart, halfDayBlocks)
-    }
 
     private fun updateIndicator(isAM: Boolean) {
         val leftView = binding.leftView

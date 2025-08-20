@@ -2,7 +2,6 @@ package com.example.teumteum.ui.main
 
 import android.content.res.ColorStateList
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,7 +29,7 @@ import java.time.format.DateTimeFormatter
 
 import com.example.teumteum.data.remote.todo.model.TodoListResult
 import com.example.teumteum.data.remote.todo.model.enums.AlarmStatus
-import com.example.teumteum.data.remote.todo.model.enums.ScheduleType
+import com.example.teumteum.databinding.ItemClockPageBinding
 import com.example.teumteum.ui.todo.viewModel.TodoViewModel
 import com.example.teumteum.ui.clock.ChartUtils
 import com.example.teumteum.ui.clock.ClockHalf
@@ -40,7 +39,6 @@ import com.example.teumteum.ui.main.data.TimeType
 import com.example.teumteum.ui.main.viewModel.HomeViewModel
 import com.example.teumteum.ui.myhome.viewModel.MyHomeViewModel
 import com.example.teumteum.utils.applyBlurShadow
-import com.example.teumteum.utils.getSavedDateOrToday
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -63,7 +61,7 @@ class HomeFragment : Fragment(), IDateClickListener {
 
     private val TODO_SHEET_TAG = "TodoRegisterSheet"
 
-    private lateinit var clockAdapter: ClockVPAdapter
+    private lateinit var clockAdapter: ClockVPAdapter<ItemClockPageBinding>
 
     // 콜백 필드
     private lateinit var clockPageChangeCallback: ViewPager2.OnPageChangeCallback
@@ -233,17 +231,21 @@ class HomeFragment : Fragment(), IDateClickListener {
         block(b)
     }
 
-    private fun setupClockPager() = withBinding {
-        clockAdapter = ClockVPAdapter { chart, half ->
-            ChartUtils.setupPieChart(chart)
-            val sleepBitmap = ChartUtils.getBitmapFromVector(requireContext(), R.drawable.ic_sleep_sv)
-            chart.renderer = IconPieChartRenderer(chart, chart.animator, chart.viewPortHandler, sleepBitmap)
+    private fun setupClockPager() {
+        clockAdapter = ClockVPAdapter(
+            inflate = ItemClockPageBinding::inflate,
+            chartOf = { it.clockChart },
+            onBindPage = { chart, half ->
+                ChartUtils.setupPieChart(chart)
+                val sleepBitmap = ChartUtils.getBitmapFromVector(requireContext(), R.drawable.ic_sleep_sv)
+                chart.renderer = IconPieChartRenderer(chart, chart.animator, chart.viewPortHandler, sleepBitmap)
 
-            // AM/PM 데이터 바인딩
-            val blocks = viewModel.scheduleList.value.orEmpty()
-            val halfBlocks = ChartUtils.splitAndFillTimeBlocks(blocks, half == ClockHalf.AM)
-            ChartUtils.setTimePieChartData(requireContext(), chart, halfBlocks)
-        }
+                // AM/PM 데이터 바인딩
+                val blocks = viewModel.scheduleList.value.orEmpty()
+                val halfBlocks = ChartUtils.splitAndFillTimeBlocks(blocks, half == ClockHalf.AM)
+                ChartUtils.setTimePieChartData(requireContext(), chart, halfBlocks)
+            }
+        )
 
         binding.clockPager.adapter = clockAdapter
         binding.clockPager.offscreenPageLimit = 1
@@ -253,22 +255,20 @@ class HomeFragment : Fragment(), IDateClickListener {
 
         binding.clockPager.setCurrentItem(amPos, false)
 
-        clockPageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
+        binding.clockPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
-                val b = _binding ?: return
-                b.apply { updateIndicator(position == amPos) }
+                updateIndicator(position == amPos)
             }
-        }
-        clockPager.registerOnPageChangeCallback(clockPageChangeCallback)
+        })
 
-        amPmTv.setOnClickListener {
-            val b = _binding ?: return@setOnClickListener
-            val next = if (b.clockPager.currentItem == amPos) pmPos else amPos
-            b.clockPager.setCurrentItem(next, true)
+        binding.amPmTv.setOnClickListener {
+            val next = if (binding.clockPager.currentItem == amPos) pmPos else amPos
+            binding.clockPager.setCurrentItem(next, true)
         }
 
         updateIndicator(binding.clockPager.currentItem == amPos)
     }
+
 
     // 주간 달력 연결
     private fun setWeeklyCalendarViewPager() = withBinding {
