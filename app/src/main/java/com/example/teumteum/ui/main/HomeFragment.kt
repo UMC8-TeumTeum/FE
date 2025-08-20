@@ -40,6 +40,7 @@ import com.example.teumteum.ui.main.data.TimeType
 import com.example.teumteum.ui.main.viewModel.HomeViewModel
 import com.example.teumteum.ui.myhome.viewModel.MyHomeViewModel
 import com.example.teumteum.utils.applyBlurShadow
+import com.example.teumteum.utils.getSavedDateOrToday
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -49,7 +50,7 @@ class HomeFragment : Fragment(), IDateClickListener {
     private val binding get() = _binding!!
 
     private val today: LocalDate = LocalDate.now()
-    private lateinit var selectedDate: LocalDate
+    private var selectedDate: LocalDate = today
 
     private lateinit var adapter: TodoRVAdapter
     private var todolistItems: List<TodoListResult> = emptyList()
@@ -77,6 +78,7 @@ class HomeFragment : Fragment(), IDateClickListener {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
         selectedDate = today
+        binding.homeSelectedDateTv.text = dateFormat(today)
 
         binding.homeCalendarPreviousDateIv.setOnClickListener {
             if (binding.homeWeeklyCalendarWeekVp.isVisible) {
@@ -270,7 +272,6 @@ class HomeFragment : Fragment(), IDateClickListener {
 
     // 주간 달력 연결
     private fun setWeeklyCalendarViewPager() = withBinding {
-        saveSelectedDate(today)
         val calendarAdapter = CalendarVPAdapter(requireActivity(), CalendarMode.WEEKLY,this@HomeFragment)
         binding.homeWeeklyCalendarWeekVp.adapter = calendarAdapter
 
@@ -298,7 +299,6 @@ class HomeFragment : Fragment(), IDateClickListener {
 
     // 월간 달력 연결
     private fun setMonthlyCalendarViewPager() = withBinding {
-        saveSelectedDate(today)
         val calendarAdapter = CalendarVPAdapter(requireActivity(), CalendarMode.MONTHLY, this@HomeFragment)
         binding.homeMonthlyCalendarMonthVp.adapter = calendarAdapter
 
@@ -437,8 +437,8 @@ class HomeFragment : Fragment(), IDateClickListener {
     }
 
     private fun refreshTodolist() {
-        val today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-        todoViewModel.getTodoList(date = today)
+        val dateStr = selectedDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        todoViewModel.getTodoList(dateStr)
     }
 
     private fun setupObservers() {
