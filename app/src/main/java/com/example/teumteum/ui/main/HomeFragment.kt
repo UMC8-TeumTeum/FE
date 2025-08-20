@@ -452,10 +452,6 @@ class HomeFragment : Fragment(), IDateClickListener {
                 adapter.updateList(itemList)
             }
         }
-
-        todoViewModel.errorMessage.observe(viewLifecycleOwner) { error ->
-            Log.e("HOME_FRAGMENT", error.toString())
-        }
     }
 
     override fun onDestroyView() {
