@@ -22,10 +22,7 @@ class ClockVPAdapter<VB : ViewBinding>(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val vb = inflate(LayoutInflater.from(parent.context), parent, false)
-        vb.root.layoutParams = RecyclerView.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.MATCH_PARENT
-        )
+        vb.root.layoutParams = RecyclerView.LayoutParams(MATCH_PARENT, MATCH_PARENT)
         return ViewHolder(vb)
     }
 

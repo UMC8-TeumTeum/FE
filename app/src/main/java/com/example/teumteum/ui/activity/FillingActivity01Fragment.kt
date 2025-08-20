@@ -60,6 +60,8 @@ class FillingActivity01Fragment : Fragment() {
             binding.fillingActivityCategoryEt.setText("")
         }
 
+        binding.fillingLl.bringToFront()
+
         // 시간 선택
         val timeCards = listOf(
             binding.fillingActivityTime01Cv.apply { tag = "10m" },

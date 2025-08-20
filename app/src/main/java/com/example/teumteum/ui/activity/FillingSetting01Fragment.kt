@@ -39,8 +39,6 @@ class FillingSetting01Fragment : Fragment() {
     private var aiId: String? = null
     private var wishId: Long? = null
 
-    private var scheduleType: String? = null
-
     private lateinit var clockAdapter: ClockVPAdapter<ItemClockMiniPageBinding>
 
     override fun onCreateView(
@@ -68,8 +66,6 @@ class FillingSetting01Fragment : Fragment() {
         aiId = arguments?.getString("ai_id")
         wishId = arguments?.getLong("wish_id", -1L)
             ?.takeIf { it > 0L }
-
-        scheduleType = arguments?.getString("schedule_type")
 
         // 바텀 내비게이션 숨기기
         val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
@@ -158,7 +154,6 @@ class FillingSetting01Fragment : Fragment() {
                 R.id.select_01_button -> {
                     val fragment = FillingSetting03Fragment().apply {
                         arguments = Bundle().apply {
-                            putString("schedule_type", ScheduleType.AI.toString())
                             aiId?.let   { putString("ai_id", it) }
                             wishId?.let { putLong("wish_id", it) }
                             putString("title", title)
@@ -175,7 +170,6 @@ class FillingSetting01Fragment : Fragment() {
                 R.id.select_02_button, R.id.select_03_button, R.id.select_04_button -> {
                     val fragment = FillingSetting02Fragment().apply {
                         arguments = Bundle().apply {
-                            putString("schedule_type", ScheduleType.AI.toString())
                             aiId?.let   { putString("ai_id", it) }
                             wishId?.let { putLong("wish_id", it) }
                             putString("title", title)

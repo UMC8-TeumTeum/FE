@@ -62,7 +62,16 @@ class MonthlyCalendarFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupObservers()
-        refreshMonth()
+
+        // 투두 등록 성공 이벤트 수신
+        parentFragmentManager.setFragmentResultListener("todo_register_calendar", viewLifecycleOwner) { _, _ ->
+            refreshMonth()
+        }
+
+        // 투두 삭제 성공 이벤트 수신
+        parentFragmentManager.setFragmentResultListener("todo_delete_calendar", viewLifecycleOwner) { _, _ ->
+            refreshMonth()
+        }
     }
 
     override fun onResume() {
@@ -176,8 +185,7 @@ class MonthlyCalendarFragment : Fragment() {
 
         viewModel.error.observe(viewLifecycleOwner) { msg ->
             msg?.let {
-//                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
-                Log.d("MONTHLY_CALENDAR_FRAGMENT", it.toString())
+                Log.d("MONTHLY_CALENDAR_FRAGMENT", it)
             }
 
         }

@@ -2,7 +2,6 @@ package com.example.teumteum.ui.main
 
 import android.content.res.ColorStateList
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,7 +29,6 @@ import java.time.format.DateTimeFormatter
 
 import com.example.teumteum.data.remote.todo.model.TodoListResult
 import com.example.teumteum.data.remote.todo.model.enums.AlarmStatus
-import com.example.teumteum.data.remote.todo.model.enums.ScheduleType
 import com.example.teumteum.databinding.ItemClockPageBinding
 import com.example.teumteum.ui.todo.viewModel.TodoViewModel
 import com.example.teumteum.ui.clock.ChartUtils
@@ -41,7 +39,6 @@ import com.example.teumteum.ui.main.data.TimeType
 import com.example.teumteum.ui.main.viewModel.HomeViewModel
 import com.example.teumteum.ui.myhome.viewModel.MyHomeViewModel
 import com.example.teumteum.utils.applyBlurShadow
-import com.example.teumteum.utils.saveSelectedDate
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -51,7 +48,7 @@ class HomeFragment : Fragment(), IDateClickListener {
     private val binding get() = _binding!!
 
     private val today: LocalDate = LocalDate.now()
-    private lateinit var selectedDate: LocalDate
+    private var selectedDate: LocalDate = today
 
     private lateinit var adapter: TodoRVAdapter
     private var todolistItems: List<TodoListResult> = emptyList()
@@ -66,6 +63,11 @@ class HomeFragment : Fragment(), IDateClickListener {
 
     private lateinit var clockAdapter: ClockVPAdapter<ItemClockPageBinding>
 
+    // 콜백 필드
+    private lateinit var clockPageChangeCallback: ViewPager2.OnPageChangeCallback
+    private lateinit var weeklyPageChangeCallback: ViewPager2.OnPageChangeCallback
+    private lateinit var monthlyPageChangeCallback: ViewPager2.OnPageChangeCallback
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -74,6 +76,7 @@ class HomeFragment : Fragment(), IDateClickListener {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
         selectedDate = today
+        binding.homeSelectedDateTv.text = dateFormat(today)
 
         binding.homeCalendarPreviousDateIv.setOnClickListener {
             if (binding.homeWeeklyCalendarWeekVp.isVisible) {
@@ -143,10 +146,6 @@ class HomeFragment : Fragment(), IDateClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        val scheduleTypeArg: ScheduleType? =
-            arguments?.getString("schedule_type")
-                ?.let { runCatching { ScheduleType.valueOf(it) }.getOrNull() }
-
         adapter = TodoRVAdapter(parentFragmentManager,
             todolistItems,
             { id, toActive ->
@@ -157,9 +156,7 @@ class HomeFragment : Fragment(), IDateClickListener {
                         alarmStatus = status
                     )
                 )
-        },
-            scheduleTypeArg
-        )
+            })
         binding.todolistRv.adapter = adapter
 
         val date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
@@ -168,6 +165,7 @@ class HomeFragment : Fragment(), IDateClickListener {
         viewModel.getTeumTime()
 
         binding.fabAddIv.post {
+            val binding = _binding ?: return@post
             applyBlurShadow(
                 sourceView = binding.fabAddIv,
                 targetImageView = binding.fabShadowIv
@@ -184,26 +182,23 @@ class HomeFragment : Fragment(), IDateClickListener {
         }
 
         // 투두 등록 성공 이벤트 수신
-        parentFragmentManager.setFragmentResultListener("todo_register", viewLifecycleOwner) { _, _ ->
+        parentFragmentManager.setFragmentResultListener("todo_register_home", viewLifecycleOwner) { _, _ ->
             viewModel.refreshTodaySchedule()
+            viewModel.getTeumTime()
             refreshTodolist()
         }
 
         // 투두 수정 성공 이벤트 수신
-        parentFragmentManager.setFragmentResultListener("todo_edit", viewLifecycleOwner) { _, _ ->
+        parentFragmentManager.setFragmentResultListener("todo_edit_home", viewLifecycleOwner) { _, _ ->
             viewModel.refreshTodaySchedule()
+            viewModel.getTeumTime()
             refreshTodolist()
         }
 
         // 투두 삭제 성공 이벤트 수신
-        parentFragmentManager.setFragmentResultListener("todo_delete", viewLifecycleOwner) { _, _ ->
+        parentFragmentManager.setFragmentResultListener("todo_delete_home", viewLifecycleOwner) { _, _ ->
             viewModel.refreshTodaySchedule()
-            refreshTodolist()
-        }
-
-        // 빈틈 채우기 이벤트 수신
-        parentFragmentManager.setFragmentResultListener("assign", viewLifecycleOwner) { _, _ ->
-            viewModel.refreshTodaySchedule()
+            viewModel.getTeumTime()
             refreshTodolist()
         }
 
@@ -223,13 +218,17 @@ class HomeFragment : Fragment(), IDateClickListener {
         viewModel.teumTimeMinutes.observe(viewLifecycleOwner) { updateTeumTime() }
 
         setupObservers()
-
     }
 
     override fun onResume() {
         super.onResume()
         val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
         bottomNav?.visibility = View.VISIBLE
+    }
+
+    private inline fun withBinding(block: FragmentHomeBinding.() -> Unit) {
+        val b = _binding ?: return
+        block(b)
     }
 
     private fun setupClockPager() {
@@ -270,10 +269,10 @@ class HomeFragment : Fragment(), IDateClickListener {
         updateIndicator(binding.clockPager.currentItem == amPos)
     }
 
+
     // 주간 달력 연결
-    private fun setWeeklyCalendarViewPager() {
-        saveSelectedDate(today)
-        val calendarAdapter = CalendarVPAdapter(requireActivity(), CalendarMode.WEEKLY,this)
+    private fun setWeeklyCalendarViewPager() = withBinding {
+        val calendarAdapter = CalendarVPAdapter(requireActivity(), CalendarMode.WEEKLY,this@HomeFragment)
         binding.homeWeeklyCalendarWeekVp.adapter = calendarAdapter
 
         val startPosition = Int.MAX_VALUE / 2
@@ -282,42 +281,40 @@ class HomeFragment : Fragment(), IDateClickListener {
         selectedDate = today
         binding.homeSelectedDateTv.text = dateFormat(today)
 
-        binding.homeWeeklyCalendarWeekVp.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+        weeklyPageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
+                val b = _binding ?: return
                 val weekOffset = position - startPosition
-
-                // 오늘 날짜에서 weekOffset만큼 이동
                 val referenceDate = today.plusWeeks(weekOffset.toLong())
-
-                // 해당 주의 요일 (1: 월요일 ~ 7: 일요일)
                 val dayOfWeekValue = referenceDate.dayOfWeek.value % 7
-
                 val saturday = referenceDate.plusDays((6 - dayOfWeekValue).toLong())
 
                 selectedDate = saturday
-                binding.homeSelectedDateTv.text = dateFormat(saturday)
+                b.homeSelectedDateTv.text = dateFormat(saturday)
             }
-        })
+        }
+        homeWeeklyCalendarWeekVp.registerOnPageChangeCallback(weeklyPageChangeCallback)
 
     }
 
     // 월간 달력 연결
-    private fun setMonthlyCalendarViewPager() {
-        saveSelectedDate(today)
-        val calendarAdapter = CalendarVPAdapter(requireActivity(), CalendarMode.MONTHLY, this)
+    private fun setMonthlyCalendarViewPager() = withBinding {
+        val calendarAdapter = CalendarVPAdapter(requireActivity(), CalendarMode.MONTHLY, this@HomeFragment)
         binding.homeMonthlyCalendarMonthVp.adapter = calendarAdapter
 
         val startPosition = Int.MAX_VALUE / 2
         binding.homeMonthlyCalendarMonthVp.setCurrentItem(startPosition, false)
 
-        binding.homeMonthlyCalendarMonthVp.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+        monthlyPageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
+                val b = _binding ?: return
                 val monthOffset = position - startPosition
                 val newSelectedDate = today.plusMonths(monthOffset.toLong())
                 selectedDate = newSelectedDate
-                binding.homeSelectedDateTv.text = dateFormat(newSelectedDate)
+                b.homeSelectedDateTv.text = dateFormat(newSelectedDate)
             }
-        })
+        }
+        homeMonthlyCalendarMonthVp.registerOnPageChangeCallback(monthlyPageChangeCallback)
     }
 
     // 주간/월간 토글 버튼 클릭 이벤트 설정
@@ -440,8 +437,8 @@ class HomeFragment : Fragment(), IDateClickListener {
     }
 
     private fun refreshTodolist() {
-        val today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-        todoViewModel.getTodoList(date = today)
+        val dateStr = selectedDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        todoViewModel.getTodoList(dateStr)
     }
 
     private fun setupObservers() {
@@ -455,14 +452,23 @@ class HomeFragment : Fragment(), IDateClickListener {
                 adapter.updateList(itemList)
             }
         }
-
-        todoViewModel.errorMessage.observe(viewLifecycleOwner) { error ->
-            Log.e("HOME_FRAGMENT", error.toString())
-        }
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
+        _binding?.let { b ->
+            runCatching {
+                if (this::clockPageChangeCallback.isInitialized) {
+                    b.clockPager.unregisterOnPageChangeCallback(clockPageChangeCallback)
+                }
+                if (this::weeklyPageChangeCallback.isInitialized) {
+                    b.homeWeeklyCalendarWeekVp.unregisterOnPageChangeCallback(weeklyPageChangeCallback)
+                }
+                if (this::monthlyPageChangeCallback.isInitialized) {
+                    b.homeMonthlyCalendarMonthVp.unregisterOnPageChangeCallback(monthlyPageChangeCallback)
+                }
+            }
+        }
         _binding = null
+        super.onDestroyView()
     }
 }
