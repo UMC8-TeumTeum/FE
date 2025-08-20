@@ -1,46 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.activity.FillingActivity01Fragment">
 
+    <LinearLayout
+        android:id="@+id/filling_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:paddingBottom="30dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/back_arrow_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="70dp"
+            android:src="@drawable/ic_arrow_back" />
+
+        <TextView
+            android:id="@+id/filling_activity_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="66dp"
+            android:fontFamily="@font/noto_sans_kr_medium"
+            android:includeFontPadding="false"
+            android:text="채움 활동"
+            android:textColor="@color/text_primary"
+            android:textSize="20sp" />
+    </LinearLayout>
+
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scroll_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true"
-        android:paddingBottom="80dp">
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:clipToPadding="false"
+        android:paddingBottom="100dp">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="80dp">
+            android:layout_marginTop="100dp"
 
-            <ImageView
-                android:id="@+id/back_arrow_iv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="70dp"
-                android:layout_marginStart="16dp"
-                android:src="@drawable/ic_arrow_back"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/filling_activity_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="66dp"
-                android:layout_marginStart="12dp"
-                android:includeFontPadding="false"
-                android:fontFamily="@font/noto_sans_kr_medium"
-                android:text="채움 활동"
-                android:textColor="@color/text_primary"
-                android:textSize="20sp"
-                app:layout_constraintStart_toEndOf="@id/back_arrow_iv"
-                app:layout_constraintTop_toTopOf="parent" />
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/filling_activity_time_select_tv"
@@ -52,25 +62,21 @@
                 android:includeFontPadding="false"
                 android:text="틈 채우기를 진행할 시간이 얼마나 있나요?"
                 android:textColor="@color/text_primary"
-                android:textSize="18sp"
-                app:layout_constraintStart_toStartOf="@id/back_arrow_iv"
-                app:layout_constraintTop_toBottomOf="@id/filling_activity_tv" />
+                android:textSize="18sp"/>
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/filling_activity_time_01_cv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
+                android:layout_marginHorizontal="5dp"
                 android:layout_marginTop="20dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
                 android:backgroundTint="@color/teumteum_bg"
                 app:cardCornerRadius="10dp"
                 app:cardElevation="0dp"
-                app:strokeWidth="0dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@id/filling_activity_time_select_tv"
-                app:layout_constraintTop_toBottomOf="@id/filling_activity_time_select_tv">
+                app:layout_constraintTop_toBottomOf="@id/filling_activity_time_select_tv"
+                app:strokeWidth="0dp">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -97,17 +103,15 @@
                 android:id="@+id/filling_activity_time_02_cv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
+                android:layout_marginHorizontal="5dp"
                 android:layout_marginTop="15dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
                 android:backgroundTint="@color/teumteum_bg"
                 app:cardCornerRadius="10dp"
                 app:cardElevation="0dp"
-                app:strokeWidth="0dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@id/filling_activity_time_select_tv"
-                app:layout_constraintTop_toBottomOf="@id/filling_activity_time_01_cv">
+                app:layout_constraintTop_toBottomOf="@id/filling_activity_time_01_cv"
+                app:strokeWidth="0dp">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -134,16 +138,14 @@
                 android:id="@+id/filling_activity_time_03_cv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
+                android:layout_marginHorizontal="5dp"
                 android:layout_marginTop="15dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
                 android:backgroundTint="@color/teumteum_bg"
                 app:cardCornerRadius="10dp"
                 app:cardElevation="0dp"
-                app:strokeWidth="0dp"
                 app:layout_constraintStart_toStartOf="@id/filling_activity_time_select_tv"
-                app:layout_constraintTop_toBottomOf="@id/filling_activity_time_02_cv">
+                app:layout_constraintTop_toBottomOf="@id/filling_activity_time_02_cv"
+                app:strokeWidth="0dp">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -170,16 +172,14 @@
                 android:id="@+id/filling_activity_time_04_cv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
+                android:layout_marginHorizontal="5dp"
                 android:layout_marginTop="15dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
                 android:backgroundTint="@color/teumteum_bg"
                 app:cardCornerRadius="10dp"
                 app:cardElevation="0dp"
-                app:strokeWidth="0dp"
                 app:layout_constraintStart_toStartOf="@id/filling_activity_time_select_tv"
-                app:layout_constraintTop_toBottomOf="@id/filling_activity_time_03_cv">
+                app:layout_constraintTop_toBottomOf="@id/filling_activity_time_03_cv"
+                app:strokeWidth="0dp">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -219,9 +219,8 @@
                 android:id="@+id/filling_activity_location_01_ll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="5dp"
                 android:layout_marginTop="20dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 app:layout_constraintStart_toStartOf="@id/filling_activity_time_select_tv"
@@ -275,8 +274,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
+                android:layout_marginHorizontal="5dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 app:layout_constraintStart_toStartOf="@id/filling_activity_time_select_tv"
@@ -329,8 +327,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginTop="7dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
+                android:layout_marginStart="3dp"
+                android:layout_marginEnd="3dp"
                 android:background="@drawable/rounded_edit_text"
                 android:gravity="center_vertical"
                 android:paddingHorizontal="12dp"
@@ -346,7 +344,6 @@
                     android:gravity="center_vertical"
                     android:hint="기타 (직접 입력하기)"
                     android:maxLength="10"
-                    android:paddingEnd="40dp"
                     android:singleLine="true"
                     android:textColor="@color/text_primary"
                     android:textColorHint="@color/teumteum_deactive"
@@ -378,9 +375,8 @@
                 android:id="@+id/filling_activity_category_01_ll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
                 android:layout_marginTop="20dp"
+                android:layout_marginHorizontal="5dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 app:layout_constraintTop_toBottomOf="@id/filling_activity_category_select_tv">
@@ -433,8 +429,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
+                android:layout_marginHorizontal="5dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 app:layout_constraintTop_toBottomOf="@id/filling_activity_category_01_ll">
@@ -486,8 +481,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginTop="7dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
+                android:layout_marginStart="3dp"
+                android:layout_marginEnd="3dp"
                 android:background="@drawable/rounded_edit_text"
                 android:gravity="center_vertical"
                 android:paddingHorizontal="12dp"
@@ -517,27 +512,37 @@
                     android:layout_centerVertical="true"
                     android:src="@drawable/clear_btn" />
             </RelativeLayout>
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/search_btn"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="19dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginEnd="19dp"
-        android:layout_marginBottom="19dp"
-        android:layout_gravity="bottom"
-        android:backgroundTint="@color/teumteum_bg"
-        android:enabled="false"
-        android:fontFamily="@font/noto_sans_kr_medium"
-        android:text="찾기"
-        android:textColor="@color/text_primary"
-        android:textSize="16sp"
-        app:cornerRadius="12dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/filling_activity_category_form" />
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <!-- 흰색 배경 View -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="85dp"
+            android:background="@color/white"/>
+
+        <!-- 버튼 -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/search_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="19dp"
+            android:layout_marginEnd="19dp"
+            android:layout_marginBottom="19dp"
+            android:enabled="false"
+            android:fontFamily="@font/noto_sans_kr_medium"
+            android:text="찾기"
+            android:textColor="@color/text_primary"
+            android:textSize="16sp"
+            app:cornerRadius="12dp"
+            app:backgroundTint="@color/teumteum_bg"/>
+    </FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

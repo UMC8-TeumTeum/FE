@@ -53,6 +53,9 @@ class TodoViewModel @Inject constructor(
     private val _editSuccess = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
     val editSuccess: SharedFlow<Unit> = _editSuccess.asSharedFlow()
 
+    private val _editError = MutableSharedFlow<ApiException>(replay = 0, extraBufferCapacity = 1)
+    val editError: SharedFlow<ApiException> = _editError.asSharedFlow()
+
     private val _deleteSuccess = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
     val deleteSuccess: SharedFlow<Unit> = _deleteSuccess.asSharedFlow()
 
@@ -145,8 +148,7 @@ class TodoViewModel @Inject constructor(
             result.onSuccess { dto ->
                 _onBoardingReminders.value = dto.reminders ?: emptyList()
             }.onFailure { e ->
-                _errorMessage.value = e.localizedMessage ?: "온보딩 리마인드 알림 조회에 실패했습니다."
-            }
+                _errorMessage.value = e.message ?: "온보딩 리마인드 알림 조회에 실패했습니다."            }
         }
     }
 

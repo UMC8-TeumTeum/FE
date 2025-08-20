@@ -1,4 +1,4 @@
-package com.example.teumteum.data.remote.alarm
+package com.example.teumteum.data.remote.alarm.service
 
 import com.example.teumteum.data.remote.alarm.dto.FcmToken
 import com.example.teumteum.utils.ApiResponse
