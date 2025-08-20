@@ -54,7 +54,6 @@ object TimeUtils {
                         val parsed = flexibleIsoFormatter.parse(isoString)
                         val hasOffset = parsed.isSupported(ChronoField.OFFSET_SECONDS)
 
-                        // offset 없으면 현재 zoneId로 해석
                         val createdZdt: ZonedDateTime = if (hasOffset) {
                                 ZonedDateTime.from(parsed)
                         } else {
@@ -63,29 +62,26 @@ object TimeUtils {
 
                         val createdLocal = createdZdt.withZoneSameInstant(zoneId).toLocalDateTime()
                         val now = LocalDateTime.now(zoneId)
-                        val duration = Duration.between(createdLocal, now)
 
-                        val neg = duration.isNegative
-                        val minutes = abs(duration.toMinutes())
-                        val hours = abs(duration.toHours())
-                        val days = abs(duration.toDays())
+                        var duration = Duration.between(createdLocal, now)
+                        if (duration.isNegative) duration = Duration.ZERO  // 미래 튐 보정
 
-                        // 미래 값이면 "방금 전"으로 잘못 표기되지 않도록 처리
-                        if (neg) {
-                                return@runCatching when {
-                                        minutes < 1 -> "방금 전" // 1분 이내의 미래 → 실시간 갱신 오차 보정
-                                        else -> createdLocal.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
-                                }
-                        }
+                        val minutes = duration.toMinutes()
+                        val hours = duration.toHours()
+                        val days = duration.toDays()
+                        val months = days / 30
+                        val years = days / 365
 
                         when {
                                 minutes < 1 -> "방금 전"
                                 minutes < 60 -> "${minutes}분 전"
                                 hours < 24 -> "${hours}시간 전"
                                 days == 1L -> "어제"
-                                days < 7 -> "${days}일 전"
-                                else -> createdLocal.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
+                                days < 30 -> "${days}일 전"
+                                months < 12 -> "${months}달 전"
+                                else -> "${years}년 전"
                         }
-                }.getOrElse { isoString }
+                }.getOrElse { "알 수 없음" }
         }
+
 }
