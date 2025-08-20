@@ -42,12 +42,6 @@ interface FriendService {
         @Path("userId") userId: Int
     ): Response<ApiResponse<Unit>>
 
-    @GET("/api/friends/followings")
-    suspend fun getFollowings(
-        @Query("page") page: Int,
-        @Query("size") size: Int
-    ): Response<ApiResponse<FollowingPageResult>>
-
     @GET("/api/teums/scheduled/calendar")
     suspend fun getScheduledTeumCalendar(
         @Query("month") month: String
@@ -80,12 +74,19 @@ interface FriendService {
         @Body body: FavoriteRequest
     ): Response<ApiResponse<FavoriteResult>>
 
+    // 팔로잉 목록
+    @GET("/api/friends/followings")
+    suspend fun getFollowings(
+        @Query("page") page: Int,
+        @Query("size") size: Int
+    ): Response<ApiResponse<PagingResponse<FollowingResult>>>
+
     // 팔로워 목록 (페이지)
     @GET("/api/friends/followers")
     suspend fun getFollowers(
         @Query("page") page: Int,
         @Query("size") size: Int
-    ): Response<ApiResponse<FollowerPageResult>>
+    ): Response<ApiResponse<PagingResponse<FollowerResult>>>
 
     // 틈 요청 읽음 처리
     @PATCH("/api/teums/request/{responseId}/read")
