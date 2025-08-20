@@ -65,16 +65,11 @@ class FriendFragment : Fragment() {
                 Log.d("CARD_CLICK", "카드 클릭됨, responseId=${item.responseId}")
                 viewModel.readTeumRequest(item.responseId)
 
+                //선택된 아이템 저장
                 viewModel.selectTeum(item)
-                val fragment = Friend02RequestFragment().apply {
-                    arguments = Bundle().apply {
-//                        putParcelableArrayList("teumList", ArrayList(viewModel.receivedTeums.value ?: emptyList()))
-//                        putInt("selectedPosition", position)
-//                        putInt("requestId", item.requestId)
-                    }
-                }
+
                 parentFragmentManager.beginTransaction()
-                    .replace(R.id.main_frm, fragment)
+                    .replace(R.id.main_frm, Friend02RequestFragment())
                     .addToBackStack(null)
                     .commit()
             }
