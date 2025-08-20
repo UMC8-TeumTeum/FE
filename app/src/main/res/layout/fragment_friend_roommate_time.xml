@@ -33,40 +33,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnBack" />
 
-    <!-- 원형 시간표 -->
-    <ImageView
-        android:id="@+id/clock_background_iv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="68dp"
-        android:layout_marginEnd="68dp"
-        android:layout_marginTop="1dp"
-        android:src="@drawable/clock_mini_sv"
-        app:layout_constraintEnd_toEndOf="parent"
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/clock_pager"
+        android:layout_width="match_parent"
+        android:layout_height="254dp"
+        app:layout_constraintTop_toBottomOf="@id/date"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/date" />
-
-    <com.github.mikephil.charting.charts.PieChart
-        android:id="@+id/clock_chart"
-        android:layout_width="179.49dp"
-        android:layout_height="179.49dp"
-        app:layout_constraintTop_toTopOf="@id/clock_background_iv"
-        app:layout_constraintStart_toStartOf="@id/clock_background_iv"
-        app:layout_constraintEnd_toEndOf="@id/clock_background_iv"
-        app:layout_constraintBottom_toBottomOf="@id/clock_background_iv"
-        android:background="@color/transparent"
-        />
-
-    <ImageView
-        android:id="@+id/clock_center_iv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="@id/clock_background_iv"
-        app:layout_constraintStart_toStartOf="@id/clock_background_iv"
-        app:layout_constraintEnd_toEndOf="@id/clock_background_iv"
-        app:layout_constraintBottom_toBottomOf="@id/clock_background_iv"
-        android:src="@drawable/clock_mini_center_sv"
-        android:background="@color/transparent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="12dp"
         />
 
     <LinearLayout
@@ -76,9 +50,9 @@
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:background="@android:color/transparent"
-        app:layout_constraintTop_toBottomOf="@id/clock_background_iv"
-        app:layout_constraintStart_toStartOf="@id/clock_background_iv"
-        app:layout_constraintEnd_toEndOf="@id/clock_background_iv"
+        app:layout_constraintTop_toBottomOf="@id/clock_pager"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="13dp"
         >
 
