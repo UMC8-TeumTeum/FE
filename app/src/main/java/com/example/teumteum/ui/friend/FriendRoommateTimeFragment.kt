@@ -12,12 +12,17 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.friend.model.FriendProfileResult
 import com.example.teumteum.data.remote.friend.model.PossibleTimeRequest
 import com.example.teumteum.databinding.FragmentFriendRoommateTimeBinding
+import com.example.teumteum.databinding.ItemClockMiniPageBinding
 import com.example.teumteum.ui.clock.ChartUtils
+import com.example.teumteum.ui.clock.ClockHalf
+import com.example.teumteum.ui.clock.ClockVPAdapter
+import com.example.teumteum.ui.clock.IconPieChartRenderer
 import com.example.teumteum.ui.friend.adapter.FriendProfileAdapter
 import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.example.teumteum.ui.main.MainActivity
@@ -27,6 +32,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import kotlin.collections.orEmpty
 import kotlin.getValue
 
 @AndroidEntryPoint
@@ -36,12 +42,13 @@ class FriendRoommateTimeFragment : Fragment() {
     private val binding get() = _binding!!
 
     private var isAM = true
-    private lateinit var sleepIconBitmap: Bitmap
 
     private val viewModel: FriendViewModel by activityViewModels()
 
     //차트에 들어갈 시간 데이터
     private var currentFullDayBlocks: List<TimeBlock> = emptyList()
+
+    private lateinit var clockAdapter: ClockVPAdapter<ItemClockMiniPageBinding>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -135,16 +142,17 @@ class FriendRoommateTimeFragment : Fragment() {
         viewModel.setFixedDate(convertDateFormat(receivedDate))
 
         // PieChart 설정
-        ChartUtils.setupPieChart(binding.clockChart)
+        setupClockPager()
+        updateIndicator(isAM)
+
         observeViewModel()
-        updateTimeChart()
-        updateAMPMIndicator()
 
         // AM/PM 토글
         binding.amPmTv.setOnClickListener {
-            isAM = !isAM
-            updateTimeChart()
-            updateAMPMIndicator()
+            val amPos = clockAdapter.positionOf(ClockHalf.AM)
+            val pmPos = clockAdapter.positionOf(ClockHalf.PM)
+            val next = if (binding.clockPager.currentItem == amPos) pmPos else amPos
+            binding.clockPager.setCurrentItem(next, true)
         }
 
         // 뒤로가기
@@ -161,16 +169,42 @@ class FriendRoommateTimeFragment : Fragment() {
         }
     }
 
-    private fun updateTimeChart() {
-        // 데이터가 오기 전엔 예시(fullSchedule), 온 뒤엔 currentFullDayBlocks 사용
-        val baseBlocks = currentFullDayBlocks
-        val halfBlocks = ChartUtils.splitAndFillTimeBlocks(baseBlocks, isAM)
+    private fun setupClockPager() {
+        clockAdapter = ClockVPAdapter(
+            inflate = ItemClockMiniPageBinding::inflate,
+            chartOf = { it.clockChart },
+            onBindPage = { chart, half ->
+                ChartUtils.setupPieChart(chart)
+                val sleepBitmap = ChartUtils.getBitmapFromVector(requireContext(), R.drawable.ic_sleep_sv)
+                chart.renderer = IconPieChartRenderer(chart, chart.animator, chart.viewPortHandler, sleepBitmap)
 
-        val unifiedPurple = Color.parseColor("#847EFF")
-        ChartUtils.setTimePieChartData(requireContext(), binding.clockChart, halfBlocks, unifiedPurple)
+                // AM/PM 데이터 바인딩
+                val blocks = currentFullDayBlocks
+                val halfBlocks = ChartUtils.splitAndFillTimeBlocks(blocks, half == ClockHalf.AM)
+                ChartUtils.setTimePieChartData(requireContext(), chart, halfBlocks)
 
-        val hasEmptyTime = halfBlocks.any { it.type == TimeType.EMPTY }
-        updateNextButton(hasEmptyTime)
+            }
+        )
+
+        binding.clockPager.adapter = clockAdapter
+        binding.clockPager.offscreenPageLimit = 1
+
+        val amPos = clockAdapter.positionOf(ClockHalf.AM) // 0
+        val pmPos = clockAdapter.positionOf(ClockHalf.PM) // 1
+
+        binding.clockPager.setCurrentItem(amPos, false)
+
+        binding.clockPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                updateIndicator(position == amPos)
+            }
+        })
+
+        binding.amPmTv.setOnClickListener {
+            val next = if (binding.clockPager.currentItem == amPos) pmPos else amPos
+            binding.clockPager.setCurrentItem(next, true)
+        }
+
     }
 
     private fun updateNextButton(hasEmpty: Boolean) {
@@ -185,31 +219,38 @@ class FriendRoommateTimeFragment : Fragment() {
         }
     }
 
-    private fun updateAMPMIndicator() {
+    private fun updateIndicator(isAM: Boolean) {
         val leftView = binding.leftView
         val rightView = binding.rightView
 
         if (isAM) {
-            updateIndicatorView(leftView, 28, 4, R.drawable.clock_indicator_bar_purple)
-            updateIndicatorView(rightView, 4, 4, R.drawable.clock_indicator_dot)
-            binding.amPmTv.text = "AM"
+            //왼쪽이 막대, 오른쪽이 점
+            leftView.layoutParams.width = dpToPx(28)
+            leftView.layoutParams.height = dpToPx(4)
+            leftView.background = ContextCompat.getDrawable(requireContext(), R.drawable.clock_indicator_bar_purple)
+
+            rightView.layoutParams.width = dpToPx(4)
+            rightView.layoutParams.height = dpToPx(4)
+            rightView.background = ContextCompat.getDrawable(requireContext(), R.drawable.clock_indicator_dot)
+
+            binding.amPmTv.text="AM"
         } else {
-            updateIndicatorView(leftView, 4, 4, R.drawable.clock_indicator_dot)
-            updateIndicatorView(rightView, 28, 4, R.drawable.clock_indicator_bar_purple)
-            binding.amPmTv.text = "PM"
+            //왼쪽이 점, 오른쪽이 막대
+            leftView.layoutParams.width = dpToPx(4)
+            leftView.layoutParams.height = dpToPx(4)
+            leftView.background = ContextCompat.getDrawable(requireContext(), R.drawable.clock_indicator_dot)
+
+            rightView.layoutParams.width = dpToPx(28)
+            rightView.layoutParams.height = dpToPx(4)
+            rightView.background = ContextCompat.getDrawable(requireContext(), R.drawable.clock_indicator_bar_purple)
+
+            binding.amPmTv.text="PM"
         }
 
         leftView.requestLayout()
         rightView.requestLayout()
     }
 
-    private fun updateIndicatorView(view: View, widthDp: Int, heightDp: Int, drawableRes: Int) {
-        val layoutParams = view.layoutParams
-        layoutParams.width = dpToPx(widthDp)
-        layoutParams.height = dpToPx(heightDp)
-        view.layoutParams = layoutParams
-        view.background = ContextCompat.getDrawable(requireContext(), drawableRes)
-    }
 
     private fun dpToPx(dp: Int): Int {
         return (dp * resources.displayMetrics.density).toInt()
@@ -225,12 +266,13 @@ class FriendRoommateTimeFragment : Fragment() {
             if (cards.isEmpty()) {
                 binding.possibleTime.text = "이때는 가능한 빈틈이 없어요"
                 currentFullDayBlocks = listOf(TimeBlock(0, 1440, TimeType.TODO))
+                updateNextButton(false)
             } else {
                 binding.possibleTime.text = "가능한 빈틈이 있어요"
                 currentFullDayBlocks = ChartUtils.buildBlocksFromTimeCardItems(cards)
+                updateNextButton(true)
             }
-
-            updateTimeChart()
+            clockAdapter.refreshAll()
         }
     }
 

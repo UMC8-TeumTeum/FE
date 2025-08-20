@@ -440,7 +440,8 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginBottom="10dp"
                                 android:gravity="center_vertical"
-                                android:orientation="horizontal">
+                                android:orientation="horizontal"
+                                android:visibility="gone">
 
                                 <TextView
                                     android:id="@+id/alarm_set_01_tv"
@@ -469,7 +470,8 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginBottom="10dp"
                                 android:gravity="center_vertical"
-                                android:orientation="horizontal">
+                                android:orientation="horizontal"
+                                android:visibility="gone">
 
                                 <TextView
                                     android:id="@+id/alarm_set_02_tv"

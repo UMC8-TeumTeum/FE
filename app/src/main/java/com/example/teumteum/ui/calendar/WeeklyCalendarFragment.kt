@@ -9,10 +9,8 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
-import com.example.teumteum.data.remote.calendar.model.GetCalendarResponse
 import com.example.teumteum.databinding.FragmentWeeklyCalendarBinding
 import com.example.teumteum.ui.calendar.viewModel.CalendarViewModel
-import com.example.teumteum.ui.main.viewModel.HomeViewModel
 import com.example.teumteum.utils.*
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
@@ -52,7 +50,9 @@ class WeeklyCalendarFragment : Fragment() {
 
         val baseMonth = newDate.monthValue
         setOneWeekDateIntoTextView(baseMonth)
-        selectTodayIfInWeek()
+
+        ensureSelectedDate()
+        resetUi(baseMonth)
 
         // 주간 범위로 캘린더 호출
         val startDate = dates.first().format(dateFormatter)
@@ -65,8 +65,24 @@ class WeeklyCalendarFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        setPrevSelectedDate()
-        refreshWeek()
+        resetUi(calculateNewDate().monthValue)
+
+        // 투두 등록 성공 이벤트 수신
+        parentFragmentManager.setFragmentResultListener("todo_register_calendar", viewLifecycleOwner) { _, _ ->
+            refreshWeek()
+        }
+
+        // 투두 삭제 성공 이벤트 수신
+        parentFragmentManager.setFragmentResultListener("todo_delete_calendar", viewLifecycleOwner) { _, _ ->
+            refreshWeek()
+        }
+    }
+
+    private fun ensureSelectedDate() {
+        if (!firstShownInProcess) {
+            saveSelectedDate(requireContext(), LocalDate.now())
+            firstShownInProcess = true
+        }
     }
 
     override fun onPause() {
@@ -97,7 +113,6 @@ class WeeklyCalendarFragment : Fragment() {
     }
 
     private fun setOneWeekDateIntoTextView(baseMonth: Int) {
-
         for (i in textViewList.indices) {
             val date = dates[i]
             val textView = textViewList[i]
@@ -112,57 +127,38 @@ class WeeklyCalendarFragment : Fragment() {
             )
 
             textView.setOnClickListener {
-                resetUi(baseMonth)
-                setSelectedDate(requireContext(), textView)
+                // 선택 날짜를 저장
                 saveSelectedDate(requireContext(), date)
+
+                // 저장된 값 기준으로 전체 UI 리셋
+                resetUi(baseMonth)
+
                 onClickListener.onClickDate(date)
             }
         }
     }
 
-    private fun setPrevSelectedDate() {
-        val selected = getSavedDateOrToday(requireContext())
-        for (i in textViewList.indices) {
-            if (dates[i] == selected) {
-                setSelectedDate(requireContext(), textViewList[i])
-            }
-        }
-    }
-
-    private fun selectTodayIfInWeek() {
-        val today = LocalDate.now()
-        for (i in textViewList.indices) {
-            if (dates[i] == today) {
-                setSelectedDate(requireContext(), textViewList[i])
-                saveSelectedDate(requireContext(), today)
-                break
-            }
-        }
-    }
-
+    // 스타일 관리
     private fun resetUi(baseMonth: Int) {
         val today = LocalDate.now()
+        val selected = getSavedDateOrToday(requireContext())
 
         for (i in textViewList.indices) {
             val date = dates[i]
             val textView = textViewList[i]
 
-            if (date == today) {
-                setTodayStyle(requireContext(), textView)
-            } else {
-                resetDateStyle(requireContext(), textView)
+            when {
+                date == selected -> setSelectedDate(requireContext(), textView) // 선택된 날짜 우선
+                date == today -> setTodayStyle(requireContext(), textView)      // 선택된 날짜가 아니면 오늘 표시
+                else -> resetDateStyle(requireContext(), textView)
             }
-
-            textView.setTextColor(
-                if (date.monthValue == baseMonth)
-                    requireContext().getColor(R.color.text_primary)
-                else
-                    requireContext().getColor(R.color.teumteum_deactive)
-            )
         }
     }
 
     companion object {
+        // 프로세스가 재시작되면 false로 초기화
+        private var firstShownInProcess: Boolean = false
+
         fun newInstance(
             position: Int,
             onClickListener: IDateClickListener
@@ -184,8 +180,7 @@ class WeeklyCalendarFragment : Fragment() {
 
         viewModel.error.observe(viewLifecycleOwner) { msg ->
             msg?.let {
-//                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
-                Log.d("WEEKLY_CALENDAR_FRAGMENT", it.toString())
+                Log.d("WEEKLY_CALENDAR_FRAGMENT", it)
             }
         }
     }
@@ -204,7 +199,8 @@ class WeeklyCalendarFragment : Fragment() {
 
         val baseMonth = newDate.monthValue
         setOneWeekDateIntoTextView(baseMonth)
-        selectTodayIfInWeek()
+
+        resetUi(baseMonth)
 
         val startDate = dates.first().format(dateFormatter)
         val endDate = dates.last().format(dateFormatter)

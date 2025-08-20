@@ -47,8 +47,6 @@ class FillingSetting02Fragment : Fragment() {
     private enum class AssignMode { AI, WISH }
     private var mode: AssignMode? = null
 
-    private var scheduleType: String? = null
-
     private val viewModel: ActivityViewModel by activityViewModels()
 
     override fun onCreateView(
@@ -83,8 +81,6 @@ class FillingSetting02Fragment : Fragment() {
             parentFragmentManager.popBackStack()
             return
         }
-
-        scheduleType = arguments?.getString("schedule_type")
 
         // 바텀 내비게이션 숨기기
         val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
@@ -326,16 +322,9 @@ class FillingSetting02Fragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.assignSuccess.collect {
                     Log.d("ASSIGN_FRAMENT", "빈틈채우기에 성공하였습니다.")
-                    parentFragmentManager.setFragmentResult("assign", Bundle())
-
-                    val fragment = HomeFragment().apply {
-                        arguments = Bundle().apply {
-                            putString("schedule_type", ScheduleType.AI.toString())
-                        }
-                    }
 
                     parentFragmentManager.beginTransaction()
-                        .replace(R.id.main_frm, fragment)
+                        .replace(R.id.main_frm, HomeFragment())
                         .addToBackStack(null)
                         .commit()
                 }
