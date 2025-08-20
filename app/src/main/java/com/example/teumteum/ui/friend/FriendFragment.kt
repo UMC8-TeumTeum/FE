@@ -29,7 +29,6 @@ class FriendFragment : Fragment() {
     private var _binding: FragmentFriendBinding? = null
     private val binding get() = _binding!!
 
-    // ViewModel은 activityViewModels()로 공유
     private val viewModel: FriendViewModel by activityViewModels()
 
     private lateinit var recommendAdapter: RecommendAdapter
@@ -82,8 +81,15 @@ class FriendFragment : Fragment() {
                     }
                 }
 
+                if(item.read==false){
+                    viewModel.readTeumRequest(item.responseId)
+                }
+
+                //선택된 아이템 저장
+                viewModel.selectTeum(item)
+
                 parentFragmentManager.beginTransaction()
-                    .replace(R.id.main_frm, fragment)
+                    .replace(R.id.main_frm, Friend02RequestFragment())
                     .addToBackStack(null)
                     .commit()
             }
