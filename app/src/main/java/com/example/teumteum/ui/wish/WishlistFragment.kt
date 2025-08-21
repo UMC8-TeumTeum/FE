@@ -44,9 +44,6 @@ class WishlistFragment : Fragment() {
         _binding = FragmentWishlistBinding.inflate(inflater, container, false)
 
         binding.editTv.setOnClickListener {
-            val currentList = viewModel.wishlistItems.value ?: emptyList()
-            viewModel.updateWishlistItems(currentList.toMutableList())
-
             parentFragmentManager.beginTransaction()
                 .replace(R.id.main_frm, WishlistEditFragment())
                 .addToBackStack(null)

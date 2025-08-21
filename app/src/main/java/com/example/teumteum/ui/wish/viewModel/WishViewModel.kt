@@ -161,8 +161,8 @@ class WishViewModel @Inject constructor(
             val result = wishRepository.deleteWish(request)
             result.onSuccess {
                 _deleteSuccess.tryEmit(Unit)
-                // 등록 성공 직후 현재 duration 기준으로 즉시 새로고침
-                refreshCurrent()
+                // 등록 성공 직후 즉시 새로고침
+                refreshWishlist("all")
             }
             result.onFailure { e ->
                 _errorMessage.value = e.localizedMessage ?: "위시 삭제에 실패했습니다."
