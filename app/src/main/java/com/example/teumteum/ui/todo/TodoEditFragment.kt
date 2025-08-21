@@ -144,8 +144,6 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
             adapter = profileAdapter
         }
 
-        binding.alarmItem01Ll.visibility = View.GONE
-        binding.alarmItem02Ll.visibility = View.GONE
         resetAlarmUI()
         setupPickers()
 
@@ -735,8 +733,7 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
             run {
                 listOf(
                     binding.todoTitleEt, binding.startDateTv, binding.startTimeTv,
-                    binding.endDateTv, binding.endTimeTv, binding.alarmSet01Tv,
-                    binding.alarmSet02Tv, binding.addAlarmTv, binding.btnPlus,
+                    binding.endDateTv, binding.endTimeTv, binding.addAlarmTv, binding.btnPlus,
                     binding.detailTextEt, binding.btnTodoSave
                 ).forEach { v ->
                     v.isEnabled = true
@@ -758,8 +755,6 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
                 binding.startTimeTv.setTextColor(nt)
                 binding.endDateTv.setTextColor(nt)
                 binding.endTimeTv.setTextColor(nt)
-                binding.alarmSet01Tv.setTextColor(nt)
-                binding.alarmSet02Tv.setTextColor(nt)
                 binding.addAlarmTv.setTextColor(nt)
                 binding.publicSettingTv.setTextColor(nt)
                 binding.includeReportTv.setTextColor(nt)
@@ -768,7 +763,6 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
 
                 // 토글 저장
                 listOf(
-                    binding.alarmToggle01Iv, binding.alarmToggle02Iv,
                     binding.publicToggle01Iv, binding.includeToggle01Iv
                 ).forEach { t ->
                     t.isEnabled = true
@@ -823,8 +817,6 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
                 binding.endDateTv.setTextColor(deactiveColor)
                 binding.endTimeTv.setTextColor(deactiveColor)
                 binding.alarmIconIv.setColorFilter(deactiveColor)
-                binding.alarmSet01Tv.setTextColor(deactiveColor)
-                binding.alarmSet02Tv.setTextColor(deactiveColor)
                 binding.addAlarmTv.setTextColor(deactiveColor)
                 binding.publicIconIv.setColorFilter(deactiveColor)
                 binding.publicSettingTv.setTextColor(deactiveColor)
@@ -839,14 +831,11 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
                 binding.startTimeTv.isEnabled = false
                 binding.endDateTv.isEnabled = false
                 binding.endTimeTv.isEnabled = false
-                binding.alarmSet01Tv.isEnabled = false
-                binding.alarmSet02Tv.isEnabled = false
                 binding.addAlarmTv.isEnabled = false
                 binding.btnPlus.isEnabled = false
                 binding.detailTextEt.isEnabled = false
 
                 listOf(
-                    binding.alarmToggle01Iv, binding.alarmToggle02Iv,
                     binding.publicToggle01Iv, binding.includeToggle01Iv
                 ).forEach { t ->
                     t.isEnabled = false
