@@ -81,6 +81,7 @@ class FillingSetting01Fragment : Fragment() {
             onSelect = { _, slot ->
                 selectedStartTime = slot.startTime
                 selectedEndTime   = slot.endTime
+                selectedTimeText = "${slot.startTime} ~ ${slot.endTime}"
                 isDirectInput = false
                 enableNextButton()
             },
@@ -88,6 +89,7 @@ class FillingSetting01Fragment : Fragment() {
                 isDirectInput = true
                 // 직접 입력 바텀시트/다이얼로그 띄우고 완료되면 selectedStartTime/EndTime에 "HH:mm" 셋팅
                 // 예: showTimeInputBottomSheet { start, end -> selectedStartTime = start; selectedEndTime = end }
+                selectedTimeText = "직접 입력하기"
                 enableNextButton()
             }
         )
