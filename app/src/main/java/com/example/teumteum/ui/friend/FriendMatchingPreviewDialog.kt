@@ -124,14 +124,31 @@ class FriendMatchingPreviewDialog : DialogFragment() {
             .error(R.drawable.gray_teum)
             .circleCrop()
             .into(binding.imgProfile)
-        binding.tvDate.text = viewModel.teumRequestSelectedDate.value
-        binding.tvTime.text = viewModel.teumRequestSelectedTime.value?.startTime.toString() + " ~ " + viewModel.teumRequestSelectedTime.value?.endTime.toString()
+
+        //  날짜 포맷 적용
+        val rawDate = viewModel.teumRequestSelectedDate.value
+        binding.tvDate.text = "${formatDate(rawDate)}     |"
+
+        // 시간
+        binding.tvTime.text =
+            "${viewModel.teumRequestSelectedTime.value?.startTime} ~ ${viewModel.teumRequestSelectedTime.value?.endTime}"
     }
 
     private fun updateImage(){
         binding.imgTeum.setImageResource(imageList[currentIndex])
         viewModel.setTeumRequestGraphicId(currentIndex)
     }
+
+    private fun formatDate(date: String?): String {
+        if (date.isNullOrBlank()) return ""
+        return try {
+            val parsed = java.time.LocalDate.parse(date) // "2025-08-20"
+            parsed.format(java.time.format.DateTimeFormatter.ofPattern("yy.MM.dd")) // "25.08.20"
+        } catch (e: Exception) {
+            date // 파싱 실패 시 원본 그대로
+        }
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

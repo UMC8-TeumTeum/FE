@@ -119,7 +119,7 @@ class FriendProfileFollowingFragment : Fragment() {
                     arguments = Bundle().apply {
                         putInt("targetUserId", targetUserId)
                         putString("targetNickname", binding.profileNicknameTv.text.toString())
-                        putString("targetProfileUrl", arguments?.getString("imageUrl") ?: "")
+                        putString("targetProfileUrl", imageUrl)
                     }
                 }
 

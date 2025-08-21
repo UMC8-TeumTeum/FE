@@ -61,8 +61,30 @@ class FriendFragment : Fragment() {
 
         recommendAdapter = RecommendAdapter(
             onCardClick = { item: TeumReceivedItem, position: Int ->
-                //틈 읽음 처리
                 Log.d("CARD_CLICK", "카드 클릭됨, responseId=${item.responseId}")
+                viewModel.readTeumRequest(item.responseId)
+
+                val fragment = if (item.resend) {
+                    //  재요청 카드면 Response 화면으로
+                    Friend02ResponseFragment().apply {
+                        arguments = Bundle().apply {
+                            putParcelable("teumItem", item)   // 단일 아이템 전달
+                        }
+                    }
+                } else {
+                    //  원본 요청 카드면 Request 화면으로
+                    Friend02RequestFragment().apply {
+                        arguments = Bundle().apply {
+                            val originalRequests = viewModel.receivedTeums.value
+                                ?.filter { !it.resend }   // 재요청 제거
+                                ?: emptyList()
+
+                            putParcelableArrayList("teumList", ArrayList(originalRequests))
+                            putInt("selectedPosition", position)
+                        }
+                    }
+                }
+
                 if(item.read==false){
                     viewModel.readTeumRequest(item.responseId)
                 }
@@ -71,7 +93,7 @@ class FriendFragment : Fragment() {
                 viewModel.selectTeum(item)
 
                 parentFragmentManager.beginTransaction()
-                    .replace(R.id.main_frm, Friend02RequestFragment())
+                    .replace(R.id.main_frm, fragment)  // 선택된 fragment 사용
                     .addToBackStack(null)
                     .commit()
             }
