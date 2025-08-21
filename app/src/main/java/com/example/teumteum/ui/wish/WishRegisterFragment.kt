@@ -62,6 +62,7 @@ class WishRegisterFragment : BottomSheetDialogFragment() {
 
         binding.btnTodo.setOnClickListener {
             if (isWishSelected) {
+                clearWishSheet()
 
                 binding.btnWish.setBackgroundColor(
                     ContextCompat.getColor(
@@ -104,6 +105,52 @@ class WishRegisterFragment : BottomSheetDialogFragment() {
 
         setupTimeButtons()
         setupCategoryButtons()
+    }
+
+    private fun clearWishSheet() {
+        binding.wishTitleEt.setText("")
+        binding.detailTextEt.setText("")
+
+        val timeButtons = listOf(
+            binding.btnWishTime01,
+            binding.btnWishTime02,
+            binding.btnWishTime03,
+            binding.btnWishTime04
+        )
+        timeButtons.forEach { btn ->
+            (btn as? MaterialButton)?.apply {
+                backgroundTintList = ColorStateList.valueOf(
+                    resources.getColor(R.color.main_2, null)
+                )
+                setTextColor(resources.getColor(R.color.text_primary, null))
+            }
+        }
+        selectedTimeButton = null
+
+        val categoryButtons = listOf(
+            binding.btnWishCategory01,
+            binding.btnWishCategory02,
+            binding.btnWishCategory03,
+            binding.btnWishCategory04,
+            binding.btnWishCategory05,
+            binding.btnWishCategory06
+        )
+        categoryButtons.forEach { btn ->
+            (btn as? MaterialButton)?.apply {
+                backgroundTintList = ColorStateList.valueOf(
+                    resources.getColor(R.color.main_2, null)
+                )
+                setTextColor(resources.getColor(R.color.text_primary, null))
+            }
+        }
+        selectedCategoryButtons.clear()
+
+        try {
+            requireActivity().currentFocus?.clearFocus()
+            val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE)
+                    as android.view.inputmethod.InputMethodManager
+            imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
+        } catch (_: Exception) { }
     }
 
     override fun onStart() {

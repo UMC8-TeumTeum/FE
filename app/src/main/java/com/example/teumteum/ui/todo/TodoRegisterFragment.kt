@@ -166,6 +166,8 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
 
         binding.btnWish.setOnClickListener {
             if (isTodoSelected) {
+                clearTodoSheet()
+
                 binding.btnWish.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
                 binding.btnWish.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
 
@@ -216,6 +218,36 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
 
         setupObservers()
         viewModel.getOnboardingReminders()
+    }
+
+    private fun clearTodoSheet() {
+        binding.todoTitleEt.setText("")
+        binding.detailTextEt.setText("")
+
+        binding.startTimeTv.text = "시작 시간"
+        binding.endTimeTv.text  = "종료 시간"
+        binding.timePickerStartContainer.isVisible = false
+        binding.timePickerEndContainer.isVisible   = false
+        currentTargetTextView = null
+
+        binding.homeCalendarViewLl.visibility    = View.GONE
+        binding.homeCalendarView02Ll.visibility  = View.GONE
+        isCalendarVisible = false
+
+        binding.publicToggle01Iv.isChecked = false
+        binding.includeToggle01Iv.isChecked = false
+
+        resetAlarmUI()
+
+        if (popupWindow?.isShowing == true) {
+            popupWindow?.dismiss()
+        }
+
+        try {
+            requireActivity().currentFocus?.clearFocus()
+            val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+            imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
+        } catch (_: Exception) { }
     }
 
     private fun applyTextStyleToNumberPicker(picker: NumberPicker, context: Context) {
