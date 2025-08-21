@@ -457,8 +457,8 @@
 
                                 <ImageView
                                     android:id="@+id/btn_plus"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
+                                    android:layout_width="17dp"
+                                    android:layout_height="17dp"
                                     android:layout_marginEnd="11dp"
                                     android:src="@drawable/btn_plus_sv" />
                             </LinearLayout>
