@@ -38,6 +38,9 @@ class OnBoardingNicknameFragment : Fragment() {
     }
 
     private fun setupUI() {
+        // 프로그래스바 설정
+        (activity as? SignUpActivity)?.setProgressBar(20)
+
         // 텍스트 입력 ViewModel 업데이트
         binding.nicknameEt.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
