@@ -13,7 +13,18 @@ import com.example.teumteum.databinding.ItemWishlistEditBinding
 
 class WishlistEditRVAdapter(private val wishlist: MutableList<WishlistItem>) : RecyclerView.Adapter<WishlistEditRVAdapter.ViewHolder>() {
 
+    // 페이징/갱신 사이클 동안 선택 상태 유지용
+    private val selectedIds = mutableSetOf<Long>()
+
+    init {
+        // 초기 데이터에 체크된 항목이 있으면 동기화
+        selectedIds.addAll(wishlist.filter { it.isChecked }.map { it.id })
+        setHasStableIds(true)
+    }
+
     inner class ViewHolder(val binding: ItemWishlistEditBinding) : RecyclerView.ViewHolder(binding.root)
+
+    override fun getItemId(position: Int): Long = wishlist[position].id
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         val binding : ItemWishlistEditBinding = ItemWishlistEditBinding.inflate(LayoutInflater.from(viewGroup.context), viewGroup, false)
@@ -33,10 +44,21 @@ class WishlistEditRVAdapter(private val wishlist: MutableList<WishlistItem>) : R
         binding.tvWishTitle.text = item.title
         binding.wishTimeTv.text = item.estimatedDuration
 
-        binding.wishCheckbox.isChecked = item.isChecked
-        setCheckBoxTint(binding.wishCheckbox, item.isChecked)
+        // 리스너 중복 호출 방지
+        binding.wishCheckbox.setOnCheckedChangeListener(null)
+
+        // 선택 집합 기준으로 체크 상태 복원
+        val checked = selectedIds.contains(item.id)
+        binding.wishCheckbox.isChecked = checked
+        item.isChecked = checked
+        setCheckBoxTint(binding.wishCheckbox, checked)
 
         binding.wishCheckbox.setOnCheckedChangeListener { button, isChecked ->
+            if (isChecked) {
+                selectedIds.add(item.id)
+            } else {
+                selectedIds.remove(item.id)
+            }
             item.isChecked = isChecked
             setCheckBoxTint(button, isChecked)
         }
@@ -45,6 +67,7 @@ class WishlistEditRVAdapter(private val wishlist: MutableList<WishlistItem>) : R
     override fun getItemCount(): Int = wishlist.size
 
     fun cancelAllCheckedItems() {
+        selectedIds.clear()
         wishlist.forEach { it.isChecked = false }
         notifyDataSetChanged()
     }
@@ -56,13 +79,13 @@ class WishlistEditRVAdapter(private val wishlist: MutableList<WishlistItem>) : R
     }
 
     fun markCheckedItemsAsDeleted(): Int {
-        val deletedItems = wishlist.filter { it.isChecked && !it.isDeleted }
+        val deletedItems = wishlist.filter { selectedIds.contains(it.id) && !it.isDeleted }
         deletedItems.forEach {
             it.isDeleted = true
             it.isChecked = false
+            selectedIds.remove(it.id)
         }
         notifyDataSetChanged()
         return deletedItems.size
     }
-
 }
