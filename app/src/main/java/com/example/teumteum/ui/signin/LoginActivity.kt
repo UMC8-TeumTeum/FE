@@ -6,19 +6,24 @@ import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.example.teumteum.ui.signup.SignUpActivity
 import com.example.teumteum.databinding.ActivityLoginBinding
+import com.example.teumteum.ui.main.MainActivity
 import com.example.teumteum.ui.signin.data.LoginResult
 import com.example.teumteum.ui.signin.viewModel.LoginViewModel
+import com.example.teumteum.ui.signup.SignUpActivity
+import com.example.teumteum.utils.FlowPrefs
 import com.example.teumteum.utils.NextStep
 import com.kakao.sdk.user.UserApiClient
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
     private val viewModel: LoginViewModel by viewModels()
+
+    @Inject lateinit var flowPrefs: FlowPrefs
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,8 +32,7 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.signupLayout.setOnClickListener {
-            val intent = Intent(this, SignUpActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, SignUpActivity::class.java))
         }
 
         binding.kakaoLoginBtn.setOnClickListener {
@@ -41,21 +45,23 @@ class LoginActivity : AppCompatActivity() {
     private fun observeViewModel() {
         viewModel.loginResult.observe(this) { result ->
             when (result) {
-                is LoginResult.Loading -> { /* 로딩 표시 */ }
+                is LoginResult.Loading -> { /* TODO: 로딩 표시 */ }
                 is LoginResult.Success -> {
+                    // 서버가 알려준 nextStep을 즉시 FlowPrefs에 동기화
                     when (result.nextStep) {
                         NextStep.AGREEMENT, NextStep.ONBOARDING -> {
+                            flowPrefs.setLastStep(result.nextStep)
                             startActivity(Intent(this, SignUpActivity::class.java))
                         }
                         NextStep.MAIN -> {
-                            startActivity(Intent(this, com.example.teumteum.ui.main.MainActivity::class.java))
+                            flowPrefs.setLastStep(NextStep.MAIN)
+                            startActivity(Intent(this, MainActivity::class.java))
                         }
                     }
                     finish()
                 }
                 is LoginResult.Error -> {
                     Log.d("KakaoLogin", "카카오 로그인 실패 ${result.message}")
-//                    Toast.makeText(this, result.message ?: "로그인 실패", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -82,5 +88,4 @@ class LoginActivity : AppCompatActivity() {
             UserApiClient.instance.loginWithKakaoAccount(this, callback = callback)
         }
     }
-
 }

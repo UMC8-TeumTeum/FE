@@ -44,6 +44,20 @@ class FriendViewModel @Inject constructor(
     private val _errorMessage = MutableLiveData<Event<String>>()
     val errorMessage: LiveData<Event<String>> get() = _errorMessage
 
+    // 페이징 상태 관련 필드
+    private var followingPage = 1
+    private var followerPage = 1
+    private val pageSize = 10
+
+    private var isLoadingFollowing = false
+    private var isLoadingFollower = false
+
+    private val _followingHasNext = MutableLiveData(true)
+    val followingHasNext: LiveData<Boolean> = _followingHasNext
+
+    private val _followersHasNext = MutableLiveData(true)
+    val followersHasNext: LiveData<Boolean> = _followersHasNext
+
 
     //    상단 프로필의 star_btn 과 리스트 아이템의 starIv 가 함께 관찰하는 공통 상태
     private val _favoriteMap = MutableLiveData<Map<Int, Boolean>>(emptyMap())
@@ -428,34 +442,28 @@ class FriendViewModel @Inject constructor(
     private val _followingUsers = MutableLiveData<List<FollowingResult>>()
     val followingUsers: LiveData<List<FollowingResult>> get() = _followingUsers
 
-    fun getFollowingUsers(page: Int = 1, size: Int = 10) {
+    fun resetFollowingPaging() {
+        followingPage = 1
+        _followingHasNext.value = true
+        _followingUsers.value = emptyList()
+    }
+
+    fun loadNextFollowings() {
+        if (isLoadingFollowing || _followingHasNext.value == false) return
+        isLoadingFollowing = true
         viewModelScope.launch {
-            repository.getFollowings(page, size)
-                .onSuccess { list ->
-                    // 기존 토글 상태 우선 반영
-                    val favMap = _favoriteMap.value.orEmpty()
-                    val merged = list.map { item ->
-                        val fav = favMap[item.userId] ?: item.isFavorite
-                        item.copy(isFavorite = fav)
-                    }
+            repository.getFollowingsPage(followingPage, pageSize)
+                .onSuccess { page ->
+                    // 서버 정렬 그대로 + 사용자가 토글한 즐겨찾기는 오버라이드만 반영
+                    val favMap = favoriteMap.value.orEmpty()
+                    val merged = page.content.map { it.copy(isFavorite = favMap[it.userId] ?: it.isFavorite) }
+                    _followingUsers.value = _followingUsers.value.orEmpty() + merged
 
-                    val collator =
-                        Collator.getInstance(Locale.KOREAN).apply { strength = Collator.PRIMARY }
-                    val sorted = merged.sortedWith(Comparator { a, b ->
-                        if (a.isFavorite != b.isFavorite) {
-                            if (a.isFavorite) -1 else 1
-                        } else {
-                            collator.compare(a.nickname, b.nickname)
-                        }
-                    })
-
-                    _followingUsers.value = sorted
-                    Log.d("FOLLOWING_LIST", "FRIEND2002 친구 목록 조회 성공")
+                    _followingHasNext.value = page.hasNext
+                    if (page.hasNext) followingPage += 1
                 }
-                .onFailure { e ->
-                    _errorMessage.value = Event("팔로잉 목록 조회 실패 (${e.message})")
-                    Log.e("FOLLOWING_LIST", "팔로잉 목록 조회 실패: ${e.message}")
-                }
+                .onFailure { e -> _errorMessage.value = Event("팔로잉 목록 조회 실패 (${e.message})") }
+            isLoadingFollowing = false
         }
     }
 
@@ -569,40 +577,27 @@ class FriendViewModel @Inject constructor(
         }
     }
 
-
-    // 14. 팔로워 목록 조회
     private val _followerUsers = MutableLiveData<List<FollowerResult>>()
     val followerUsers: LiveData<List<FollowerResult>> get() = _followerUsers
 
-    // 다음 페이지 여부
-    private val _followersHasNext = MutableLiveData<Boolean>()
-    val followersHasNext: LiveData<Boolean> get() = _followersHasNext
+    fun resetFollowerPaging() {
+        followerPage = 1
+        _followersHasNext.value = true
+        _followerUsers.value = emptyList()
+    }
 
-    /** 팔로워 목록 조회 (가나다 정렬 + 성공 로그/토스트) */
-    fun getFollowerUsers(page: Int = 1, size: Int = 10) {
+    fun loadNextFollowers() {
+        if (isLoadingFollower || _followersHasNext.value == false) return
+        isLoadingFollower = true
         viewModelScope.launch {
-            // repository에 getFollowersPage(...) 추가해둔 버전 사용
-            repository.getFollowersPage(page, size)
-                .onSuccess { pageResult ->
-                    Log.d("FOLLOWER_FRAGMENT", "친구 목록 조회에 성공하였습니다.")
-
-                    // 가나다 정렬
-                    val collator =
-                        Collator.getInstance(Locale.KOREAN).apply { strength = Collator.PRIMARY }
-                    val sorted = pageResult.content.sortedWith { a, b ->
-                        collator.compare(a.nickname, b.nickname)
-                    }
-
-                    _followerUsers.value = sorted
-                    _followersHasNext.value = pageResult.hasNext
-
-//                    _successMessage.value = Event("친구 목록 조회에 성공하였습니다.")
+            repository.getFollowersPage(followerPage, pageSize)
+                .onSuccess { page ->
+                    _followerUsers.value = _followerUsers.value.orEmpty() + page.content
+                    _followersHasNext.value = page.hasNext
+                    if (page.hasNext) followerPage += 1
                 }
-                .onFailure { e ->
-                    val msg = "팔로워 목록 조회 실패 (${e.message ?: "알 수 없는 오류"})"
-                    _errorMessage.value = Event(msg)
-                    Log.e("FOLLOWER_FRAGMENT", msg, e)
-                }
+                .onFailure { e -> _errorMessage.value = Event("팔로워 목록 조회 실패 (${e.message ?: "알 수 없는 오류"})") }
+            isLoadingFollower = false
         }
     }
 

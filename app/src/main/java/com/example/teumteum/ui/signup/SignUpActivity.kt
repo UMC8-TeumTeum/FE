@@ -17,6 +17,10 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class SignUpActivity : AppCompatActivity() {
 
+    companion object {
+        const val EXTRA_NEXT_STEP = "extra_next_step"
+    }
+
     private lateinit var binding: ActivitySignUpBinding
 
     @Inject
@@ -32,27 +36,20 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     private fun initializeSignUpFlow() {
-        val currentStep = flowPrefs.getLastStep()
+        val stepFromIntent = intent.getStringExtra(EXTRA_NEXT_STEP)
+            ?.let { runCatching { NextStep.valueOf(it) }.getOrNull() }
+
+        // 1순위: 인텐트, 2순위: 로컬 캐시
+        val currentStep = stepFromIntent ?: flowPrefs.getLastStep()
 
         when (currentStep) {
-            NextStep.AGREEMENT -> {
-                // 약관 동의 화면부터 시작
-                setProgressBarVisible(true)
-                setProgressBar(0)
-                loadFragment(AgreementFragment())
-            }
             NextStep.ONBOARDING -> {
-                // 온보딩 첫 번째 단계부터 시작
                 setProgressBarVisible(true)
                 setProgressBar(20)
                 loadFragment(OnBoardingNicknameFragment())
             }
-            NextStep.MAIN -> {
-                // 이미 모든 과정이 완료된 경우 - 메인으로 이동
-                navigateToMain()
-            }
-            null -> {
-                // NextStep이 설정되지 않은 경우 - 약관 동의부터 시작
+            NextStep.MAIN -> navigateToMain()
+            NextStep.AGREEMENT, null -> {
                 setProgressBarVisible(false)
                 loadFragment(AgreementFragment())
             }
@@ -65,20 +62,21 @@ class SignUpActivity : AppCompatActivity() {
             .commit()
     }
 
-    //상단 프로그레스바 제어
+    // 상단 프로그레스바 제어
     fun setProgressBar(progress: Int) {
         binding.progressBar.progress = progress
     }
 
-    //프로그레스바 visible 설정
+    // 프로그레스바 visible 설정
     fun setProgressBarVisible(visible: Boolean) {
         binding.progressBar.visibility = if (visible) View.VISIBLE else View.GONE
     }
 
-    /**
-     * 온보딩 단계 진행
-     */
+    // 온보딩 단계
     fun proceedToNextOnboardingStep(currentFragment: Fragment) {
+        // 온보딩 도중에는 항상 ONBOARDING 유지
+        flowPrefs.setLastStep(NextStep.ONBOARDING)
+
         when (currentFragment) {
             is OnBoardingNicknameFragment -> {
                 setProgressBar(40)
@@ -102,21 +100,16 @@ class SignUpActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * 온보딩 완료 후 메인 화면으로 이동
-     */
+    // 온보딩 완료 후 메인 화면으로 이동
     fun completeOnboarding() {
         flowPrefs.setLastStep(NextStep.MAIN)
         navigateToMain()
     }
 
-    /**
-     * 메인 화면으로 이동
-     */
+    // 메인 화면으로 이동
     private fun navigateToMain() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
         finish()
     }
-
 }
