@@ -21,7 +21,11 @@ import com.example.teumteum.ui.main.MainActivity
 import com.example.teumteum.ui.signup.SignUpActivity
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
+import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 import kotlin.getValue
 
 @AndroidEntryPoint
@@ -33,6 +37,9 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
     private var selectedEndTime: String? = null
     private var lastSelectedCardView: View? = null
     private lateinit var timeCardAdapter: TimeCardAdapter
+
+    // 선택된 날짜 저장 (이전 Fragment에서 전달)
+    private var selectedDate: String = ""
 
     private val viewModel: FriendViewModel by activityViewModels()
 
@@ -49,6 +56,9 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
         (activity as? SignUpActivity)?.setProgressBar(75)
         (activity as? MainActivity)?.hideBottomBar()
 
+        // 이전 Fragment에서 선택된 날짜 받기 (예: "25.08.21(목)" 또는 "2025-08-21")
+        selectedDate = arguments?.getString("selected_date") ?: ""
+
         val fullText = "틈 요청 제목을 작성해주세요*"
         val spannable = android.text.SpannableString(fullText)
         val starIndex = fullText.indexOf("*")
@@ -62,7 +72,6 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
             )
             binding.teumRequestTitle.text = spannable
         }
-
 
         binding.clearTitleBtn.setOnClickListener {
             binding.editTextTitle.text.clear()
@@ -88,7 +97,6 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
             dialog.show(parentFragmentManager, "PreviewDialog")
         }
 
-
         // 뒤로가기 버튼 처리
         binding.btnBack.setOnClickListener {
             parentFragmentManager.popBackStack()
@@ -107,11 +115,9 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
         // 초기 버튼 상태 설정
         binding.sendBtn.isEnabled = false
         binding.sendBtn.setBackgroundColor(android.graphics.Color.parseColor("#F6F6F6"))
-
     }
 
     private fun updateNextButtonState() {
-
         val isTimeSelected = timeCardAdapter.getSelectedItem() != null
         val isTitleFilled = binding.editTextTitle.text.toString().isNotBlank()
         val isEnabled = isTimeSelected && isTitleFilled
@@ -128,25 +134,29 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
     private fun setupTimeCardRecyclerView() {
         timeCardAdapter = TimeCardAdapter { position, isStart, startBound, endBound, current ->
             showCustomTimePicker(initial = current) { picked ->
-                // 카드의 허용 범위 [startBound, endBound] 검사
+                // 1) 카드의 허용 범위 [startBound, endBound] 검사
                 if (!isWithinRange(picked, startBound, endBound)) {
-                    Toast.makeText(requireContext(), "가능한 시간대에서 벗어났어요!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "가능한 시간대에서 벗어났어요.", Toast.LENGTH_SHORT).show()
+                    return@showCustomTimePicker
+                }
+
+                // 2) 오늘 선택 시 현재 시각 이후인지 검사
+                if (!isAfterCurrentTime(picked)) {
+                    Toast.makeText(requireContext(), "현재 시각 이후의 시간을 선택해주세요.", Toast.LENGTH_SHORT).show()
                     return@showCustomTimePicker
                 }
 
                 timeCardAdapter.updateTime(position, isStart, picked)
                 binding.possibleTimeRc.post { updateNextButtonState() }
             }
-
         }
         binding.possibleTimeRc.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = timeCardAdapter
         }
-
     }
 
-    //정해진 시간 범위의 시간으로 선택했는지 확인
+    // 정해진 시간 범위의 시간으로 선택했는지 확인
     private fun isWithinRange(picked: String, min: String, max: String): Boolean {
         val normMax = if (max == "24:00") "23:59" else max
         val t = LocalTime.parse(picked)
@@ -198,10 +208,87 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
     private fun observeViewModel() {
         viewModel.possibleTimeList.observe(viewLifecycleOwner) { list ->
             val nonNullList = list.filterNotNull()
-            timeCardAdapter.setData(nonNullList)
 
+            // 오늘인 경우, 현재 시각 기준으로 카드들 필터링/조정
+            val dateFormatted = convertDateFormat(selectedDate)
+            val today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+
+            val filteredList = if (dateFormatted == today) {
+                val now = LocalDateTime.now()
+                val currentMinutes = now.hour * 60 + now.minute
+                // 현재 시각을 10분 단위로 올림
+                val adjustedCurrentMinutes = ((currentMinutes + 9) / 10) * 10
+
+                nonNullList.mapNotNull { card ->
+                    val startMinutes = timeToMinutes(card.startTime)
+                    val endMinutes = timeToMinutes(card.endTime)
+
+                    when {
+                        // endTime이 현재 시각 이후가 아니면 (현재 시각 이하면) 제외
+                        endMinutes <= currentMinutes -> {
+                            null
+                        }
+                        // startTime과 endTime 사이에 현재 시각이 있으면 조정된 현재 시각을 startTime으로 설정
+                        startMinutes <= currentMinutes && endMinutes > currentMinutes -> {
+                            val adjustedStartTime = minutesToTime(adjustedCurrentMinutes)
+                            // 조정된 시작 시간이 종료 시간보다 크거나 같으면 제외
+                            if (adjustedCurrentMinutes >= endMinutes) {
+                                null
+                            } else {
+                                card.copy(startTime = adjustedStartTime)
+                            }
+                        }
+                        // startTime이 현재 시각 이후면 그대로 사용
+                        else -> {
+                            card
+                        }
+                    }
+                }
+            } else {
+                nonNullList
+            }
+
+            timeCardAdapter.setData(filteredList)
             updateNextButtonState()
         }
+    }
+
+    // 선택 시간이 (선택 날짜가 오늘인 경우) 현재 시각 이후인지 확인
+    private fun isAfterCurrentTime(selectedTime: String): Boolean {
+        val dateFormatted = convertDateFormat(selectedDate)
+        val today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        if (dateFormatted != today) return true // 오늘이 아니면 통과
+
+        val now = LocalDateTime.now()
+        val currentMinutes = now.hour * 60 + now.minute
+        val selectedMinutes = timeToMinutes(selectedTime)
+        return selectedMinutes > currentMinutes
+    }
+
+    // 날짜 형식 변환 ("yy.MM.dd(E)" -> "yyyy-MM-dd"). 이미 yyyy-MM-dd면 그대로 반환
+    private fun convertDateFormat(dateStr: String): String {
+        if (dateStr.isBlank()) return dateStr
+        return try {
+            val formatterInput = DateTimeFormatter.ofPattern("yy.MM.dd(E)", Locale.KOREAN)
+            val formatterOutput = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.KOREAN)
+            LocalDate.parse(dateStr, formatterInput).format(formatterOutput)
+        } catch (e: Exception) {
+            // 파싱 실패 시, 원본을 반환 (이미 yyyy-MM-dd 형태일 수 있음)
+            dateStr
+        }
+    }
+
+    // 시간 문자열(HH:mm)을 분으로 변환
+    private fun timeToMinutes(timeStr: String): Int {
+        val parts = timeStr.split(":")
+        return parts[0].toInt() * 60 + parts[1].toInt()
+    }
+
+    // 분을 HH:mm 문자열로 변환
+    private fun minutesToTime(minutes: Int): String {
+        val hours = minutes / 60
+        val mins = minutes % 60
+        return String.format("%02d:%02d", hours, mins)
     }
 
     private fun setViewModelData() {
@@ -213,16 +300,15 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
             )
         )
         viewModel.setTeumRequestTitle(binding.editTextTitle.text.toString())
-        if(binding.editTextDetail.text.isEmpty()){
-            //기본 멘트
+        if (binding.editTextDetail.text.isEmpty()) {
+            // 기본 멘트
             viewModel.setTeumRequestDescription("같이 빈틈을 채워봐요.")
-        }else{
+        } else {
             viewModel.setTeumRequestDescription(binding.editTextDetail.text.toString())
         }
-
     }
 
-    //24:00 -> 00:00 변환
+    // 24:00 -> 00:00 변환
     private fun convert24To00(timeStr: String): String {
         return if (timeStr == "24:00") "00:00" else timeStr
     }
