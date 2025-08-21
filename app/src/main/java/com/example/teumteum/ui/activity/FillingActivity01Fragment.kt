@@ -99,6 +99,12 @@ class FillingActivity01Fragment : Fragment() {
         locationButtons.forEachIndexed { index, locationBtn ->
             locationBtn.tag = locationIds[index]
             locationBtn.setOnClickListener {
+                // 위치 버튼 선택 시 직접 입력 선택 해제
+                if (!binding.fillingActivityLocationEt.text.isNullOrBlank()) {
+                    binding.fillingActivityLocationEt.setText("")
+                    selectedLocationText = null
+                }
+
                 // 이미 선택된 같은 버튼이면 해제
                 if (selectedLocationButton === locationBtn) {
                     locationBtn.setBackgroundColor(defaultBg)
@@ -126,6 +132,15 @@ class FillingActivity01Fragment : Fragment() {
             // 직접 입력이 있으면 selectedCategoryText에 반영
             selectedLocationText = if (!categoryText.isNullOrEmpty()) categoryText else null
 
+            // 직접 입력 선택 시 위치 버튼 해제
+            if (!categoryText.isNullOrEmpty() && selectedLocationButton != null) {
+                (selectedLocationButton as? android.widget.TextView)?.apply {
+                    setBackgroundColor(defaultBg)
+                    setTextColor(defaultText)
+                }
+                selectedLocationButton = null
+            }
+
             // 버튼 상태 갱신
             updateNextButtonState()
         }
@@ -144,6 +159,12 @@ class FillingActivity01Fragment : Fragment() {
         categoryButtons.forEachIndexed { index, categoryBtn ->
             categoryBtn.tag = categoryIds[index]
             categoryBtn.setOnClickListener {
+                // 카테고리 버튼 선택 시 직접 입력 선택 해제
+                if (!binding.fillingActivityCategoryEt.text.isNullOrBlank()) {
+                    binding.fillingActivityCategoryEt.setText("")
+                    selectedCategoryText = null
+                }
+
                 // 이미 선택된 같은 버튼이면 해제
                 if (selectedCategoryButton === categoryBtn) {
                     categoryBtn.setBackgroundColor(defaultBg)
@@ -170,6 +191,15 @@ class FillingActivity01Fragment : Fragment() {
 
             // 직접 입력이 있으면 selectedCategoryText에 반영
             selectedCategoryText = if (!categoryText.isNullOrEmpty()) categoryText else null
+
+            // 직접 입력 선택 시 카테고리 버튼 해제
+            if (!categoryText.isNullOrEmpty() && selectedCategoryButton != null) {
+                (selectedCategoryButton as? android.widget.TextView)?.apply {
+                    setBackgroundColor(defaultBg)
+                    setTextColor(defaultText)
+                }
+                selectedCategoryButton = null
+            }
 
             // 버튼 상태 갱신
             updateNextButtonState()
