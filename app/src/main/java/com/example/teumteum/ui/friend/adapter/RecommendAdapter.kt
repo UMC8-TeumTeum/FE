@@ -11,7 +11,7 @@ import com.example.teumteum.databinding.Friend01ItemRecommendCardReadBinding
 import com.google.android.material.card.MaterialCardView
 
 class RecommendAdapter(
-    private val onCardClick: (TeumReceivedItem, Int) -> Unit  // ✅ position 추가
+    private val onCardClick: (TeumReceivedItem, Int) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var teumList: List<TeumReceivedItem> = emptyList()
@@ -25,19 +25,24 @@ class RecommendAdapter(
     inner class RecommendViewHolder(val binding: Friend01ItemRecommendCardBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        // ✅ position도 같이 받도록 수정
         fun bind(item: TeumReceivedItem, position: Int) {
             val nickname = item.senderUser.nickname
             val receiverCount = item.receiverCount
 
-            val displayName = if (receiverCount <= 1) {
-                nickname
+            val displayName = if (item.resend) {
+                "나 > $nickname"   // 🔹 재요청이면 "나 > 상대방 이름"
             } else {
-                "$nickname 외 ${receiverCount - 1}명"
+                if (receiverCount <= 1) nickname else "$nickname 외 ${receiverCount - 1}명"
             }
-
             binding.tvName.text = displayName
-            binding.tvDesc.text = item.title
+
+
+            //  재요청이면 고정 텍스트
+            binding.tvDesc.text = if (item.resend) {
+                "시간 제안이 도착했어요"
+            } else {
+                item.title
+            }
 
             Glide.with(binding.root.context)
                 .load(item.senderUser.profileImageUrl)
@@ -47,7 +52,6 @@ class RecommendAdapter(
                 .circleCrop()
                 .into(binding.profileIv)
 
-            // ✅ position 함께 넘기기
             binding.root.setOnClickListener {
                 onCardClick(item, position)
             }
@@ -58,19 +62,24 @@ class RecommendAdapter(
     inner class RecommendReadViewHolder(val binding: Friend01ItemRecommendCardReadBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        // ✅ position도 같이 받도록 수정
         fun bind(item: TeumReceivedItem, position: Int) {
             val nickname = item.senderUser.nickname
             val receiverCount = item.receiverCount
 
-            val displayName = if (receiverCount <= 1) {
-                nickname
+            val displayName = if (item.resend) {
+                "나 > $nickname"   // 🔹 재요청이면 "나 > 상대방 이름"
             } else {
-                "$nickname 외 ${receiverCount - 1}명"
+                if (receiverCount <= 1) nickname else "$nickname 외 ${receiverCount - 1}명"
             }
-
             binding.tvName.text = displayName
-            binding.tvDesc.text = item.title
+
+
+            //  재요청이면 고정 텍스트
+            binding.tvDesc.text = if (item.resend) {
+                "시간 제안이 도착했어요"
+            } else {
+                item.title
+            }
 
             Glide.with(binding.root.context)
                 .load(item.senderUser.profileImageUrl)
@@ -80,7 +89,6 @@ class RecommendAdapter(
                 .circleCrop()
                 .into(binding.profileIv)
 
-            // ✅ position 함께 넘기기
             binding.root.setOnClickListener {
                 onCardClick(item, position)
             }

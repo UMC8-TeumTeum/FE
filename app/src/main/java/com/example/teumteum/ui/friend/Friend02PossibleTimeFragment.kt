@@ -9,6 +9,7 @@ import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.friend.model.TeumReceivedItem
 import com.example.teumteum.databinding.FragmentFriend02PossibleTimeBinding
+import com.example.teumteum.ui.friend.adapter.FriendRequestCardAdapter
 import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.example.teumteum.ui.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -57,10 +58,26 @@ class Friend02PossibleTimeFragment : Fragment() {
 
         //  뒤로가기
         binding.backButton.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, Friend02RequestFragment())
-                .addToBackStack(null)
-                .commit()
+            val selected = viewModel.selectedTeum.value
+
+            if (selected?.resend == true) {
+                //  재요청 카드였으면 Response 화면으로
+                val frag = Friend02ResponseFragment().apply {
+                    arguments = Bundle().apply {
+                        putParcelable("teumItem", selected)
+                    }
+                }
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.main_frm, frag)
+                    .addToBackStack(null)
+                    .commit()
+            } else {
+                // 원본 요청 카드였으면 Request 화면으로
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.main_frm, Friend02RequestFragment())
+                    .addToBackStack(null)
+                    .commit()
+            }
         }
 
         //  "찾기" 버튼 클릭 시 → Suggest로 넘어갈 때도 teumList, responseId 넘기기
