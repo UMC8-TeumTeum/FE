@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -41,6 +42,8 @@ class FriendRoommateFriendFragment : Fragment() {
     private var baseFriends: List<AddedFriend> = emptyList()
 
     private lateinit var addedFriendAdapter: AddedFriendAdapter
+
+    private val viewModel: FriendViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -175,8 +178,16 @@ class FriendRoommateFriendFragment : Fragment() {
 
         // 뒤로가기 버튼 처리
         binding.btnBack.setOnClickListener {
+            resetAddedFriendsState()
             parentFragmentManager.popBackStack()
         }
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                resetAddedFriendsState()
+                parentFragmentManager.popBackStack()
+            }
+        })
 
         // TODO: 이곳에 추가 로직 구현
     }
@@ -184,6 +195,14 @@ class FriendRoommateFriendFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun resetAddedFriendsState() {
+        // 선택된 친구들 초기화
+        addedFriends = emptyList()
+        addedFriendsData = emptyList()
+
+        viewModel.setTeumRequestReceiverUserIds(emptyList())
     }
 
 }

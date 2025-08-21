@@ -92,6 +92,8 @@ class FriendMatchingPreviewDialog : DialogFragment() {
             viewModel.sendTeumRequest(
                 request,
                 onSuccess = {
+                    viewModel.setTeumRequestReceiverUserIds(emptyList())
+
                     parentFragmentManager.beginTransaction()
                         .replace(R.id.main_frm, FriendSendFragment())
                         .addToBackStack(null)
