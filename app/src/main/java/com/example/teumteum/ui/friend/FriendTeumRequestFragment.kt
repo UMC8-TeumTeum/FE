@@ -121,7 +121,7 @@ class FriendTeumRequestFragment : Fragment() {
         viewModel.fetchRequestTeumDates(monthStr)
     }
 
-    // 날짜 클릭 리스너: 선택 강조만 (리스트는 API 준비되면 연결)
+    // 날짜 클릭 리스너
     private val onClickListener = object : IDateClickListener {
         override fun onClickDate(date: LocalDate) {
             onDateSelected(date)

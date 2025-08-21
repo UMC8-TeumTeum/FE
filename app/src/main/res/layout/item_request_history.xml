@@ -9,234 +9,253 @@
     android:layout_marginBottom="40dp"
     app:cardBackgroundColor="@android:color/white">
 
-    <!-- 약속 상태 표시용 TextView -->
-    <TextView
-        android:id="@+id/tvStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="38dp"
-        android:layout_marginStart="19dp"
-        android:text="약속이 취소되었어요"
-        android:textSize="20sp"
-        android:textColor="#0F0F0F"
-        android:fontFamily="@font/noto_sans_kr_medium"
-        android:visibility="gone" />
-
-    <View
-        android:id="@+id/originalDivider"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#E0E0E0"
-        android:visibility="gone"/>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- 상단: 보낸 사람, 날짜, 시간 -->
-        <LinearLayout
-            android:id="@+id/topContainer"
+        <!-- 약속 상태 표시용 TextView -->
+        <TextView
+            android:id="@+id/tvStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="약속이 취소되었어요"
+            android:textSize="20sp"
+            android:textColor="#0F0F0F"
+            android:fontFamily="@font/noto_sans_kr_medium"
+            android:visibility="gone" />
+
+        <!-- 재요청 카드 상단 안내 -->
+        <TextView
+            android:id="@+id/tvResendNotice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="재요청 기록이 있어요"
+            android:textSize="20sp"
+            android:textColor="#0F0F0F"
+            android:fontFamily="@font/noto_sans_kr_medium"
+            android:visibility="gone" />
+
+        <!-- 원본 구분선 -->
+        <View
+            android:id="@+id/originalDivider"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:background="#7770FE"
-            android:gravity="center_vertical">
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:background="#E0E0E0"
+            android:visibility="gone" />
+
+        <!-- 기존 카드 본문 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- 상단: 보낸 사람, 날짜, 시간 -->
+            <LinearLayout
+                android:id="@+id/topContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/bg_top_rounded">
 
             <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/profile_iv"
-                android:layout_width="38dp"
-                android:layout_height="38dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:background="@color/gray"
-                android:scaleType="centerCrop"
-                app:shapeAppearanceOverlay="@style/CircleImage" />
+                    android:id="@+id/profile_iv"
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@color/gray"
+                    android:scaleType="centerCrop"
+                    app:shapeAppearanceOverlay="@style/CircleImage" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvName"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_marginEnd="18dp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/noto_sans_kr_medium"
+                        android:text="이름"
+                        android:textColor="#FFFFFF"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/tvDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8.52dp"
+                        android:fontFamily="@font/noto_sans_kr_regular"
+                        android:text="25.05.02     |"
+                        android:textColor="#FFFFFF"
+                        android:textSize="11sp" />
+
+                    <ImageView
+                        android:layout_width="13dp"
+                        android:layout_height="13dp"
+                        android:layout_marginEnd="4dp"
+                        android:contentDescription="시간 아이콘"
+                        android:src="@drawable/friend_timer_outline" />
+
+                    <TextView
+                        android:id="@+id/tvTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="21dp"
+                        android:fontFamily="@font/noto_sans_kr_regular"
+                        android:text="15:20 ~ 16:10"
+                        android:textColor="#FFFFFF"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </LinearLayout>
 
             <LinearLayout
-                android:layout_width="0dp"
+                android:id="@+id/contentContainer"
+                android:layout_width="match_parent"
+                android:layout_height="95dp"
+                android:orientation="vertical"
+                android:background="@drawable/bg_bottom_rounded">
+
+                <!-- 제목 -->
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="14dp"
+                    android:text="종강 기념 한강 피크닉"
+                    android:includeFontPadding="false"
+                    android:textColor="#0F0F0F"
+                    android:textSize="15sp"
+                    android:fontFamily="@font/noto_sans_kr_medium" />
+
+                <!-- 설명 -->
+                <TextView
+                    android:id="@+id/description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="93.69dp"
+                    android:layout_marginBottom="16dp"
+                    android:includeFontPadding="false"
+                    android:text="종강 기념 한강 피크닉 가자! 돗자리는 내가 챙길\n게~ 다들 몸만 오세요"
+                    android:textColor="#788084"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/noto_sans_kr_regular" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/rowAccept"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:layout_marginTop="16dp">
 
                 <TextView
-                    android:id="@+id/tvName"
+                    android:id="@+id/labelAccept"
+                    android:layout_width="56dp"
+                    android:layout_height="32dp"
+                    android:background="@drawable/bg_label_accept"
+                    android:gravity="center"
+                    android:text="수락"
+                    android:textColor="#5C6569"
+                    android:textSize="14sp" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="8dp"
+                    android:background="#CBCCD0" />
+
+                <com.google.android.flexbox.FlexboxLayout
+                    android:id="@+id/containerAccepted"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
-                    android:layout_marginEnd="18dp"
                     android:layout_weight="1"
-                    android:fontFamily="@font/noto_sans_kr_medium"
-                    android:text="이름"
-                    android:textColor="#FFFFFF"
-                    android:textSize="16sp" />
+                    app:flexWrap="wrap"
+                    app:justifyContent="flex_start" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/rowCancel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="0dp"
+                android:visibility="gone">
 
                 <TextView
-                    android:id="@+id/tvDate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8.52dp"
-                    android:fontFamily="@font/noto_sans_kr_regular"
-                    android:text="25.05.02     |"
-                    android:textColor="#FFFFFF"
-                    android:textSize="11sp" />
+                    android:id="@+id/labelCancel"
+                    android:layout_width="56dp"
+                    android:layout_height="32dp"
+                    android:background="@drawable/bg_label_accept"
+                    android:gravity="center"
+                    android:text="취소"
+                    android:textColor="#5C6569"
+                    android:textSize="14sp" />
 
-                <ImageView
-                    android:layout_width="13dp"
-                    android:layout_height="13dp"
-                    android:layout_marginEnd="4dp"
-                    android:contentDescription="시간 아이콘"
-                    android:src="@drawable/friend_timer_outline" />
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="8dp"
+                    android:background="#CBCCD0" />
+
+                <com.google.android.flexbox.FlexboxLayout
+                    android:id="@+id/containerCancelled"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    app:flexWrap="wrap"
+                    app:justifyContent="flex_start" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/rowNoAnswer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="0dp"
+                android:visibility="gone">
 
                 <TextView
-                    android:id="@+id/tvTime"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/labelNoAnswer"
+                    android:layout_width="56dp"
+                    android:layout_height="32dp"
+                    android:background="@drawable/bg_label_accept"
+                    android:gravity="center"
+                    android:text="미응답"
+                    android:textColor="#5C6569"
+                    android:textSize="14sp" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="8dp"
+                    android:background="#CBCCD0" />
+
+                <com.google.android.flexbox.FlexboxLayout
+                    android:id="@+id/containerPending"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="21dp"
-                    android:fontFamily="@font/noto_sans_kr_regular"
-                    android:text="15:20 ~ 16:10"
-                    android:textColor="#FFFFFF"
-                    android:textSize="11sp" />
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    app:flexWrap="wrap"
+                    app:justifyContent="flex_start" />
             </LinearLayout>
         </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/contentContainer"
-            android:layout_width="match_parent"
-            android:layout_height="95dp"
-            android:orientation="vertical"
-            android:background="@drawable/bg_bottom_rounded">
-
-            <!-- 제목 -->
-            <TextView
-                android:id="@+id/title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="14dp"
-                android:text="종강 기념 한강 피크닉"
-                android:includeFontPadding="false"
-                android:textColor="#0F0F0F"
-                android:textSize="15sp"
-                android:fontFamily="@font/noto_sans_kr_medium" />
-
-            <!-- 설명 -->
-            <TextView
-                android:id="@+id/description"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="93.69dp"
-                android:layout_marginBottom="16dp"
-                android:includeFontPadding="false"
-                android:text="종강 기념 한강 피크닉 가자! 돗자리는 내가 챙길\n게~ 다들 몸만 오세요"
-                android:textColor="#788084"
-                android:textSize="12sp"
-                android:fontFamily="@font/noto_sans_kr_regular" />
-        </LinearLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="200dp">
-
-            <TextView
-                android:id="@+id/labelAccept"
-                android:layout_width="56dp"
-                android:layout_height="32dp"
-                android:layout_marginTop="29dp"
-                android:background="@drawable/bg_label_accept"
-                android:gravity="center"
-                android:text="수락"
-                android:textColor="#5C6569"
-                android:textSize="14sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/labelCancel"
-                android:layout_width="56dp"
-                android:layout_height="32dp"
-                android:layout_marginTop="24dp"
-                android:background="@drawable/bg_label_accept"
-                android:gravity="center"
-                android:text="취소"
-                android:textColor="#5C6569"
-                android:textSize="14sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/labelAccept" />
-
-            <TextView
-                android:id="@+id/labelNoAnswer"
-                android:layout_width="56dp"
-                android:layout_height="32dp"
-                android:layout_marginTop="24dp"
-                android:background="@drawable/bg_label_accept"
-                android:gravity="center"
-                android:text="미응답"
-                android:textColor="#5C6569"
-                android:textSize="14sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/labelCancel" />
-
-            <!-- 수직 구분선은 그대로 사용 -->
-            <View
-                android:id="@+id/verticalDivider"
-                android:layout_width="1dp"
-                android:layout_height="0dp"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="25dp"
-                android:layout_marginBottom="25dp"
-                android:background="#CBCCD0"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@id/labelAccept" />
-
-            <!-- 수락 컨테이너 -->
-            <com.google.android.flexbox.FlexboxLayout
-                android:id="@+id/containerAccepted"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="26dp"
-                android:layout_marginEnd="12dp"
-                app:flexWrap="wrap"
-                app:justifyContent="flex_start"
-                app:layout_constraintStart_toEndOf="@id/verticalDivider"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
-
-            <!-- 취소 컨테이너 -->
-            <com.google.android.flexbox.FlexboxLayout
-                android:id="@+id/containerCancelled"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="58dp"
-                android:layout_marginEnd="12dp"
-                app:flexWrap="wrap"
-                app:justifyContent="flex_start"
-                app:layout_constraintStart_toEndOf="@id/verticalDivider"
-                app:layout_constraintTop_toBottomOf="@id/containerAccepted"
-                app:layout_constraintEnd_toEndOf="parent" />
-
-            <!-- 미응답 컨테이너 -->
-            <com.google.android.flexbox.FlexboxLayout
-                android:id="@+id/containerPending"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="12dp"
-                android:layout_marginBottom="24dp"
-                app:flexWrap="wrap"
-                app:justifyContent="flex_start"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/verticalDivider" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>
-
