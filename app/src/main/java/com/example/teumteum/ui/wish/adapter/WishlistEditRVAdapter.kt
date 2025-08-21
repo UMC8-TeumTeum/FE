@@ -2,7 +2,6 @@ package com.example.teumteum.ui.wish.adapter
 
 import android.content.res.ColorStateList
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
 import androidx.core.content.ContextCompat
@@ -13,11 +12,11 @@ import com.example.teumteum.databinding.ItemWishlistEditBinding
 
 class WishlistEditRVAdapter(private val wishlist: MutableList<WishlistItem>) : RecyclerView.Adapter<WishlistEditRVAdapter.ViewHolder>() {
 
-    // 페이징/갱신 사이클 동안 선택 상태 유지용
+    // 페이징/갱신 사이클 동안 선택 상태 유지용 id 집합
     private val selectedIds = mutableSetOf<Long>()
 
     init {
-        // 초기 데이터에 체크된 항목이 있으면 동기화
+        // 초기 데이터에 체크된 항목 반영
         selectedIds.addAll(wishlist.filter { it.isChecked }.map { it.id })
         setHasStableIds(true)
     }
@@ -34,12 +33,6 @@ class WishlistEditRVAdapter(private val wishlist: MutableList<WishlistItem>) : R
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = wishlist[position]
         val binding = holder.binding
-
-        if (item.isDeleted) {
-            holder.itemView.visibility = View.GONE
-            holder.itemView.layoutParams = RecyclerView.LayoutParams(0, 0)
-            return
-        }
 
         binding.tvWishTitle.text = item.title
         binding.wishTimeTv.text = item.estimatedDuration
@@ -78,14 +71,26 @@ class WishlistEditRVAdapter(private val wishlist: MutableList<WishlistItem>) : R
         checkBox.buttonTintList = ColorStateList.valueOf(ContextCompat.getColor(context, colorRes))
     }
 
-    fun markCheckedItemsAsDeleted(): Int {
-        val deletedItems = wishlist.filter { selectedIds.contains(it.id) && !it.isDeleted }
-        deletedItems.forEach {
-            it.isDeleted = true
-            it.isChecked = false
-            selectedIds.remove(it.id)
+
+    // 체크된 항목을 제거하고, 제거된 항목들의 id를 반환 (Fragment에서 서버로 삭제 요청 보낼 때 사용)
+    fun markCheckedItemsAsDeletedAndReturnIds(): List<Long> {
+        val toRemoveIdx = mutableListOf<Int>()
+        val removedIds = mutableListOf<Long>()
+        wishlist.forEachIndexed { index, it ->
+            if (selectedIds.contains(it.id) && !it.isDeleted) {
+                it.isDeleted = true
+                toRemoveIdx.add(index)
+                removedIds.add(it.id)
+            }
         }
-        notifyDataSetChanged()
-        return deletedItems.size
+        if (toRemoveIdx.isEmpty()) return emptyList()
+
+        for (i in toRemoveIdx.asReversed()) {
+            val removed = wishlist.removeAt(i)
+            selectedIds.remove(removed.id)
+            notifyItemRemoved(i)
+        }
+        return removedIds
     }
+
 }

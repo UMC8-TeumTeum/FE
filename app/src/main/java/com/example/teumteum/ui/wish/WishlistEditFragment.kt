@@ -32,8 +32,8 @@ class WishlistEditFragment : Fragment() {
     private lateinit var adapter: WishlistEditRVAdapter
     private val edited: MutableList<WishlistItem> = mutableListOf()
 
-    // 페이지 append 시에 선택(삭제 체크) 유지용
-    private val selectedIds = mutableSetOf<Long>()
+    // 어댑터에서 실제 제거한 항목들을 서버에 일괄 반영하기 위한 보류 목록
+    private val pendingDeleteIds = mutableSetOf<Long>()
 
     private val viewModel: WishViewModel by activityViewModels()
 
@@ -83,19 +83,9 @@ class WishlistEditFragment : Fragment() {
                 binding.wishNotExistsCv.visibility = View.GONE
             }
 
-            // 선택(삭제 체크) 보존
-            val prevSelected = selectedIds.toSet()
-
+            // 서버 리스트를 그대로 반영 (선택/체크 보존은 어댑터에서 id 기반으로 처리)
             edited.clear()
-            edited.addAll(
-                serverList.map { item ->
-                    item.copy(isDeleted = item.id in prevSelected)
-                }
-            )
-
-            // (선택) 동기화: 내부 selectedIds를 현재 edited 상태로 갱신
-            selectedIds.clear()
-            selectedIds.addAll(edited.filter { it.isDeleted }.map { it.id })
+            edited.addAll(serverList)
 
             adapter.notifyDataSetChanged()
         }
@@ -105,6 +95,7 @@ class WishlistEditFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.deleteSuccess.collect {
                     Toast.makeText(requireContext(), "삭제가 완료되었어요.", Toast.LENGTH_SHORT).show()
+                    pendingDeleteIds.clear()
                     viewModel.refreshWishlist("all") // 요구사항: 삭제는 항상 ALL
                     parentFragmentManager.popBackStack()
                 }
@@ -118,28 +109,23 @@ class WishlistEditFragment : Fragment() {
 
     private fun setupButtons() {
         binding.btnWishDelete.setOnClickListener {
-            // 어댑터에서 체크 표시 반영
-            val cnt = adapter.markCheckedItemsAsDeleted()
+            // 어댑터에서 실제 제거하고 제거된 id들을 돌려받아 보류 목록에 누적
+            val removedIds: List<Long> = adapter.markCheckedItemsAsDeletedAndReturnIds()
+            pendingDeleteIds.addAll(removedIds)
 
-            // 현재 편집 리스트에서 선택 집합 갱신(보존의 핵심)
-            selectedIds.clear()
-            selectedIds.addAll(edited.filter { it.isDeleted }.map { it.id })
-
-            if (cnt <= 0) {
+            if (removedIds.isEmpty()) {
                 Toast.makeText(requireContext(), "삭제할 위시를 선택해주세요.", Toast.LENGTH_SHORT).show()
             }
         }
 
         binding.btnWishCancel.setOnClickListener {
             adapter.cancelAllCheckedItems()
-            // 선택 취소 시에도 선택 집합 초기화
-            selectedIds.clear()
         }
 
         binding.completeTv.setOnClickListener {
-            val ids = edited.filter { it.isDeleted }.map { it.id }
-            if (ids.isNotEmpty()) {
-                viewModel.deleteWishes(DeleteWishesRequest(ids))
+            // 현재 화면에서는 이미 리스트에서 제거되었으므로 보류 목록으로 서버 삭제
+            if (pendingDeleteIds.isNotEmpty()) {
+                viewModel.deleteWishes(DeleteWishesRequest(pendingDeleteIds.toList()))
             } else {
                 parentFragmentManager.popBackStack()
             }
