@@ -30,6 +30,7 @@ import com.example.teumteum.ui.main.data.TimeBlock
 import com.example.teumteum.ui.main.data.TimeType
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import kotlin.collections.orEmpty
@@ -162,8 +163,14 @@ class FriendRoommateTimeFragment : Fragment() {
 
         // 다음 버튼
         binding.nextBtn.setOnClickListener {
+            val receivedDate = arguments?.getString("selected_date") ?: ""
+            val detail = FriendRoommateMatchingDetailFragment().apply {
+                arguments = Bundle().apply {
+                    putString("selected_date", receivedDate)
+                }
+            }
             parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, FriendRoommateMatchingDetailFragment())
+                .replace(R.id.main_frm, detail)
                 .addToBackStack(null)
                 .commit()
         }
@@ -263,17 +270,76 @@ class FriendRoommateTimeFragment : Fragment() {
             val cards = list.filterNotNull()
             Log.d("DEBUG", "after filterNotNull: ${cards.size}개")
 
-            if (cards.isEmpty()) {
-                binding.possibleTime.text = "이때는 가능한 빈틈이 없어요"
+            // 현재 날짜와 선택된 날짜 비교
+            val selectedDate = convertDateFormat(arguments?.getString("selected_date") ?: "")
+            val today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+
+            val filteredCards = if (selectedDate == today) {
+                // 오늘인 경우 현재 시각 이후의 시간만 필터링
+                val currentMinutes = LocalDateTime.now().let { now ->
+                    now.hour * 60 + now.minute
+                }
+
+                cards.mapNotNull { card ->
+                    val startMinutes = timeToMinutes(card.startTime)
+                    val endMinutes = timeToMinutes(card.endTime)
+
+                    when {
+                        // 전체 시간이 현재 시각 이전인 경우 제외
+                        endMinutes <= currentMinutes -> null
+                        // 시작 시간이 현재 시각 이전인 경우 현재 시각부터 시작하도록 조정
+                        startMinutes < currentMinutes -> {
+                            val adjustedStartTime = minutesToTime(currentMinutes)
+                            card.copy(startTime = adjustedStartTime)
+                        }
+                        // 전체 시간이 현재 시각 이후인 경우 그대로 유지
+                        else -> card
+                    }
+                }
+            } else {
+                // 오늘이 아닌 경우 모든 시간 표시
+                cards
+            }
+
+            // 필터링 결과에 따른 텍스트 및 UI 업데이트
+            if (filteredCards.isEmpty()) {
+                // 가용 시간이 없는 경우의 텍스트 분기
+                binding.possibleTime.text = if (selectedDate == today) {
+                    if (cards.isEmpty()) {
+                        "이때는 가능한 빈틈이 없어요"  // 원래 서버에서 빈 시간이 없는 경우
+                    } else {
+                        "현재 시각 이후 가능한 빈틈이 없어요"  // 현재 시각 필터링으로 인해 없어진 경우
+                    }
+                } else {
+                    "이때는 가능한 빈틈이 없어요"  // 다른 날짜
+                }
                 currentFullDayBlocks = listOf(TimeBlock(0, 1440, TimeType.TODO))
                 updateNextButton(false)
             } else {
-                binding.possibleTime.text = "가능한 빈틈이 있어요"
-                currentFullDayBlocks = ChartUtils.buildBlocksFromTimeCardItems(cards)
+                // 가용 시간이 있는 경우의 텍스트 분기
+                binding.possibleTime.text = if (selectedDate == today && cards.size > filteredCards.size) {
+                    "현재 시각 이후 가능한 빈틈이 있어요"  // 일부 시간이 필터링된 경우
+                } else {
+                    "가능한 빈틈이 있어요"  // 일반적인 경우
+                }
+                currentFullDayBlocks = ChartUtils.buildBlocksFromTimeCardItems(filteredCards)
                 updateNextButton(true)
             }
             clockAdapter.refreshAll()
         }
+    }
+
+    // 시간 문자열을 분(minutes)으로 변환하는 헬퍼 함수
+    private fun timeToMinutes(timeStr: String): Int {
+        val parts = timeStr.split(":")
+        return parts[0].toInt() * 60 + parts[1].toInt()
+    }
+
+    // 분(minutes)을 시간 문자열로 변환하는 헬퍼 함수
+    private fun minutesToTime(minutes: Int): String {
+        val hours = minutes / 60
+        val mins = minutes % 60
+        return String.format("%02d:%02d", hours, mins)
     }
 
     private fun convertDateFormat(dateStr: String): String {
