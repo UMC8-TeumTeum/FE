@@ -117,16 +117,29 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
         setupPickers()
 
         binding.startTimeTv.setOnClickListener {
+            if (isCalendarVisible) {
+                binding.homeCalendarViewLl.visibility = View.GONE
+                binding.homeCalendarView02Ll.visibility = View.GONE
+                isCalendarVisible = false
+            }
+
             val isVisibleNow = binding.timePickerStartContainer.isVisible
             if (isVisibleNow) {
                 applySelectedTime(isStart = true)
             }
+
             binding.timePickerStartContainer.isVisible = !isVisibleNow
             binding.timePickerEndContainer.isVisible = false
             currentTargetTextView = binding.startTimeTv.takeIf { !isVisibleNow }
         }
 
         binding.endTimeTv.setOnClickListener {
+            if (isCalendarVisible) {
+                binding.homeCalendarViewLl.visibility = View.GONE
+                binding.homeCalendarView02Ll.visibility = View.GONE
+                isCalendarVisible = false
+            }
+
             val isVisibleNow = binding.timePickerEndContainer.isVisible
             if (isVisibleNow) {
                 applySelectedTime(isStart = false)
@@ -167,11 +180,23 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
         }
 
         binding.startDateTv.setOnClickListener {
+            if (binding.timePickerStartContainer.isVisible || binding.timePickerEndContainer.isVisible) {
+                binding.timePickerStartContainer.isVisible = false
+                binding.timePickerEndContainer.isVisible = false
+                currentTargetTextView = null
+            }
+
             isStartDateSelected = true
             toggleCalendarVisibility()
         }
 
         binding.endDateTv.setOnClickListener {
+            if (binding.timePickerStartContainer.isVisible || binding.timePickerEndContainer.isVisible) {
+                binding.timePickerStartContainer.isVisible = false
+                binding.timePickerEndContainer.isVisible = false
+                currentTargetTextView = null
+            }
+
             isStartDateSelected = false
             toggleCalendarVisibility()
         }
@@ -413,6 +438,7 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
                     onClickListener = this,
                     showDot = false
                 )
+
                 childFragmentManager.beginTransaction()
                     .replace(R.id.home_calendar_container_fl, calendarFragmentStart!!)
                     .commit()

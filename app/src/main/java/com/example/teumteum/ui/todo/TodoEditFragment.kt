@@ -148,6 +148,12 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
         setupPickers()
 
         binding.startTimeTv.setOnClickListener {
+            if (isCalendarVisible) {
+                binding.homeCalendarViewLl.visibility = View.GONE
+                binding.homeCalendarView02Ll.visibility = View.GONE
+                isCalendarVisible = false
+            }
+
             val isVisibleNow = binding.timePickerStartContainer.isVisible
             if (isVisibleNow) {
                 applySelectedTime(isStart = true)
@@ -158,6 +164,12 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
         }
 
         binding.endTimeTv.setOnClickListener {
+            if (isCalendarVisible) {
+                binding.homeCalendarViewLl.visibility = View.GONE
+                binding.homeCalendarView02Ll.visibility = View.GONE
+                isCalendarVisible = false
+            }
+
             val isVisibleNow = binding.timePickerEndContainer.isVisible
             if (isVisibleNow) {
                 applySelectedTime(isStart = false)
@@ -193,11 +205,23 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
 
 
         binding.startDateTv.setOnClickListener {
+            if (binding.timePickerStartContainer.isVisible || binding.timePickerEndContainer.isVisible) {
+                binding.timePickerStartContainer.isVisible = false
+                binding.timePickerEndContainer.isVisible = false
+                currentTargetTextView = null
+            }
+
             isStartDateSelected = true
             toggleCalendarVisibility()
         }
 
         binding.endDateTv.setOnClickListener {
+            if (binding.timePickerStartContainer.isVisible || binding.timePickerEndContainer.isVisible) {
+                binding.timePickerStartContainer.isVisible = false
+                binding.timePickerEndContainer.isVisible = false
+                currentTargetTextView = null
+            }
+
             isStartDateSelected = false
             toggleCalendarVisibility()
         }
