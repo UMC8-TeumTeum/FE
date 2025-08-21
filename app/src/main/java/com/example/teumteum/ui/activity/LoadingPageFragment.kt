@@ -5,10 +5,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import androidx.core.animation.doOnEnd
 import androidx.fragment.app.Fragment
 import com.example.teumteum.databinding.FragmentLoadingPageBinding
-import com.google.android.material.progressindicator.LinearProgressIndicator
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -22,8 +22,9 @@ class LoadingPageFragment : Fragment() {
     private var _binding: FragmentLoadingPageBinding? = null
     private val binding get() = _binding!!
 
-    private val progress: LinearProgressIndicator get() = binding.linearProgress
+    private val progress: ProgressBar get() = binding.linearProgress
     private var animator: ValueAnimator? = null
+    private var current = 0 // 진행률 캐시(선택)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -33,6 +34,13 @@ class LoadingPageFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // 초기화
+        progress.isIndeterminate = false
+        progress.progress = 0
+        current = 0
+
         animateProgress(to = 90)
     }
 
@@ -40,16 +48,17 @@ class LoadingPageFragment : Fragment() {
         val start = progress.progress
         val end = to.coerceIn(0, 100)
 
-        // 중복 애니메이터 정리 (겹침 방지)
         animator?.cancel()
         animator = null
         progress.clearAnimation()
         progress.jumpDrawablesToCurrentState()
 
-        ValueAnimator.ofInt(start, end).apply {
+        animator = ValueAnimator.ofInt(start, end).apply {
             duration = 1500L
-            addUpdateListener { animator ->
-                progress.setProgressCompat(animator.animatedValue as Int, true)
+            addUpdateListener { a ->
+                val v = a.animatedValue as Int
+                progress.progress = v
+                current = v
             }
             doOnEnd { onEnd?.invoke() }
             start()
