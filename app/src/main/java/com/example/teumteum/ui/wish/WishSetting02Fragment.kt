@@ -23,6 +23,7 @@ import com.example.teumteum.data.remote.todo.model.enums.ScheduleType
 import com.example.teumteum.databinding.DialogConfirmRegisterBinding
 import com.example.teumteum.databinding.FragmentWishSetting02Binding
 import com.example.teumteum.ui.main.HomeFragment
+import com.example.teumteum.ui.main.viewModel.HomeViewModel
 import com.example.teumteum.ui.wish.viewModel.WishViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -42,6 +43,7 @@ class WishSetting02Fragment : Fragment() {
 
     private var wishId: Long? = null
     private val viewModel: WishViewModel by activityViewModels()
+    private val homeViewModel: HomeViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -283,6 +285,8 @@ class WishSetting02Fragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.assignSuccess.collect {
                     Log.d("ASSIGN_FRAMENT", "빈틈채우기에 성공하였습니다.")
+
+                    homeViewModel.refreshTodaySchedule()
 
                     parentFragmentManager.beginTransaction()
                         .replace(R.id.main_frm, HomeFragment())
