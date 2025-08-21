@@ -17,6 +17,7 @@ import com.example.teumteum.data.remote.friend.model.PossibleTimeRequest
 import com.example.teumteum.data.remote.friend.model.ResendTeumRequest
 import com.example.teumteum.data.remote.friend.model.TeumReceivedItem
 import com.example.teumteum.databinding.FragmentFriend02SuggestBinding
+import com.example.teumteum.ui.friend.adapter.FriendRequestCardAdapter
 import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.example.teumteum.ui.main.MainActivity
 import com.google.android.material.bottomsheet.BottomSheetDialog

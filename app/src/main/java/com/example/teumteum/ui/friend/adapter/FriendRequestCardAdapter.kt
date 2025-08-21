@@ -1,4 +1,4 @@
-package com.example.teumteum.ui.friend
+package com.example.teumteum.ui.friend.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -27,7 +27,7 @@ class FriendRequestCardAdapter(private val teumList: List<TeumReceivedItem>) :
             binding.tvName.text = displayName
 
 //            binding.tvName.text = item.senderUser.nickname
-            binding.tvDate.text = item.date
+            binding.tvDate.text = "${formatDate(item.date)}     |"
             binding.tvTime.text = "${item.timeSlot.start} ~ ${item.timeSlot.end}"
             binding.tvTitle.text = item.title
             binding.tvDesc.text = item.description
@@ -39,6 +39,16 @@ class FriendRequestCardAdapter(private val teumList: List<TeumReceivedItem>) :
                 .error(R.drawable.gray_teum)
                 .fallback(R.drawable.gray_teum)
                 .into(binding.imgProfile)
+        }
+    }
+
+    private fun formatDate(date: String?): String {
+        if (date.isNullOrBlank()) return ""
+        return try {
+            val parsed = java.time.LocalDate.parse(date) // "2025-08-20"
+            parsed.format(java.time.format.DateTimeFormatter.ofPattern("yy.MM.dd")) // "25.08.20"
+        } catch (e: Exception) {
+            date // 실패하면 원본 그대로
         }
     }
 
