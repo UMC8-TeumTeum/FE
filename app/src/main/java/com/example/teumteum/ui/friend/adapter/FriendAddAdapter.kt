@@ -17,6 +17,15 @@ class FriendAddAdapter(
     // 선택 상태 저장 (userId 기준)
     private val selectedIds = mutableSetOf<Int>()
 
+    fun updateList(newItems: List<MutualFriendItem>, preselected: Set<Int> = emptySet()) {
+        friends = newItems
+        selectedIds.clear()
+        // 목록에 존재하는 아이디만 반영 (안전)
+        val idSet = newItems.map { it.userId }.toSet()
+        selectedIds.addAll(preselected.intersect(idSet))
+        notifyDataSetChanged()
+    }
+
     inner class FriendAddViewHolder(private val binding: ItemFriendCheckboxBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -69,12 +78,12 @@ class FriendAddAdapter(
 
     override fun getItemCount(): Int = friends.size
 
-    fun updateList(newList: List<MutualFriendItem>) {
-        friends = newList
-        val idSet = newList.map { it.userId }.toSet()
-        selectedIds.retainAll(idSet) // 기존 선택 중 사라진 건 제거
-        notifyDataSetChanged()
-    }
+//    fun updateList(newList: List<MutualFriendItem>) {
+//        friends = newList
+//        val idSet = newList.map { it.userId }.toSet()
+//        selectedIds.retainAll(idSet) // 기존 선택 중 사라진 건 제거
+//        notifyDataSetChanged()
+//    }
 
     fun getSelectedUserIds(): List<Int> = selectedIds.toList()
 
