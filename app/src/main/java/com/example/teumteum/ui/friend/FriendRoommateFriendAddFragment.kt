@@ -36,6 +36,10 @@ class FriendRoommateFriendAddFragment : Fragment() {
 
         val TAG = "MUTUAL_FRAGMENT"
 
+        val preselectedFromArgs = arguments?.getIntegerArrayList("preselectedIds")?.toSet() ?: emptySet()
+        val preselectedFromVm   = viewModel.teumRequestReceiverUserIds.value?.toSet() ?: emptySet()
+        val initialSelected     = if (preselectedFromArgs.isNotEmpty()) preselectedFromArgs else preselectedFromVm
+
         // 1) 리사이클러뷰/어댑터
         adapter = FriendAddAdapter(emptyList<MutualFriendItem>())
         binding.friendRecyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -55,7 +59,7 @@ class FriendRoommateFriendAddFragment : Fragment() {
             if (list.isNotEmpty()) {
                 Log.d(TAG, list.take(5).joinToString(prefix="sample<=5: ") { "(${it.userId}, ${it.nickname})" })
             }
-            adapter.updateList(list) // FriendAddAdapter.updateList 내부에서 notify 호출 필요
+            adapter.updateList(list, preselected = initialSelected)
         }
 
         viewModel.errorMessage.observe(viewLifecycleOwner) { event ->

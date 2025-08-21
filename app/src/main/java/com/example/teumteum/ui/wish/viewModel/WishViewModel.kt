@@ -58,12 +58,20 @@ class WishViewModel @Inject constructor(
     private val _assignError = MutableSharedFlow<ApiException>(replay = 0, extraBufferCapacity = 1)
     val assignError: SharedFlow<ApiException> = _assignError.asSharedFlow()
 
+    // 페이징 상태
+    private var currentPage = 1
+    private var currentDuration: String = "all"
+    private var hasNext: Boolean = true
+    private var loadingInProgress = false
+
     // 위시 등록
     fun registerWish(request: RegisterWishRequest) {
         viewModelScope.launch {
             val result = wishRepository.registerWish(request)
             result.onSuccess {
                 _registerSuccess.tryEmit(Unit)
+                // 등록 성공 직후 현재 duration 기준으로 즉시 새로고침
+                refreshCurrent()
             }
             result.onFailure { e ->
                 _errorMessage.value = e.localizedMessage ?: "위시 등록에 실패했습니다."
@@ -71,14 +79,47 @@ class WishViewModel @Inject constructor(
         }
     }
 
-    // 위시리스트 조회
-    fun getWishlist(duration: String, page: Int) {
+    // 위시리스트 조회 (refresh)
+    fun refreshWishlist(duration: String) {
+        currentDuration = duration
+        currentPage = 1
+        hasNext = true
+        loadWishlist(reset = true)
+    }
+
+    // 현재 duration으로 1페이지부터 다시 불러오기
+    fun refreshCurrent() {
+        refreshWishlist(currentDuration)
+    }
+
+    // 다음 페이지 조회
+    fun loadNextPage() {
+        if (!hasNext || loadingInProgress) return
+        currentPage += 1
+        loadWishlist(reset = false, onFail = {
+            currentPage = maxOf(1, currentPage - 1)
+        })
+    }
+
+
+    private fun loadWishlist(reset: Boolean, onFail: (() -> Unit)? = null) {
         viewModelScope.launch {
-            val result = wishRepository.getWishlist(duration, page)
-            result.onSuccess { response ->
-                _wishlistItems.value = response.wishlist
-            }.onFailure { e ->
-                _errorMessage.value = e.localizedMessage ?: "위시리스트 조회에 실패했습니다."
+            try {
+                loadingInProgress = true
+                val result = wishRepository.getWishlist(currentDuration, currentPage)
+                result.onSuccess { response ->
+                    hasNext = response.hasNext == true
+                    val incoming = response.wishlist.orEmpty()
+                    _wishlistItems.value = if (reset) incoming else _wishlistItems.value.orEmpty() + incoming
+                }.onFailure { e ->
+                    onFail?.invoke()
+                    _errorMessage.value = e.localizedMessage ?: "위시리스트 조회에 실패했습니다."
+                }
+            } catch (t: Throwable) {
+                onFail?.invoke()
+                _errorMessage.value = t.localizedMessage ?: "위시리스트 조회 중 오류가 발생했습니다."
+            } finally {
+                loadingInProgress = false
             }
         }
     }
@@ -101,6 +142,8 @@ class WishViewModel @Inject constructor(
             val result = wishRepository.editWish(wishId, request)
             result.onSuccess {
                 _editSuccess.tryEmit(Unit)
+                // 등록 성공 직후 현재 duration 기준으로 즉시 새로고침
+                refreshCurrent()
             }
             result.onFailure { e ->
                 _errorMessage.value = e.localizedMessage ?: "위시 수정에 실패했습니다."
@@ -118,6 +161,8 @@ class WishViewModel @Inject constructor(
             val result = wishRepository.deleteWish(request)
             result.onSuccess {
                 _deleteSuccess.tryEmit(Unit)
+                // 등록 성공 직후 즉시 새로고침
+                refreshWishlist("all")
             }
             result.onFailure { e ->
                 _errorMessage.value = e.localizedMessage ?: "위시 삭제에 실패했습니다."

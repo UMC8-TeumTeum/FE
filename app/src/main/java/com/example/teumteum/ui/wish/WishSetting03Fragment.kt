@@ -22,6 +22,7 @@ import com.example.teumteum.data.remote.activity.model.AssignWishRequest
 import com.example.teumteum.databinding.DialogConfirmRegisterBinding
 import com.example.teumteum.databinding.FragmentWishSetting03Binding
 import com.example.teumteum.ui.main.HomeFragment
+import com.example.teumteum.ui.main.viewModel.HomeViewModel
 import com.example.teumteum.ui.wish.viewModel.WishViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -41,6 +42,8 @@ class WishSetting03Fragment : Fragment() {
 
     private var wishId: Long? = null
     private val viewModel: WishViewModel by activityViewModels()
+    private val homeViewModel: HomeViewModel by activityViewModels()
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -239,6 +242,7 @@ class WishSetting03Fragment : Fragment() {
         dialogBinding.assignConfirmTv.setOnClickListener {
             if (wishId != null) {
                 viewModel.assignWish(wishId!!, assignWishRequest(true))
+                homeViewModel.refreshTodaySchedule()
             }
             dialog.dismiss()
         }

@@ -2,9 +2,11 @@ package com.example.teumteum.ui.friend
 
 import android.os.Bundle
 import android.util.Log
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -76,6 +78,34 @@ class Friend01SearchResultFragment : Fragment() {
                 // Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
                 Log.e("SEARCH_RESULT_FRAGMENT", "오류: $msg")
                 applySearchResultEmptyState(true)
+            }
+        }
+
+        binding.searchEditText.setOnEditorActionListener { _, actionId, event ->
+            val isSearchAction = actionId == EditorInfo.IME_ACTION_SEARCH
+            val isEnterKey = event?.action == KeyEvent.ACTION_DOWN && event.keyCode == KeyEvent.KEYCODE_ENTER
+
+            if (isSearchAction || isEnterKey) {
+                val keyword = binding.searchEditText.text.toString().trim()
+                if (keyword.isNotEmpty()) {
+                    viewModel.addRecentKeyword(keyword)
+                    binding.searchEditText.text.clear()
+
+                    // 👉 검색 수행 및 결과 프래그먼트로 이동
+                    val bundle = Bundle().apply {
+                        putString("searchKeyword", keyword)
+                    }
+                    val fragment = Friend01SearchResultFragment()
+                    fragment.arguments = bundle
+
+                    parentFragmentManager.beginTransaction()
+                        .replace(R.id.main_frm, fragment)
+                        .addToBackStack(null)
+                        .commit()
+                }
+                true
+            } else {
+                false
             }
         }
 

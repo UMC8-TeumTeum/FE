@@ -163,6 +163,7 @@ class HomeFragment : Fragment(), IDateClickListener {
 
         viewModel.getTodayScheduleIfNeeded()
         viewModel.getTeumTime()
+        viewModel.refreshTodaySchedule()
 
         binding.fabAddIv.post {
             val binding = _binding ?: return@post

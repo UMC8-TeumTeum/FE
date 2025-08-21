@@ -12,6 +12,7 @@ import com.bumptech.glide.Glide
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentFriendRoommateDateBinding
 import com.example.teumteum.ui.calendar.FriendMonthlyCalendarFragment
+import com.example.teumteum.ui.calendar.FriendRoommateCalendarFragment
 import com.example.teumteum.ui.calendar.IDateClickListener
 import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.example.teumteum.ui.main.MainActivity
@@ -34,7 +35,7 @@ class FriendRoommateDateFragment : Fragment() {
     private var targetNickname: String? = null
     private var targetProfileUrl: String? = null
 
-    private var selectedDate: LocalDate = LocalDate.now()
+    private var selectedDate: LocalDate? = null
     private val today: LocalDate = LocalDate.now()
     private val baseDate: LocalDate = LocalDate.now()
     private var currentMonthOffset = 0
@@ -44,7 +45,6 @@ class FriendRoommateDateFragment : Fragment() {
             selectedDate = date
             updateCalendarFragment()
 
-            // 오늘 이전이 아니면 활성화
             if (!date.isBefore(today)) {
                 binding.nextBtn.isEnabled = true
                 binding.nextBtn.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.black))
@@ -167,15 +167,19 @@ class FriendRoommateDateFragment : Fragment() {
         val displayDate = baseDate.plusMonths(currentMonthOffset.toLong())
         binding.homeSelectedDateTv.text = "${displayDate.year}년 ${displayDate.monthValue}월"
 
-        val calendarFragment = FriendMonthlyCalendarFragment.newInstance(
+        val calendarFragment = FriendRoommateCalendarFragment.newInstance(
             position = Int.MAX_VALUE / 2 + currentMonthOffset,
             onClickListener = onClickListener,
             showDot = true
         ).apply {
             arguments = Bundle().apply {
                 putSerializable("displayDate", displayDate)
-                putSerializable("selectedDate", selectedDate)
                 putSerializable("today", today)
+
+                // 선택된 날짜가 있을 때만 넘김
+                selectedDate?.let {
+                    putSerializable("selectedDate", it)
+                }
             }
         }
 

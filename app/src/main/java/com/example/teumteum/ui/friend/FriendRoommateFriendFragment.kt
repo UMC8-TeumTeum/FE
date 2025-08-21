@@ -1,16 +1,28 @@
 package com.example.teumteum.ui.friend
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.friend.model.FriendProfileResult
 import com.example.teumteum.databinding.FragmentFriendRoommateFriendBinding
+import com.example.teumteum.ui.clock.ChartUtils
+import com.example.teumteum.ui.friend.adapter.AddedFriendAdapter
+import com.example.teumteum.ui.friend.adapter.FriendProfileAdapter
+import com.example.teumteum.ui.friend.data.AddedFriend
+import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.example.teumteum.ui.main.MainActivity
+import com.example.teumteum.ui.main.data.TimeBlock
+import com.example.teumteum.ui.main.data.TimeType
 import dagger.hilt.android.AndroidEntryPoint
+import kotlin.getValue
 
 @AndroidEntryPoint
 class FriendRoommateFriendFragment : Fragment() {
@@ -24,8 +36,14 @@ class FriendRoommateFriendFragment : Fragment() {
     private var targetProfileUrl: String? = null
     private var myNickname: String? = null
     private var myProfileUrl: String? = null
-    private var addedFriends: List<FriendProfileResult> = emptyList()
 
+    private var addedFriends: List<FriendProfileResult> = emptyList()
+    private var addedFriendsData: List<AddedFriend> = emptyList()
+    private var baseFriends: List<AddedFriend> = emptyList()
+
+    private lateinit var addedFriendAdapter: AddedFriendAdapter
+
+    private val viewModel: FriendViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,6 +74,34 @@ class FriendRoommateFriendFragment : Fragment() {
         // 하단 바 숨기기
         (activity as? MainActivity)?.hideBottomBar()
 
+        addedFriendAdapter = AddedFriendAdapter()
+        binding.friendRc.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = addedFriendAdapter
+        }
+
+        baseFriends = listOf(
+            AddedFriend(profileImage = myProfileUrl,     name = myNickname ?: "나"),
+            AddedFriend(profileImage = targetProfileUrl, name = targetNickname ?: "상대")
+        )
+
+        addedFriendAdapter.submitList(baseFriends)
+
+        if (addedFriends.isNotEmpty()) {
+            addedFriendsData = addedFriends.map {
+                AddedFriend(
+                    profileImage = it.profileImageUrl,
+                    name = it.name
+                )
+            }
+
+            val merged = (baseFriends + addedFriendsData)
+                .distinctBy { it.name to it.profileImage }
+
+            addedFriendAdapter.submitList(merged)
+        }
+
+
         // 좌측(상대)
         binding.profileNicknameTv1.text = targetNickname ?: "상대"
         Glide.with(this)
@@ -74,28 +120,15 @@ class FriendRoommateFriendFragment : Fragment() {
             .circleCrop()
             .into(binding.profileIv2)
 
-        // 카드 3: "나"
-        binding.profileName1.text = myNickname ?: "나"
-        Glide.with(this)
-            .load(myProfileUrl)
-            .placeholder(R.drawable.gray_teum)
-            .error(R.drawable.gray_teum)
-            .circleCrop()
-            .into(binding.profile1)
 
-        // 카드 2: "상대"
-        binding.profileName2.text = targetNickname ?: "상대"
-        Glide.with(this)
-            .load(targetProfileUrl)
-            .placeholder(R.drawable.gray_teum)
-            .error(R.drawable.gray_teum)
-            .circleCrop()
-            .into(binding.profile2)
 
         // 친구 추가 버튼 클릭 시 프래그먼트 이동
         binding.addFriendBtn.setOnClickListener {
+            val preselectedIds = ArrayList(addedFriends.map { it.userId })
+
             val bundle = Bundle().apply {
                 putInt("excludeUserId", targetUserId) // 매칭 대상 ID 전달
+                putIntegerArrayList("preselectedIds", preselectedIds)
             }
             val fragment = FriendRoommateFriendAddFragment().apply {
                 arguments = bundle
@@ -110,7 +143,16 @@ class FriendRoommateFriendFragment : Fragment() {
 
         parentFragmentManager.setFragmentResultListener("selectedFriends", viewLifecycleOwner) { _, bundle ->
             val selectedFriends = bundle.getParcelableArrayList<FriendProfileResult>("friends") ?: emptyList()
+
             addedFriends = selectedFriends
+
+            // FriendProfileResult → AddedFriend 변환 (필드명은 실제 모델에 맞춰 수정)
+            addedFriendsData = selectedFriends.map {
+                AddedFriend(profileImage = it.profileImageUrl, name = it.name)
+            }
+
+            val merged = baseFriends + addedFriendsData
+            addedFriendAdapter.submitList(merged)
         }
 
 
@@ -136,8 +178,16 @@ class FriendRoommateFriendFragment : Fragment() {
 
         // 뒤로가기 버튼 처리
         binding.btnBack.setOnClickListener {
+            resetAddedFriendsState()
             parentFragmentManager.popBackStack()
         }
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                resetAddedFriendsState()
+                parentFragmentManager.popBackStack()
+            }
+        })
 
         // TODO: 이곳에 추가 로직 구현
     }
@@ -146,4 +196,13 @@ class FriendRoommateFriendFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
+    private fun resetAddedFriendsState() {
+        // 선택된 친구들 초기화
+        addedFriends = emptyList()
+        addedFriendsData = emptyList()
+
+        viewModel.setTeumRequestReceiverUserIds(emptyList())
+    }
+
 }

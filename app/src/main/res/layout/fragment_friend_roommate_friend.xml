@@ -142,115 +142,35 @@
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/card_container"
+    
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/friendRc"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:layout_height="0dp"
+        android:layout_marginTop="44dp"
         app:layout_constraintTop_toBottomOf="@+id/profile_layout"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <!-- 카드 3 -->
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardView3"
-            android:layout_width="match_parent"
-            android:layout_height="64dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="44dp"
-            android:layout_marginEnd="16dp"
-            app:cardCornerRadius="10dp"
-            app:cardElevation="0dp"
-            app:strokeColor="@android:color/transparent"
-            app:strokeWidth="0dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#F6F6F6"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingStart="16dp">
-
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/profile1"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_marginEnd="12dp"
-                    android:background="@color/gray"
-                    android:scaleType="centerCrop"
-                    app:shapeAppearanceOverlay="@style/CircleImage" />
-
-                <TextView
-                    android:id="@+id/profile_name1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/noto_sans_kr_medium"
-                    android:text="나"
-                    android:textColor="#0F0F0F"
-                    android:textSize="16sp" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- 카드 2 -->
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardView2"
-            android:layout_width="match_parent"
-            android:layout_height="64dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="166dp"
-            app:cardCornerRadius="10dp"
-            app:cardElevation="0dp"
-            app:strokeColor="@android:color/transparent"
-            app:strokeWidth="0dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#F6F6F6"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingStart="16dp">
-
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/profile2"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_marginEnd="12dp"
-                    android:background="@color/gray"
-                    android:scaleType="centerCrop"
-                    app:shapeAppearanceOverlay="@style/CircleImage" />
-
-                <TextView
-                    android:id="@+id/profile_name2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/noto_sans_kr_medium"
-                    android:text="문혜원"
-                    android:textColor="#0F0F0F"
-                    android:textSize="16sp" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-    </LinearLayout>
-
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/tvMoreFriend"
+        android:paddingHorizontal="16dp"
+        />
 
     <TextView
         android:id="@+id/tvMoreFriend"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="97dp"
-        android:layout_marginTop="-10dp"
+        android:layout_marginBottom="20dp"
         android:layout_marginEnd="97dp"
         android:fontFamily="@font/noto_sans_kr_medium"
         android:text="함께 할 친구를 더 찾아볼까요?"
+        android:includeFontPadding="false"
         android:textColor="#0F0F0F"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/card_container" />
+        app:layout_constraintBottom_toTopOf="@+id/addFriendBtn"
+        />
 
     <ImageButton
         android:id="@+id/addFriendBtn"
@@ -258,14 +178,16 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="149dp"
         android:layout_marginEnd="149dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginBottom="44dp"
         android:background="@drawable/bg_circle_purple"
         android:contentDescription="친구 추가"
         android:scaleType="center"
         android:src="@drawable/plusbtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvMoreFriend" />
+        app:layout_constraintBottom_toTopOf="@+id/match_btn"
+
+        />
 
 
     <com.google.android.material.button.MaterialButton
