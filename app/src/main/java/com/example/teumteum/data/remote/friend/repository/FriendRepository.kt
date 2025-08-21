@@ -83,11 +83,14 @@ class FriendRepository @Inject constructor(
     }
 
     // 7) 팔로잉 목록
-    suspend fun getFollowings(page: Int, size: Int): Result<List<FollowingResult>> = runCatching {
+    suspend fun getFollowingsPage(
+        page: Int,
+        size: Int
+    ): Result<PagingResponse<FollowingResult>> = runCatching {
         val response = api.getFollowings(page, size)
         val body = response.body()
         if (response.isSuccessful && body?.isSuccess == true) {
-            body.result?.content ?: emptyList()
+            body.result ?: PagingResponse(emptyList(), false)
         } else {
             throw Exception("${body?.code ?: "HTTP ${response.code()}"} - ${body?.message ?: response.message()}")
         }
@@ -162,24 +165,14 @@ class FriendRepository @Inject constructor(
     }
 
     // 14) 팔로워 목록
-    suspend fun getFollowers(page: Int, size: Int): Result<List<FollowerResult>> = runCatching {
+    suspend fun getFollowersPage(
+        page: Int,
+        size: Int
+    ): Result<PagingResponse<FollowerResult>> = runCatching {
         val response = api.getFollowers(page, size)
         val body = response.body()
         if (response.isSuccessful && body?.isSuccess == true) {
-            Log.d("FOLLOWER_FRAGMENT", "친구 목록 조회에 성공하였습니다. message=${body.message}")
-            body.result?.content ?: emptyList()
-        } else {
-            throw Exception("${body?.code ?: "HTTP ${response.code()}"} - ${body?.message ?: response.message()}")
-        }
-    }
-
-    // 14-1) 팔로워 목록
-    suspend fun getFollowersPage(page: Int, size: Int): Result<FollowerPageResult> = runCatching {
-        val response = api.getFollowers(page, size)
-        val body = response.body()
-        if (response.isSuccessful && body?.isSuccess == true && body.result != null) {
-            Log.d("FOLLOWER_FRAGMENT", "친구 목록 조회에 성공하였습니다. message=${body.message}")
-            body.result
+            body.result ?: PagingResponse(emptyList(), false)
         } else {
             throw Exception("${body?.code ?: "HTTP ${response.code()}"} - ${body?.message ?: response.message()}")
         }

@@ -215,6 +215,26 @@ class FriendFragment : Fragment() {
             adapter = recommendAdapter
         }
 
+        // 무한스크롤 (following)
+        val flm = binding.followingRecyclerView.layoutManager as LinearLayoutManager
+        binding.followingRecyclerView.addOnScrollListener(object: RecyclerView.OnScrollListener() {
+            override fun onScrolled(rv: RecyclerView, dx: Int, dy: Int) {
+                if (dy <= 0) return
+                val last = flm.findLastVisibleItemPosition()
+                if (last >= flm.itemCount - 3) viewModel.loadNextFollowings()
+            }
+        })
+
+        // 무한스크롤 (follower)
+        val flm2 = binding.followerRecyclerView.layoutManager as LinearLayoutManager
+        binding.followerRecyclerView.addOnScrollListener(object: RecyclerView.OnScrollListener() {
+            override fun onScrolled(rv: RecyclerView, dx: Int, dy: Int) {
+                if (dy <= 0) return
+                val last = flm2.findLastVisibleItemPosition()
+                if (last >= flm2.itemCount - 3) viewModel.loadNextFollowers()
+            }
+        })
+
         // 탭 클릭 리스너
         binding.tabFollowing.setOnClickListener {
             binding.tabFollowing.setTextColor(Color.parseColor("#0F0F0F"))
@@ -223,7 +243,8 @@ class FriendFragment : Fragment() {
             binding.followerRecyclerView.visibility = View.GONE
 
             // 팔로잉 목록 조회
-            viewModel.getFollowingUsers()
+            viewModel.resetFollowingPaging()
+            viewModel.loadNextFollowings()
         }
 
         binding.tabFollower.setOnClickListener {
@@ -233,7 +254,8 @@ class FriendFragment : Fragment() {
             binding.followerRecyclerView.visibility = View.VISIBLE
 
             // 팔로워 목록 조회
-            viewModel.getFollowerUsers()
+            viewModel.resetFollowerPaging()
+            viewModel.loadNextFollowers()
         }
 
         binding.btnAlarm.setOnClickListener {

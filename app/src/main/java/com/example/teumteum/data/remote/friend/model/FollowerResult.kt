@@ -8,8 +8,3 @@ data class FollowerResult(
     @SerializedName("job") val job: String,
     @SerializedName("profileImageUrl") val profileImageUrl: String
 )
-
-data class FollowerPageResult(
-    @SerializedName("content") val content: List<FollowerResult>,
-    @SerializedName("hasNext") val hasNext: Boolean
-)
