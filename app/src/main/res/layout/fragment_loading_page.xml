@@ -44,16 +44,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <com.google.android.material.progressindicator.LinearProgressIndicator
+    <ProgressBar
         android:id="@+id/linear_progress"
+        style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="6dp"
         android:layout_marginStart="46dp"
         android:layout_marginEnd="46dp"
         android:max="100"
-        app:trackCornerRadius="0dp"
-        app:indicatorColor="@color/main_1"
-        app:trackColor="@color/teumteum_bg"
+        android:progress="0"
+        android:progressDrawable="@drawable/progress_square"
+        android:indeterminate="false"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
