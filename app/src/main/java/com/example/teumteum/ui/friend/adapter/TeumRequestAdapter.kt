@@ -25,7 +25,7 @@ class TeumRequestAdapter(
             position: Int,
             fullList: List<TeumRequestDateResult>
         ) {
-            // 🔹 초기화
+            //  초기화
             binding.tvStatus.visibility = View.GONE
             binding.tvResendNotice.visibility = View.GONE
 
@@ -39,7 +39,7 @@ class TeumRequestAdapter(
             //  취소된 원본 카드 (뒤에 재요청이 없는 경우)
             else if (
                 data.isCancelled &&
-                data.accepted.isNullOrEmpty() &&   // ✅ 수락자가 없을 때만
+                data.accepted.isNullOrEmpty() &&
                 (position + 1 >= fullList.size || fullList[position + 1].isResend != true)
             ) {
                 binding.tvStatus.visibility = View.VISIBLE
@@ -52,7 +52,7 @@ class TeumRequestAdapter(
                 binding.topContainer.setBackgroundResource(R.drawable.bg_top_rounded)
             }
 
-            // 🔹 원본/재요청 구분선
+            //  원본/재요청 구분선
             binding.originalDivider.visibility = View.GONE
             val isOriginal = data.isResend == false
             val nextIsResend =
@@ -61,7 +61,7 @@ class TeumRequestAdapter(
                 binding.originalDivider.visibility = View.VISIBLE
             }
 
-            // 🔹 프로필, 이름
+            //  프로필, 이름
             Glide.with(binding.profileIv.context)
                 .load(data.requester.profileImageUrl)
                 .placeholder(com.example.teumteum.R.drawable.gray_teum)
@@ -71,16 +71,16 @@ class TeumRequestAdapter(
 
             binding.tvName.text = data.requester.nickname ?: "이름없음"
 
-            // 🔹 날짜/시간
+            //  날짜/시간
             val dateFormatted = data.date.replace("-", ".").substring(2) // "25.09.02"
             binding.tvDate.text = "$dateFormatted     |"
             binding.tvTime.text = "${data.timeSlot.start} ~ ${data.timeSlot.end}"
 
-            // 🔹 제목 / 설명
+            //  제목 / 설명
             binding.title.text = data.title
             binding.description.text = data.description
 
-            // 🔹 상태별 FlexboxLayout 처리
+            //  상태별 FlexboxLayout 처리
             updateSectionRow(
                 binding.rowAccept,
                 binding.labelAccept,
