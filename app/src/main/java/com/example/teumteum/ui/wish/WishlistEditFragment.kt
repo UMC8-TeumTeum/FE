@@ -94,7 +94,7 @@ class WishlistEditFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.deleteSuccess.collect {
-                    Toast.makeText(requireContext(), "삭제가 완료되었어요.", Toast.LENGTH_SHORT).show()
+                    Log.d("WISH_EDIT_FRAGMENT", "위시가 성공적으로 삭제되었습니다.")
                     pendingDeleteIds.clear()
                     viewModel.refreshWishlist("all") // 요구사항: 삭제는 항상 ALL
                     parentFragmentManager.popBackStack()
