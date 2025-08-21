@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.teumteum.data.remote.alarm.FcmRepository
+import com.example.teumteum.data.remote.alarm.repository.FcmRepository
 import com.example.teumteum.data.remote.login.repository.LoginRepository
 import com.example.teumteum.ui.signin.data.LoginResult
 import com.example.teumteum.data.remote.alarm.FcmTokenStore

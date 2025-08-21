@@ -5,13 +5,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.viewpager2.widget.ViewPager2
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.friend.model.TeumReceivedItem
 import com.example.teumteum.databinding.FragmentFriend02RequestBinding
+import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.example.teumteum.ui.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import kotlin.getValue
 
 @AndroidEntryPoint
 class Friend02RequestFragment : Fragment() {
@@ -20,6 +24,8 @@ class Friend02RequestFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var adapter: FriendRequestCardAdapter
+    private val viewModel: FriendViewModel by activityViewModels()
+
     var teumList: List<TeumReceivedItem> = emptyList()
 
     override fun onCreateView(
@@ -36,19 +42,18 @@ class Friend02RequestFragment : Fragment() {
 
         (activity as? MainActivity)?.hideBottomBar()
 
-        val receivedList = arguments?.getParcelableArrayList<TeumReceivedItem>("teumList") ?: emptyList()
-        val selectedPosition = arguments?.getInt("selectedPosition") ?: 0
-        val selectedItem = receivedList.getOrNull(selectedPosition)
+        val receivedList = viewModel.receivedTeums.value.orEmpty()
+        val selected = viewModel.selectedTeum.value
 
         // 1. 유효한 요청만 필터링
-        val validList = filterValidTeumRequests(receivedList)
+        val validList = filterValidTeumRequests(receivedList!!)
 
         // 2. 정렬
         val sortedList = sortTeumList(validList)
 
         // 3. 선택된 요청을 맨 앞으로
-        teumList = if (selectedItem != null && sortedList.contains(selectedItem)) {
-            reorderWithSelectedFirst(sortedList, selectedItem)
+        teumList = if (selected != null) {
+            reorderWithSelectedFirstById(sortedList, selected.requestId)
         } else {
             sortedList
         }
@@ -59,6 +64,18 @@ class Friend02RequestFragment : Fragment() {
 
         // 5. 선택한 카드부터 시작
         binding.requestViewPager.setCurrentItem(0, false)
+        viewModel.selectTeum(teumList.getOrNull(0))
+
+        binding.requestViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                val current = teumList.getOrNull(position) ?: return
+                viewModel.selectTeum(current)   //선택된 아이템 갱신
+                if(current.read == false){  //읽은 상태가 아니면
+                    viewModel.readTeumRequest(current.responseId)   //읽기 요청
+                }
+            }
+        })
 
         // 6. 인디케이터
         binding.dotsIndicator.setViewPager2(binding.requestViewPager)
@@ -97,36 +114,30 @@ class Friend02RequestFragment : Fragment() {
     //  미확인 → 최신순 정렬
     private fun sortTeumList(teumList: List<TeumReceivedItem>): List<TeumReceivedItem> {
         return teumList.sortedWith(
-            compareBy<TeumReceivedItem> { it.read } // false = 미확인 먼저
-                .thenByDescending { it.requestId } // 최신순
+            compareBy<TeumReceivedItem> { it.read }      // false(미확인) 먼저
+                .thenByDescending { it.requestId }       // 최신순
         )
     }
 
     //  선택된 요청을 가장 앞으로
-    private fun reorderWithSelectedFirst(
+    private fun reorderWithSelectedFirstById(
         sortedList: List<TeumReceivedItem>,
-        selectedItem: TeumReceivedItem
+        selectedRequestId: Int
     ): List<TeumReceivedItem> {
-        return listOf(selectedItem) + sortedList.filter { it != selectedItem }
+        val selected = sortedList.firstOrNull { it.requestId == selectedRequestId }
+            ?: return sortedList
+        return listOf(selected) + sortedList.filter { it.requestId != selectedRequestId }
     }
 
-    //  시간이 지나지 않고, 아직 안 읽은 요청만 필터링
-    private fun filterValidTeumRequests(teumList: List<TeumReceivedItem>): List<TeumReceivedItem> {
+    //  시간이 지나지 않은 요청 필터링
+    private fun filterValidTeumRequests(list: List<TeumReceivedItem>): List<TeumReceivedItem> {
         val now = LocalDateTime.now()
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
-
-        return teumList.filter { item ->
+        return list.filter { item ->
             try {
-                val dateTimeStr = "${item.date} ${item.timeSlot.end}"
-                val endDateTime = LocalDateTime.parse(dateTimeStr, formatter)
-
-                val isFuture = endDateTime.isAfter(now)
-//                val isUnread = !item.read
-                //read 여부 검사 제거
-                isFuture
-            } catch (e: Exception) {
-                false // 날짜 파싱 실패한 항목 제외
-            }
+                val endDateTime = LocalDateTime.parse("${item.date} ${item.timeSlot.end}", formatter)
+                endDateTime.isAfter(now)
+            } catch (_: Exception) { false }
         }
     }
 

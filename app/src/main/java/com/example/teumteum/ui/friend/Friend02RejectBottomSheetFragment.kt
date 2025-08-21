@@ -53,6 +53,12 @@ class Friend02RejectBottomSheetFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val item = viewModel.selectedTeum.value
+        if (item == null) {
+            dismiss() // 방어: 선택값 없으면 닫기
+            return
+        }
+
         binding.btnRejectMent.text = getColoredText("이때는 시간이 안돼요", " 멘트 보내기")
         binding.btnSuggestTime.text = getColoredText("가능한 다른 시간대", " 제안하기")
         updateSelection(SelectedOption.REJECT)
