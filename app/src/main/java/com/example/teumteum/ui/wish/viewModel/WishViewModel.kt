@@ -70,6 +70,8 @@ class WishViewModel @Inject constructor(
             val result = wishRepository.registerWish(request)
             result.onSuccess {
                 _registerSuccess.tryEmit(Unit)
+                // 등록 성공 직후 현재 duration 기준으로 즉시 새로고침
+                refreshCurrent()
             }
             result.onFailure { e ->
                 _errorMessage.value = e.localizedMessage ?: "위시 등록에 실패했습니다."
@@ -140,6 +142,8 @@ class WishViewModel @Inject constructor(
             val result = wishRepository.editWish(wishId, request)
             result.onSuccess {
                 _editSuccess.tryEmit(Unit)
+                // 등록 성공 직후 현재 duration 기준으로 즉시 새로고침
+                refreshCurrent()
             }
             result.onFailure { e ->
                 _errorMessage.value = e.localizedMessage ?: "위시 수정에 실패했습니다."
@@ -157,6 +161,8 @@ class WishViewModel @Inject constructor(
             val result = wishRepository.deleteWish(request)
             result.onSuccess {
                 _deleteSuccess.tryEmit(Unit)
+                // 등록 성공 직후 현재 duration 기준으로 즉시 새로고침
+                refreshCurrent()
             }
             result.onFailure { e ->
                 _errorMessage.value = e.localizedMessage ?: "위시 삭제에 실패했습니다."
