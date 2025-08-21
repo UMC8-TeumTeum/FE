@@ -413,76 +413,18 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
-                            android:layout_marginTop="10dp"
+                            android:layout_marginTop="7dp"
                             android:orientation="vertical"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toEndOf="@id/alarm_icon_iv"
                             app:layout_constraintTop_toTopOf="parent">
 
                             <LinearLayout
-                                android:id="@+id/alarm_item_01_ll"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginBottom="10dp"
-                                android:gravity="center_vertical"
-                                android:orientation="horizontal">
-
-                                <TextView
-                                    android:id="@+id/alarm_set_01_tv"
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:fontFamily="@font/noto_sans_kr_regular"
-                                    android:includeFontPadding="false"
-                                    android:text="30분 전"
-                                    android:textColor="@color/text_primary"
-                                    android:textSize="15sp" />
-
-                                <androidx.appcompat.widget.SwitchCompat
-                                    android:id="@+id/alarm_toggle_01_iv"
-                                    style="@style/category_toggle"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="20dp"
-                                    android:layout_marginTop="2dp"
-                                    app:thumbTint="@null"
-                                    app:trackTint="@null" />
-                            </LinearLayout>
-
-                            <LinearLayout
-                                android:id="@+id/alarm_item_02_ll"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginBottom="10dp"
-                                android:gravity="center_vertical"
-                                android:orientation="horizontal">
-
-                                <TextView
-                                    android:id="@+id/alarm_set_02_tv"
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:fontFamily="@font/noto_sans_kr_regular"
-                                    android:includeFontPadding="false"
-                                    android:text="10분 전"
-                                    android:textColor="@color/text_primary"
-                                    android:textSize="15sp" />
-
-                                <androidx.appcompat.widget.SwitchCompat
-                                    android:id="@+id/alarm_toggle_02_iv"
-                                    style="@style/category_toggle"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="20dp"
-                                    android:layout_marginTop="2dp"
-                                    app:thumbTint="@null"
-                                    app:trackTint="@null" />
-                            </LinearLayout>
-
-                            <LinearLayout
                                 android:id="@+id/alarm_layout_container"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="-27dp"
-                                android:layout_marginTop="1dp"
+                                android:layout_marginTop="3dp"
                                 android:orientation="vertical" />
 
                             <LinearLayout
@@ -507,8 +449,8 @@
 
                                 <ImageView
                                     android:id="@+id/btn_plus"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
+                                    android:layout_width="17dp"
+                                    android:layout_height="17dp"
                                     android:layout_marginEnd="11dp"
                                     android:src="@drawable/btn_plus_sv" />
                             </LinearLayout>
