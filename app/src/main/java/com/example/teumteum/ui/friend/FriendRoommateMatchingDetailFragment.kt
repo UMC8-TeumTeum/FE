@@ -136,13 +136,13 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
             showCustomTimePicker(initial = current) { picked ->
                 // 1) 카드의 허용 범위 [startBound, endBound] 검사
                 if (!isWithinRange(picked, startBound, endBound)) {
-                    Toast.makeText(requireContext(), "가능한 시간대에서 벗어났어요!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "가능한 시간대에서 벗어났어요.", Toast.LENGTH_SHORT).show()
                     return@showCustomTimePicker
                 }
 
                 // 2) 오늘 선택 시 현재 시각 이후인지 검사
                 if (!isAfterCurrentTime(picked)) {
-                    Toast.makeText(requireContext(), "현재 시각 이후의 시간을 선택해주세요!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "현재 시각 이후의 시간을 선택해주세요.", Toast.LENGTH_SHORT).show()
                     return@showCustomTimePicker
                 }
 
@@ -208,17 +208,10 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
     private fun observeViewModel() {
         viewModel.possibleTimeList.observe(viewLifecycleOwner) { list ->
             val nonNullList = list.filterNotNull()
-            android.util.Log.d("TimeFiltering", "=== observeViewModel 시작 ===")
-            android.util.Log.d("TimeFiltering", "원본 카드 개수: ${nonNullList.size}")
 
             // 오늘인 경우, 현재 시각 기준으로 카드들 필터링/조정
             val dateFormatted = convertDateFormat(selectedDate)
             val today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-
-            android.util.Log.d("TimeFiltering", "선택된 날짜: $selectedDate")
-            android.util.Log.d("TimeFiltering", "변환된 날짜: $dateFormatted")
-            android.util.Log.d("TimeFiltering", "오늘 날짜: $today")
-            android.util.Log.d("TimeFiltering", "오늘인가? ${dateFormatted == today}")
 
             val filteredList = if (dateFormatted == today) {
                 val now = LocalDateTime.now()
@@ -226,23 +219,13 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
                 // 현재 시각을 10분 단위로 올림
                 val adjustedCurrentMinutes = ((currentMinutes + 9) / 10) * 10
 
-                android.util.Log.d("TimeFiltering", "현재 시각: ${now.hour}:${String.format("%02d", now.minute)}")
-                android.util.Log.d("TimeFiltering", "현재 시각(분): $currentMinutes")
-                android.util.Log.d("TimeFiltering", "조정된 시각(분): $adjustedCurrentMinutes")
-                android.util.Log.d("TimeFiltering", "조정된 시각: ${minutesToTime(adjustedCurrentMinutes)}")
-
                 nonNullList.mapNotNull { card ->
                     val startMinutes = timeToMinutes(card.startTime)
                     val endMinutes = timeToMinutes(card.endTime)
 
-                    android.util.Log.d("TimeFiltering", "--- 카드 처리 ---")
-                    android.util.Log.d("TimeFiltering", "원본: ${card.startTime} ~ ${card.endTime}")
-                    android.util.Log.d("TimeFiltering", "분 단위: $startMinutes ~ $endMinutes")
-
                     when {
                         // endTime이 현재 시각 이후가 아니면 (현재 시각 이하면) 제외
                         endMinutes <= currentMinutes -> {
-                            android.util.Log.d("TimeFiltering", "결과: 제외 (endTime이 현재 시각 이하)")
                             null
                         }
                         // startTime과 endTime 사이에 현재 시각이 있으면 조정된 현재 시각을 startTime으로 설정
@@ -250,27 +233,20 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
                             val adjustedStartTime = minutesToTime(adjustedCurrentMinutes)
                             // 조정된 시작 시간이 종료 시간보다 크거나 같으면 제외
                             if (adjustedCurrentMinutes >= endMinutes) {
-                                android.util.Log.d("TimeFiltering", "결과: 제외 (조정된 시작시간이 종료시간보다 크거나 같음)")
                                 null
                             } else {
-                                android.util.Log.d("TimeFiltering", "결과: 조정 ($adjustedStartTime ~ ${card.endTime})")
                                 card.copy(startTime = adjustedStartTime)
                             }
                         }
                         // startTime이 현재 시각 이후면 그대로 사용
                         else -> {
-                            android.util.Log.d("TimeFiltering", "결과: 그대로 사용")
                             card
                         }
                     }
                 }
             } else {
-                android.util.Log.d("TimeFiltering", "오늘이 아니므로 필터링 없이 그대로 사용")
                 nonNullList
             }
-
-            android.util.Log.d("TimeFiltering", "필터링 후 카드 개수: ${filteredList.size}")
-            android.util.Log.d("TimeFiltering", "=== observeViewModel 끝 ===")
 
             timeCardAdapter.setData(filteredList)
             updateNextButtonState()
