@@ -12,7 +12,7 @@ import javax.inject.Singleton
 @Singleton
 class MyPageRepository @Inject constructor(
     private val myPageService: MyPageService
-){
+) {
     //마이페이지 조회
     suspend fun getMyInfo(): Result<MyInfoResponse> = runCatching {
         val response = myPageService.getMyInfo()
@@ -42,15 +42,42 @@ class MyPageRepository @Inject constructor(
         if (body.isSuccess && body.code == "HOME20015") {
             Log.d("RECENT_TODO", body.message)
 
-            // id 내림차순으로 정렬 → 최신순 → 최대 2개만
-            val trimmed = (body.result ?: emptyList())
-                .sortedByDescending { it.id }
-                .take(2)
+            val zone = java.time.ZoneId.systemDefault()
+            val today = java.time.LocalDate.now(zone)
+            val nowTime = java.time.LocalTime.now(zone)
 
-            trimmed
+            val targetDate = runCatching { java.time.LocalDate.parse(date) }
+                .getOrElse { throw Exception("잘못된 날짜 형식입니다. yyyy-MM-dd 형식이어야 합니다.") }
+
+            val filtered = (body.result ?: emptyList()).asSequence()
+                .filter { it.isPublic }
+                .filter { item ->
+                    val start = parseLocalTimeHHmm(item.startTime) ?: return@filter false
+                    when {
+                        targetDate.isAfter(today) -> true                // 미래 날짜: 전부 포함
+                        targetDate.isEqual(today) -> start.isAfter(nowTime) || start == nowTime
+                        else -> false                                     // 과거 날짜: 제외
+                    }
+                }
+                .sortedWith(
+                    compareBy<TodoListResult> { parseLocalTimeHHmm(it.startTime) }
+                        .thenBy { parseLocalTimeHHmm(it.endTime) }
+                        .thenByDescending { it.id }
+                )
+                .take(2)
+                .toList()
+
+            filtered
         } else {
             Log.d("RECENT_TODO", "오늘의 투두리스트 조회에 실패했습니다.")
             throw Exception("오늘의 투두리스트 조회에 실패했습니다.")
         }
+    }
+
+    private fun parseLocalTimeHHmm(s: String?): java.time.LocalTime? {
+        if (s.isNullOrBlank()) return null
+        return runCatching {
+            java.time.LocalTime.parse(s, java.time.format.DateTimeFormatter.ofPattern("HH:mm"))
+        }.getOrNull()
     }
 }
