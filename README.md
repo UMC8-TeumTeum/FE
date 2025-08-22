@@ -34,35 +34,18 @@
 │        ├─ java/
 │        │  └─ com/example/teumteum/
 │        │     ├─ application/                     # 앱 전역 설정/시작 지점
-│        │     │  ├─ TeumTeumApplication.kt        # Application 클래스
-│        │     │  └─ MyFirebaseMessagingService.kt # FCM 수신 서비스
-│        │     │
 │        │     ├─ data/             # 데이터 계층 (Clean/Layered)
 │        │     │  ├─ remote/        # 원격 데이터(API)
 │        │     │     ├─ model/      # 요청/응답 DTO
 │        │     │     ├─ service/    # 네트워크 호출 래핑(Service)
 │        │     │     └─ repository/ # Repository (local/remote 조합)
-│        │     │
 │        │     ├─ ui/               # 프레젠테이션 계층
-│        │     │  ├─ activity/      # 채움 활동
-│        │     │  ├─ alarm/         # 알림
-│        │     │  ├─ calendar/      # 캘린더
-│        │     │  └─ ...
-│        │     │
 │        │     └─ utils/                   # 공통 유틸(비즈니스 무관한 순수 함수/헬퍼)
-│        │        ├─ ApiResponse.kt        # 공통 응답 처리
-│        │        ├─ NetworkModule.kt      # 인터셉터 적용 및 통신 관리
-│        │        ├─ NotificationHelper.kt # 알림 채널 생성·권한 확인
-│        │        └─ ... 
 │        │
 │        └─ res/                    # 리소스
 │           ├─ drawable/            # 벡터/이미지 리소스
 │           ├─ font/                # 폰트
 │           ├─ layout/              # 화면 XML (Fragment/Activity/Item)
-│           │  ├─ activity_main.xml
-│           │  ├─ fragment_home.xml
-│           │  ├─ item_todolist.xml
-│           │  └─ ... 
 │           ├─ menu/                # 메뉴 XML
 │           ├─ values/              # colors.xml, strings.xml, styles.xml 등
 └─ README.md                        # 프로젝트 문서(구조/빌드/실행 방법)
