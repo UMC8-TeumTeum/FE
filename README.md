@@ -4,9 +4,9 @@
 *틈틈*은 매번 새로운 계획을 고민하고 실행하는 것이 번거롭게 느껴져 무의미하게 시간을 흘려보낸 사람들을 위한 서비스입니다.
 단순한 일정 관리 캘린더에서 벗어나, **나의 일정을 기반으로 하루의 빈틈을 찾아 삶의 질을 향상**시켜 보세요!
 
-## 🚀 Tech Stack
+# 🚀 Tech Stack
 
-### Framework & Library
+## Framework & Library
 
 ![Kotlin](https://img.shields.io/badge/Kotlin-7F52FF?logo=kotlin&logoColor=white)
 ![Android](https://img.shields.io/badge/Android-3DDC84?logo=android&logoColor=white)
@@ -18,7 +18,7 @@
 ![Kotlin_Coroutines](https://img.shields.io/badge/Kotlin%20Coroutines-7F52FF?logo=kotlin&logoColor=white)
 ![MVVM](https://img.shields.io/badge/MVVM-6C63FF)
 
-### Push & Messaging
+## Push & Messaging
 
 ![Firebase%20Cloud%20Messaging](https://img.shields.io/badge/Firebase%20Cloud%20Messaging-FFCA28?logo=firebase&logoColor=black)
 
