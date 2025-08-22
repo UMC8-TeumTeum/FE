@@ -82,7 +82,6 @@ class Friend02SuggestFragment : Fragment() {
             // 현재 보여주는 요청(카드) 기준 정보
             val currentItem = teumList.firstOrNull { it.responseId == responseId } ?: teumList.firstOrNull()
             if (currentItem == null) {
-//                Toast.makeText(requireContext(), "요청 정보를 찾지 못했습니다.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -114,7 +113,6 @@ class Friend02SuggestFragment : Fragment() {
         val currentItem = teumList.firstOrNull { it.responseId == responseId } ?: teumList.firstOrNull()
         val requesterId = currentItem?.senderUser?.userId
         if (requesterId == null) {
-//            Toast.makeText(requireContext(), "요청자 정보를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -131,60 +129,6 @@ class Friend02SuggestFragment : Fragment() {
         viewModel.getPossibleTimeWithFriend(request)
     }
 
-    /** 커스텀 TimePicker 다이얼로그 표시 */
-//    private fun showCustomTimePicker(targetTextView: TextView) {
-//        val dialogView = layoutInflater.inflate(R.layout.dialog_time_picker, null, false)
-//
-//        val ampmPicker = dialogView.findViewById<NumberPicker>(R.id.ampmPicker01Np)
-//        val hourPicker = dialogView.findViewById<NumberPicker>(R.id.hourPicker01Np)
-//        val minutePicker = dialogView.findViewById<NumberPicker>(R.id.minutePicker01Np)
-//        val minuteValues = arrayOf("00", "10", "20", "30", "40", "50")
-//
-//        ampmPicker.minValue = 0
-//        ampmPicker.maxValue = 1
-//        ampmPicker.displayedValues = arrayOf("AM", "PM")
-//
-//        hourPicker.minValue = 1
-//        hourPicker.maxValue = 12
-//        hourPicker.wrapSelectorWheel = true
-//
-//        minutePicker.minValue = 0
-//        minutePicker.maxValue = minuteValues.size - 1
-//        minutePicker.displayedValues = minuteValues
-//        minutePicker.wrapSelectorWheel = true
-//
-//        val dialog = BottomSheetDialog(requireContext())
-//        dialog.setContentView(dialogView)
-//
-//        dialog.setOnShowListener { dialogInterface ->
-//            (dialogInterface as? BottomSheetDialog)?.let { bottomSheetDialog ->
-//                bottomSheetDialog.behavior.addBottomSheetCallback(object :
-//                    com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback() {
-//                    override fun onStateChanged(bottomSheet: View, newState: Int) {
-//                        // 상태 변경 시
-//                    }
-//
-//                    override fun onSlide(bottomSheet: View, slideOffset: Float) {
-//                        // 배경 변경
-//                        bottomSheet.setBackgroundResource(R.drawable.calendar_background)
-//                    }
-//                })
-//            }
-//        }
-//
-//        dialogView.findViewById<Button>(R.id.btnCancel).setOnClickListener { dialog.dismiss() }
-//        dialogView.findViewById<Button>(R.id.btnOk).setOnClickListener {
-//            val isAm = ampmPicker.value == 0
-//            var hour = hourPicker.value % 12
-//            if (!isAm) hour += 12
-//            val minute = minuteValues[minutePicker.value]
-//            val timeText = String.format("%02d:%s", hour, minute)
-//            targetTextView.text = timeText
-//            dialog.dismiss()
-//        }
-//
-//        dialog.show()
-//    }
     private fun showCustomTimePicker(
         initial: String,
         onPicked: (String) -> Unit
@@ -223,25 +167,6 @@ class Friend02SuggestFragment : Fragment() {
         }
         dialog.show()
     }
-
-    /** 시간 카드 선택 강조 */
-//    private fun highlightSelectedCard() {
-//        if (isFirst) {
-//            binding.timeCard1.setBackgroundResource(R.drawable.friend_time_card_bg_selected)
-//            binding.timeCard2.setBackgroundResource(R.drawable.friend_time_card_bg_default)
-//        } else {
-//            binding.timeCard1.setBackgroundResource(R.drawable.friend_time_card_bg_default)
-//            binding.timeCard2.setBackgroundResource(R.drawable.friend_time_card_bg_selected)
-//        }
-//    }
-
-//    private fun setupTimeCardRecyclerView() {
-//        timeCardAdapter = TimeCardAdapter { selectedItem ->
-//        }
-//
-//        binding.possibleTimeRc.adapter = timeCardAdapter
-//        binding.possibleTimeRc.layoutManager = LinearLayoutManager(requireContext())
-//    }
 
     private fun setupTimeCardRecyclerView() {
         timeCardAdapter = TimeCardAdapter { position, isStart, startBound, endBound, current ->

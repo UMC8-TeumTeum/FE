@@ -41,7 +41,7 @@ class FriendRoommateFriendAddFragment : Fragment() {
         val initialSelected     = if (preselectedFromArgs.isNotEmpty()) preselectedFromArgs else preselectedFromVm
 
         // 1) 리사이클러뷰/어댑터
-        adapter = FriendAddAdapter(emptyList<MutualFriendItem>())
+        adapter = FriendAddAdapter(emptyList())
         binding.friendRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.friendRecyclerView.adapter = adapter
 
@@ -64,7 +64,6 @@ class FriendRoommateFriendAddFragment : Fragment() {
 
         viewModel.errorMessage.observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let { msg ->
-//                Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
                 Log.e(TAG, "error: $msg")
             }
         }
@@ -83,7 +82,6 @@ class FriendRoommateFriendAddFragment : Fragment() {
             parentFragmentManager.setFragmentResult("selectedFriends", result)
             parentFragmentManager.popBackStack()
         }
-
 
     }
 

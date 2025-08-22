@@ -32,10 +32,6 @@ import kotlin.getValue
 class FriendRoommateMatchingDetailFragment : Fragment() {
 
     private lateinit var binding: FragmentFriendRoommateMatchingDetailBinding
-
-    private var selectedStartTime: String? = null
-    private var selectedEndTime: String? = null
-    private var lastSelectedCardView: View? = null
     private lateinit var timeCardAdapter: TimeCardAdapter
 
     // 선택된 날짜 저장 (이전 Fragment에서 전달)

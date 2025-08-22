@@ -95,8 +95,6 @@ class Friend02RejectBottomSheetFragment : BottomSheetDialogFragment() {
 
                 //  로그 & 토스트
                 Log.d("REJECT_BOTTOM_SHEET", "responseId: $responseId, status: $status")
-//                Toast.makeText(requireContext(), "응답: 시간이 안돼요 (id: $responseId)", Toast.LENGTH_SHORT).show()
-
                 Toast.makeText(requireContext(), "삭제되었습니다", Toast.LENGTH_SHORT).show()
 
                 //  응답 처리

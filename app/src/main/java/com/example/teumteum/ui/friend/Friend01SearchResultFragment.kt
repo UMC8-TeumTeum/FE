@@ -25,8 +25,6 @@ class Friend01SearchResultFragment : Fragment() {
     private var _binding: FragmentFriend01SearchResultBinding? = null
     private val binding get() = _binding!!
 
-//    private var toast: Toast? = null
-
     private lateinit var adapter: SearchResultAdapter
     private val viewModel: FriendViewModel by activityViewModels()
 
@@ -67,15 +65,10 @@ class Friend01SearchResultFragment : Fragment() {
         // 메시지 (성공/실패) 관찰
         viewModel.successMessage.observe(viewLifecycleOwner) { msg ->
             Log.d("SEARCH_RESULT_FRAGMENT", "성공: $msg")
-//            toast?.cancel() // 이전 토스트 제거
-//            toast = Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT)
-//            toast?.show()
         }
 
         viewModel.errorMessage.observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let { msg ->
-                // Toast로 띄우거나 Log 출력
-                // Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
                 Log.e("SEARCH_RESULT_FRAGMENT", "오류: $msg")
                 applySearchResultEmptyState(true)
             }

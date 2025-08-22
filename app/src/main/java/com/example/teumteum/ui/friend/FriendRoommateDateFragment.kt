@@ -147,8 +147,6 @@ class FriendRoommateDateFragment : Fragment() {
                 .commit()
         }
 
-
-
     }
 
     private fun setupNavigationButtons() {

@@ -1,4 +1,3 @@
-// FriendFragment.kt 수정본
 package com.example.teumteum.ui.friend
 
 import android.graphics.Color
@@ -328,14 +327,12 @@ class FriendFragment : Fragment() {
 
         viewModel.successMessage.observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let { msg ->
-//                Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
                 Log.d("FriendFragment", msg.toString())
             }
         }
 
         viewModel.errorMessage.observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let { msg ->
-//                Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
                 Log.d("FriendFragment", msg.toString())
             }
         }

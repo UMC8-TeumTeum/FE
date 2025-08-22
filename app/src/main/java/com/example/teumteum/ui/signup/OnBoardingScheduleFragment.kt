@@ -176,7 +176,6 @@ class OnBoardingScheduleFragment : Fragment() {
                 }
 
                 is OnBoardingUiState.Error -> {
-//                    Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
                     if (state.code == "ONBOARDING4001") {
                         Log.d("ScheduleFragment", "ONBOARDING4001 - 강제 이동")
                         navigateToNext()

@@ -88,8 +88,6 @@ class Friend02RequestFragment : Fragment() {
 
             val bottomSheet = Friend02AcceptBottomSheetFragment.newInstance(responseId)
             bottomSheet.show(parentFragmentManager, bottomSheet.tag)
-
-//            Toast.makeText(requireContext(), "함께할래요 버튼이 눌렸습니다.", Toast.LENGTH_SHORT).show()
         }
 
         binding.btnReject.setOnClickListener {
@@ -98,8 +96,6 @@ class Friend02RequestFragment : Fragment() {
 
             val bottomSheet = Friend02RejectBottomSheetFragment.newInstance(responseId)
             bottomSheet.show(parentFragmentManager, bottomSheet.tag)
-
-//            Toast.makeText(requireContext(), "거절 버튼이 눌렸습니다.", Toast.LENGTH_SHORT).show()
         }
 
 
