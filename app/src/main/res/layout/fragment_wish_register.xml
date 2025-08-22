@@ -36,9 +36,9 @@
                 android:layout_marginEnd="8dp"
                 android:padding="0dp"
                 android:text="투두"
-                android:textColor="@color/white"
+                android:textColor="@color/text_primary"
                 android:textSize="12sp"
-                app:backgroundTint="@color/text_primary"
+                app:backgroundTint="@color/teumteum_bg"
                 app:cornerRadius="10dp" />
 
             <com.google.android.material.button.MaterialButton
@@ -47,9 +47,9 @@
                 android:layout_height="35dp"
                 android:padding="0dp"
                 android:text="위시"
-                android:textColor="@color/text_primary"
+                android:textColor="@color/white"
                 android:textSize="12sp"
-                app:backgroundTint="@color/teumteum_bg"
+                app:backgroundTint="@color/text_primary"
                 app:cornerRadius="10dp" />
         </LinearLayout>
     </LinearLayout>

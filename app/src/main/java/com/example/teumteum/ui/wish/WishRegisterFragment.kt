@@ -64,36 +64,24 @@ class WishRegisterFragment : BottomSheetDialogFragment() {
             if (isWishSelected) {
                 clearWishSheet()
 
-                binding.btnWish.setBackgroundColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.teumteum_bg
-                    )
-                )
-                binding.btnWish.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.text_primary
-                    )
-                )
+                binding.btnWish.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.teumteum_bg))
+                binding.btnWish.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
 
-                binding.btnTodo.setBackgroundColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.text_primary
-                    )
-                )
-                binding.btnTodo.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.white
-                    )
-                )
+                binding.btnTodo.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
+                binding.btnTodo.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
 
                 isWishSelected = false
-                childFragmentManager.beginTransaction()
-                    .replace(R.id.register_fragment_container, TodoRegisterFragment())
-                    .commit()
+
+                // 컨테이너 잔여 뷰 제거 + 즉시 커밋으로 겹침 방지
+                (requireView().findViewById<ViewGroup>(R.id.register_fragment_container)).removeAllViews()
+
+                val tx = childFragmentManager.beginTransaction()
+                    .setReorderingAllowed(true)
+                    .disallowAddToBackStack()
+                    .replace(R.id.register_fragment_container, TodoRegisterFragment(), "TodoRegister")
+
+                // 겹침/플리커 방지를 위해 즉시 커밋
+                tx.commitNowAllowingStateLoss()
             }
         }
 
