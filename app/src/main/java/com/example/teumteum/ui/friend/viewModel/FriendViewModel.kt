@@ -2,17 +2,16 @@ package com.example.teumteum.ui.friend.viewModel
 
 import android.util.Log
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.teumteum.data.AppUserManager
 import com.example.teumteum.data.remote.friend.model.*
 import com.example.teumteum.data.remote.friend.repository.FriendRepository
+import com.example.teumteum.data.remote.mypage.repository.MyPageRepository
 import com.example.teumteum.ui.friend.data.SelectedTime
 
 import com.example.teumteum.utils.Event
-import com.google.gson.Gson
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 
@@ -26,12 +25,11 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import javax.inject.Inject
-import kotlin.math.E
 
 @HiltViewModel
 class FriendViewModel @Inject constructor(
     private val repository: FriendRepository,
-    private val myPageRepository: com.example.teumteum.data.remote.mypage.repository.MyPageRepository
+    private val myPageRepository: MyPageRepository
 ) : ViewModel() {
 
     private var searchJob: Job? = null

@@ -38,7 +38,6 @@ class Friend02PossibleTimeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         //  전달받은 데이터 받기
-//        teumList = arguments?.getParcelableArrayList("teumList") ?: emptyList()
         val selected = viewModel.selectedTeum.value
         if (selected == null) {
             // 방어: 선택값이 없으면 종료
@@ -93,8 +92,6 @@ class Friend02PossibleTimeFragment : Fragment() {
                 .replace(R.id.main_frm, fragment)
                 .addToBackStack(null)
                 .commit()
-
-//            Toast.makeText(requireContext(), "함께할래요 화면으로 이동합니다.", Toast.LENGTH_SHORT).show()
         }
     }
 

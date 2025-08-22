@@ -107,16 +107,12 @@ class OnBoardingNicknameFragment : Fragment() {
                 is OnBoardingUiState.Success -> navigateToNext()
                 is OnBoardingUiState.Error -> {
                     binding.nextBtn.isEnabled = true
-                    val message = state.message
                     val code = state.code
                     if (code.contains("ONBOARDING4091")) {
                         binding.nicknameErrorTv.visibility = View.VISIBLE
                     } else if (code.contains("ONBOARDING4001")) {
                         Log.d("NicknameFragment", "ONBOARDING4001 - 강제 이동")
                         navigateToNext()
-                    } else {
-//                        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-
                     }
                 }
                 else -> Unit

@@ -121,13 +121,6 @@ class OnBoardingSleepPatternFragment : Fragment() {
         }
     }
 
-    private fun getSleepPatternRequest(): SleepPatternRequest {
-        return SleepPatternRequest(
-            sleepTime = selectedStartTime.toString(),
-            wakeTime = selectedEndTime.toString()
-        )
-    }
-
     private fun navigateToNext() {
         // SignUpActivity의 메서드를 통해 다음 단계로 이동
         (activity as? SignUpActivity)?.proceedToNextOnboardingStep(this)

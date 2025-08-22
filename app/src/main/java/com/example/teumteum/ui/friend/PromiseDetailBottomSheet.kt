@@ -82,7 +82,6 @@ class PromiseDetailBottomSheet(
         //  성공 메시지
         viewModel.successMessage.observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let { message ->
-//                Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
                 Log.d("PROMISE_DETAIL_BOTTOM_SHEET", message.toString())
                 dismiss()
             }
@@ -91,7 +90,6 @@ class PromiseDetailBottomSheet(
         // 에러 메시지
         viewModel.errorMessage.observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let { err ->
-//                Toast.makeText(requireContext(), err, Toast.LENGTH_SHORT).show()
                 Log.e("PROMISE_DETAIL_BOTTOM_SHEET", err.toString())
             }
         }

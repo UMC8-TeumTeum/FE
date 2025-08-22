@@ -5,7 +5,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.teumteum.data.remote.friend.model.PublicTodoResult
 import com.example.teumteum.data.remote.mypage.repository.MyPageRepository
+import com.example.teumteum.data.remote.todo.model.TodoListResult
+import com.example.teumteum.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -44,6 +47,24 @@ class MyHomeViewModel @Inject constructor(
                 .onFailure {
                     _error.value = "내 정보 조회 실패: ${it.message}"
                     Log.d("MyInfo", _error.value.toString() )
+                }
+        }
+    }
+
+    // 최근 투두 조회
+    private val _recentTodos = MutableLiveData<List<TodoListResult>>()
+    val recentTodos: LiveData<List<TodoListResult>> get() = _recentTodos
+
+    fun fetchRecentTodos(date: String) {
+        viewModelScope.launch {
+            repository.getRecentTodos(date)
+                .onSuccess { list ->
+                    // 0개면 UI에서 카드 컨테이너 숨기도록 empty 리스트 그대로 전달
+                    _recentTodos.value = list
+                }
+                .onFailure {
+                    _recentTodos.value = emptyList()
+                    _error.value = "최근 투두리스트 조회 실패: ${it.message}"
                 }
         }
     }

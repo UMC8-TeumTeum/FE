@@ -196,7 +196,6 @@ class FriendProfileFollowingFragment : Fragment() {
         // 에러 메시지
         viewModel.errorMessage.observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let { msg ->
-//                Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
                 Log.d("FRIEND_PROFILE_FOLLOWING_FRAGMENT", msg.toString())
             }
         }

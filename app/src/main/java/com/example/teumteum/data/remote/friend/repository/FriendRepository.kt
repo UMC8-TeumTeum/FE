@@ -45,14 +45,6 @@ class FriendRepository @Inject constructor(
 
     // 4) 틈 요청 보내기
     suspend fun sendTeumRequest(request: TeumRequest): Result<Int> = runCatching {
-//        val response = api.sendTeumRequest(request)
-//        val body = response.body()
-//        if (response.isSuccessful && body?.isSuccess == true) {
-//            Log.d("SEND_TEUM_REQUEST", body.toString())
-//            body.result ?: throw Exception("teumId 없음")
-//        } else {
-//            throw Exception("${body?.code ?: "HTTP ${response.code()}"} - ${body?.message ?: response.message()}")
-//        }
 
         val response = api.sendTeumRequest(request)
         Log.d("SendTeumRequest", "response = ${response.body()}")

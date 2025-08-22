@@ -189,7 +189,6 @@ class FriendRoommateFriendFragment : Fragment() {
             }
         })
 
-        // TODO: 이곳에 추가 로직 구현
     }
 
     override fun onDestroyView() {

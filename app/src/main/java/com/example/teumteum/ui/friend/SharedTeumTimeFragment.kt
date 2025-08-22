@@ -56,7 +56,6 @@ class SharedTeumTimeFragment : Fragment() {
         // 에러
         viewModel.errorMessage.observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let { msg ->
-//                Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
                 Log.e("SHARED_TEUM_TIME_FRAGMENT", msg.toString())
             }
         }

@@ -177,7 +177,6 @@ class AgreementFragment : Fragment() {
                         Log.d("AgreementFragment", "ONBOARDING4001 - 강제 이동")
                         navigateToNext()
                     } else {
-//                        Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
                         binding.nextBtn.isEnabled = true
                     }
                 }

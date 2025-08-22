@@ -24,7 +24,6 @@ class FriendProfileFollowFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: FriendViewModel by viewModels()
-    private var navigatedToFollowing = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -70,7 +69,7 @@ class FriendProfileFollowFragment : Fragment() {
         viewModel.fetchRecentPublicTodos(userId)
 
         // 옵저버 등록
-        observeViewModel(userId)
+        observeViewModel()
 
         // 뒤로가기 버튼
         binding.backBtn.setOnClickListener {
@@ -110,7 +109,7 @@ class FriendProfileFollowFragment : Fragment() {
         }
     }
 
-    private fun observeViewModel(userId: Int) {
+    private fun observeViewModel() {
         // 프로필 LiveData
         viewModel.friendProfile.observe(viewLifecycleOwner) { result ->
             binding.profileNicknameTv.text = result.name
