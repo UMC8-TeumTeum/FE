@@ -11,6 +11,8 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -66,6 +68,29 @@ class WishEditFragment : BottomSheetDialogFragment() {
         wishId = arguments?.getLong("wish_id") ?: -1L
         if (wishId != -1L) {
             viewModel.getWish(wishId)
+        }
+
+        // 원래 스크롤뷰 패딩 저장
+        val originalBottomPadding = binding.editScroll.paddingBottom
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
+            val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+
+            // 버튼 실제 높이
+            val btnH = binding.wishBottomBar.height
+
+            // 스크롤 영역: 키보드 + 버튼 높이만큼 바닥 패딩
+            binding.editScroll.setPadding(
+                binding.editScroll.paddingLeft,
+                binding.editScroll.paddingTop,
+                binding.editScroll.paddingRight,
+                if (imeVisible) originalBottomPadding + btnH else originalBottomPadding
+            )
+
+            // 키보드 올라왔을 때 보이는 흰색 영역 제거
+            binding.wishBottomBar.visibility = if (imeVisible) View.GONE else View.VISIBLE
+
+            insets
         }
 
         binding.btnWishSave.setOnClickListener {
