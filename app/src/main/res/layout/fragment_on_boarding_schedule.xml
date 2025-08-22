@@ -15,7 +15,7 @@
         android:text="요일마다 반복되는\n일정이 있나요?"
         style="@style/notoSansBold"
         android:textSize="28sp"
-        android:textColor="@color/black"
+        android:textColor="@color/text_primary"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginStart="20dp"
@@ -30,7 +30,7 @@
         android:text="없으시면 다음으로 넘어가주세요"
         style="@style/Header2"
         android:textSize="14sp"
-        android:textColor="@color/black"
+        android:textColor="@color/text_primary"
         app:layout_constraintTop_toBottomOf="@+id/title_tv"
         app:layout_constraintStart_toStartOf="@+id/title_tv"
         android:layout_marginTop="10dp"
@@ -58,7 +58,7 @@
             android:layout_height="20dp"
             android:gravity="center"
             android:text="일"
-            android:textColor="@color/black"
+            android:textColor="@color/text_primary"
             android:includeFontPadding="false"/>
 
         <TextView
@@ -69,7 +69,7 @@
             android:gravity="center"
             android:layout_marginStart="30dp"
             android:text="월"
-            android:textColor="@color/black"
+            android:textColor="@color/text_primary"
             android:includeFontPadding="false"/>
 
         <TextView
@@ -80,7 +80,7 @@
             android:gravity="center"
             android:layout_marginStart="30dp"
             android:text="화"
-            android:textColor="@color/black"
+            android:textColor="@color/text_primary"
             android:includeFontPadding="false"/>
 
         <TextView
@@ -91,7 +91,7 @@
             android:gravity="center"
             android:layout_marginStart="30dp"
             android:text="수"
-            android:textColor="@color/black"
+            android:textColor="@color/text_primary"
             android:includeFontPadding="false"/>
 
         <TextView
@@ -102,7 +102,7 @@
             android:gravity="center"
             android:layout_marginStart="30dp"
             android:text="목"
-            android:textColor="@color/black"
+            android:textColor="@color/text_primary"
             android:includeFontPadding="false"/>
 
         <TextView
@@ -113,7 +113,7 @@
             android:gravity="center"
             android:layout_marginStart="30dp"
             android:text="금"
-            android:textColor="@color/black"
+            android:textColor="@color/text_primary"
             android:includeFontPadding="false"/>
 
         <TextView
@@ -124,7 +124,7 @@
             android:gravity="center"
             android:layout_marginStart="30dp"
             android:text="토"
-            android:textColor="@color/black"
+            android:textColor="@color/text_primary"
             android:includeFontPadding="false"/>
     </LinearLayout>
 
@@ -162,7 +162,7 @@
         android:src="@drawable/ic_fab_add_purple_sv"
         android:elevation="20dp"
         android:translationZ="20dp"
-        android:backgroundTint="@color/black"
+        android:backgroundTint="@color/text_primary"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:layout_marginBottom="29dp"
         />
@@ -174,7 +174,7 @@
         android:text="다음으로"
         style="@style/Md16"
         app:cornerRadius="12dp"
-        android:backgroundTint="@color/black"
+        android:backgroundTint="@color/text_primary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
