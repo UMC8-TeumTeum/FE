@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:background="@android:color/white">
+    android:background="@color/white">
 
     <!-- 상단 패널 -->
     <androidx.constraintlayout.widget.ConstraintLayout
