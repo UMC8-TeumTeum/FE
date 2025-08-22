@@ -31,6 +31,7 @@ class FriendMatchingPreviewDialog : DialogFragment() {
     private var currentIndex = 0
 
     private var imageList = listOf(
+        R.drawable.friend_teum_logo,
         R.drawable.teumi_teuma_eat,
         R.drawable.teumi_teuma_ball,
         R.drawable.teumi_teuma_down,
