@@ -80,7 +80,7 @@ fun myMethod() {
 
 ```kotlin
 const val MAX_COUNT = 8
-val USER_NAME_FIELD = "UserName
+val USER_NAME_FIELD = "UserName"
 ```
 
 ### 소스코드 구성(Source code organization)
