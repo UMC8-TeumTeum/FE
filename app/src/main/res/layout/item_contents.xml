@@ -51,7 +51,6 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="200dp"
             android:layout_height="100dp"
-            android:clipToOutline="true"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/profile_iv"
             android:layout_marginTop="7dp"
@@ -64,6 +63,7 @@
                 android:scaleType="centerCrop"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
+                android:clipToOutline="true"
                 android:background="@drawable/rounded_contents_image"
                 />
 
