@@ -9,6 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -64,37 +66,48 @@ class WishRegisterFragment : BottomSheetDialogFragment() {
             if (isWishSelected) {
                 clearWishSheet()
 
-                binding.btnWish.setBackgroundColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.teumteum_bg
-                    )
-                )
-                binding.btnWish.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.text_primary
-                    )
-                )
+                binding.btnWish.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.teumteum_bg))
+                binding.btnWish.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
 
-                binding.btnTodo.setBackgroundColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.text_primary
-                    )
-                )
-                binding.btnTodo.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.white
-                    )
-                )
+                binding.btnTodo.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
+                binding.btnTodo.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
 
                 isWishSelected = false
-                childFragmentManager.beginTransaction()
-                    .replace(R.id.register_fragment_container, TodoRegisterFragment())
-                    .commit()
+
+                // 컨테이너 잔여 뷰 제거 + 즉시 커밋으로 겹침 방지
+                (requireView().findViewById<ViewGroup>(R.id.register_fragment_container)).removeAllViews()
+
+                val tx = childFragmentManager.beginTransaction()
+                    .setReorderingAllowed(true)
+                    .disallowAddToBackStack()
+                    .replace(R.id.register_fragment_container, TodoRegisterFragment(), "TodoRegister")
+
+                // 겹침/플리커 방지를 위해 즉시 커밋
+                tx.commitNowAllowingStateLoss()
             }
+        }
+
+        // 원래 스크롤뷰 패딩 저장
+        val originalBottomPadding = binding.registerScroll.paddingBottom
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
+            val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+
+            // 버튼 실제 높이
+            val btnH = binding.btnWishRegister.height
+
+            // 1) 스크롤 영역: 키보드 + 버튼 높이만큼 바닥 패딩
+            binding.registerScroll.setPadding(
+                binding.registerScroll.paddingLeft,
+                binding.registerScroll.paddingTop,
+                binding.registerScroll.paddingRight,
+                if (imeVisible) originalBottomPadding + btnH else originalBottomPadding
+            )
+
+            // 키보드 올라왔을 때 보이는 흰색 영역 제거
+            binding.btnWishRegister.visibility = if (imeVisible) View.GONE else View.VISIBLE
+
+            insets
         }
 
         binding.btnWishRegister.setOnClickListener {

@@ -1,5 +1,6 @@
 package com.example.teumteum.ui.feed
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
@@ -12,6 +13,7 @@ import com.example.teumteum.ui.feed.data.Contents
 import com.example.teumteum.ui.feed.data.Feed
 import com.example.teumteum.databinding.ItemContentsCardBinding
 import com.example.teumteum.databinding.ItemFeedBinding
+import kotlin.math.roundToInt
 
 sealed class FeedItem {
     data class FeedData(val feed: Feed) : FeedItem()
@@ -66,6 +68,21 @@ class FeedContentAdapter(
         }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        // 아이템별 좌우 마진 적용
+        val lp = holder.itemView.layoutParams as RecyclerView.LayoutParams
+        val side20 = holder.itemView.context.dp(20)
+        when (getItemViewType(position)) {
+            VIEW_TYPE_CONTENTS -> {
+                lp.leftMargin = 0
+                lp.rightMargin = 0
+            }
+            else -> { // 일반 피드: 좌우 20dp 여백
+                lp.leftMargin = side20
+                lp.rightMargin = side20
+            }
+        }
+        holder.itemView.layoutParams = lp
+
         when (val item = getItem(position)) {
             is FeedItem.FeedData     -> (holder as FeedViewHolder).bind(item.feed)
             is FeedItem.ContentsCard -> (holder as ContentsCardViewHolder).bind(item.contentsList)
@@ -117,3 +134,6 @@ class FeedContentAdapter(
         }
     }
 }
+
+private fun Context.dp(value: Int): Int =
+    (value * resources.displayMetrics.density).roundToInt()

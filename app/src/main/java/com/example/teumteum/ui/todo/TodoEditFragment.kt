@@ -20,6 +20,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -146,6 +148,29 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
 
         resetAlarmUI()
         setupPickers()
+
+        // 원래 스크롤뷰 패딩 저장
+        val originalBottomPadding = binding.editScroll.paddingBottom
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
+            val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+
+            // 버튼 실제 높이
+            val btnH = binding.todoBottomBar.height
+
+            // 스크롤 영역: 키보드 + 버튼 높이만큼 바닥 패딩
+            binding.editScroll.setPadding(
+                binding.editScroll.paddingLeft,
+                binding.editScroll.paddingTop,
+                binding.editScroll.paddingRight,
+                if (imeVisible) originalBottomPadding + btnH else originalBottomPadding
+            )
+
+            // 키보드 올라왔을 때 보이는 흰색 영역 제거
+            binding.todoBottomBar.visibility = if (imeVisible) View.GONE else View.VISIBLE
+
+            insets
+        }
 
         binding.startTimeTv.setOnClickListener {
             if (isCalendarVisible) {
