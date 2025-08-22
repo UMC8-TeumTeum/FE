@@ -28,7 +28,7 @@
         android:includeFontPadding="false"
         android:text="함께 할 틈을 선택해주세요"
         android:textColor="#0F0F0F"
-        android:textSize="20dp"
+        android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnBack" />
 
@@ -42,7 +42,7 @@
         android:includeFontPadding="false"
         android:text="하나만 선택 가능해요"
         android:textColor="#0F0F0F"
-        android:textSize="14dp"
+        android:textSize="14sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
