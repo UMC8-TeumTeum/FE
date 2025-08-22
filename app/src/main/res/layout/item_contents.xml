@@ -40,6 +40,7 @@
         android:layout_height="wrap_content"
         android:text="  •  UX디자이너"
         android:fontFamily="@font/noto_sans_kr_medium"
+        android:textSize="13sp"
         android:textColor="@color/teumteum_deactive"
         android:includeFontPadding="false"
         app:layout_constraintTop_toTopOf="@id/nickname_tv"
