@@ -1,5 +1,4 @@
 # UMC 8th 틈틈(teumteum) Frontend
-" Micro-break × 콘텐츠 × 사회적 연결
 하루의 빈틈을 가치 있는 시간으로 채우는 플랫폼
 <img width="2880" height="1620" alt="image" src="https://github.com/user-attachments/assets/871115d8-c1a0-4107-ad39-5f76538bdd56" />
 *틈틈*은 매번 새로운 계획을 고민하고 실행하는 것이 번거롭게 느껴져 무의미하게 시간을 흘려보낸 사람들을 위한 서비스입니다.
