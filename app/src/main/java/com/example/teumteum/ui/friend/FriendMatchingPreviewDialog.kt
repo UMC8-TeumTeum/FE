@@ -9,6 +9,7 @@ import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import com.bumptech.glide.Glide
 import com.example.teumteum.R
 import com.example.teumteum.databinding.DialogFriendMatchingPreviewBinding
@@ -84,6 +85,9 @@ class FriendMatchingPreviewDialog : DialogFragment() {
         binding.btnSend.setOnClickListener {
 
             val request = viewModel.buildTeumRequest()
+
+            setLoading(true)
+
             Log.d("SEND_TEUM_REQUEST", request.toString())
             if (request == null) {
                 return@setOnClickListener
@@ -95,15 +99,20 @@ class FriendMatchingPreviewDialog : DialogFragment() {
                 onSuccess = {
                     viewModel.setTeumRequestReceiverUserIds(emptyList())
 
-                    parentFragmentManager.beginTransaction()
-                        .replace(R.id.main_frm, FriendSendFragment())
-                        .addToBackStack(null)
-                        .commit()
-
-                    dismiss()
+                    if (isAdded &&
+                        this@FriendMatchingPreviewDialog.view != null &&
+                        lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)
+                    ) {
+                        requireActivity().supportFragmentManager.beginTransaction()
+                            .replace(R.id.main_frm, FriendSendFragment())
+                            .addToBackStack(null)
+                            .commit()
+                    }
+                    dismissAllowingStateLoss()
                 },
                 onError = { msg ->
-//                    Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+                    setLoading(false)
+                    Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
                     Log.d("FRIEND_MATCHING_PREVIEW_DIALOG", msg.toString())
                 })
         }
@@ -156,6 +165,18 @@ class FriendMatchingPreviewDialog : DialogFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun setLoading(loading: Boolean) {
+
+        // 버튼 막기
+        binding.btnSend.isEnabled = !loading
+        binding.btnPrev.isEnabled = !loading
+        binding.btnNext.isEnabled = !loading
+
+        // 다이얼로그 취소/바깥터치 방지
+        isCancelable = !loading
+        dialog?.setCanceledOnTouchOutside(!loading)
     }
 
     data class Suggestion(val title: String, val detail: String)
