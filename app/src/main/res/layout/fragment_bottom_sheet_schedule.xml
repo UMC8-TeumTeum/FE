@@ -66,7 +66,7 @@
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
                         android:text="매주 수요일"
-                        android:textColor="@android:color/black"
+                        android:textColor="@color/text_primary"
                         android:textSize="15sp" />
 
                     <TextView
@@ -76,7 +76,7 @@
                         android:clickable="true"
                         android:focusable="true"
                         android:text="오전 9:00"
-                        android:textColor="@android:color/black"
+                        android:textColor="@color/text_primary"
                         android:textSize="14sp" />
                 </LinearLayout>
 
@@ -141,7 +141,7 @@
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
                         android:text="매주 수요일"
-                        android:textColor="@android:color/black"
+                        android:textColor="@color/text_primary"
                         android:textSize="15sp" />
 
                     <TextView
@@ -149,7 +149,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="오후 12:00"
-                        android:textColor="@android:color/black"
+                        android:textColor="@color/text_primary"
                         android:textSize="14sp" />
                 </LinearLayout>
 
@@ -224,7 +224,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="상세 내용 입력"
-                    android:textColorHint="@color/black"
+                    android:textColorHint="@color/text_primary"
                     android:minHeight="28dp"
                     android:textSize="15sp"
                     android:background="@android:color/transparent"
@@ -242,7 +242,7 @@
                 style="@style/Md16"
                 android:textColor="@color/white"
                 app:cornerRadius="8dp"
-                android:backgroundTint="@color/black"
+                android:backgroundTint="@color/text_primary"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
