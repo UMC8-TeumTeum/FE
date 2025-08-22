@@ -66,7 +66,7 @@
 │           ├─ menu/                # 메뉴 XML
 │           ├─ values/              # colors.xml, strings.xml, styles.xml 등
 └─ README.md                        # 프로젝트 문서(구조/빌드/실행 방법)
-
+```
 
 ## 💻 Code Convention
 
