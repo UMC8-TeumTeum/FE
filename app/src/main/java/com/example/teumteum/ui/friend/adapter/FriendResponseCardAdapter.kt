@@ -12,6 +12,14 @@ class FriendResponseCardAdapter(
     private val responseList: List<TeumReceivedItem>
 ) : RecyclerView.Adapter<FriendResponseCardAdapter.ResponseViewHolder>() {
 
+    private var imageList = listOf(
+        R.drawable.friend_teum_logo,
+        R.drawable.teumi_teuma_eat,
+        R.drawable.teumi_teuma_ball,
+        R.drawable.teumi_teuma_down,
+        R.drawable.teumi_teuma_juice
+    )
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -56,6 +64,8 @@ class FriendResponseCardAdapter(
                     .placeholder(R.drawable.gray_teum)
                     .circleCrop()
                     .into(imgProfile)
+
+                binding.imgTeum.setImageResource(imageList[item.graphicId])
             }
         }
 

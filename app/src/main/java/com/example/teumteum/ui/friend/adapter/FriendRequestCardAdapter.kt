@@ -11,6 +11,14 @@ import com.example.teumteum.databinding.Friend02ItemTeumCardBinding
 class FriendRequestCardAdapter(private val teumList: List<TeumReceivedItem>) :
     RecyclerView.Adapter<FriendRequestCardAdapter.TeumViewHolder>() {
 
+    private var imageList = listOf(
+        R.drawable.friend_teum_logo,
+        R.drawable.teumi_teuma_eat,
+        R.drawable.teumi_teuma_ball,
+        R.drawable.teumi_teuma_down,
+        R.drawable.teumi_teuma_juice
+    )
+
     inner class TeumViewHolder(private val binding: Friend02ItemTeumCardBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -39,6 +47,8 @@ class FriendRequestCardAdapter(private val teumList: List<TeumReceivedItem>) :
                 .error(R.drawable.gray_teum)
                 .fallback(R.drawable.gray_teum)
                 .into(binding.imgProfile)
+
+            binding.imgTeum.setImageResource(imageList[item.graphicId])
         }
     }
 
