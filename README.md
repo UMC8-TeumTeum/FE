@@ -29,7 +29,6 @@
 ├─ app/
 │  ├─ build.gradle                  # 앱 모듈 빌드 스크립트
 │  └─ src/
-│     ├─ androidTest/               # UI/인스트루먼트 테스트
 │     └─ main/                      # 실제 앱 코드
 │        ├─ AndroidManifest.xml     # manifest
 │        ├─ java/
@@ -44,23 +43,11 @@
 │        │     │     ├─ service/    # 네트워크 호출 래핑(Service)
 │        │     │     └─ repository/ # Repository (local/remote 조합)
 │        │     │
-│        │     ├─ receiver/         # 브로드캐스트 리시버
-│        │     │  └─ ScreenOnReceiver.kt
-│        │     │
 │        │     ├─ ui/               # 프레젠테이션 계층
 │        │     │  ├─ activity/      # 채움 활동
 │        │     │  ├─ alarm/         # 알림
 │        │     │  ├─ calendar/      # 캘린더
-│        │     │  ├─ clock/         # 시계
-│        │     │  ├─ feed/          # 피드
-│        │     │  ├─ friend/        # 친구
-│        │     │  ├─ main/          # 메인(홈)
-│        │     │  ├─ myhome/        # 마이페이지
-│        │     │  ├─ signin/        # 로그인
-│        │     │  ├─ signup/        # 회원가입
-│        │     │  ├─ splash/        # 스플래시
-│        │     │  ├─ todo/          # 투두
-│        │     │  └─ wish/          # 위시
+│        │     │  └─ ...
 │        │     │
 │        │     └─ utils/                   # 공통 유틸(비즈니스 무관한 순수 함수/헬퍼)
 │        │        ├─ ApiResponse.kt        # 공통 응답 처리
@@ -77,15 +64,7 @@
 │           │  ├─ item_todolist.xml
 │           │  └─ ... 
 │           ├─ menu/                # 메뉴 XML
-│           ├─ mipmap-anydpi-v26/   # 아이콘
-│           ├─ mipmap-hdpi/         # 아이콘
-│           ├─ mipmap-mdpi/
-│           ├─ mipmap-xhdpi/
-│           ├─ mipmap-xxhdpi/
-│           ├─ mipmap-xxxhdpi/
 │           ├─ values/              # colors.xml, strings.xml, styles.xml 등
-│           ├─ values-night/        # 다크모드 테마
-│           └─ xml/                 # 네비그래프, provider_paths 등
 └─ README.md                        # 프로젝트 문서(구조/빌드/실행 방법)
 
 
