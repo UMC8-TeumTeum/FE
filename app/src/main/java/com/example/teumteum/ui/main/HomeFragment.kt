@@ -198,6 +198,16 @@ class HomeFragment : Fragment(), IDateClickListener {
             }
         }
 
+        // 주 스크롤 리스너 (헤더 갱신용)
+        weekCalendar.weekScrollListener = { week ->
+            weekCursorDate = week.days.first().date
+            updateHeaderForCurrentMode()
+
+            // 주 한 줄만 갱신
+            weekCalendar.notifyWeekChanged(week.days.first().date)
+
+        }
+
         binding.btnHomeWeeklyCalendar.setOnClickListener {
             if (!isWeeklyMode) switchToWeek()
         }
@@ -223,11 +233,7 @@ class HomeFragment : Fragment(), IDateClickListener {
                 tv.background = null
 
                 // 회색 처리 기준: 주/월 모드에 따라 다르게
-                val isInactive = if (isWeeklyMode) {
-                    isInactiveWeekly(day.date)
-                } else {
-                    day.position != DayPosition.MonthDate
-                }
+                val isInactive = isInactiveWeekly(day.date)
 
                 // 회색 텍스트 적용
                 tv.setTextColor(
@@ -289,9 +295,7 @@ class HomeFragment : Fragment(), IDateClickListener {
                 tv.typeface = Typeface.DEFAULT
                 tv.background = null
 
-                // 주간: 기준 주의 '표시 기준 월'과 다른 날짜는 회색
-                val baseYm = headerMonthOfDisplayedWeek()
-                val isInactive = YearMonth.from(day.date) != baseYm
+                val isInactive = isInactiveWeekly(day.date)
                 tv.setTextColor(
                     ContextCompat.getColor(
                         requireContext(),
