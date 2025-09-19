@@ -3,8 +3,8 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    id("org.jetbrains.kotlin.kapt")
-    id("dagger.hilt.android.plugin")
+    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.ksp)
     id("kotlin-parcelize")
     id("com.google.gms.google-services")
 }
@@ -58,13 +58,6 @@ android {
         jvmTarget = "11"
         freeCompilerArgs += listOf("-Xjvm-default=all", "-Xemit-jvm-type-annotations")
     }
-    kapt {
-        arguments {
-            arg("room.schemaLocation", "$projectDir/schemas")
-            arg("room.incremental", "true")
-            arg("room.expandProjection", "true")
-        }
-    }
 }
 
 dependencies {
@@ -75,9 +68,9 @@ dependencies {
     // 프로필
     implementation ("com.google.android.flexbox:flexbox:3.0.0")
 
-    // profileImageUrl
+    // glide
     implementation ("com.github.bumptech.glide:glide:4.15.1")
-    kapt ("com.github.bumptech.glide:compiler:4.15.1")
+    ksp("com.github.bumptech.glide:ksp:4.15.1")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -88,21 +81,19 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
+    // Hilt
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+
     //bottom nav
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
     implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
-    implementation("com.google.android.material:material:1.11.0")
 
     //grid
     implementation("androidx.gridlayout:gridlayout:1.0.0")
 
     //Material Component
     implementation("com.google.android.material:material:1.12.0")
-
-    //roomdb
-    implementation ("androidx.room:room-ktx:2.5.2")
-    implementation ("androidx.room:room-runtime:2.5.2")
-    kapt ("androidx.room:room-compiler:2.5.2")
 
     //lifecycleScope
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
@@ -125,10 +116,6 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.9.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.0")
 
-    // Hilt
-    implementation("com.google.dagger:hilt-android:2.51")
-    kapt("com.google.dagger:hilt-android-compiler:2.51")
-
     //kakao
     implementation("com.kakao.sdk:v2-user:2.19.0")
 
@@ -143,5 +130,5 @@ dependencies {
     implementation("com.google.firebase:firebase-messaging")
 
     // calendarview
-    implementation("com.github.kizitonwose:CalendarView:1.0.4")
+    implementation("com.kizitonwose.calendar:view:2.7.0")
 }

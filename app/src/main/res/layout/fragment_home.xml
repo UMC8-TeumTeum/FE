@@ -261,21 +261,29 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/calendar_mode_buttons"/>
 
-                    <com.kizitonwose.calendarview.CalendarView
+                    <com.kizitonwose.calendar.view.CalendarView
                         android:id="@+id/home_calender_view"
-                        android:layout_marginTop="5dp"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        app:cv_orientation="horizontal"
-                        app:cv_scrollMode="paged"
-                        app:cv_maxRowCount="6"
-                        app:cv_hasBoundaries="true"
-                        app:cv_inDateStyle="allMonths"
-                        app:cv_outDateStyle="endOfRow"
+                        android:layout_marginTop="5dp"
+                        android:visibility="gone"
                         app:cv_dayViewResource="@layout/calendar_day_layout"
+                        app:cv_orientation="horizontal"
+                        app:cv_outDateStyle="endOfRow"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/calendar_weekdays_row"/>
+                        app:layout_constraintTop_toBottomOf="@id/calendar_weekdays_row" />
+
+                    <com.kizitonwose.calendar.view.WeekCalendarView
+                        android:id="@+id/home_week_calender_view"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        app:cv_dayViewResource="@layout/calendar_day_layout"
+                        app:cv_orientation="horizontal"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/calendar_weekdays_row" />
 
                     <ImageView
                         android:id="@+id/horizon_iv"
