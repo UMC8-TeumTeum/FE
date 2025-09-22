@@ -176,7 +176,7 @@ class HomeFragment : Fragment(), IDateClickListener {
         // 해당 라이브러리는 캘린더 범위를 무제한으로 설정할 수 없어 일단은 +-50년으로 설정...
         val currentMonth = YearMonth.now()
         val startMonth = currentMonth.minusYears(50) // 50년 전
-        val endMonth   = currentMonth.plusYears(50)  // 50년 후
+        val endMonth = currentMonth.plusYears(50)  // 50년 후
         val firstDayOfWeek = DayOfWeek.SUNDAY
 
         // 월 달력: 월 범위로 설정
@@ -194,7 +194,7 @@ class HomeFragment : Fragment(), IDateClickListener {
         monthCalendar.monthScrollListener = { month ->
             visibleMonth = month.yearMonth
             if (!isWeeklyMode) {
-                binding.homeSelectedDateTv.text = visibleMonth.format(headerFormatter)
+                updateHeaderForCurrentMode()
             }
         }
 
@@ -204,8 +204,7 @@ class HomeFragment : Fragment(), IDateClickListener {
             updateHeaderForCurrentMode()
 
             // 주 한 줄만 갱신
-            weekCalendar.notifyWeekChanged(week.days.first().date)
-
+            weekCalendar.notifyWeekChanged(weekCursorDate)
         }
 
         binding.btnHomeWeeklyCalendar.setOnClickListener {
@@ -232,14 +231,16 @@ class HomeFragment : Fragment(), IDateClickListener {
                 tv.typeface = Typeface.DEFAULT
                 tv.background = null
 
-                // 회색 처리 기준: 주/월 모드에 따라 다르게
-                val isInactive = isInactiveWeekly(day.date)
+                // 이번 달 셀만 활성화, out-date는 비활성화/회색
+                val isThisMonth = day.position == DayPosition.MonthDate
+                container.view.isEnabled = isThisMonth
+                container.view.isClickable = isThisMonth
 
                 // 회색 텍스트 적용
                 tv.setTextColor(
                     ContextCompat.getColor(
                         requireContext(),
-                        if (isInactive) R.color.teumteum_deactive else R.color.text_primary
+                        if (isThisMonth) R.color.text_primary else R.color.teumteum_deactive
                     )
                 )
 
@@ -258,7 +259,7 @@ class HomeFragment : Fragment(), IDateClickListener {
 
                 // 클릭으로 선택 처리
                 container.view.setOnClickListener {
-                    if (day.date == selectedDate && day.position == DayPosition.MonthDate) return@setOnClickListener
+                    if (!isThisMonth) return@setOnClickListener  // 전환/선택 방지
 
                     val old = selectedDate
                     selectedDate = day.date
@@ -268,11 +269,6 @@ class HomeFragment : Fragment(), IDateClickListener {
                     monthCalendar.notifyDateChanged(selectedDate)
                     weekCalendar.notifyDateChanged(old)
                     weekCalendar.notifyDateChanged(selectedDate)
-
-                    if (day.position != DayPosition.MonthDate) {
-                        visibleMonth = YearMonth.from(day.date)
-                        monthCalendar.scrollToMonth(visibleMonth)
-                    }
 
                     // 주간 뷰도 해당 날짜 주로 맞춰두기
                     weekCursorDate = selectedDate
@@ -413,6 +409,11 @@ class HomeFragment : Fragment(), IDateClickListener {
         bottomNav?.visibility = View.VISIBLE
     }
 
+    private fun weekContains(target: LocalDate, weekStart: LocalDate): Boolean {
+        val weekEnd = weekStart.plusDays(6)
+        return !target.isBefore(weekStart) && !target.isAfter(weekEnd)
+    }
+
     // 주별 날짜 헤더
     private fun headerMonthOfDisplayedWeek(): YearMonth {
         val weekStart = startOfWeekSunday(weekCursorDate)
@@ -420,14 +421,12 @@ class HomeFragment : Fragment(), IDateClickListener {
 
         val startYm = YearMonth.from(weekStart)
         val endYm = YearMonth.from(weekEnd)
-        val todayYm = YearMonth.from(today)
-        val selectedYm = YearMonth.from(selectedDate)
 
-        return when {
-            startYm == endYm -> startYm // 한 달로만 구성된 주 → 그 달
-            (startYm == todayYm || endYm == todayYm) -> selectedYm // 두 달에 걸친 주에서 ‘오늘의 달’이 포함 → 선택한 날짜의 달
-            else -> endYm // 그 외 두 달에 걸친 주 → 토요일 달(주 마지막 날의 달)
-        }
+        // 주 안에 '오늘'이 있으면 오늘의 달
+        if (weekContains(today, weekStart)) return YearMonth.from(today)
+
+        // 그 외에는 토요일 달
+        return if (startYm == endYm) startYm else endYm
     }
 
     private fun startOfWeekSunday(d: LocalDate): LocalDate {
