@@ -1,22 +1,35 @@
 package com.example.teumteum.ui.friend
 
+import android.graphics.Typeface
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentFriendTodoListBinding
-import com.example.teumteum.ui.calendar.FriendMonthlyCalendarFragment
-import com.example.teumteum.ui.calendar.IDateClickListener
 import com.example.teumteum.ui.friend.adapter.PublicTodoAdapter
 import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.example.teumteum.ui.main.MainActivity
-import com.example.teumteum.utils.getSavedDateOrToday
+import com.kizitonwose.calendar.core.CalendarDay
+import com.kizitonwose.calendar.core.DayPosition
+import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
+import com.kizitonwose.calendar.view.CalendarView
+import com.kizitonwose.calendar.view.MonthDayBinder
+import com.kizitonwose.calendar.view.ViewContainer
 import dagger.hilt.android.AndroidEntryPoint
+import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -28,13 +41,16 @@ class FriendTodoListFragment : Fragment() {
 
     private val viewModel: FriendViewModel by viewModels()
 
-    private val baseDate: LocalDate = LocalDate.now()
-    private var currentMonthOffset = 0
-    private val today = LocalDate.now()
+    private val today: LocalDate = LocalDate.now()
+    private var selectedDate: LocalDate = LocalDate.now()
+    private var visibleMonth: YearMonth = YearMonth.now()
+
+    private val headerFormatter = DateTimeFormatter.ofPattern("yyyy년 M월")
 
     private lateinit var todoAdapter: PublicTodoAdapter
-    private var selectedDate: LocalDate = LocalDate.now()
     private var friendUserId: Int = -1
+
+    private lateinit var calendarView: CalendarView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -53,12 +69,16 @@ class FriendTodoListFragment : Fragment() {
         friendUserId = arguments?.getInt("userId") ?: -1
         binding.tvName.text = "${nickname}님이"
 
+        calendarView = binding.calendarView
+        calendarView.isVisible = true
+
         Log.d("FRIEND_TODO_LIST", "friendUserId = $friendUserId")
 
+        setupCalendar()
         setupHeader()
+        setupWeekdayLabels()
         setupRecyclerView()
         setupCalendarNavigation()
-        setupCalendarFragment()
 
         // arguments에서 friendUserId 읽은 뒤에 호출
         fetchDotDates()
@@ -68,7 +88,7 @@ class FriendTodoListFragment : Fragment() {
         }
 
         viewModel.publicTodoDotDates.observe(viewLifecycleOwner) {
-            setupCalendarFragment()
+            setupCalendar()
         }
 
         viewModel.publicTodosByDate.observe(viewLifecycleOwner) { list ->
@@ -80,8 +100,112 @@ class FriendTodoListFragment : Fragment() {
     }
 
     private fun setupHeader() {
-        val displayDate = baseDate.plusMonths(currentMonthOffset.toLong())
-        binding.homeSelectedDateTv.text = "${displayDate.year}년 ${displayDate.monthValue}월"
+        binding.selectedDateTv.text = visibleMonth.format(headerFormatter)
+    }
+
+    private fun setupCalendar() {
+        // 해당 라이브러리는 캘린더 범위를 무제한으로 설정할 수 없어 일단은 +-50년으로 설정...
+        val currentMonth = YearMonth.now()
+        val startMonth = currentMonth.minusYears(50) // 50년 전
+        val endMonth = currentMonth.plusYears(50)  // 50년 후
+        val firstDayOfWeek = firstDayOfWeekFromLocale()
+
+        calendarView.setup(startMonth, endMonth, firstDayOfWeek)
+        calendarView.scrollToMonth(currentMonth)
+
+        calendarView.monthScrollListener = { month ->
+            visibleMonth = month.yearMonth
+            setupHeader()
+            fetchDotDates()
+        }
+
+        calendarView.dayBinder = object : MonthDayBinder<DayViewContainer> {
+            override fun create(view: View): DayViewContainer = DayViewContainer(view)
+
+            override fun bind(container: DayViewContainer, day: CalendarDay) {
+                val tv = container.textView
+                tv.text = day.date.dayOfMonth.toString()
+
+                // 기본 스타일 초기화
+                tv.typeface = Typeface.DEFAULT
+                tv.background = null
+
+                // 이번 달 셀만 활성화, out-date는 비활성화/회색
+                val isThisMonth = day.position == DayPosition.MonthDate
+
+                // 회색 텍스트 적용
+                tv.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        if (isThisMonth) R.color.text_primary else R.color.teumteum_deactive
+                    )
+                )
+
+                // 오늘 표시
+                if (day.date == today) {
+                    tv.background = circleFill(
+                        fillColor = ContextCompat.getColor(requireContext(), R.color.teumteum_gray)
+                    )
+                }
+
+                // 날짜 선택
+                if (day.date == selectedDate && isThisMonth) {
+                    tv.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.white))
+                    tv.background = circleFill(ContextCompat.getColor(requireContext(), R.color.main_1))
+                }
+
+                // 클릭으로 선택 처리
+                container.view.setOnClickListener {
+                    if (!isThisMonth) return@setOnClickListener  // 전환/선택 방지
+
+                    val old = selectedDate
+                    selectedDate = day.date
+
+                    // 월 갱신
+                    calendarView.notifyDateChanged(old)
+                    calendarView.notifyDateChanged(selectedDate)
+
+                    updateHeader()
+                    onDateSelected(selectedDate)
+                }
+
+                // dot 표시 로직
+            }
+        }
+    }
+
+    private fun updateHeader() {
+        val ym = YearMonth.from(selectedDate)
+        binding.selectedDateTv.text = ym.format(headerFormatter)
+    }
+
+    // 요일 텍스트 설정 (일~토)
+    private fun setupWeekdayLabels() {
+        val container = binding.calendarWeekdaysRow
+        container.removeAllViews()
+
+        val firstDayOfWeek = firstDayOfWeekFromLocale()
+        val days = (0..6).map { firstDayOfWeek.plus(it.toLong()) }
+        days.forEach { dow ->
+            val tv = TextView(requireContext()).apply {
+                layoutParams = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
+                gravity = Gravity.CENTER
+                setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
+                text = weekdayShortKorean(dow)
+                setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
+            }
+            container.addView(tv)
+        }
+    }
+
+    private fun weekdayShortKorean(dow: DayOfWeek): String = when (dow) {
+        DayOfWeek.SUNDAY -> "일"
+        DayOfWeek.MONDAY -> "월"
+        DayOfWeek.TUESDAY -> "화"
+        DayOfWeek.WEDNESDAY -> "수"
+        DayOfWeek.THURSDAY -> "목"
+        DayOfWeek.FRIDAY -> "금"
+        DayOfWeek.SATURDAY -> "토"
     }
 
     private fun setupRecyclerView() {
@@ -91,56 +215,13 @@ class FriendTodoListFragment : Fragment() {
     }
 
     private fun setupCalendarNavigation() {
-        binding.homeCalendarPreviousDateIv.setOnClickListener {
-            currentMonthOffset--
-            todoAdapter.submitList(emptyList())
-            setupHeader()
-            setupCalendarFragment()
-            fetchDotDates()
-
-            // 원래 달로 복귀하면 리스트 자동 복구
-            if (currentMonthOffset == 0) {
-                selectedDate = today
-                onDateSelected(selectedDate)
-            }
+        binding.calendarPreviousDateIv.setOnClickListener {
+            calendarView.smoothScrollToMonth(visibleMonth.minusMonths(1))
         }
 
-        binding.homeCalendarNextDateIv.setOnClickListener {
-            currentMonthOffset++
-            todoAdapter.submitList(emptyList())
-            setupHeader()
-            setupCalendarFragment()
-            fetchDotDates()
-
-            if (currentMonthOffset == 0) {
-                selectedDate = today
-                onDateSelected(selectedDate)
-            }
+        binding.calendarNextDateIv.setOnClickListener {
+            calendarView.smoothScrollToMonth(visibleMonth.plusMonths(1))
         }
-    }
-
-    private fun setupCalendarFragment() {
-        val displayDate = baseDate.plusMonths(currentMonthOffset.toLong())
-        val calendarFragment = FriendMonthlyCalendarFragment.newInstance(
-            position = Int.MAX_VALUE / 2 + currentMonthOffset,
-            onClickListener = object : IDateClickListener {
-                override fun onClickDate(date: LocalDate) {
-                    onDateSelected(date)
-                }
-            },
-            showDot = true,
-            dotDates = viewModel.publicTodoDotDates.value ?: emptyList()
-        ).apply {
-            arguments = Bundle().apply {
-                putSerializable("displayDate", displayDate)
-                putSerializable("selectedDate", selectedDate)
-                putSerializable("today", today)
-            }
-        }
-
-        childFragmentManager.beginTransaction()
-            .replace(binding.calendarContainer.id, calendarFragment)
-            .commit()
     }
 
     private fun onDateSelected(date: LocalDate) {
@@ -153,9 +234,21 @@ class FriendTodoListFragment : Fragment() {
 
     private fun fetchDotDates() {
         if (friendUserId == -1) return
-        val displayDate = baseDate.plusMonths(currentMonthOffset.toLong())
-        val monthStr = displayDate.format(DateTimeFormatter.ofPattern("yyyy-MM", Locale.KOREA))
+        val monthStr = visibleMonth.format(DateTimeFormatter.ofPattern("yyyy-MM", Locale.KOREA))
         viewModel.fetchFriendPublicTodoDates(friendUserId, monthStr)
+    }
+
+    // 채운 동그라미 배경
+    private fun circleFill(fillColor: Int): GradientDrawable {
+        return GradientDrawable().apply {
+            shape = GradientDrawable.OVAL
+            setColor(fillColor)
+        }
+    }
+
+    // DayView의 뷰 홀더
+    private inner class DayViewContainer(view: View) : ViewContainer(view) {
+        val textView: TextView = view.findViewById(R.id.calendar_day_tv)
     }
 
     override fun onDestroyView() {

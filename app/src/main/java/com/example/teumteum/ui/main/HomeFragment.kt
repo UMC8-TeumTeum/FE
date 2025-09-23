@@ -697,6 +697,7 @@ class HomeFragment : Fragment(), IDateClickListener {
     // DayView의 뷰 홀더
     private inner class DayViewContainer(view: View) : ViewContainer(view) {
         val textView: TextView = view.findViewById(R.id.calendar_day_tv)
+        val dotView: View = view.findViewById(R.id.dot_view)
     }
 
     override fun onDestroyView() {
