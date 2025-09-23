@@ -233,8 +233,8 @@ class HomeFragment : Fragment(), IDateClickListener {
 
                 // 이번 달 셀만 활성화, out-date는 비활성화/회색
                 val isThisMonth = day.position == DayPosition.MonthDate
-                container.view.isEnabled = isThisMonth
-                container.view.isClickable = isThisMonth
+//                container.view.isEnabled = isThisMonth
+//                container.view.isClickable = isThisMonth
 
                 // 회색 텍스트 적용
                 tv.setTextColor(
@@ -252,7 +252,7 @@ class HomeFragment : Fragment(), IDateClickListener {
                 }
 
                 // 날짜 선택
-                if (day.date == selectedDate) {
+                if (day.date == selectedDate && isThisMonth) {
                     tv.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.white))
                     tv.background = circleFill(ContextCompat.getColor(requireContext(), R.color.main_1))
                 }
@@ -322,7 +322,10 @@ class HomeFragment : Fragment(), IDateClickListener {
                     monthCalendar.notifyDateChanged(old)
                     monthCalendar.notifyDateChanged(selectedDate)
 
-                    updateHeaderForCurrentMode()
+                    // 클릭한 날짜의 월로 헤더 직접 갱신
+                    val newHeaderMonth = YearMonth.from(selectedDate)
+                    binding.homeSelectedDateTv.text = newHeaderMonth.format(headerFormatter)
+
                     onDateSelected(selectedDate)
                 }
             }
@@ -421,12 +424,13 @@ class HomeFragment : Fragment(), IDateClickListener {
 
         val startYm = YearMonth.from(weekStart)
         val endYm = YearMonth.from(weekEnd)
+        val todayYm = YearMonth.from(today)
 
-        // 주 안에 '오늘'이 있으면 오늘의 달
-        if (weekContains(today, weekStart)) return YearMonth.from(today)
+        // 1. 주 안에 같은 달이 있는 경우
+        if (startYm == endYm) return startYm
 
-        // 그 외에는 토요일 달
-        return if (startYm == endYm) startYm else endYm
+        // 2. 주 안에 두 달이 겹치는 경우 or 토요일 기준
+        return if (todayYm == startYm) startYm else endYm
     }
 
     private fun startOfWeekSunday(d: LocalDate): LocalDate {
