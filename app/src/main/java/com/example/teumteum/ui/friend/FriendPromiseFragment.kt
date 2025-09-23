@@ -13,12 +13,9 @@ import androidx.fragment.app.viewModels
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.friend.model.TeumScheduleDetailResult
 import com.example.teumteum.databinding.FragmentFriendPromiseBinding
-import com.example.teumteum.ui.calendar.IDateClickListener
-import com.example.teumteum.ui.calendar.FriendMonthlyCalendarFragment
 import com.example.teumteum.ui.friend.adapter.TeumEventAdapter
 import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.example.teumteum.ui.main.MainActivity
-import com.google.android.material.datepicker.DayViewDecorator
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.DayPosition
 import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale

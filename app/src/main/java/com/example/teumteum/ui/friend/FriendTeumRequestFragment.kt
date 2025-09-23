@@ -17,8 +17,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentFriendTeumRequestBinding
-import com.example.teumteum.ui.calendar.FriendMonthlyCalendarFragment
-import com.example.teumteum.ui.calendar.IDateClickListener
 import com.example.teumteum.ui.friend.adapter.TeumRequestAdapter
 import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.example.teumteum.ui.main.MainActivity

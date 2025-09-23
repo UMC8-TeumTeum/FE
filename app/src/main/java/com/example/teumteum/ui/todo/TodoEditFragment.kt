@@ -2,8 +2,11 @@ package com.example.teumteum.ui.todo
 
 import android.app.Dialog
 import android.content.Context
+import android.graphics.Typeface
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -40,16 +43,18 @@ import com.example.teumteum.databinding.DialogConfirmAiContentDeleteBinding
 import com.example.teumteum.databinding.DialogConfirmTeumDeleteBinding
 import com.example.teumteum.databinding.DialogConfirmTodoDeleteBinding
 import com.example.teumteum.databinding.DialogConfirmTodoEditBinding
-import com.example.teumteum.ui.calendar.IDateClickListener
-import com.example.teumteum.ui.calendar.MonthlyCalendarFragment
 
 import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.example.teumteum.ui.todo.adapter.TeumProfileAdapter
 import com.example.teumteum.ui.todo.viewModel.TodoViewModel
-import com.example.teumteum.utils.TimeUtils
 import com.example.teumteum.utils.TimeUtils.combineDateTime
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.kizitonwose.calendar.core.CalendarDay
+import com.kizitonwose.calendar.core.DayPosition
+import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
+import com.kizitonwose.calendar.view.MonthDayBinder
+import com.kizitonwose.calendar.view.ViewContainer
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -59,7 +64,7 @@ import java.time.format.DateTimeParseException
 import java.util.Locale
 
 @AndroidEntryPoint
-class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
+class TodoEditFragment : BottomSheetDialogFragment() {
 
     private var _binding: FragmentTodoEditBinding? = null
     private val binding get() = _binding!!
@@ -85,9 +90,10 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
     private val alarmOptions = mutableListOf<String>().apply { addAll(alarmLabelToMinutes.keys) }
 
     private var isCalendarVisible = false
-    private var calendarFragmentStart: MonthlyCalendarFragment? = null
-    private var calendarFragmentEnd: MonthlyCalendarFragment? = null
     private var isStartDateSelected = true
+    private var selectedStartDate: LocalDate = LocalDate.now()
+    private var selectedEndDate: LocalDate = LocalDate.now()
+    private val today: LocalDate = LocalDate.now()
 
     private val viewModel: TodoViewModel by activityViewModels()
     private val friendViewModel: FriendViewModel by activityViewModels()
@@ -148,6 +154,11 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
 
         resetAlarmUI()
         setupPickers()
+        setupStartCalendar()
+        setupEndCalendar()
+        setupWeekdayLabels()
+        setupClickListeners(scheduleType)
+        setupObservers()
 
         // 원래 스크롤뷰 패딩 저장
         val originalBottomPadding = binding.editScroll.paddingBottom
@@ -172,13 +183,16 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
             insets
         }
 
+        if (todoId != -1L) {
+            viewModel.getTodo(todoId)
+        }
+    }
+
+    private fun setupClickListeners(scheduleType: ScheduleType) {
         binding.startTimeTv.setOnClickListener {
             if (isCalendarVisible) {
-                binding.homeCalendarViewLl.visibility = View.GONE
-                binding.homeCalendarView02Ll.visibility = View.GONE
-                isCalendarVisible = false
+                toggleCalendarVisibility(show = false)
             }
-
             val isVisibleNow = binding.timePickerStartContainer.isVisible
             if (isVisibleNow) {
                 applySelectedTime(isStart = true)
@@ -190,11 +204,8 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
 
         binding.endTimeTv.setOnClickListener {
             if (isCalendarVisible) {
-                binding.homeCalendarViewLl.visibility = View.GONE
-                binding.homeCalendarView02Ll.visibility = View.GONE
-                isCalendarVisible = false
+                toggleCalendarVisibility(show = false)
             }
-
             val isVisibleNow = binding.timePickerEndContainer.isVisible
             if (isVisibleNow) {
                 applySelectedTime(isStart = false)
@@ -228,16 +239,14 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
             }
         }
 
-
         binding.startDateTv.setOnClickListener {
             if (binding.timePickerStartContainer.isVisible || binding.timePickerEndContainer.isVisible) {
                 binding.timePickerStartContainer.isVisible = false
                 binding.timePickerEndContainer.isVisible = false
                 currentTargetTextView = null
             }
-
             isStartDateSelected = true
-            toggleCalendarVisibility()
+            toggleCalendarVisibility(show = true)
         }
 
         binding.endDateTv.setOnClickListener {
@@ -246,15 +255,157 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
                 binding.timePickerEndContainer.isVisible = false
                 currentTargetTextView = null
             }
-
             isStartDateSelected = false
-            toggleCalendarVisibility()
+            toggleCalendarVisibility(show = true)
         }
+    }
 
-        setupObservers()
+    private fun setupStartCalendar() {
+        val currentMonth = java.time.YearMonth.now()
+        val startMonth = currentMonth.minusYears(50)
+        val endMonth = currentMonth.plusYears(50)
+        val firstDayOfWeek = firstDayOfWeekFromLocale()
 
-        if (todoId != -1L) {
-            viewModel.getTodo(todoId)
+        binding.calendarView01.setup(startMonth, endMonth, firstDayOfWeek)
+        binding.calendarView01.scrollToMonth(currentMonth)
+
+        binding.calendarView01.dayBinder = object : MonthDayBinder<DayViewContainer> {
+            override fun create(view: View): DayViewContainer = DayViewContainer(view)
+
+            override fun bind(container: DayViewContainer, day: CalendarDay) {
+                val tv = container.textView
+                tv.text = day.date.dayOfMonth.toString()
+                tv.typeface = Typeface.DEFAULT
+                tv.background = null
+
+                val isThisMonth = day.position == DayPosition.MonthDate
+                tv.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        if (isThisMonth) R.color.text_primary else R.color.teumteum_deactive
+                    )
+                )
+
+                if (day.date == today && isThisMonth) {
+                    tv.background = circleFill(ContextCompat.getColor(requireContext(), R.color.teumteum_gray))
+                }
+
+                if (day.date == selectedStartDate && isThisMonth) {
+                    tv.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.white))
+                    tv.background = circleFill(ContextCompat.getColor(requireContext(), R.color.main_1))
+                }
+
+                container.view.setOnClickListener {
+                    if (!isThisMonth) return@setOnClickListener
+                    val old = selectedStartDate
+                    selectedStartDate = day.date
+                    binding.calendarView01.notifyDateChanged(old)
+                    binding.startDateTv.text = day.date.format(DateTimeFormatter.ofPattern("M월 d일 (E)", Locale.KOREAN))
+                    binding.calendarView01.notifyDateChanged(day.date)
+                    toggleCalendarVisibility(show = false)
+                }
+            }
+        }
+    }
+
+    private fun setupEndCalendar() {
+        val currentMonth = java.time.YearMonth.now()
+        val startMonth = currentMonth.minusYears(50)
+        val endMonth = currentMonth.plusYears(50)
+        val firstDayOfWeek = firstDayOfWeekFromLocale()
+
+        binding.calendarView02.setup(startMonth, endMonth, firstDayOfWeek)
+        binding.calendarView02.scrollToMonth(currentMonth)
+
+        binding.calendarView02.dayBinder = object : MonthDayBinder<DayViewContainer> {
+            override fun create(view: View): DayViewContainer = DayViewContainer(view)
+
+            override fun bind(container: DayViewContainer, day: CalendarDay) {
+                val tv = container.textView
+                tv.text = day.date.dayOfMonth.toString()
+                tv.typeface = Typeface.DEFAULT
+                tv.background = null
+
+                val isThisMonth = day.position == DayPosition.MonthDate
+                tv.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        if (isThisMonth) R.color.text_primary else R.color.teumteum_deactive
+                    )
+                )
+
+                if (day.date == today && isThisMonth) {
+                    tv.background = circleFill(ContextCompat.getColor(requireContext(), R.color.teumteum_gray))
+                }
+
+                if (day.date == selectedEndDate && isThisMonth) {
+                    tv.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.white))
+                    tv.background = circleFill(ContextCompat.getColor(requireContext(), R.color.main_1))
+                }
+
+                container.view.setOnClickListener {
+                    if (!isThisMonth) return@setOnClickListener
+                    val old = selectedEndDate
+                    selectedEndDate = day.date
+                    binding.calendarView02.notifyDateChanged(old)
+                    binding.endDateTv.text = day.date.format(DateTimeFormatter.ofPattern("M월 d일 (E)", Locale.KOREAN))
+                    binding.calendarView02.notifyDateChanged(day.date)
+                    toggleCalendarVisibility(show = false)
+                }
+            }
+        }
+    }
+
+    private fun setupWeekdayLabels() {
+        val container1 = binding.calendarWeekdaysRow01
+        container1.removeAllViews()
+        val container2 = binding.calendarWeekdaysRow02
+        container2.removeAllViews()
+
+        val firstDayOfWeek = firstDayOfWeekFromLocale()
+        val days = (0..6).map { firstDayOfWeek.plus(it.toLong()) }
+        days.forEach { dow ->
+            val tv1 = TextView(requireContext()).apply {
+                layoutParams = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
+                gravity = Gravity.CENTER
+                setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
+                text = weekdayShortKorean(dow)
+                setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
+            }
+            container1.addView(tv1)
+
+            val tv2 = TextView(requireContext()).apply {
+                layoutParams = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
+                gravity = Gravity.CENTER
+                setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
+                text = weekdayShortKorean(dow)
+                setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
+            }
+            container2.addView(tv2)
+        }
+    }
+
+    private fun weekdayShortKorean(dow: java.time.DayOfWeek): String = when (dow) {
+        java.time.DayOfWeek.SUNDAY -> "일"
+        java.time.DayOfWeek.MONDAY -> "월"
+        java.time.DayOfWeek.TUESDAY -> "화"
+        java.time.DayOfWeek.WEDNESDAY -> "수"
+        java.time.DayOfWeek.THURSDAY -> "목"
+        java.time.DayOfWeek.FRIDAY -> "금"
+        java.time.DayOfWeek.SATURDAY -> "토"
+    }
+
+    private fun toggleCalendarVisibility(show: Boolean) {
+        if (show) {
+            binding.calendarHeaderLayout01.isVisible = isStartDateSelected
+            binding.calendarHeaderLayout02.isVisible = !isStartDateSelected
+            binding.timePickerStartContainer.isVisible = false
+            binding.timePickerEndContainer.isVisible = false
+            isCalendarVisible = true
+        } else {
+            binding.calendarHeaderLayout01.isVisible = false
+            binding.calendarHeaderLayout02.isVisible = false
+            isCalendarVisible = false
         }
     }
 
@@ -676,71 +827,6 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
         dialog.show()
     }
 
-    private fun toggleCalendarVisibility() {
-        isCalendarVisible = !isCalendarVisible
-
-        if (isStartDateSelected) {
-            binding.homeCalendarViewLl.visibility = if (isCalendarVisible) View.VISIBLE else View.GONE
-
-            if (isCalendarVisible && calendarFragmentStart == null) {
-                calendarFragmentStart = MonthlyCalendarFragment.newInstance(
-                    position = Int.MAX_VALUE / 2,
-                    onClickListener = this,
-                    showDot = false
-                )
-                childFragmentManager.beginTransaction()
-                    .replace(R.id.home_calendar_container_fl, calendarFragmentStart!!)
-                    .commit()
-            }
-        } else {
-            binding.homeCalendarView02Ll.visibility = if (isCalendarVisible) View.VISIBLE else View.GONE
-
-            if (isCalendarVisible && calendarFragmentEnd == null) {
-                calendarFragmentEnd = MonthlyCalendarFragment.newInstance(
-                    position = Int.MAX_VALUE / 2,
-                    onClickListener = this,
-                    showDot = false
-                )
-                childFragmentManager.beginTransaction()
-                    .replace(R.id.home_calendar_container_02_fl, calendarFragmentEnd!!)
-                    .commit()
-            }
-        }
-    }
-
-    override fun onClickDate(date: LocalDate) {
-        val formatter = DateTimeFormatter.ofPattern("M월 d일 (E)", Locale.KOREAN)
-        val formattedDate = date.format(formatter)
-
-        if (isStartDateSelected) {
-            binding.startDateTv.text = formattedDate
-            binding.homeCalendarViewLl.visibility = View.GONE
-        } else {
-            binding.endDateTv.text = formattedDate
-            binding.homeCalendarView02Ll.visibility = View.GONE
-        }
-
-        isCalendarVisible = false
-    }
-
-    companion object {
-        fun newInstance(todoId: Long): TodoEditFragment {
-            return TodoEditFragment().apply {
-                arguments = Bundle().apply {
-                    putLong("todo_id", todoId)
-                }
-            }
-        }
-    }
-
-    private fun dismissAllSheets() {
-        (requireActivity().supportFragmentManager.fragments).forEach { fragment ->
-            if (fragment is BottomSheetDialogFragment) {
-                fragment.dismissAllowingStateLoss()
-            }
-        }
-    }
-
     private fun applyReminders(reminds: List<ReminderAlarm>) {
         resetAlarmUI()
         reminds
@@ -1006,6 +1092,45 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
             val minute = m.groupValues[3].toInt()
             val second = m.groupValues.getOrNull(4)?.takeIf { it.isNotEmpty() }?.toInt() ?: 0
             if (hour == 24) date.plusDays(1).atTime(0, minute, second) else throw e
+        }
+    }
+
+    // 채운 동그라미 배경
+    private fun circleFill(fillColor: Int): GradientDrawable {
+        return GradientDrawable().apply {
+            shape = GradientDrawable.OVAL
+            setColor(fillColor)
+        }
+    }
+
+    // DayView의 뷰 홀더
+    private inner class DayViewContainer(view: View) : ViewContainer(view) {
+        val textView: TextView = view.findViewById(R.id.calendar_day_tv)
+    }
+
+    private fun dismissAllSheets() {
+        (requireActivity().supportFragmentManager.fragments).forEach { fragment ->
+            if (fragment is BottomSheetDialogFragment) {
+                fragment.dismissAllowingStateLoss()
+            }
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        popupWindow?.dismiss()
+        popupWindow = null
+        _binding = null
+    }
+
+    companion object {
+        fun newInstance(todoId: Long, scheduleType: ScheduleType): TodoEditFragment {
+            return TodoEditFragment().apply {
+                arguments = Bundle().apply {
+                    putLong("todo_id", todoId)
+                    putString("schedule_type", scheduleType.name)
+                }
+            }
         }
     }
 }

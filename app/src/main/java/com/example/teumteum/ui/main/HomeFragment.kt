@@ -11,12 +11,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.viewpager2.widget.ViewPager2
-import com.example.teumteum.ui.calendar.IDateClickListener
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.todo.model.AlarmStatusRequest
 import com.example.teumteum.databinding.FragmentHomeBinding
@@ -57,7 +55,7 @@ import java.time.DayOfWeek
 import java.time.YearMonth
 
 @AndroidEntryPoint
-class HomeFragment : Fragment(), IDateClickListener {
+class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
@@ -101,11 +99,10 @@ class HomeFragment : Fragment(), IDateClickListener {
         weekCursorDate = selectedDate
         updateHeaderForCurrentMode()
 
-        binding.homeCalendarPreviousDateIv.setOnClickListener {
+        binding.calendarPreviousDateIv.setOnClickListener {
             if (isWeeklyMode) {
                 weekCursorDate = weekCursorDate.minusWeeks(1) // 커서만 이동
                 weekCalendar.smoothScrollToDate(weekCursorDate)
-//                repaintWeekMonths(weekCursorDate)
                 updateHeaderForCurrentMode()
             } else {
                 visibleMonth = visibleMonth.minusMonths(1)
@@ -114,11 +111,10 @@ class HomeFragment : Fragment(), IDateClickListener {
             }
         }
 
-        binding.homeCalendarNextDateIv.setOnClickListener {
+        binding.calendarNextDateIv.setOnClickListener {
             if (isWeeklyMode) {
                 weekCursorDate = weekCursorDate.plusWeeks(1) // 커서만 이동
                 weekCalendar.smoothScrollToDate(weekCursorDate)
-//                repaintWeekMonths(weekCursorDate)
                 updateHeaderForCurrentMode()
             } else {
                 visibleMonth = visibleMonth.plusMonths(1)
@@ -170,8 +166,8 @@ class HomeFragment : Fragment(), IDateClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        monthCalendar = binding.homeCalenderView
-        weekCalendar = binding.homeWeekCalenderView
+        monthCalendar = binding.calenderView
+        weekCalendar = binding.weekCalenderView
 
         // 해당 라이브러리는 캘린더 범위를 무제한으로 설정할 수 없어 일단은 +-50년으로 설정...
         val currentMonth = YearMonth.now()
@@ -216,7 +212,6 @@ class HomeFragment : Fragment(), IDateClickListener {
         }
 
         switchToWeek()
-
         setupWeekdayLabels(firstDayOfWeek)
 
         // 월별 DayBinder
@@ -532,8 +527,8 @@ class HomeFragment : Fragment(), IDateClickListener {
         isWeeklyMode = false
 
         // 주 → 월 토글
-        binding.homeWeekCalenderView.visibility = View.GONE
-        binding.homeCalenderView.visibility = View.VISIBLE
+        binding.weekCalenderView.visibility = View.GONE
+        binding.calenderView.visibility = View.VISIBLE
 
         // 선택일의 달로 이동 + 헤더 갱신
         visibleMonth = YearMonth.from(selectedDate)
@@ -548,8 +543,8 @@ class HomeFragment : Fragment(), IDateClickListener {
         isWeeklyMode = true
 
         // 월 → 주 토글
-        binding.homeCalenderView.visibility = View.GONE
-        binding.homeWeekCalenderView.visibility = View.VISIBLE
+        binding.calenderView.visibility = View.GONE
+        binding.weekCalenderView.visibility = View.VISIBLE
 
         weekCursorDate = selectedDate
         weekCalendar.scrollToDate(weekCursorDate) // 선택일이 포함된 주로 이동
@@ -586,35 +581,6 @@ class HomeFragment : Fragment(), IDateClickListener {
                 strokeColor = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.teumteum_line))
             }
         }
-    }
-
-    private fun saveSelectedDate(date: LocalDate) {
-        val sharedPref = requireContext().getSharedPreferences("CALENDAR-APP", AppCompatActivity.MODE_PRIVATE)
-        sharedPref.edit().putString("SELECTED-DATE", date.toString()).apply()
-    }
-
-    override fun onClickDate(date: LocalDate) {
-        val old = selectedDate
-        selectedDate = date
-        saveSelectedDate(date)
-
-        // 두 달력 모두 갱신
-        monthCalendar.notifyDateChanged(old)
-        monthCalendar.notifyDateChanged(selectedDate)
-        weekCalendar.notifyDateChanged(old)
-        weekCalendar.notifyDateChanged(selectedDate)
-
-        if (isWeeklyMode) {
-            weekCursorDate = date
-            weekCalendar.scrollToDate(weekCursorDate)
-        } else {
-            visibleMonth = YearMonth.from(selectedDate)
-            monthCalendar.scrollToMonth(visibleMonth)
-        }
-
-        updateHeaderForCurrentMode()
-        val dateStr = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-        todoViewModel.getTodoList(dateStr)
     }
 
     private fun onDateSelected(date: LocalDate) {

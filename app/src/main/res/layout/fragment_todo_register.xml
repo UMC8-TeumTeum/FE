@@ -152,71 +152,37 @@
                         android:textSize="15sp" />
                 </LinearLayout>
 
-                <LinearLayout
-                    android:id="@+id/home_calendar_view_ll"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/calendarHeaderLayout_01"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
-                    android:orientation="vertical"
+                    android:layout_marginTop="10dp"
                     android:visibility="gone"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/start_date_tv">
 
                     <LinearLayout
-                        android:id="@+id/home_weekly_calendar_day_of_month_ll"
-                        android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:layout_marginTop="20dp"
-                        android:orientation="horizontal">
+                        android:id="@+id/calendar_weekdays_row_01"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toTopOf="@id/calendar_view_01"/>
 
-                        <TextView
-                            android:id="@+id/home_day_of_week_sun_tv"
-                            style="@style/day_of_week_tv"
-                            android:text="일" />
-
-                        <TextView
-                            android:id="@+id/home_day_of_week_mon_tv"
-                            style="@style/day_of_week_tv"
-                            android:text="월" />
-
-                        <TextView
-                            android:id="@+id/home_day_of_week_tue_tv"
-                            style="@style/day_of_week_tv"
-                            android:text="화" />
-
-                        <TextView
-                            android:id="@+id/home_day_of_week_wed_tv"
-                            style="@style/day_of_week_tv"
-                            android:text="수" />
-
-                        <TextView
-                            android:id="@+id/home_day_of_week_thu_tv"
-                            style="@style/day_of_week_tv"
-                            android:text="목" />
-
-                        <TextView
-                            android:id="@+id/home_day_of_week_fri_tv"
-                            style="@style/day_of_week_tv"
-                            android:text="금" />
-
-                        <TextView
-                            android:id="@+id/home_day_of_week_sat_tv"
-                            style="@style/day_of_week_tv"
-                            android:text="토" />
-                    </LinearLayout>
-
-                    <FrameLayout
-                        android:id="@+id/home_calendar_container_fl"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <androidx.viewpager2.widget.ViewPager2
-                            android:id="@+id/home_monthly_calendar_month_vp"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
-                    </FrameLayout>
-                </LinearLayout>
+                    <com.kizitonwose.calendar.view.CalendarView
+                        android:id="@+id/calendar_view_01"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        app:cv_dayViewResource="@layout/calendar_day_layout"
+                        app:cv_orientation="horizontal"
+                        app:cv_outDateStyle="endOfRow"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/calendar_weekdays_row_01" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <FrameLayout
                     android:id="@+id/time_picker_start_container"
@@ -257,7 +223,6 @@
                             style="@style/CustomNumberPicker"
                             android:theme="@style/TimePickerTheme" />
                     </LinearLayout>
-
                 </FrameLayout>
 
                 <LinearLayout
@@ -296,71 +261,37 @@
                         android:textSize="15sp" />
                 </LinearLayout>
 
-                <LinearLayout
-                    android:id="@+id/home_calendar_view_02_ll"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/calendarHeaderLayout_02"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
-                    android:orientation="vertical"
+                    android:layout_marginTop="10dp"
                     android:visibility="gone"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/start_date_tv">
 
                     <LinearLayout
-                        android:id="@+id/home_weekly_calendar_day_of_month_02_ll"
-                        android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:layout_marginTop="20dp"
-                        android:orientation="horizontal">
+                        android:id="@+id/calendar_weekdays_row_02"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toTopOf="@id/calendar_view_02"/>
 
-                        <TextView
-                            android:id="@+id/home_day_of_week_sun_02_tv"
-                            style="@style/day_of_week_tv"
-                            android:text="일" />
-
-                        <TextView
-                            android:id="@+id/home_day_of_week_mon_02_tv"
-                            style="@style/day_of_week_tv"
-                            android:text="월" />
-
-                        <TextView
-                            android:id="@+id/home_day_of_week_tue_02_tv"
-                            style="@style/day_of_week_tv"
-                            android:text="화" />
-
-                        <TextView
-                            android:id="@+id/home_day_of_week_wed_02_tv"
-                            style="@style/day_of_week_tv"
-                            android:text="수" />
-
-                        <TextView
-                            android:id="@+id/home_day_of_week_thu_02_tv"
-                            style="@style/day_of_week_tv"
-                            android:text="목" />
-
-                        <TextView
-                            android:id="@+id/home_day_of_week_fri_02_tv"
-                            style="@style/day_of_week_tv"
-                            android:text="금" />
-
-                        <TextView
-                            android:id="@+id/home_day_of_week_sat_02_tv"
-                            style="@style/day_of_week_tv"
-                            android:text="토" />
-                    </LinearLayout>
-
-                    <FrameLayout
-                        android:id="@+id/home_calendar_container_02_fl"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <androidx.viewpager2.widget.ViewPager2
-                            android:id="@+id/home_monthly_calendar_month_02_vp"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
-                    </FrameLayout>
-                </LinearLayout>
+                    <com.kizitonwose.calendar.view.CalendarView
+                        android:id="@+id/calendar_view_02"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        app:cv_dayViewResource="@layout/calendar_day_layout"
+                        app:cv_orientation="horizontal"
+                        app:cv_outDateStyle="endOfRow"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/calendar_weekdays_row_02" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <FrameLayout
                     android:id="@+id/time_picker_end_container"

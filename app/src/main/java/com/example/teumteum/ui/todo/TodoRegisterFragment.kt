@@ -1,10 +1,13 @@
 package com.example.teumteum.ui.todo
 
-import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
+import android.graphics.Typeface
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,22 +40,24 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-import com.example.teumteum.ui.calendar.IDateClickListener
-import com.example.teumteum.ui.calendar.MonthlyCalendarFragment
 import com.example.teumteum.ui.myhome.viewModel.MyHomeViewModel
 import com.example.teumteum.ui.todo.viewModel.TodoViewModel
-import com.example.teumteum.utils.TimeUtils
 import com.example.teumteum.utils.TimeUtils.combineDateTime
-import com.google.gson.Gson
+import com.kizitonwose.calendar.core.CalendarDay
+import com.kizitonwose.calendar.core.DayPosition
+import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
+import com.kizitonwose.calendar.view.MonthDayBinder
+import com.kizitonwose.calendar.view.ViewContainer
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 import java.time.LocalDate
+import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 @AndroidEntryPoint
-class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
+class TodoRegisterFragment : BottomSheetDialogFragment() {
 
     private var _binding: FragmentTodoRegisterBinding? = null
     private val binding get() = _binding!!
@@ -75,9 +80,10 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
     private var isTodoSelected = true
 
     private var isCalendarVisible = false
-    private var calendarFragmentStart: MonthlyCalendarFragment? = null
-    private var calendarFragmentEnd: MonthlyCalendarFragment? = null
     private var isStartDateSelected = true
+    private var selectedStartDate: LocalDate = LocalDate.now()
+    private var selectedEndDate: LocalDate = LocalDate.now()
+    private val today: LocalDate = LocalDate.now()
 
     private val viewModel: TodoViewModel by activityViewModels()
     private val myHomeViewModel: MyHomeViewModel by activityViewModels()
@@ -109,6 +115,9 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
             ?.let { kotlin.runCatching { LocalDate.parse(it) }.getOrNull() }
             ?: LocalDate.now()
 
+        selectedStartDate = baseDate
+        selectedEndDate = baseDate
+
         val formatter = DateTimeFormatter.ofPattern("M월 d일 (E)", Locale.KOREAN)
         val baseDateText = baseDate.format(formatter)
 
@@ -118,19 +127,60 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
 
         resetAlarmUI()
         setupPickers()
+        setupStartCalendar()
+        setupEndCalendar()
+        setupWeekdayLabels()
+        setupObservers()
+        setupClickListeners()
 
+        viewModel.getOnboardingReminders()
+
+        // 원래 스크롤뷰 패딩 저장
+        val originalBottomPadding = binding.registerScroll.paddingBottom
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
+            val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+
+            // 버튼 실제 높이
+            val btnH = binding.btnTodoRegister.height
+
+            // 스크롤 영역: 키보드 + 버튼 높이만큼 바닥 패딩
+            binding.registerScroll.setPadding(
+                binding.registerScroll.paddingLeft,
+                binding.registerScroll.paddingTop,
+                binding.registerScroll.paddingRight,
+                if (imeVisible) originalBottomPadding + btnH else originalBottomPadding
+            )
+
+            // 키보드 올라왔을 때 보이는 흰색 영역 제거
+            binding.btnTodoRegister.visibility = if (imeVisible) View.GONE else View.VISIBLE
+
+            insets
+        }
+
+        myHomeViewModel.profileImageUrl.observe(viewLifecycleOwner) { imageUrl ->
+            Log.d("ProfileImageCheck", "Image URL: $imageUrl")
+            if (!imageUrl.isNullOrBlank()) {
+                Glide.with(this)
+                    .load(imageUrl)
+                    .placeholder(R.drawable.gray_teum) // 기본 이미지 리소스
+                    .error(R.drawable.gray_teum)       // 에러 시 이미지
+                    .into(binding.profileIv)
+            } else {
+                binding.profileIv.setImageResource(R.drawable.gray_teum)
+            }
+        }
+    }
+
+    private fun setupClickListeners() {
         binding.startTimeTv.setOnClickListener {
             if (isCalendarVisible) {
-                binding.homeCalendarViewLl.visibility = View.GONE
-                binding.homeCalendarView02Ll.visibility = View.GONE
-                isCalendarVisible = false
+                toggleCalendarVisibility(show = false)
             }
-
             val isVisibleNow = binding.timePickerStartContainer.isVisible
             if (isVisibleNow) {
                 applySelectedTime(isStart = true)
             }
-
             binding.timePickerStartContainer.isVisible = !isVisibleNow
             binding.timePickerEndContainer.isVisible = false
             currentTargetTextView = binding.startTimeTv.takeIf { !isVisibleNow }
@@ -138,11 +188,8 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
 
         binding.endTimeTv.setOnClickListener {
             if (isCalendarVisible) {
-                binding.homeCalendarViewLl.visibility = View.GONE
-                binding.homeCalendarView02Ll.visibility = View.GONE
-                isCalendarVisible = false
+                toggleCalendarVisibility(show = false)
             }
-
             val isVisibleNow = binding.timePickerEndContainer.isVisible
             if (isVisibleNow) {
                 applySelectedTime(isStart = false)
@@ -178,7 +225,6 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
                 binding.btnTodo.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
                 isTodoSelected = false
 
-                // 컨테이너 잔여 뷰 제거 + 즉시 커밋으로 겹침 방지
                 (requireView().findViewById<ViewGroup>(R.id.register_fragment_container)).removeAllViews()
 
                 val tx = childFragmentManager.beginTransaction()
@@ -186,32 +232,8 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
                     .disallowAddToBackStack()
                     .replace(R.id.register_fragment_container, WishRegisterFragment(), "WishRegister")
 
-                // 겹침/플리커 방지를 위해 즉시 커밋
                 tx.commitNowAllowingStateLoss()
             }
-        }
-
-        // 원래 스크롤뷰 패딩 저장
-        val originalBottomPadding = binding.registerScroll.paddingBottom
-
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
-            val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
-
-            // 버튼 실제 높이
-            val btnH = binding.btnTodoRegister.height
-
-            // 스크롤 영역: 키보드 + 버튼 높이만큼 바닥 패딩
-            binding.registerScroll.setPadding(
-                binding.registerScroll.paddingLeft,
-                binding.registerScroll.paddingTop,
-                binding.registerScroll.paddingRight,
-                if (imeVisible) originalBottomPadding + btnH else originalBottomPadding
-            )
-
-            // 키보드 올라왔을 때 보이는 흰색 영역 제거
-            binding.btnTodoRegister.visibility = if (imeVisible) View.GONE else View.VISIBLE
-
-            insets
         }
 
         binding.startDateTv.setOnClickListener {
@@ -220,9 +242,8 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
                 binding.timePickerEndContainer.isVisible = false
                 currentTargetTextView = null
             }
-
             isStartDateSelected = true
-            toggleCalendarVisibility()
+            toggleCalendarVisibility(show = true)
         }
 
         binding.endDateTv.setOnClickListener {
@@ -231,26 +252,158 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
                 binding.timePickerEndContainer.isVisible = false
                 currentTargetTextView = null
             }
-
             isStartDateSelected = false
-            toggleCalendarVisibility()
+            toggleCalendarVisibility(show = true)
         }
+    }
 
-        myHomeViewModel.profileImageUrl.observe(viewLifecycleOwner) { imageUrl ->
-            Log.d("ProfileImageCheck", "Image URL: $imageUrl")
-            if (!imageUrl.isNullOrBlank()) {
-                Glide.with(this)
-                    .load(imageUrl)
-                    .placeholder(R.drawable.gray_teum) // 기본 이미지 리소스
-                    .error(R.drawable.gray_teum)       // 에러 시 이미지
-                    .into(binding.profileIv)
-            } else {
-                binding.profileIv.setImageResource(R.drawable.gray_teum)
+    private fun setupStartCalendar() {
+        val currentMonth = YearMonth.now()
+        val startMonth = currentMonth.minusYears(50)
+        val endMonth = currentMonth.plusYears(50)
+        val firstDayOfWeek = firstDayOfWeekFromLocale()
+
+        binding.calendarView01.setup(startMonth, endMonth, firstDayOfWeek)
+        binding.calendarView01.scrollToMonth(currentMonth)
+
+        binding.calendarView01.dayBinder = object : MonthDayBinder<DayViewContainer> {
+            override fun create(view: View): DayViewContainer = DayViewContainer(view)
+
+            override fun bind(container: DayViewContainer, day: CalendarDay) {
+                val tv = container.textView
+                tv.text = day.date.dayOfMonth.toString()
+                tv.typeface = Typeface.DEFAULT
+                tv.background = null
+
+                val isThisMonth = day.position == DayPosition.MonthDate
+                tv.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        if (isThisMonth) R.color.text_primary else R.color.teumteum_deactive
+                    )
+                )
+
+                if (day.date == today && isThisMonth) {
+                    tv.background = circleFill(ContextCompat.getColor(requireContext(), R.color.teumteum_gray))
+                }
+
+                if (day.date == selectedStartDate && isThisMonth) {
+                    tv.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.white))
+                    tv.background = circleFill(ContextCompat.getColor(requireContext(), R.color.main_1))
+                }
+
+                container.view.setOnClickListener {
+                    if (!isThisMonth) return@setOnClickListener
+                    val old = selectedStartDate
+                    selectedStartDate = day.date
+                    binding.calendarView01.notifyDateChanged(old)
+                    binding.startDateTv.text = day.date.format(DateTimeFormatter.ofPattern("M월 d일 (E)", Locale.KOREAN))
+                    binding.calendarView01.notifyDateChanged(day.date)
+                    toggleCalendarVisibility(show = false)
+                }
             }
         }
+    }
 
-        setupObservers()
-        viewModel.getOnboardingReminders()
+    private fun setupEndCalendar() {
+        val currentMonth = YearMonth.now()
+        val startMonth = currentMonth.minusYears(50)
+        val endMonth = currentMonth.plusYears(50)
+        val firstDayOfWeek = firstDayOfWeekFromLocale()
+
+        binding.calendarView02.setup(startMonth, endMonth, firstDayOfWeek)
+        binding.calendarView02.scrollToMonth(currentMonth)
+
+        binding.calendarView02.dayBinder = object : MonthDayBinder<DayViewContainer> {
+            override fun create(view: View): DayViewContainer = DayViewContainer(view)
+
+            override fun bind(container: DayViewContainer, day: CalendarDay) {
+                val tv = container.textView
+                tv.text = day.date.dayOfMonth.toString()
+                tv.typeface = Typeface.DEFAULT
+                tv.background = null
+
+                val isThisMonth = day.position == DayPosition.MonthDate
+                tv.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        if (isThisMonth) R.color.text_primary else R.color.teumteum_deactive
+                    )
+                )
+
+                if (day.date == today && isThisMonth) {
+                    tv.background = circleFill(ContextCompat.getColor(requireContext(), R.color.teumteum_gray))
+                }
+
+                if (day.date == selectedEndDate && isThisMonth) {
+                    tv.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.white))
+                    tv.background = circleFill(ContextCompat.getColor(requireContext(), R.color.main_1))
+                }
+
+                container.view.setOnClickListener {
+                    if (!isThisMonth) return@setOnClickListener
+                    val old = selectedEndDate
+                    selectedEndDate = day.date
+                    binding.calendarView02.notifyDateChanged(old)
+                    binding.endDateTv.text = day.date.format(DateTimeFormatter.ofPattern("M월 d일 (E)", Locale.KOREAN))
+                    binding.calendarView02.notifyDateChanged(day.date)
+                    toggleCalendarVisibility(show = false)
+                }
+            }
+        }
+    }
+
+    private fun setupWeekdayLabels() {
+        val container1 = binding.calendarWeekdaysRow01
+        container1.removeAllViews()
+        val container2 = binding.calendarWeekdaysRow02
+        container2.removeAllViews()
+
+        val firstDayOfWeek = firstDayOfWeekFromLocale()
+        val days = (0..6).map { firstDayOfWeek.plus(it.toLong()) }
+        days.forEach { dow ->
+            val tv1 = TextView(requireContext()).apply {
+                layoutParams = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
+                gravity = Gravity.CENTER
+                setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
+                text = weekdayShortKorean(dow)
+                setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
+            }
+            container1.addView(tv1)
+
+            val tv2 = TextView(requireContext()).apply {
+                layoutParams = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
+                gravity = Gravity.CENTER
+                setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
+                text = weekdayShortKorean(dow)
+                setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
+            }
+            container2.addView(tv2)
+        }
+    }
+
+    private fun weekdayShortKorean(dow: java.time.DayOfWeek): String = when (dow) {
+        java.time.DayOfWeek.SUNDAY -> "일"
+        java.time.DayOfWeek.MONDAY -> "월"
+        java.time.DayOfWeek.TUESDAY -> "화"
+        java.time.DayOfWeek.WEDNESDAY -> "수"
+        java.time.DayOfWeek.THURSDAY -> "목"
+        java.time.DayOfWeek.FRIDAY -> "금"
+        java.time.DayOfWeek.SATURDAY -> "토"
+    }
+
+    private fun toggleCalendarVisibility(show: Boolean) {
+        if (show) {
+            binding.calendarHeaderLayout01.isVisible = isStartDateSelected
+            binding.calendarHeaderLayout02.isVisible = !isStartDateSelected
+            binding.timePickerStartContainer.isVisible = false
+            binding.timePickerEndContainer.isVisible = false
+            isCalendarVisible = true
+        } else {
+            binding.calendarHeaderLayout01.isVisible = false
+            binding.calendarHeaderLayout02.isVisible = false
+            isCalendarVisible = false
+        }
     }
 
     private fun clearTodoSheet() {
@@ -263,9 +416,7 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
         binding.timePickerEndContainer.isVisible   = false
         currentTargetTextView = null
 
-        binding.homeCalendarViewLl.visibility    = View.GONE
-        binding.homeCalendarView02Ll.visibility  = View.GONE
-        isCalendarVisible = false
+        toggleCalendarVisibility(show = false)
 
         binding.publicToggle01Iv.isChecked = false
         binding.includeToggle01Iv.isChecked = false
@@ -491,54 +642,6 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
         return dialog
     }
 
-    private fun toggleCalendarVisibility() {
-        isCalendarVisible = !isCalendarVisible
-
-        if (isStartDateSelected) {
-            binding.homeCalendarViewLl.visibility = if (isCalendarVisible) View.VISIBLE else View.GONE
-
-            if (isCalendarVisible && calendarFragmentStart == null) {
-                calendarFragmentStart = MonthlyCalendarFragment.newInstance(
-                    position = Int.MAX_VALUE / 2,
-                    onClickListener = this,
-                    showDot = false
-                )
-
-                childFragmentManager.beginTransaction()
-                    .replace(R.id.home_calendar_container_fl, calendarFragmentStart!!)
-                    .commit()
-            }
-        } else {
-            binding.homeCalendarView02Ll.visibility = if (isCalendarVisible) View.VISIBLE else View.GONE
-
-            if (isCalendarVisible && calendarFragmentEnd == null) {
-                calendarFragmentEnd = MonthlyCalendarFragment.newInstance(
-                    position = Int.MAX_VALUE / 2,
-                    onClickListener = this,
-                    showDot = false
-                )
-                childFragmentManager.beginTransaction()
-                    .replace(R.id.home_calendar_container_02_fl, calendarFragmentEnd!!)
-                    .commit()
-            }
-        }
-    }
-
-    override fun onClickDate(date: LocalDate) {
-        val formatter = DateTimeFormatter.ofPattern("M월 d일 (E)", Locale.KOREAN)
-        val formattedDate = date.format(formatter)
-
-        if (isStartDateSelected) {
-            binding.startDateTv.text = formattedDate
-            binding.homeCalendarViewLl.visibility = View.GONE
-        } else {
-            binding.endDateTv.text = formattedDate
-            binding.homeCalendarView02Ll.visibility = View.GONE
-        }
-
-        isCalendarVisible = false
-    }
-
     private fun getSelectedRemindAlarms(): List<ReminderAlarm>? {
         val map = linkedMapOf<Int, AlarmStatus>()
 
@@ -673,12 +776,23 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
         }
     }
 
+    // 채운 동그라미 배경
+    private fun circleFill(fillColor: Int): GradientDrawable {
+        return GradientDrawable().apply {
+            shape = GradientDrawable.OVAL
+            setColor(fillColor)
+        }
+    }
+
+    // DayView의 뷰 홀더
+    private inner class DayViewContainer(view: View) : ViewContainer(view) {
+        val textView: TextView = view.findViewById(R.id.calendar_day_tv)
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         popupWindow?.dismiss()
         popupWindow = null
-        calendarFragmentStart = null
-        calendarFragmentEnd = null
         _binding = null
     }
 }

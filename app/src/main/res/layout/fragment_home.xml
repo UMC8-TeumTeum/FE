@@ -196,7 +196,7 @@
                         android:layout_marginEnd="10dp"
                         android:orientation="horizontal"
                         app:layout_constraintBottom_toBottomOf="@id/home_selected_date_tv"
-                        app:layout_constraintEnd_toStartOf="@id/home_calendar_previous_date_iv"
+                        app:layout_constraintEnd_toStartOf="@id/calendar_previous_date_iv"
                         app:layout_constraintTop_toTopOf="@id/home_selected_date_tv">
 
                         <com.google.android.material.button.MaterialButton
@@ -231,23 +231,23 @@
                     </LinearLayout>
 
                     <ImageView
-                        android:id="@+id/home_calendar_previous_date_iv"
+                        android:id="@+id/calendar_previous_date_iv"
                         android:layout_width="18dp"
                         android:layout_height="18dp"
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="30dp"
                         android:src="@drawable/ic_calendar_previous_sv"
-                        app:layout_constraintEnd_toStartOf="@id/home_calendar_next_date_iv"
+                        app:layout_constraintEnd_toStartOf="@id/calendar_next_date_iv"
                         app:layout_constraintTop_toTopOf="@id/calendar_mode_buttons" />
 
                     <ImageView
-                        android:id="@+id/home_calendar_next_date_iv"
+                        android:id="@+id/calendar_next_date_iv"
                         android:layout_width="18dp"
                         android:layout_height="18dp"
                         android:layout_marginEnd="15dp"
                         android:src="@drawable/ic_calendar_next_sv"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="@id/home_calendar_previous_date_iv" />
+                        app:layout_constraintTop_toTopOf="@id/calendar_previous_date_iv" />
 
                     <LinearLayout
                         android:id="@+id/calendar_weekdays_row"
@@ -262,7 +262,7 @@
                         app:layout_constraintTop_toBottomOf="@id/calendar_mode_buttons"/>
 
                     <com.kizitonwose.calendar.view.CalendarView
-                        android:id="@+id/home_calender_view"
+                        android:id="@+id/calender_view"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
@@ -275,7 +275,7 @@
                         app:layout_constraintTop_toBottomOf="@id/calendar_weekdays_row" />
 
                     <com.kizitonwose.calendar.view.WeekCalendarView
-                        android:id="@+id/home_week_calender_view"
+                        android:id="@+id/week_calender_view"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
@@ -291,7 +291,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:barrierDirection="bottom"
-                        app:constraint_referenced_ids="home_calender_view,home_week_calender_view" />
+                        app:constraint_referenced_ids="calender_view,week_calender_view" />
 
                     <ImageView
                         android:id="@+id/horizon_iv"

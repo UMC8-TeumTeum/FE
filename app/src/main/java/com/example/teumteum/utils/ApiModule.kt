@@ -3,7 +3,6 @@ package com.example.teumteum.utils
 import com.example.teumteum.data.remote.activity.service.ActivityService
 import com.example.teumteum.data.remote.alarm.service.FcmService
 import com.example.teumteum.data.remote.alarm.service.NotificationService
-import com.example.teumteum.data.remote.calendar.service.CalendarService
 import com.example.teumteum.data.remote.friend.service.FriendService
 import com.example.teumteum.data.remote.mypage.service.MyPageService
 import com.example.teumteum.data.remote.home.service.HomeService
@@ -33,12 +32,6 @@ class ApiModule {
     @Singleton
     fun provideWishApi(@AuthRetrofit retrofit: Retrofit): WishService {
         return retrofit.create(WishService::class.java)
-    }
-
-    @Provides
-    @Singleton
-    fun provideCalendarApi(@AuthRetrofit retrofit: Retrofit): CalendarService {
-        return retrofit.create(CalendarService::class.java)
     }
 
     @Provides
