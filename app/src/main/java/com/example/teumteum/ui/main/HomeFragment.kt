@@ -412,11 +412,6 @@ class HomeFragment : Fragment(), IDateClickListener {
         bottomNav?.visibility = View.VISIBLE
     }
 
-    private fun weekContains(target: LocalDate, weekStart: LocalDate): Boolean {
-        val weekEnd = weekStart.plusDays(6)
-        return !target.isBefore(weekStart) && !target.isAfter(weekEnd)
-    }
-
     // 주별 날짜 헤더
     private fun headerMonthOfDisplayedWeek(): YearMonth {
         val weekStart = startOfWeekSunday(weekCursorDate)
