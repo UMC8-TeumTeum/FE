@@ -27,12 +27,6 @@
         </service>
 
         <activity
-            android:name=".ui.lock.LockScreenPushActivity"
-            android:showWhenLocked="true"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            android:turnScreenOn="true"
-            android:exported="true" />
-        <activity
             android:name=".ui.signup.SignUpActivity"
             android:exported="false" />
         <activity
