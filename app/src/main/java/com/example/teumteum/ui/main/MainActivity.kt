@@ -14,7 +14,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.example.teumteum.ui.feed.FeedFragment
 import com.example.teumteum.ui.friend.FriendFragment
 import com.example.teumteum.ui.myhome.MyHomeFragment
 import com.example.teumteum.R
@@ -105,13 +104,6 @@ class MainActivity : AppCompatActivity() {
                 R.id.fragment_home -> {
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.main_frm, HomeFragment())
-                        .commitAllowingStateLoss()
-                    return@setOnItemSelectedListener true
-                }
-
-                R.id.fragment_feed -> {
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.main_frm, FeedFragment())
                         .commitAllowingStateLoss()
                     return@setOnItemSelectedListener true
                 }
