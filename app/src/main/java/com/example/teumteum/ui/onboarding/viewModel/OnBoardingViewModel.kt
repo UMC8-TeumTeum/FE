@@ -1,4 +1,4 @@
-package com.example.teumteum.ui.auth.onboarding.viewModel
+package com.example.teumteum.ui.onboarding.viewModel
 
 import android.content.Context
 import android.net.Uri
@@ -6,15 +6,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.teumteum.ui.auth.onboarding.data.Schedule
-import com.example.teumteum.data.remote.auth.signup.model.AgreementRequest
-import com.example.teumteum.data.remote.auth.onboarding.model.NicknameJobRequest
-import com.example.teumteum.data.remote.auth.onboarding.model.PresignedRequest
-import com.example.teumteum.data.remote.auth.onboarding.model.ProfileImageRequest
-import com.example.teumteum.data.remote.auth.onboarding.model.RemindRequest
-import com.example.teumteum.data.remote.auth.onboarding.model.ScheduleRequest
-import com.example.teumteum.data.remote.auth.onboarding.model.SleepPatternRequest
-import com.example.teumteum.data.remote.auth.onboarding.repository.OnBoardingRepository
+import com.example.teumteum.ui.onboarding.data.Schedule
+import com.example.teumteum.data.remote.signup.model.AgreementRequest
+import com.example.teumteum.data.remote.onboarding.model.NicknameJobRequest
+import com.example.teumteum.data.remote.onboarding.model.PresignedRequest
+import com.example.teumteum.data.remote.onboarding.model.ProfileImageRequest
+import com.example.teumteum.data.remote.onboarding.model.RemindRequest
+import com.example.teumteum.data.remote.onboarding.model.ScheduleRequest
+import com.example.teumteum.data.remote.onboarding.model.SleepPatternRequest
+import com.example.teumteum.data.remote.onboarding.repository.OnBoardingRepository
 import com.example.teumteum.utils.ApiException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -62,18 +62,6 @@ class OnBoardingViewModel @Inject constructor(
 
     private val _remindList = MutableLiveData<List<Int>>(emptyList())
     val remindList: LiveData<List<Int>> get() = _remindList
-
-    /** 약관 동의  */
-    fun postAgreements(request: AgreementRequest) {
-        _state.value = OnBoardingUiState.Loading
-        viewModelScope.launch {
-            repository.postAgreements(request)
-                .onSuccess {
-                    _state.value = OnBoardingUiState.Success
-                }
-                .onFailure { handleError(it) }
-        }
-    }
 
     /** 닉네임/직업 등록 */
     fun postNicknameAndJob() {
@@ -126,7 +114,11 @@ class OnBoardingViewModel @Inject constructor(
 
                         override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
                             if (response.isSuccessful) {
-                                postProfileImage(ProfileImageRequest(_profileImageFileName.value!!))
+                                postProfileImage(
+                                    ProfileImageRequest(
+                                        _profileImageFileName.value!!
+                                    )
+                                )
                             } else {
                                 _state.postValue(
                                     OnBoardingUiState.Error(

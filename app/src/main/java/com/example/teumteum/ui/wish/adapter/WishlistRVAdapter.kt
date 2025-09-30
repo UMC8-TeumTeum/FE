@@ -31,7 +31,7 @@ class WishlistRVAdapter(private var wishlist: List<WishlistItem>, private val fr
             bottomSheet.show(fragmentManager, bottomSheet.tag)
         }
 
-        binding.fillButton.setOnClickListener {
+        binding.selectButton.setOnClickListener {
             val fragment = WishSetting01Fragment().apply {
                 arguments = Bundle().apply {
                     putLong("wish_id", item.id)

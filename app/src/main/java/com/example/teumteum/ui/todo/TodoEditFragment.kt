@@ -29,13 +29,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.teumteum.R
-import com.example.teumteum.databinding.FragmentTodoEditBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 import com.example.teumteum.data.remote.todo.model.EditTodoRequest
 import com.example.teumteum.data.remote.todo.model.ReminderAlarm
 import com.example.teumteum.data.remote.todo.model.enums.AlarmStatus
 import com.example.teumteum.data.remote.todo.model.enums.ScheduleType
+import com.example.teumteum.databinding.BottomSheetTodoEditBinding
 import com.example.teumteum.databinding.DialogConfirmAiContentDeleteBinding
 import com.example.teumteum.databinding.DialogConfirmTeumDeleteBinding
 import com.example.teumteum.databinding.DialogConfirmTodoDeleteBinding
@@ -61,7 +61,7 @@ import java.util.Locale
 @AndroidEntryPoint
 class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
 
-    private var _binding: FragmentTodoEditBinding? = null
+    private var _binding: BottomSheetTodoEditBinding? = null
     private val binding get() = _binding!!
 
     private var currentTargetTextView: TextView? = null
@@ -111,7 +111,7 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentTodoEditBinding.inflate(inflater, container, false)
+        _binding = BottomSheetTodoEditBinding.inflate(inflater, container, false)
         return binding.root
     }
 

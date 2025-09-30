@@ -18,7 +18,7 @@ import com.example.teumteum.ui.friend.adapter.TimeCardAdapter
 import com.example.teumteum.ui.friend.data.SelectedTime
 import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.example.teumteum.ui.main.MainActivity
-import com.example.teumteum.ui.signup.SignUpActivity
+import com.example.teumteum.ui.auth.SignUpActivity
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate

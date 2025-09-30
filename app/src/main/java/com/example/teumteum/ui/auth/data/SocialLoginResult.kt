@@ -1,4 +1,4 @@
-package com.example.teumteum.ui.auth.signin.data
+package com.example.teumteum.ui.auth.data
 
 import com.example.teumteum.utils.NextStep
 

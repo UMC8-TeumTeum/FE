@@ -1,15 +1,14 @@
-package com.example.teumteum.data.remote.auth.onboarding.repository
+package com.example.teumteum.data.remote.onboarding.repository
 
 import android.util.Log
-import com.example.teumteum.data.remote.auth.signup.model.AgreementRequest
-import com.example.teumteum.data.remote.auth.onboarding.model.NicknameJobRequest
-import com.example.teumteum.data.remote.auth.onboarding.model.PresignedRequest
-import com.example.teumteum.data.remote.auth.onboarding.model.PresignedResponse
-import com.example.teumteum.data.remote.auth.onboarding.model.ProfileImageRequest
-import com.example.teumteum.data.remote.auth.onboarding.model.ScheduleRequest
-import com.example.teumteum.data.remote.auth.onboarding.model.SleepPatternRequest
-import com.example.teumteum.data.remote.auth.onboarding.model.RemindRequest
-import com.example.teumteum.data.remote.auth.onboarding.service.OnBoardingService
+import com.example.teumteum.data.remote.onboarding.model.NicknameJobRequest
+import com.example.teumteum.data.remote.onboarding.model.PresignedRequest
+import com.example.teumteum.data.remote.onboarding.model.PresignedResponse
+import com.example.teumteum.data.remote.onboarding.model.ProfileImageRequest
+import com.example.teumteum.data.remote.onboarding.model.ScheduleRequest
+import com.example.teumteum.data.remote.onboarding.model.SleepPatternRequest
+import com.example.teumteum.data.remote.onboarding.model.RemindRequest
+import com.example.teumteum.data.remote.onboarding.service.OnBoardingService
 import com.example.teumteum.utils.handleApiResponse
 import com.example.teumteum.utils.handleApiResponseUnit
 import javax.inject.Inject

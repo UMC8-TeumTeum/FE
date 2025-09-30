@@ -17,7 +17,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.wish.model.RegisterWishRequest
-import com.example.teumteum.databinding.FragmentWishRegisterBinding
+import com.example.teumteum.databinding.BottomSheetWishRegisterBinding
 import com.example.teumteum.ui.todo.TodoRegisterFragment
 import com.example.teumteum.ui.wish.viewModel.WishViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -30,7 +30,7 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class WishRegisterFragment : BottomSheetDialogFragment() {
 
-    private var _binding: FragmentWishRegisterBinding? = null
+    private var _binding: BottomSheetWishRegisterBinding? = null
     private val binding get() = _binding!!
 
     private var selectedTimeButton: View? = null
@@ -46,7 +46,7 @@ class WishRegisterFragment : BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentWishRegisterBinding.inflate(inflater, container, false)
+        _binding = BottomSheetWishRegisterBinding.inflate(inflater, container, false)
         return binding.root
     }
 

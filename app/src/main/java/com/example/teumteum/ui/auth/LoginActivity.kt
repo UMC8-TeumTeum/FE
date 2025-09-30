@@ -1,4 +1,4 @@
-package com.example.teumteum.ui.auth.signin
+package com.example.teumteum.ui.auth
 
 import android.content.Intent
 import android.os.Bundle
@@ -8,8 +8,8 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.teumteum.databinding.ActivityLoginBinding
 import com.example.teumteum.ui.main.MainActivity
-import com.example.teumteum.ui.auth.signin.data.LoginResult
-import com.example.teumteum.ui.auth.signin.viewModel.LoginViewModel
+import com.example.teumteum.ui.auth.data.LoginResult
+import com.example.teumteum.ui.auth.viewModel.LoginViewModel
 import com.example.teumteum.ui.auth.SignUpActivity
 import com.example.teumteum.utils.FlowPrefs
 import com.example.teumteum.utils.NextStep

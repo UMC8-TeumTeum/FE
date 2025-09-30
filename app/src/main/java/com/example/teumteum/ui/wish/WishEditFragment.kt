@@ -22,9 +22,9 @@ import com.example.teumteum.R
 import com.example.teumteum.data.remote.wish.model.DeleteWishesRequest
 import com.example.teumteum.data.remote.wish.model.EditWishRequest
 import com.example.teumteum.data.remote.wish.model.WishResult
+import com.example.teumteum.databinding.BottomSheetWishEditBinding
 import com.example.teumteum.databinding.DialogConfirmWishDeleteBinding
 import com.example.teumteum.databinding.DialogConfirmWishEditBinding
-import com.example.teumteum.databinding.FragmentWishEditBinding
 import com.example.teumteum.ui.wish.viewModel.WishViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -36,7 +36,7 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class WishEditFragment : BottomSheetDialogFragment() {
 
-    private var _binding: FragmentWishEditBinding? = null
+    private var _binding: BottomSheetWishEditBinding? = null
     private val binding get() = _binding!!
 
     private var wishId: Long = -1L
@@ -56,7 +56,7 @@ class WishEditFragment : BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentWishEditBinding.inflate(inflater, container, false)
+        _binding = BottomSheetWishEditBinding.inflate(inflater, container, false)
         return binding.root
     }
 

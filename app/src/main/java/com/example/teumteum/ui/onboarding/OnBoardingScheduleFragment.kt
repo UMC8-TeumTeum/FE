@@ -1,4 +1,4 @@
-package com.example.teumteum.ui.auth.onboarding
+package com.example.teumteum.ui.onboarding
 
 import android.os.Bundle
 import android.util.Log
@@ -11,13 +11,13 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.teumteum.R
-import com.example.teumteum.data.remote.auth.onboarding.model.Schedule
+import com.example.teumteum.data.remote.onboarding.model.Schedule
 import com.example.teumteum.databinding.FragmentOnBoardingScheduleBinding
 import kotlin.collections.toList
-import com.example.teumteum.data.remote.auth.onboarding.model.ScheduleRequest
-import com.example.teumteum.data.remote.auth.onboarding.model.Week
-import com.example.teumteum.ui.auth.onboarding.viewModel.OnBoardingUiState
-import com.example.teumteum.ui.auth.onboarding.viewModel.OnBoardingViewModel
+import com.example.teumteum.data.remote.onboarding.model.ScheduleRequest
+import com.example.teumteum.data.remote.onboarding.model.Week
+import com.example.teumteum.ui.onboarding.viewModel.OnBoardingUiState
+import com.example.teumteum.ui.onboarding.viewModel.OnBoardingViewModel
 import com.example.teumteum.ui.auth.SignUpActivity
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalTime

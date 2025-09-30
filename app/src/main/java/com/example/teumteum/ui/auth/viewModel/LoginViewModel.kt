@@ -1,4 +1,4 @@
-package com.example.teumteum.ui.auth.signin.viewModel
+package com.example.teumteum.ui.auth.viewModel
 
 import android.content.Context
 import android.util.Log
@@ -7,8 +7,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.teumteum.data.remote.alarm.repository.FcmRepository
-import com.example.teumteum.data.remote.auth.signin.repository.SignInRepository
-import com.example.teumteum.ui.auth.signin.data.LoginResult
+import com.example.teumteum.data.remote.auth.repository.AuthRepository
+import com.example.teumteum.ui.auth.data.LoginResult
 import com.example.teumteum.data.remote.alarm.FcmTokenStore
 import com.example.teumteum.utils.FlowPrefs
 import com.example.teumteum.utils.TokenProvider
@@ -20,7 +20,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val repository: SignInRepository,
+    private val repository: AuthRepository,
     private val tokenProvider: TokenProvider,
     private val flowPrefs: FlowPrefs,
     private val fcmRepository: FcmRepository,

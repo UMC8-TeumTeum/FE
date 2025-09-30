@@ -1,9 +1,9 @@
-package com.example.teumteum.data.remote.auth.signin.service
+package com.example.teumteum.data.remote.auth.service
 
-import com.example.teumteum.data.remote.auth.signin.model.JwtTokenResponse
-import com.example.teumteum.data.remote.auth.signin.model.KakaoSignInRequest
-import com.example.teumteum.data.remote.auth.signin.model.ReissueRequest
-import com.example.teumteum.ui.auth.signin.data.SocialLoginResult
+import com.example.teumteum.data.remote.auth.model.JwtTokenResponse
+import com.example.teumteum.data.remote.auth.model.KakaoLoginRequest
+import com.example.teumteum.data.remote.auth.model.ReissueRequest
+import com.example.teumteum.ui.auth.data.SocialLoginResult
 import com.example.teumteum.utils.ApiResponse
 import retrofit2.Response
 import retrofit2.http.Body
@@ -13,7 +13,7 @@ interface AuthService {
 
     @POST("/api/auth/social-login/kakao")
     suspend fun loginWithKakao(
-        @Body request: KakaoSignInRequest
+        @Body request: KakaoLoginRequest
     ): Response<ApiResponse<SocialLoginResult>>
 
     @POST("/api/auth/reissue")

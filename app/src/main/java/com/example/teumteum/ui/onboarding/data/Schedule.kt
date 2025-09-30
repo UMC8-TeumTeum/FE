@@ -1,4 +1,4 @@
-package com.example.teumteum.ui.auth.onboarding.data
+package com.example.teumteum.ui.onboarding.data
 
 import java.time.LocalTime
 

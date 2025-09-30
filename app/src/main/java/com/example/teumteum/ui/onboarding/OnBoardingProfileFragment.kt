@@ -1,4 +1,4 @@
-package com.example.teumteum.ui.auth.onboarding
+package com.example.teumteum.ui.onboarding
 
 import android.app.Activity
 import android.content.Intent
@@ -12,8 +12,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.example.teumteum.databinding.FragmentOnBoardingProfileBinding
-import com.example.teumteum.ui.auth.onboarding.viewModel.OnBoardingUiState
-import com.example.teumteum.ui.auth.onboarding.viewModel.OnBoardingViewModel
+import com.example.teumteum.ui.onboarding.viewModel.OnBoardingUiState
+import com.example.teumteum.ui.onboarding.viewModel.OnBoardingViewModel
 import com.example.teumteum.ui.auth.SignUpActivity
 import dagger.hilt.android.AndroidEntryPoint
 

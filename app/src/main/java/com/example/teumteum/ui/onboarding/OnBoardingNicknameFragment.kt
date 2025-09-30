@@ -1,4 +1,4 @@
-package com.example.teumteum.ui.auth.onboarding
+package com.example.teumteum.ui.onboarding
 
 import android.graphics.Color
 import android.os.Bundle
@@ -12,8 +12,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentOnBoardingNicknameBinding
-import com.example.teumteum.ui.auth.onboarding.viewModel.OnBoardingUiState
-import com.example.teumteum.ui.auth.onboarding.viewModel.OnBoardingViewModel
+import com.example.teumteum.ui.onboarding.viewModel.OnBoardingUiState
+import com.example.teumteum.ui.onboarding.viewModel.OnBoardingViewModel
 import com.example.teumteum.ui.auth.SignUpActivity
 import dagger.hilt.android.AndroidEntryPoint
 

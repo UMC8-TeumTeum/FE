@@ -1,4 +1,4 @@
-package com.example.teumteum.ui.auth.onboarding
+package com.example.teumteum.ui.onboarding
 
 import android.os.Bundle
 import android.util.Log
@@ -7,10 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
-import com.example.teumteum.data.remote.auth.onboarding.model.RemindRequest
+import com.example.teumteum.data.remote.onboarding.model.RemindRequest
 import com.example.teumteum.databinding.FragmentOnBoardingRemindBinding
-import com.example.teumteum.ui.auth.onboarding.viewModel.OnBoardingUiState
-import com.example.teumteum.ui.auth.onboarding.viewModel.OnBoardingViewModel
+import com.example.teumteum.ui.onboarding.viewModel.OnBoardingUiState
+import com.example.teumteum.ui.onboarding.viewModel.OnBoardingViewModel
 import com.example.teumteum.ui.auth.SignUpActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.getValue

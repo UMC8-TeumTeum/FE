@@ -1,13 +1,12 @@
-package com.example.teumteum.data.remote.auth.onboarding.service
+package com.example.teumteum.data.remote.onboarding.service
 
-import com.example.teumteum.data.remote.auth.signup.model.AgreementRequest
-import com.example.teumteum.data.remote.auth.onboarding.model.NicknameJobRequest
-import com.example.teumteum.data.remote.auth.onboarding.model.PresignedRequest
-import com.example.teumteum.data.remote.auth.onboarding.model.PresignedResponse
-import com.example.teumteum.data.remote.auth.onboarding.model.ProfileImageRequest
-import com.example.teumteum.data.remote.auth.onboarding.model.ScheduleRequest
-import com.example.teumteum.data.remote.auth.onboarding.model.SleepPatternRequest
-import com.example.teumteum.data.remote.auth.onboarding.model.RemindRequest
+import com.example.teumteum.data.remote.onboarding.model.NicknameJobRequest
+import com.example.teumteum.data.remote.onboarding.model.PresignedRequest
+import com.example.teumteum.data.remote.onboarding.model.PresignedResponse
+import com.example.teumteum.data.remote.onboarding.model.ProfileImageRequest
+import com.example.teumteum.data.remote.onboarding.model.ScheduleRequest
+import com.example.teumteum.data.remote.onboarding.model.SleepPatternRequest
+import com.example.teumteum.data.remote.onboarding.model.RemindRequest
 import com.example.teumteum.utils.ApiResponse
 import retrofit2.Response
 import retrofit2.http.Body

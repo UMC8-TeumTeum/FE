@@ -1,4 +1,4 @@
-package com.example.teumteum.ui.auth.onboarding
+package com.example.teumteum.ui.onboarding
 
 import android.app.Dialog
 import android.content.Context
@@ -15,8 +15,8 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
 import com.example.teumteum.databinding.BottomSheetScheduleBinding
-import com.example.teumteum.ui.auth.onboarding.data.Schedule
-import com.example.teumteum.ui.auth.onboarding.viewModel.OnBoardingViewModel
+import com.example.teumteum.ui.onboarding.data.Schedule
+import com.example.teumteum.ui.onboarding.viewModel.OnBoardingViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import java.time.LocalTime

@@ -1,4 +1,4 @@
-package com.example.teumteum.data
+package com.example.teumteum.data.remote.alarm
 
 data class PushAlarmItem(
     val id: Int,

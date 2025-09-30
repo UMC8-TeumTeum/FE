@@ -1,12 +1,12 @@
-package com.example.teumteum.data.remote.auth.signin
+package com.example.teumteum.data.remote.auth
 
 import android.content.Context
 import android.content.Intent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
-import com.example.teumteum.ui.auth.signin.LoginActivity
-import com.example.teumteum.data.remote.auth.signin.service.AuthService
+import com.example.teumteum.ui.auth.LoginActivity
+import com.example.teumteum.data.remote.auth.service.AuthService
 import com.example.teumteum.utils.AuthRetrofit
 import com.example.teumteum.utils.FlowPrefs
 import com.example.teumteum.utils.TokenProvider

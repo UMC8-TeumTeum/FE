@@ -1,4 +1,4 @@
-package com.example.teumteum.data.remote.auth.signin.model
+package com.example.teumteum.data.remote.auth.model
 
 import com.google.gson.annotations.SerializedName
 

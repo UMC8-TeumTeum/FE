@@ -26,12 +26,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
-import com.example.teumteum.databinding.FragmentTodoRegisterBinding
 import com.example.teumteum.R
 
 import com.example.teumteum.data.remote.todo.model.RegisterTodoRequest
 import com.example.teumteum.data.remote.todo.model.ReminderAlarm
 import com.example.teumteum.data.remote.todo.model.enums.AlarmStatus
+import com.example.teumteum.databinding.BottomSheetTodoRegisterBinding
 import com.example.teumteum.ui.wish.WishRegisterFragment
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -54,7 +54,7 @@ import java.util.Locale
 @AndroidEntryPoint
 class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
 
-    private var _binding: FragmentTodoRegisterBinding? = null
+    private var _binding: BottomSheetTodoRegisterBinding? = null
     private val binding get() = _binding!!
 
     private var currentTargetTextView: TextView? = null
@@ -87,7 +87,7 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentTodoRegisterBinding.inflate(inflater, container, false)
+        _binding = BottomSheetTodoRegisterBinding.inflate(inflater, container, false)
 
         return binding.root
     }

@@ -7,8 +7,9 @@ import com.example.teumteum.data.remote.calendar.service.CalendarService
 import com.example.teumteum.data.remote.friend.service.FriendService
 import com.example.teumteum.data.remote.mypage.service.MyPageService
 import com.example.teumteum.data.remote.home.service.HomeService
-import com.example.teumteum.data.remote.login.service.AuthService
+import com.example.teumteum.data.remote.auth.service.AuthService
 import com.example.teumteum.data.remote.onboarding.service.OnBoardingService
+import com.example.teumteum.data.remote.signup.service.SignUpService
 import com.example.teumteum.data.remote.wish.service.WishService
 import com.example.teumteum.data.remote.todo.service.TodoService
 import dagger.Module
@@ -55,6 +56,12 @@ class ApiModule {
 
     @Provides
     @Singleton
+    fun provideSignUpApi(@AuthRetrofit retrofit: Retrofit): SignUpService {
+        return retrofit.create(SignUpService::class.java)
+    }
+
+    @Provides
+    @Singleton
     fun provideOnBoardingApi(@AuthRetrofit retrofit: Retrofit): OnBoardingService {
         return retrofit.create(OnBoardingService::class.java)
     }
@@ -86,7 +93,7 @@ class ApiModule {
     // 인증이 필요 없는 API - @NoAuthRetrofit 사용
     @Provides
     @Singleton
-    fun provideLoginApi(@NoAuthRetrofit retrofit: Retrofit): AuthService {
+    fun provideAuthApi(@NoAuthRetrofit retrofit: Retrofit): AuthService {
         return retrofit.create(AuthService::class.java)
     }
 }

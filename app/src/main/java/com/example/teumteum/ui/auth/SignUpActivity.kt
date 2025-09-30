@@ -1,4 +1,4 @@
-package com.example.teumteum.ui.auth.signup
+package com.example.teumteum.ui.auth
 
 import android.content.Intent
 import android.os.Bundle
@@ -8,11 +8,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.teumteum.R
 import com.example.teumteum.databinding.ActivitySignUpBinding
-import com.example.teumteum.ui.auth.onboarding.OnBoardingNicknameFragment
-import com.example.teumteum.ui.auth.onboarding.OnBoardingProfileFragment
-import com.example.teumteum.ui.auth.onboarding.OnBoardingRemindFragment
-import com.example.teumteum.ui.auth.onboarding.OnBoardingScheduleFragment
-import com.example.teumteum.ui.auth.onboarding.OnBoardingSleepPatternFragment
+import com.example.teumteum.ui.onboarding.OnBoardingNicknameFragment
+import com.example.teumteum.ui.onboarding.OnBoardingProfileFragment
+import com.example.teumteum.ui.onboarding.OnBoardingRemindFragment
+import com.example.teumteum.ui.onboarding.OnBoardingScheduleFragment
+import com.example.teumteum.ui.onboarding.OnBoardingSleepPatternFragment
+import com.example.teumteum.ui.signup.AgreementFragment
 import com.example.teumteum.ui.main.MainActivity
 import com.example.teumteum.utils.FlowPrefs
 import com.example.teumteum.utils.NextStep

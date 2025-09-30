@@ -1,4 +1,4 @@
-package com.example.teumteum.ui.auth.onboarding.viewModel
+package com.example.teumteum.ui.onboarding.viewModel
 
 sealed class OnBoardingUiState {
     object Idle : OnBoardingUiState()
