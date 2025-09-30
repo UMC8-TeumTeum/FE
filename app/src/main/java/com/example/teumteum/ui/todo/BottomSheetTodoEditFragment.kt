@@ -46,7 +46,6 @@ import com.example.teumteum.ui.calendar.MonthlyCalendarFragment
 import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.example.teumteum.ui.todo.adapter.TeumProfileAdapter
 import com.example.teumteum.ui.todo.viewModel.TodoViewModel
-import com.example.teumteum.utils.TimeUtils
 import com.example.teumteum.utils.TimeUtils.combineDateTime
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -59,7 +58,7 @@ import java.time.format.DateTimeParseException
 import java.util.Locale
 
 @AndroidEntryPoint
-class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
+class TodoEditBottomSheetFragment : BottomSheetDialogFragment(), IDateClickListener {
 
     private var _binding: BottomSheetTodoEditBinding? = null
     private val binding get() = _binding!!
@@ -724,8 +723,8 @@ class TodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
     }
 
     companion object {
-        fun newInstance(todoId: Long): TodoEditFragment {
-            return TodoEditFragment().apply {
+        fun newInstance(todoId: Long): TodoEditBottomSheetFragment {
+            return TodoEditBottomSheetFragment().apply {
                 arguments = Bundle().apply {
                     putLong("todo_id", todoId)
                 }

@@ -1,6 +1,5 @@
 package com.example.teumteum.ui.todo
 
-import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
@@ -32,7 +31,7 @@ import com.example.teumteum.data.remote.todo.model.RegisterTodoRequest
 import com.example.teumteum.data.remote.todo.model.ReminderAlarm
 import com.example.teumteum.data.remote.todo.model.enums.AlarmStatus
 import com.example.teumteum.databinding.BottomSheetTodoRegisterBinding
-import com.example.teumteum.ui.wish.WishRegisterFragment
+import com.example.teumteum.ui.wish.WishRegisterBottomSheetFragment
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -41,9 +40,7 @@ import com.example.teumteum.ui.calendar.IDateClickListener
 import com.example.teumteum.ui.calendar.MonthlyCalendarFragment
 import com.example.teumteum.ui.myhome.viewModel.MyHomeViewModel
 import com.example.teumteum.ui.todo.viewModel.TodoViewModel
-import com.example.teumteum.utils.TimeUtils
 import com.example.teumteum.utils.TimeUtils.combineDateTime
-import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -52,7 +49,7 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 @AndroidEntryPoint
-class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
+class TodoRegisterBottomSheetFragment : BottomSheetDialogFragment(), IDateClickListener{
 
     private var _binding: BottomSheetTodoRegisterBinding? = null
     private val binding get() = _binding!!
@@ -184,7 +181,7 @@ class TodoRegisterFragment : BottomSheetDialogFragment(), IDateClickListener{
                 val tx = childFragmentManager.beginTransaction()
                     .setReorderingAllowed(true)
                     .disallowAddToBackStack()
-                    .replace(R.id.register_fragment_container, WishRegisterFragment(), "WishRegister")
+                    .replace(R.id.register_fragment_container, WishRegisterBottomSheetFragment(), "WishRegister")
 
                 // 겹침/플리커 방지를 위해 즉시 커밋
                 tx.commitNowAllowingStateLoss()

@@ -22,18 +22,18 @@ class WishRecommendRVAdapter(private var wishList: List<ActivityWishResult>, pri
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = wishList[position]
-        val binding = holder.binding
+        val b = holder.binding
 
-        binding.wishTitleTv.text = item.title
-        binding.wishTimeTv.text =
+        b.titleTv.text = item.title
+        b.timeTv.text =
             when (item.estimatedDuration.lowercase()) { "1h" -> "1h-" ; else -> item.estimatedDuration }
 
-        binding.selectButton.setOnClickListener {
+        b.selectButton.setOnClickListener {
             val fragment = FillingSetting01Fragment().apply {
                 arguments = Bundle().apply {
                     putLong("wish_id", item.id)
-                    putString("title", binding.wishTitleTv.text.toString())
-                    putString("time", binding.wishTimeTv.text.toString())
+                    putString("title", b.titleTv.text.toString())
+                    putString("time", b.timeTv.text.toString())
                 }
             }
 

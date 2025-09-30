@@ -12,8 +12,7 @@ import com.example.teumteum.data.remote.todo.model.TodoListResult
 import com.example.teumteum.data.remote.todo.model.enums.AlarmStatus
 import com.example.teumteum.data.remote.todo.model.enums.ScheduleType
 import com.example.teumteum.databinding.ItemTodolistBinding
-import com.example.teumteum.ui.todo.TodoEditFragment
-import com.example.teumteum.ui.wish.WishSetting01Fragment
+import com.example.teumteum.ui.todo.BottomSheetTodoEditFragment
 
 class TodoRVAdapter(
     private val fragmentManager: FragmentManager,
@@ -52,7 +51,7 @@ class TodoRVAdapter(
                 putLong("todo_id", item.id)
                 putString("schedule_type", scheduleTypeName)
             }
-            TodoEditFragment().apply { arguments = args }
+            BottomSheetTodoEditFragment().apply { arguments = args }
                 .show(fragmentManager, "TodoEditBottomSheet")
         }
 

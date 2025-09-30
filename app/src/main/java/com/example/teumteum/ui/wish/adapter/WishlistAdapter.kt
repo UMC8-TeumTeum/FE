@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.wish.model.WishlistItem
 import com.example.teumteum.databinding.ItemWishlistBinding
-import com.example.teumteum.ui.wish.WishEditFragment
+import com.example.teumteum.ui.wish.BottomSheetWishEditFragment
 import com.example.teumteum.ui.wish.WishSetting01Fragment
 
 class WishlistRVAdapter(private var wishlist: List<WishlistItem>, private val fragmentManager: FragmentManager) : RecyclerView.Adapter<WishlistRVAdapter.ViewHolder>() {
@@ -23,11 +23,11 @@ class WishlistRVAdapter(private var wishlist: List<WishlistItem>, private val fr
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = wishlist[position]
         val binding = holder.binding
-        binding.wishTitleTv.text = item.title
-        binding.wishTimeTv.text = item.estimatedDuration
+        binding.titleTv.text = item.title
+        binding.timeTv.text = item.estimatedDuration
 
         binding.root.setOnClickListener {
-            val bottomSheet = WishEditFragment.newInstance(item.id)
+            val bottomSheet = BottomSheetWishEditFragment.newInstance(item.id)
             bottomSheet.show(fragmentManager, bottomSheet.tag)
         }
 
@@ -35,8 +35,8 @@ class WishlistRVAdapter(private var wishlist: List<WishlistItem>, private val fr
             val fragment = WishSetting01Fragment().apply {
                 arguments = Bundle().apply {
                     putLong("wish_id", item.id)
-                    putString("title", binding.wishTitleTv.text.toString())
-                    putString("time", binding.wishTimeTv.text.toString())
+                    putString("title", binding.titleTv.text.toString())
+                    putString("time", binding.timeTv.text.toString())
                 }
             }
 

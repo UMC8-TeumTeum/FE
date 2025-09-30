@@ -14,7 +14,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -34,7 +33,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class WishEditFragment : BottomSheetDialogFragment() {
+class WishEditBottomSheetFragment : BottomSheetDialogFragment() {
 
     private var _binding: BottomSheetWishEditBinding? = null
     private val binding get() = _binding!!
@@ -388,8 +387,8 @@ class WishEditFragment : BottomSheetDialogFragment() {
     }
 
     companion object {
-        fun newInstance(wishId: Long): WishEditFragment {
-            return WishEditFragment().apply {
+        fun newInstance(wishId: Long): WishEditBottomSheetFragment {
+            return WishEditBottomSheetFragment().apply {
                 arguments = Bundle().apply {
                     putLong("wish_id", wishId)
                 }

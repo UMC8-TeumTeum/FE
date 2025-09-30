@@ -34,19 +34,19 @@ class WishlistEditRVAdapter(private val wishlist: MutableList<WishlistItem>) : R
         val item = wishlist[position]
         val binding = holder.binding
 
-        binding.tvWishTitle.text = item.title
-        binding.wishTimeTv.text = item.estimatedDuration
+        binding.titleTv.text = item.title
+        binding.timeTv.text = item.estimatedDuration
 
         // 리스너 중복 호출 방지
-        binding.wishCheckbox.setOnCheckedChangeListener(null)
+        binding.checkbox.setOnCheckedChangeListener(null)
 
         // 선택 집합 기준으로 체크 상태 복원
         val checked = selectedIds.contains(item.id)
-        binding.wishCheckbox.isChecked = checked
+        binding.checkbox.isChecked = checked
         item.isChecked = checked
-        setCheckBoxTint(binding.wishCheckbox, checked)
+        setCheckBoxTint(binding.checkbox, checked)
 
-        binding.wishCheckbox.setOnCheckedChangeListener { button, isChecked ->
+        binding.checkbox.setOnCheckedChangeListener { button, isChecked ->
             if (isChecked) {
                 selectedIds.add(item.id)
             } else {

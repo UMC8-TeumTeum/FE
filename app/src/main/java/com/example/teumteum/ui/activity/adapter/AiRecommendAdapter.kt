@@ -7,8 +7,8 @@ import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.activity.model.ActivityAiResult
-import com.example.teumteum.data.remote.todo.model.enums.ScheduleType
 import com.example.teumteum.databinding.ItemWishlistBinding
+import com.example.teumteum.ui.activity.ContentsBottomSheetFragment
 import com.example.teumteum.ui.activity.FillingSetting01Fragment
 
 class AiRecommendRVAdapter( private var aiList: List<ActivityAiResult>, private val fragmentManager: FragmentManager) : RecyclerView.Adapter<AiRecommendRVAdapter.ViewHolder>() {
@@ -22,18 +22,28 @@ class AiRecommendRVAdapter( private var aiList: List<ActivityAiResult>, private 
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = aiList[position]
-        val binding = holder.binding
+        val b = holder.binding
 
-        binding.wishTitleTv.text = item.title
-        binding.wishTimeTv.text =
+        b.titleTv.text = item.title
+        b.timeTv.text =
             when (item.estimatedDuration.lowercase()) { "1h" -> "1h-" ; else -> item.estimatedDuration }
 
-        binding.selectButton.setOnClickListener {
+        b.root.setOnClickListener {
+            val args = Bundle().apply {
+                putString("ai_id", item.id)
+                putString("title", b.titleTv.text.toString())
+//                putString("content", b.contentTv.text.toString())
+            }
+            ContentsBottomSheetFragment().apply { arguments = args }
+                .show(fragmentManager, "ContentBottomSheetFragment")
+        }
+
+        b.selectButton.setOnClickListener {
             val fragment = FillingSetting01Fragment().apply {
                 arguments = Bundle().apply {
                     putString("ai_id", item.id)
-                    putString("title", binding.wishTitleTv.text.toString())
-                    putString("time", binding.wishTimeTv.text.toString())
+                    putString("title", b.titleTv.text.toString())
+                    putString("time", b.timeTv.text.toString())
                 }
             }
 
