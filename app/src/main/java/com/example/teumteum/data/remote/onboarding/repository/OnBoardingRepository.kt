@@ -1,15 +1,15 @@
-package com.example.teumteum.data.remote.onboarding.repository
+package com.example.teumteum.data.remote.auth.onboarding.repository
 
 import android.util.Log
-import com.example.teumteum.data.remote.onboarding.model.AgreementRequest
-import com.example.teumteum.data.remote.onboarding.model.NicknameJobRequest
-import com.example.teumteum.data.remote.onboarding.model.PresignedRequest
-import com.example.teumteum.data.remote.onboarding.model.PresignedResponse
-import com.example.teumteum.data.remote.onboarding.model.ProfileImageRequest
-import com.example.teumteum.data.remote.onboarding.model.ScheduleRequest
-import com.example.teumteum.data.remote.onboarding.model.SleepPatternRequest
-import com.example.teumteum.data.remote.onboarding.model.RemindRequest
-import com.example.teumteum.data.remote.onboarding.service.OnBoardingService
+import com.example.teumteum.data.remote.auth.signup.model.AgreementRequest
+import com.example.teumteum.data.remote.auth.onboarding.model.NicknameJobRequest
+import com.example.teumteum.data.remote.auth.onboarding.model.PresignedRequest
+import com.example.teumteum.data.remote.auth.onboarding.model.PresignedResponse
+import com.example.teumteum.data.remote.auth.onboarding.model.ProfileImageRequest
+import com.example.teumteum.data.remote.auth.onboarding.model.ScheduleRequest
+import com.example.teumteum.data.remote.auth.onboarding.model.SleepPatternRequest
+import com.example.teumteum.data.remote.auth.onboarding.model.RemindRequest
+import com.example.teumteum.data.remote.auth.onboarding.service.OnBoardingService
 import com.example.teumteum.utils.handleApiResponse
 import com.example.teumteum.utils.handleApiResponseUnit
 import javax.inject.Inject
@@ -19,13 +19,6 @@ import javax.inject.Singleton
 class OnBoardingRepository @Inject constructor(
     private val onBoardingService: OnBoardingService
 ){
-
-    // 약관동의
-    suspend fun postAgreements(request: AgreementRequest): Result<Unit> = runCatching {
-        val response = onBoardingService.postAgreements(request)
-        Log.d("Agreements", "response = ${response.body()}")
-        handleApiResponseUnit(response)
-    }
 
     // 닉네임, 직종 입력
     suspend fun postNicknameAndJobField(request: NicknameJobRequest): Result<Unit> = runCatching {

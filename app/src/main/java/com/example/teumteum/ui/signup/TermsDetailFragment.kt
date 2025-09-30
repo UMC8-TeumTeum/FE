@@ -1,4 +1,4 @@
-package com.example.teumteum.ui.signup
+package com.example.teumteum.ui.auth.signup
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentTermsDetailBinding
+import com.example.teumteum.ui.auth.SignUpActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

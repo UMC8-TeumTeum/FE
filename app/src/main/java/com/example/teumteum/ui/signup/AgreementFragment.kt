@@ -1,4 +1,4 @@
-package com.example.teumteum.ui.signup
+package com.example.teumteum.ui.auth.signup
 
 import android.content.res.ColorStateList
 import android.graphics.Color
@@ -12,10 +12,11 @@ import android.widget.CompoundButton
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
-import com.example.teumteum.data.remote.onboarding.model.AgreementRequest
+import com.example.teumteum.data.remote.auth.signup.model.AgreementRequest
 import com.example.teumteum.databinding.FragmentAgreementBinding
-import com.example.teumteum.ui.signup.viewModel.OnBoardingUiState
-import com.example.teumteum.ui.signup.viewModel.OnBoardingViewModel
+import com.example.teumteum.ui.auth.SignUpActivity
+import com.example.teumteum.ui.auth.onboarding.viewModel.OnBoardingUiState
+import com.example.teumteum.ui.auth.onboarding.viewModel.OnBoardingViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
