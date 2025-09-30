@@ -28,7 +28,7 @@ class WishRecommendRVAdapter(private var wishList: List<ActivityWishResult>, pri
         binding.wishTimeTv.text =
             when (item.estimatedDuration.lowercase()) { "1h" -> "1h-" ; else -> item.estimatedDuration }
 
-        binding.fillButton.setOnClickListener {
+        binding.selectButton.setOnClickListener {
             val fragment = FillingSetting01Fragment().apply {
                 arguments = Bundle().apply {
                     putLong("wish_id", item.id)
