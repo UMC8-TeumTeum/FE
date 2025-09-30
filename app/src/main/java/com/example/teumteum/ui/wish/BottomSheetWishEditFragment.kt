@@ -33,7 +33,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class WishEditBottomSheetFragment : BottomSheetDialogFragment() {
+class BottomSheetWishEditFragment : BottomSheetDialogFragment() {
 
     private var _binding: BottomSheetWishEditBinding? = null
     private val binding get() = _binding!!
@@ -387,8 +387,8 @@ class WishEditBottomSheetFragment : BottomSheetDialogFragment() {
     }
 
     companion object {
-        fun newInstance(wishId: Long): WishEditBottomSheetFragment {
-            return WishEditBottomSheetFragment().apply {
+        fun newInstance(wishId: Long): BottomSheetWishEditFragment {
+            return BottomSheetWishEditFragment().apply {
                 arguments = Bundle().apply {
                     putLong("wish_id", wishId)
                 }

@@ -58,7 +58,7 @@ import java.time.format.DateTimeParseException
 import java.util.Locale
 
 @AndroidEntryPoint
-class TodoEditBottomSheetFragment : BottomSheetDialogFragment(), IDateClickListener {
+class BottomSheetTodoEditFragment : BottomSheetDialogFragment(), IDateClickListener {
 
     private var _binding: BottomSheetTodoEditBinding? = null
     private val binding get() = _binding!!
@@ -723,8 +723,8 @@ class TodoEditBottomSheetFragment : BottomSheetDialogFragment(), IDateClickListe
     }
 
     companion object {
-        fun newInstance(todoId: Long): TodoEditBottomSheetFragment {
-            return TodoEditBottomSheetFragment().apply {
+        fun newInstance(todoId: Long): BottomSheetTodoEditFragment {
+            return BottomSheetTodoEditFragment().apply {
                 arguments = Bundle().apply {
                     putLong("todo_id", todoId)
                 }

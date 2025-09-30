@@ -4,7 +4,7 @@
     android:id="@+id/edit_fragment_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.todo.TodoEditFragment">
+    tools:context=".ui.todo.BottomSheetTodoEditFragment">
 
     <LinearLayout
         android:id="@+id/header_container"

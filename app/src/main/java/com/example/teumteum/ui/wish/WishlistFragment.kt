@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.wish.model.WishlistItem
 import com.example.teumteum.databinding.FragmentWishlistBinding
-import com.example.teumteum.ui.wish.adapter.WishlistRVAdapter
+import com.example.teumteum.ui.wish.adapter.WishlistAdapter
 import com.example.teumteum.ui.wish.viewModel.WishViewModel
 import com.example.teumteum.utils.applyBlurShadow
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -26,7 +26,7 @@ class WishlistFragment : Fragment() {
     private var _binding: FragmentWishlistBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var adapter: WishlistRVAdapter
+    private lateinit var adapter: WishlistAdapter
 
     // 로컬 필터링에 의존하지 않으므로 내부 보관만 유지
     private var wishlistItems: List<WishlistItem> = emptyList()
@@ -51,7 +51,7 @@ class WishlistFragment : Fragment() {
         }
 
         binding.fabAddIv.setOnClickListener {
-            val bottomSheet = WishRegisterFragment().apply {
+            val bottomSheet = BottomSheetWishRegisterFragment().apply {
                 arguments = Bundle().apply { putBoolean("isFromWish", true) }
             }
             bottomSheet.show(parentFragmentManager, bottomSheet.tag)
@@ -63,7 +63,7 @@ class WishlistFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapter = WishlistRVAdapter(wishlistItems, parentFragmentManager)
+        adapter = WishlistAdapter(wishlistItems, parentFragmentManager)
         binding.wishlistRv.adapter = adapter
         val lm = LinearLayoutManager(requireContext())
         binding.wishlistRv.layoutManager = lm

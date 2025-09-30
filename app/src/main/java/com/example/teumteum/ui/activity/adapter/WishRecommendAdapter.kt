@@ -7,11 +7,10 @@ import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.activity.model.ActivityWishResult
-import com.example.teumteum.data.remote.todo.model.enums.ScheduleType
 import com.example.teumteum.databinding.ItemWishlistBinding
 import com.example.teumteum.ui.activity.FillingSetting01Fragment
 
-class WishRecommendRVAdapter(private var wishList: List<ActivityWishResult>, private val fragmentManager: FragmentManager) : RecyclerView.Adapter<WishRecommendRVAdapter.ViewHolder>() {
+class WishRecommendAdapter(private var wishList: List<ActivityWishResult>, private val fragmentManager: FragmentManager) : RecyclerView.Adapter<WishRecommendAdapter.ViewHolder>() {
 
     inner class ViewHolder(val binding: ItemWishlistBinding) : RecyclerView.ViewHolder(binding.root)
 

@@ -1,4 +1,4 @@
-package com.example.teumteum.ui.friend.adapter
+package com.example.teumteum.ui.friend.data
 
 data class TeumRequestItem(
     val name: String,

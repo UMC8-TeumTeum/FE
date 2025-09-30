@@ -10,7 +10,7 @@ import com.example.teumteum.R
 import com.example.teumteum.data.remote.wish.model.WishlistItem
 import com.example.teumteum.databinding.ItemWishlistEditBinding
 
-class WishlistEditRVAdapter(private val wishlist: MutableList<WishlistItem>) : RecyclerView.Adapter<WishlistEditRVAdapter.ViewHolder>() {
+class WishlistEditAdapter(private val wishlist: MutableList<WishlistItem>) : RecyclerView.Adapter<WishlistEditAdapter.ViewHolder>() {
 
     // 페이징/갱신 사이클 동안 선택 상태 유지용 id 집합
     private val selectedIds = mutableSetOf<Long>()

@@ -14,11 +14,11 @@ import com.example.teumteum.data.remote.todo.model.enums.ScheduleType
 import com.example.teumteum.databinding.ItemTodolistBinding
 import com.example.teumteum.ui.todo.BottomSheetTodoEditFragment
 
-class TodoRVAdapter(
+class TodoAdapter(
     private val fragmentManager: FragmentManager,
     private var todoList: List<TodoListResult>,
     private val onToggleAlarm: (id: Long, toActive: Boolean) -> Unit,
-) : RecyclerView.Adapter<TodoRVAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<TodoAdapter.ViewHolder>() {
 
     inner class ViewHolder(val binding: ItemTodolistBinding) : RecyclerView.ViewHolder(binding.root)
 

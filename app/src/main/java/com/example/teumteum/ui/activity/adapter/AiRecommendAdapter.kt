@@ -8,10 +8,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.activity.model.ActivityAiResult
 import com.example.teumteum.databinding.ItemWishlistBinding
-import com.example.teumteum.ui.activity.ContentsBottomSheetFragment
+import com.example.teumteum.ui.activity.BottomSheetContentFragment
 import com.example.teumteum.ui.activity.FillingSetting01Fragment
 
-class AiRecommendRVAdapter( private var aiList: List<ActivityAiResult>, private val fragmentManager: FragmentManager) : RecyclerView.Adapter<AiRecommendRVAdapter.ViewHolder>() {
+class AiRecommendAdapter(private var aiList: List<ActivityAiResult>, private val fragmentManager: FragmentManager) : RecyclerView.Adapter<AiRecommendAdapter.ViewHolder>() {
 
     inner class ViewHolder(val binding: ItemWishlistBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -34,7 +34,7 @@ class AiRecommendRVAdapter( private var aiList: List<ActivityAiResult>, private 
                 putString("title", b.titleTv.text.toString())
 //                putString("content", b.contentTv.text.toString())
             }
-            ContentsBottomSheetFragment().apply { arguments = args }
+            BottomSheetContentFragment().apply { arguments = args }
                 .show(fragmentManager, "ContentBottomSheetFragment")
         }
 

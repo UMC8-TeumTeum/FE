@@ -11,7 +11,7 @@ import com.example.teumteum.databinding.ItemWishlistBinding
 import com.example.teumteum.ui.wish.BottomSheetWishEditFragment
 import com.example.teumteum.ui.wish.WishSetting01Fragment
 
-class WishlistRVAdapter(private var wishlist: List<WishlistItem>, private val fragmentManager: FragmentManager) : RecyclerView.Adapter<WishlistRVAdapter.ViewHolder>() {
+class WishlistAdapter(private var wishlist: List<WishlistItem>, private val fragmentManager: FragmentManager) : RecyclerView.Adapter<WishlistAdapter.ViewHolder>() {
 
     inner class ViewHolder(val binding: ItemWishlistBinding) : RecyclerView.ViewHolder(binding.root)
 

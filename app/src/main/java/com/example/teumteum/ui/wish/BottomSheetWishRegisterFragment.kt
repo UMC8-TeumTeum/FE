@@ -18,7 +18,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.wish.model.RegisterWishRequest
 import com.example.teumteum.databinding.BottomSheetWishRegisterBinding
-import com.example.teumteum.ui.todo.TodoRegisterBottomSheetFragment
+import com.example.teumteum.ui.todo.BottomSheetTodoRegisterFragment
 import com.example.teumteum.ui.wish.viewModel.WishViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -28,7 +28,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class WishRegisterBottomSheetFragment : BottomSheetDialogFragment() {
+class BottomSheetWishRegisterFragment : BottomSheetDialogFragment() {
 
     private var _binding: BottomSheetWishRegisterBinding? = null
     private val binding get() = _binding!!
@@ -80,7 +80,7 @@ class WishRegisterBottomSheetFragment : BottomSheetDialogFragment() {
                 val tx = childFragmentManager.beginTransaction()
                     .setReorderingAllowed(true)
                     .disallowAddToBackStack()
-                    .replace(R.id.register_fragment_container, TodoRegisterBottomSheetFragment(), "TodoRegister")
+                    .replace(R.id.register_fragment_container, BottomSheetTodoRegisterFragment(), "TodoRegister")
 
                 // 겹침/플리커 방지를 위해 즉시 커밋
                 tx.commitNowAllowingStateLoss()
