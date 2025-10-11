@@ -144,7 +144,7 @@
             android:id="@+id/routine_mod_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/noto_sans_kr"
+            android:fontFamily="@font/noto_sans_kr_medium"
             android:includeFontPadding="false"
             android:text="반복 일정 편집하러 가기"
             android:textSize="15sp"

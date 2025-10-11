@@ -98,7 +98,10 @@ class MyHomeFragment : Fragment() {
         }
 
         binding.routineModLl.setOnClickListener {
-
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, MyRoutineModifyFragment())
+                .addToBackStack(null)
+                .commit()
         }
     }
 
