@@ -140,72 +140,16 @@
         android:layout_marginEnd="20dp"
         android:gravity="center">
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/schedule_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="요일별\n반복 일정"
-                android:textAlignment="center"
-                style="@style/Sm14Regular"
-                android:textColor="@color/text_primary"
-                android:includeFontPadding="false" />
-        </LinearLayout>
-
-        <View
-            android:layout_width="1dp"
-            android:layout_height="52dp"
-            android:background="@color/teumteum_line"
+        <TextView
+            android:id="@+id/routine_mod_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/noto_sans_kr"
+            android:includeFontPadding="false"
+            android:text="반복 일정 편집하러 가기"
+            android:textSize="15sp"
+            android:textColor="@color/text_secondary"
             />
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/bookmark_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="북마크"
-                android:textAlignment="center"
-                style="@style/Sm14Regular"
-                android:textColor="@color/text_primary"
-                android:includeFontPadding="false" />
-        </LinearLayout>
-
-        <View
-            android:layout_width="1dp"
-            android:layout_height="52dp"
-            android:background="@color/teumteum_line"
-            />
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/sticker_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="스티커"
-                android:textAlignment="center"
-                style="@style/Sm14Regular"
-                android:textColor="@color/text_primary"
-                android:includeFontPadding="false" />
-
-        </LinearLayout>
 
     </LinearLayout>
 
