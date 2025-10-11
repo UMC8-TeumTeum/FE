@@ -96,6 +96,10 @@ class MyHomeFragment : Fragment() {
                 .addToBackStack(null)
                 .commit()
         }
+
+        binding.routineModLl.setOnClickListener {
+
+        }
     }
 
     override fun onResume() {

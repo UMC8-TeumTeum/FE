@@ -128,9 +128,9 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- 중앙 부분 -->
+    <!-- 반복 일정 편집 메뉴 -->
     <LinearLayout
-        android:id="@+id/body_cl"
+        android:id="@+id/routine_mod_ll"
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:orientation="horizontal"
