@@ -9,7 +9,6 @@ import com.example.teumteum.data.remote.mypage.service.MyPageService
 import com.example.teumteum.data.remote.home.service.HomeService
 import com.example.teumteum.data.remote.auth.service.AuthService
 import com.example.teumteum.data.remote.onboarding.service.OnBoardingService
-import com.example.teumteum.data.remote.signup.service.SignUpService
 import com.example.teumteum.data.remote.wish.service.WishService
 import com.example.teumteum.data.remote.todo.service.TodoService
 import dagger.Module
@@ -52,12 +51,6 @@ class ApiModule {
     @Singleton
     fun provideHomeApi(@AuthRetrofit retrofit: Retrofit): HomeService {
         return retrofit.create(HomeService::class.java)
-    }
-
-    @Provides
-    @Singleton
-    fun provideSignUpApi(@AuthRetrofit retrofit: Retrofit): SignUpService {
-        return retrofit.create(SignUpService::class.java)
     }
 
     @Provides

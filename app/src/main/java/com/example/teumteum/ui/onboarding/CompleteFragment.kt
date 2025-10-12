@@ -1,4 +1,4 @@
-package com.example.teumteum.ui.signup
+package com.example.teumteum.ui.onboarding
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentCompleteBinding
 import com.example.teumteum.ui.auth.SignUpActivity
-import com.example.teumteum.ui.onboarding.OnBoardingNicknameFragment
 import com.example.teumteum.utils.FlowPrefs
 import com.example.teumteum.utils.NextStep
 import dagger.hilt.android.AndroidEntryPoint

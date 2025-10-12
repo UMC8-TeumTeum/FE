@@ -1,4 +1,4 @@
-package com.example.teumteum.ui.signup
+package com.example.teumteum.ui.onboarding
 
 import android.content.res.ColorStateList
 import android.graphics.Color
@@ -12,11 +12,11 @@ import android.widget.CompoundButton
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
-import com.example.teumteum.data.remote.signup.model.AgreementRequest
+import com.example.teumteum.data.remote.onboarding.model.AgreementRequest
 import com.example.teumteum.databinding.FragmentAgreementBinding
 import com.example.teumteum.ui.auth.SignUpActivity
 import com.example.teumteum.ui.onboarding.viewModel.OnBoardingUiState
-import com.example.teumteum.ui.signup.viewModel.SignUpViewModel
+import com.example.teumteum.ui.onboarding.viewModel.OnBoardingViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -25,7 +25,7 @@ class AgreementFragment : Fragment() {
     private var _binding: FragmentAgreementBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: SignUpViewModel by activityViewModels()
+    private val viewModel: OnBoardingViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

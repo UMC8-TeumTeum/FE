@@ -13,7 +13,7 @@ import com.example.teumteum.ui.onboarding.OnBoardingProfileFragment
 import com.example.teumteum.ui.onboarding.OnBoardingRemindFragment
 import com.example.teumteum.ui.onboarding.OnBoardingScheduleFragment
 import com.example.teumteum.ui.onboarding.OnBoardingSleepPatternFragment
-import com.example.teumteum.ui.signup.AgreementFragment
+import com.example.teumteum.ui.onboarding.AgreementFragment
 import com.example.teumteum.ui.main.MainActivity
 import com.example.teumteum.utils.FlowPrefs
 import com.example.teumteum.utils.NextStep

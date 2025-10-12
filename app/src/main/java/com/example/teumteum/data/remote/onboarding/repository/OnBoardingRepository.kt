@@ -1,6 +1,7 @@
 package com.example.teumteum.data.remote.onboarding.repository
 
 import android.util.Log
+import com.example.teumteum.data.remote.onboarding.model.AgreementRequest
 import com.example.teumteum.data.remote.onboarding.model.NicknameJobRequest
 import com.example.teumteum.data.remote.onboarding.model.PresignedRequest
 import com.example.teumteum.data.remote.onboarding.model.PresignedResponse
@@ -18,6 +19,13 @@ import javax.inject.Singleton
 class OnBoardingRepository @Inject constructor(
     private val onBoardingService: OnBoardingService
 ){
+
+    // 약관동의
+    suspend fun postAgreements(request: AgreementRequest): Result<Unit> = runCatching {
+        val response = onBoardingService.postAgreements(request)
+        Log.d("Agreements", "response = ${response.body()}")
+        handleApiResponseUnit(response)
+    }
 
     // 닉네임, 직종 입력
     suspend fun postNicknameAndJobField(request: NicknameJobRequest): Result<Unit> = runCatching {

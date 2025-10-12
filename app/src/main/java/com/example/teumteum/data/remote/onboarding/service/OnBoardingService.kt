@@ -1,5 +1,6 @@
 package com.example.teumteum.data.remote.onboarding.service
 
+import com.example.teumteum.data.remote.onboarding.model.AgreementRequest
 import com.example.teumteum.data.remote.onboarding.model.NicknameJobRequest
 import com.example.teumteum.data.remote.onboarding.model.PresignedRequest
 import com.example.teumteum.data.remote.onboarding.model.PresignedResponse
@@ -13,6 +14,9 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface OnBoardingService {
+
+    @POST("/api/users/onboarding/agreements")
+    suspend fun postAgreements(@Body request: AgreementRequest): Response<ApiResponse<Unit>>
 
     @POST("/api/users/onboarding/nickname-job")
     suspend fun postNicknameAndJobField(@Body request: NicknameJobRequest): Response<ApiResponse<Unit>>

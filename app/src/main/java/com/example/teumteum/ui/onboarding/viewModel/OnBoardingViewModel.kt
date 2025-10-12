@@ -6,8 +6,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.teumteum.data.remote.onboarding.model.AgreementRequest
 import com.example.teumteum.ui.onboarding.data.Schedule
-import com.example.teumteum.data.remote.signup.model.AgreementRequest
 import com.example.teumteum.data.remote.onboarding.model.NicknameJobRequest
 import com.example.teumteum.data.remote.onboarding.model.PresignedRequest
 import com.example.teumteum.data.remote.onboarding.model.ProfileImageRequest
@@ -62,6 +62,18 @@ class OnBoardingViewModel @Inject constructor(
 
     private val _remindList = MutableLiveData<List<Int>>(emptyList())
     val remindList: LiveData<List<Int>> get() = _remindList
+
+    /** 약관 동의  */
+    fun postAgreements(request: AgreementRequest) {
+        _state.value = OnBoardingUiState.Loading
+        viewModelScope.launch {
+            repository.postAgreements(request)
+                .onSuccess {
+                    _state.value = OnBoardingUiState.Success
+                }
+                .onFailure { handleError(it) }
+        }
+    }
 
     /** 닉네임/직업 등록 */
     fun postNicknameAndJob() {
