@@ -45,7 +45,9 @@ import com.kizitonwose.calendar.view.CalendarView
 import com.kizitonwose.calendar.view.MonthDayBinder
 import com.kizitonwose.calendar.view.ViewContainer
 import com.kizitonwose.calendar.core.CalendarDay
+import com.kizitonwose.calendar.core.CalendarMonth
 import com.kizitonwose.calendar.core.DayPosition
+import com.kizitonwose.calendar.core.Week
 import com.kizitonwose.calendar.core.WeekDay
 import com.kizitonwose.calendar.view.WeekCalendarView
 import com.kizitonwose.calendar.view.WeekDayBinder
@@ -72,7 +74,16 @@ class HomeFragment : Fragment() {
     private var isWeeklyMode: Boolean = false
     private var visibleMonth: YearMonth = YearMonth.now()
 
+    // 헤더는 "yyyy년 M월"
     private val headerFormatter = DateTimeFormatter.ofPattern(DATE_PATTERN)
+    // 서버 요청은 "yyyy-MM-dd"
+    private val serverFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+
+    // 중복 호출 방지용 캐시: 마지막으로 서버에 요청했던 [시작일, 종료일]
+    private var lastRequestedRange: Pair<LocalDate, LocalDate>? = null
+
+    // 일정 있는 날짜들 캐시
+    private val eventDates = hashSetOf<LocalDate>()
 
     private lateinit var adapter: TodoRVAdapter
     private var todolistItems: List<TodoListResult> = emptyList()
@@ -191,6 +202,7 @@ class HomeFragment : Fragment() {
             visibleMonth = month.yearMonth
             if (!isWeeklyMode) {
                 updateHeaderForCurrentMode()
+                requestForMonth(month)
             }
         }
 
@@ -198,6 +210,7 @@ class HomeFragment : Fragment() {
         weekCalendar.weekScrollListener = { week ->
             weekCursorDate = week.days.first().date
             updateHeaderForCurrentMode()
+            requestForWeek(week)
 
             // 주 한 줄만 갱신
             weekCalendar.notifyWeekChanged(weekCursorDate)
@@ -220,9 +233,10 @@ class HomeFragment : Fragment() {
 
             override fun bind(container: DayViewContainer, day: CalendarDay) {
                 val tv = container.textView
-                tv.text = day.date.dayOfMonth.toString()
+                val dot = container.dotView
 
                 // 기본 스타일 초기화
+                tv.text = day.date.dayOfMonth.toString()
                 tv.typeface = Typeface.DEFAULT
                 tv.background = null
 
@@ -238,6 +252,9 @@ class HomeFragment : Fragment() {
                         if (isThisMonth) R.color.text_primary else R.color.teumteum_deactive
                     )
                 )
+
+                // 일정 점 표시
+                dot.visibility = if (eventDates.contains(day.date) && isThisMonth) View.VISIBLE else View.GONE
 
                 // 오늘 표시
                 if (day.date == today) {
@@ -282,6 +299,9 @@ class HomeFragment : Fragment() {
 
             override fun bind(container: DayViewContainer, day: WeekDay) {
                 val tv = container.textView
+                val dot = container.dotView
+
+                // 기본 스타일 초기화
                 tv.text = day.date.dayOfMonth.toString()
                 tv.typeface = Typeface.DEFAULT
                 tv.background = null
@@ -293,6 +313,9 @@ class HomeFragment : Fragment() {
                         if (isInactive) R.color.teumteum_deactive else R.color.text_primary
                     )
                 )
+
+                // 일정 점 표시
+                dot.visibility = if (eventDates.contains(day.date)) View.VISIBLE else View.GONE
 
                 if (day.date == today) {
                     tv.background = circleFill(
@@ -399,6 +422,11 @@ class HomeFragment : Fragment() {
         viewModel.teumTimeMinutes.observe(viewLifecycleOwner) { updateTeumTime() }
 
         setupObservers()
+
+        view.post {
+            if (isWeeklyMode) weekCalendar.findFirstVisibleWeek()?.let { requestForWeek(it) }
+            else monthCalendar.findFirstVisibleMonth()?.let { requestForMonth(it) }
+        }
     }
 
     override fun onResume() {
@@ -485,6 +513,28 @@ class HomeFragment : Fragment() {
         DayOfWeek.SATURDAY -> "토"
     }
 
+    // 월 범위 요청 함수 (캘린더 조회용)
+    private fun requestForMonth(month: CalendarMonth) {
+        val start = month.weekDays.first().first().date
+        val end = month.weekDays.last().last().date
+        val range = start to end
+        if (lastRequestedRange == range) return
+        lastRequestedRange = range
+
+        viewModel.getCalendar(start.format(serverFormatter), end.format(serverFormatter))
+    }
+
+    // 주 범위 요청 함수 (캘린더 조회용)
+    private fun requestForWeek(week: Week) {
+        val start = week.days.first().date
+        val end = week.days.last().date
+        val range = start to end
+        if (lastRequestedRange == range) return
+        lastRequestedRange = range
+
+        viewModel.getCalendar(start.format(serverFormatter), end.format(serverFormatter))
+    }
+
     private fun setupClockPager() {
         clockAdapter = ClockVPAdapter(
             inflate = ItemClockPageBinding::inflate,
@@ -537,6 +587,10 @@ class HomeFragment : Fragment() {
 
         updateCalendarToggle(false)
         monthCalendar.notifyCalendarChanged()
+
+        // 모드 전환 시 캐시 초기화
+        lastRequestedRange = null
+        monthCalendar.findFirstVisibleMonth()?.let { requestForMonth(it) }
     }
 
     private fun switchToWeek() {
@@ -552,6 +606,10 @@ class HomeFragment : Fragment() {
 
         updateCalendarToggle(true)
         weekCalendar.notifyCalendarChanged()
+
+        // 모드 전환 시 캐시 초기화
+        lastRequestedRange = null
+        weekCalendar.findFirstVisibleWeek()?.let { requestForWeek(it) }
     }
 
     // 주간/월간 버튼 이미지 변경
@@ -640,6 +698,19 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupObservers() {
+        viewModel.calendarData.observe(viewLifecycleOwner) { items ->
+            eventDates.clear()
+            items.forEach { ev ->
+                if (ev.hasSchedule) {
+                    runCatching { LocalDate.parse(ev.date) }
+                        .getOrNull()
+                        ?.let { d -> eventDates += d }
+                }
+            }
+            monthCalendar.notifyCalendarChanged()
+            weekCalendar.notifyCalendarChanged()
+        }
+
         todoViewModel.todolistItems.observe(viewLifecycleOwner) { itemList ->
             todolistItems = itemList
 

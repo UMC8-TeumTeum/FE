@@ -3,6 +3,7 @@
     android:layout_height="wrap_content"
     android:layout_marginVertical="8dp"
     android:paddingHorizontal="10.5dp"
+    android:paddingBottom="6dp"
     android:orientation="vertical"
     android:gravity="center"
     android:layout_weight="1">
@@ -24,7 +25,7 @@
         android:id="@+id/dot_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
+        android:layout_marginTop="10dp"
         android:layout_gravity="center_horizontal|bottom"
         android:src="@drawable/dot_schedule_exists"
         android:visibility="gone" />
