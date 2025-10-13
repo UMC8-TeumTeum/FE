@@ -122,7 +122,6 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:visibility="gone"
             app:cv_dayViewResource="@layout/calendar_day_layout"
             app:cv_orientation="horizontal"
             app:cv_outDateStyle="endOfRow"
