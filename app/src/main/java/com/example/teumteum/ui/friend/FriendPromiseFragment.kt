@@ -192,8 +192,6 @@ class FriendPromiseFragment : Fragment() {
                     updateHeader()
                     onDateSelected(selectedDate)
                 }
-
-                // dot 표시 로직
             }
         }
     }
