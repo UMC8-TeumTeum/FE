@@ -237,7 +237,7 @@ class HomeFragment : Fragment() {
 
                 // dot 간격 설정
                 (dot.layoutParams as? ViewGroup.MarginLayoutParams)?.let { params ->
-                    params.topMargin = dpToPx(5)
+                    params.topMargin = dpToPx(3)
                     dot.layoutParams = params
                 }
 
@@ -309,7 +309,7 @@ class HomeFragment : Fragment() {
 
                 // dot 간격 설정
                 (dot.layoutParams as? ViewGroup.MarginLayoutParams)?.let { params ->
-                    params.topMargin = dpToPx(5)
+                    params.topMargin = dpToPx(3)
                     dot.layoutParams = params
                 }
 
