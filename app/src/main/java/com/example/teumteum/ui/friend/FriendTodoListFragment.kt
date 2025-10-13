@@ -130,6 +130,7 @@ class FriendTodoListFragment : Fragment() {
         calendarView.monthScrollListener = { month ->
             visibleMonth = month.yearMonth
             setupHeader()
+
             // 같은 달로의 반복 호출 방지
             if (lastRequestedMonth != visibleMonth) {
                 lastRequestedMonth = visibleMonth
@@ -190,8 +191,6 @@ class FriendTodoListFragment : Fragment() {
                     updateHeader()
                     onDateSelected(selectedDate)
                 }
-
-                // dot 표시 로직
             }
         }
     }
