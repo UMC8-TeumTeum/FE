@@ -45,7 +45,15 @@ class FriendTodoListFragment : Fragment() {
     private var selectedDate: LocalDate = LocalDate.now()
     private var visibleMonth: YearMonth = YearMonth.now()
 
-    private val headerFormatter = DateTimeFormatter.ofPattern("yyyy년 M월")
+    // 헤더는 "yyyy년 M월"
+    private val headerFormatter = DateTimeFormatter.ofPattern(DATE_PATTERN)
+    // 서버 요청은 "yyyy-MM-dd"
+    private val serverFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+
+    // 일정 있는 날짜들 캐시
+    private val eventDates = hashSetOf<LocalDate>()
+    // 중복 조회 방지용
+    private var lastRequestedMonth: YearMonth? = null
 
     private lateinit var todoAdapter: PublicTodoAdapter
     private var friendUserId: Int = -1
@@ -80,6 +88,9 @@ class FriendTodoListFragment : Fragment() {
         setupRecyclerView()
         setupCalendarNavigation()
 
+        // 최초 가시 월 기준으로 한 번 조회
+        visibleMonth = YearMonth.now()
+        lastRequestedMonth = null
         // arguments에서 friendUserId 읽은 뒤에 호출
         fetchDotDates()
 
@@ -87,8 +98,11 @@ class FriendTodoListFragment : Fragment() {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
 
-        viewModel.publicTodoDotDates.observe(viewLifecycleOwner) {
-            setupCalendar()
+        // 공개 투두 '점' 날짜 목록 옵저버
+        viewModel.publicTodoDotDates.observe(viewLifecycleOwner) { dates: List<LocalDate> ->
+            eventDates.clear()
+            eventDates.addAll(dates)
+            calendarView.notifyMonthChanged(visibleMonth)
         }
 
         viewModel.publicTodosByDate.observe(viewLifecycleOwner) { list ->
@@ -116,7 +130,11 @@ class FriendTodoListFragment : Fragment() {
         calendarView.monthScrollListener = { month ->
             visibleMonth = month.yearMonth
             setupHeader()
-            fetchDotDates()
+            // 같은 달로의 반복 호출 방지
+            if (lastRequestedMonth != visibleMonth) {
+                lastRequestedMonth = visibleMonth
+                fetchDotDates()
+            }
         }
 
         calendarView.dayBinder = object : MonthDayBinder<DayViewContainer> {
@@ -124,9 +142,10 @@ class FriendTodoListFragment : Fragment() {
 
             override fun bind(container: DayViewContainer, day: CalendarDay) {
                 val tv = container.textView
-                tv.text = day.date.dayOfMonth.toString()
+                val dot = container.dotView
 
                 // 기본 스타일 초기화
+                tv.text = day.date.dayOfMonth.toString()
                 tv.typeface = Typeface.DEFAULT
                 tv.background = null
 
@@ -140,6 +159,9 @@ class FriendTodoListFragment : Fragment() {
                         if (isThisMonth) R.color.text_primary else R.color.teumteum_deactive
                     )
                 )
+
+                // 일정 점 표시
+                dot.visibility = if (eventDates.contains(day.date) && isThisMonth) View.VISIBLE else View.GONE
 
                 // 오늘 표시
                 if (day.date == today) {
@@ -226,9 +248,8 @@ class FriendTodoListFragment : Fragment() {
 
     private fun onDateSelected(date: LocalDate) {
         selectedDate = date
-        val dateStr = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
         if (friendUserId != -1) {
-            viewModel.fetchFriendPublicTodosByDate(friendUserId, dateStr)
+            viewModel.fetchFriendPublicTodosByDate(friendUserId, formatDateForApi(date))
         }
     }
 
@@ -249,12 +270,20 @@ class FriendTodoListFragment : Fragment() {
     // DayView의 뷰 홀더
     private inner class DayViewContainer(view: View) : ViewContainer(view) {
         val textView: TextView = view.findViewById(R.id.calendar_day_tv)
+        val dotView: View = view.findViewById(R.id.dot_view)
     }
+
+    companion object {
+        private const val DATE_PATTERN = "yyyy년 M월"
+    }
+
+    // LocalDate -> 서버 전송용 yyyy-MM-dd 문자열
+    private fun formatDateForApi(date: LocalDate): String =
+        date.format(serverFormatter)
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
-
 }
 
