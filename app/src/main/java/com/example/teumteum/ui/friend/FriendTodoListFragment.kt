@@ -145,6 +145,12 @@ class FriendTodoListFragment : Fragment() {
                 val tv = container.textView
                 val dot = container.dotView
 
+                // dot 간격 설정
+                (dot.layoutParams as? ViewGroup.MarginLayoutParams)?.let { params ->
+                    params.topMargin = dpToPx(5)
+                    dot.layoutParams = params
+                }
+
                 // 기본 스타일 초기화
                 tv.text = day.date.dayOfMonth.toString()
                 tv.typeface = Typeface.DEFAULT
@@ -264,6 +270,10 @@ class FriendTodoListFragment : Fragment() {
             shape = GradientDrawable.OVAL
             setColor(fillColor)
         }
+    }
+
+    private fun dpToPx(dp: Int): Int {
+        return (dp * resources.displayMetrics.density).toInt()
     }
 
     // DayView의 뷰 홀더

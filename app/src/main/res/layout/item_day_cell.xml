@@ -25,8 +25,7 @@
         android:id="@+id/dot_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_gravity="center_horizontal|bottom"
+        android:layout_gravity="center_horizontal"
         android:src="@drawable/dot_schedule_exists"
         android:visibility="gone" />
 </LinearLayout>
