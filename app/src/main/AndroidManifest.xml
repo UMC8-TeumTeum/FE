@@ -27,10 +27,10 @@
         </service>
 
         <activity
-            android:name=".ui.signup.SignUpActivity"
+            android:name=".ui.auth.SignUpActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.signin.LoginActivity"
+            android:name=".ui.auth.LoginActivity"
             android:exported="false" />
         <activity
             android:name=".ui.splash.SplashActivity"

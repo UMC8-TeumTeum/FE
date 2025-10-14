@@ -1,0 +1,112 @@
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:maxHeight="360dp"
+    android:background="@drawable/calendar_background">
+
+    <View
+        android:layout_width="54dp"
+        android:layout_height="4dp"
+        android:layout_marginTop="12dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/bg_bottom_sheet_handle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <LinearLayout
+        android:id="@+id/title_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="56dp"
+        android:layout_marginStart="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:id="@+id/wish_time_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <TextView
+                android:id="@+id/wish_time_tv"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:gravity="center"
+                tools:text="10m"
+                android:textColor="@color/white"
+                android:background="@drawable/circle_purple"
+                android:textSize="12sp"
+                android:fontFamily="@font/noto_sans_kr_medium"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/title_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="7dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="4dp"
+            tools:text="화분 물 주기"
+            android:textSize="20sp"
+            android:textColor="@color/text_primary"
+            android:fontFamily="@font/pretendard_medium"
+            android:includeFontPadding="false"
+            app:layout_constraintStart_toEndOf="@id/wish_time_layout"/>
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/horizon_iv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="15dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_horizon_sv"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title_ll"/>
+
+    <TextView
+        android:id="@+id/content_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="4dp"
+        tools:text="다육이랑 바질에 물 주고 바질은 창가로 옮겨두기"
+        android:textSize="16sp"
+        android:textColor="@color/text_primary"
+        android:fontFamily="@font/pretendard_regular"
+        android:includeFontPadding="false"
+        app:layout_constraintStart_toStartOf="@id/horizon_iv"
+        app:layout_constraintTop_toBottomOf="@id/horizon_iv"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_select"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:layout_marginStart="19dp"
+        android:layout_marginEnd="19dp"
+        android:fontFamily="@font/noto_sans_kr_medium"
+        android:text="선택"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        app:backgroundTint="@color/text_primary"
+        app:cornerRadius="12dp"
+        app:layout_constraintTop_toBottomOf="@id/content_tv"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

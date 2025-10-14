@@ -10,7 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentMyAccountSettingBinding
 import com.example.teumteum.ui.main.MainActivity
-import com.example.teumteum.data.remote.login.LogoutUseCase
+import com.example.teumteum.data.remote.auth.LogoutUseCase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
