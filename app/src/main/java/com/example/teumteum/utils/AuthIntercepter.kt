@@ -2,9 +2,9 @@ package com.example.teumteum.utils
 
 import android.util.Log
 import com.example.teumteum.BuildConfig
-import com.example.teumteum.data.remote.login.LogoutManager
-import com.example.teumteum.data.remote.login.model.ReissueRequest
-import com.example.teumteum.data.remote.login.service.AuthService
+import com.example.teumteum.data.remote.auth.LogoutManager
+import com.example.teumteum.data.remote.auth.model.ReissueRequest
+import com.example.teumteum.data.remote.auth.service.AuthService
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import okhttp3.Interceptor

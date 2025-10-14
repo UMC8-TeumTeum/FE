@@ -3,9 +3,8 @@ package com.example.teumteum.ui.alarm
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
-import com.example.teumteum.data.PushAlarmItem
+import com.example.teumteum.data.remote.alarm.PushAlarmItem
 import com.example.teumteum.databinding.ActivityLockScreenPushBinding
-import com.example.teumteum.ui.alarm.PushAlarmRVAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
 import java.util.*

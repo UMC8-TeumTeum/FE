@@ -14,8 +14,8 @@ import com.example.teumteum.data.remote.activity.model.ActivityAiResult
 import com.example.teumteum.data.remote.activity.model.ActivityWishRequest
 import com.example.teumteum.data.remote.activity.model.ActivityWishResult
 import com.example.teumteum.databinding.FragmentFillingActivity02Binding
-import com.example.teumteum.ui.activity.adapter.AiRecommendRVAdapter
-import com.example.teumteum.ui.activity.adapter.WishRecommendRVAdapter
+import com.example.teumteum.ui.activity.adapter.AiRecommendAdapter
+import com.example.teumteum.ui.activity.adapter.WishRecommendAdapter
 import com.example.teumteum.ui.activity.viewModel.ActivityViewModel
 import com.example.teumteum.ui.friend.FriendFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -24,8 +24,8 @@ import dagger.hilt.android.AndroidEntryPoint
 class FillingActivity02Fragment : Fragment() {
 
     private lateinit var binding: FragmentFillingActivity02Binding
-    private lateinit var aiAdapter: AiRecommendRVAdapter
-    private lateinit var wishAdapter: WishRecommendRVAdapter
+    private lateinit var aiAdapter: AiRecommendAdapter
+    private lateinit var wishAdapter: WishRecommendAdapter
     private val wishList = mutableListOf<ActivityWishResult>()
     private val aiList = mutableListOf<ActivityAiResult>()
 
@@ -44,10 +44,10 @@ class FillingActivity02Fragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        wishAdapter = WishRecommendRVAdapter(wishList, parentFragmentManager)
+        wishAdapter = WishRecommendAdapter(wishList, parentFragmentManager)
         binding.wishRecommendRv.adapter = wishAdapter
 
-        aiAdapter = AiRecommendRVAdapter(aiList, parentFragmentManager)
+        aiAdapter = AiRecommendAdapter(aiList, parentFragmentManager)
         binding.aiRecommendRv.adapter = aiAdapter
 
         binding.fabShadowIv.isClickable = false
