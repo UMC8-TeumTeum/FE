@@ -71,6 +71,10 @@ class MyAccountSettingFragment : Fragment() {
             showLogoutDialog()
         }
 
+        binding.deleteAccountLl.setOnClickListener {
+            showDeleteAccountDialog()
+        }
+
     }
 
     private fun showLogoutDialog() {
@@ -102,9 +106,34 @@ class MyAccountSettingFragment : Fragment() {
         dialog.window?.setLayout(dialogWidth, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
+    private fun showDeleteAccountDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_delete_account, null)
+        val dialog = Dialog(requireContext())
+        dialog.setContentView(dialogView)
 
+        dialog.window?.apply {
+            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            setGravity(Gravity.CENTER)
+        }
 
+        val yesBtn = dialogView.findViewById<MaterialButton>(R.id.yes_btn)
+        val noBtn = dialogView.findViewById<MaterialButton>(R.id.no_btn)
 
+        yesBtn.setOnClickListener {
+            dialog.dismiss()
+            //todo: 회원탈퇴 호출 로직
+        }
+
+        noBtn.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
+
+        val displayMetrics = resources.displayMetrics
+        val dialogWidth = (displayMetrics.widthPixels * 0.9).toInt()
+        dialog.window?.setLayout(dialogWidth, ViewGroup.LayoutParams.WRAP_CONTENT)
+    }
 
     private fun performLogout() {
         loggingOut = true
