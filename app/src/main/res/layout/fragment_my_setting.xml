@@ -150,7 +150,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/noto_sans_kr_medium"
                 android:includeFontPadding="false"
-                android:text="리마인드 알림 변경"
+                android:text="리마인드 알림"
                 android:layout_weight="1"
                 android:textColor="@color/text_primary"
                 android:textSize="18sp" />
@@ -184,7 +184,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/noto_sans_kr_medium"
                 android:includeFontPadding="false"
-                android:text="수면 패턴 변경"
+                android:text="수면 패턴"
                 android:layout_weight="1"
                 android:textColor="@color/text_primary"
                 android:textSize="18sp" />
@@ -201,7 +201,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/teummate_setting_ll"
+            android:id="@+id/block_account_ll"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -213,18 +213,18 @@
             >
 
             <TextView
-                android:id="@+id/teummate_setting_tv"
+                android:id="@+id/block_account_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/noto_sans_kr_medium"
                 android:includeFontPadding="false"
-                android:text="틈메이트 매칭 설정"
+                android:text="차단된 계정"
                 android:layout_weight="1"
                 android:textColor="@color/text_primary"
                 android:textSize="18sp" />
 
             <ImageView
-                android:id="@+id/teummate_setting_arrow_iv"
+                android:id="@+id/block_account_arrow_iv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_arrow_sv"
@@ -235,7 +235,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/agreement_setting_ll"
+            android:id="@+id/service_info_ll"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -247,18 +247,18 @@
             >
 
             <TextView
-                android:id="@+id/agreement_setting_tv"
+                android:id="@+id/service_info_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/noto_sans_kr_medium"
                 android:includeFontPadding="false"
-                android:text="개인정보 제공 동의 관리"
+                android:text="서비스 정보"
                 android:layout_weight="1"
                 android:textColor="@color/text_primary"
                 android:textSize="18sp" />
 
             <ImageView
-                android:id="@+id/agreement_setting_arrow_iv"
+                android:id="@+id/service_info_arrow_iv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_arrow_sv"
