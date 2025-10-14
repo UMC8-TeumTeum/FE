@@ -17,7 +17,7 @@ import com.example.teumteum.R
 import com.example.teumteum.data.remote.wish.model.DeleteWishesRequest
 import com.example.teumteum.data.remote.wish.model.WishlistItem
 import com.example.teumteum.databinding.FragmentWishlistEditBinding
-import com.example.teumteum.ui.wish.adapter.WishlistEditRVAdapter
+import com.example.teumteum.ui.wish.adapter.WishlistEditAdapter
 import com.example.teumteum.ui.wish.viewModel.WishViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,7 +29,7 @@ class WishlistEditFragment : Fragment() {
     private var _binding: FragmentWishlistEditBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var adapter: WishlistEditRVAdapter
+    private lateinit var adapter: WishlistEditAdapter
     private val edited: MutableList<WishlistItem> = mutableListOf()
 
     // 어댑터에서 실제 제거한 항목들을 서버에 일괄 반영하기 위한 보류 목록
@@ -48,7 +48,7 @@ class WishlistEditFragment : Fragment() {
         activity?.findViewById<BottomNavigationView>(R.id.main_bnv)?.visibility = View.GONE
 
         // 리사이클러/어댑터
-        adapter = WishlistEditRVAdapter(edited)
+        adapter = WishlistEditAdapter(edited)
         val lm = LinearLayoutManager(requireContext())
         binding.wishlistRv.layoutManager = lm
         binding.wishlistRv.adapter = adapter

@@ -60,7 +60,7 @@
         android:id="@+id/wishlist_rv"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="22dp"
+        android:layout_marginTop="24dp"
         android:clipToPadding="false"
         android:nestedScrollingEnabled="true"
         android:overScrollMode="never"

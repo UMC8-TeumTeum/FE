@@ -4,13 +4,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Looper
 import android.os.Handler
-import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.example.teumteum.R
 import com.example.teumteum.ui.main.MainActivity
-import com.example.teumteum.ui.signin.LoginActivity
-import com.example.teumteum.ui.signup.SignUpActivity
+import com.example.teumteum.ui.auth.LoginActivity
+import com.example.teumteum.ui.auth.SignUpActivity
 import com.example.teumteum.utils.FlowPrefs
 import com.example.teumteum.utils.NextStep
 import com.example.teumteum.utils.TokenProvider

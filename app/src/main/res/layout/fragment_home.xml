@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        android:paddingBottom="200dp">
+        android:paddingBottom="100dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -442,7 +442,7 @@
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:layout_marginTop="-4dp"
-        android:layout_marginBottom="15dp"
+        android:layout_marginBottom="10dp"
         android:layout_marginEnd="20dp"
         android:scaleType="centerInside"
         android:layout_gravity="center"
@@ -454,7 +454,7 @@
             android:id="@+id/fab_add_iv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
+            android:layout_marginBottom="10dp"
             android:layout_marginEnd="20dp"
             android:src="@drawable/ic_fab_add_sv"
             app:layout_constraintBottom_toBottomOf="parent"

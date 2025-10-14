@@ -20,8 +20,8 @@ import com.example.teumteum.ui.calendar.CalendarMode
 import com.example.teumteum.ui.alarm.AlarmFragment
 import com.example.teumteum.ui.calendar.CalendarVPAdapter
 import com.example.teumteum.ui.activity.FillingActivity01Fragment
-import com.example.teumteum.ui.todo.adapter.TodoRVAdapter
-import com.example.teumteum.ui.todo.TodoRegisterFragment
+import com.example.teumteum.ui.todo.adapter.TodoAdapter
+import com.example.teumteum.ui.todo.BottomSheetTodoRegisterFragment
 import com.example.teumteum.ui.wish.WishlistFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.time.LocalDate
@@ -50,7 +50,7 @@ class HomeFragment : Fragment(), IDateClickListener {
     private val today: LocalDate = LocalDate.now()
     private var selectedDate: LocalDate = today
 
-    private lateinit var adapter: TodoRVAdapter
+    private lateinit var adapter: TodoAdapter
     private var todolistItems: List<TodoListResult> = emptyList()
 
     private val viewModel: HomeViewModel by activityViewModels()
@@ -99,7 +99,7 @@ class HomeFragment : Fragment(), IDateClickListener {
         }
 
         binding.fabAddIv.setOnClickListener {
-            (parentFragmentManager.findFragmentByTag(TODO_SHEET_TAG) as? TodoRegisterFragment)?.let { sheet ->
+            (parentFragmentManager.findFragmentByTag(TODO_SHEET_TAG) as? BottomSheetTodoRegisterFragment)?.let { sheet ->
                 if (sheet.dialog?.isShowing == true) return@setOnClickListener
                 sheet.dismissAllowingStateLoss() // 인스턴스 정리
             }
@@ -107,7 +107,7 @@ class HomeFragment : Fragment(), IDateClickListener {
             val scheduleList = viewModel.scheduleList.value ?: emptyList()
             val sleepBlocks = scheduleList.filter { it.type == TimeType.SLEEP }
 
-            TodoRegisterFragment().apply {
+            BottomSheetTodoRegisterFragment().apply {
                 arguments = Bundle().apply {
                     putParcelableArrayList("sleepBlocks", ArrayList(sleepBlocks))
                     putString("defaultDate", selectedDate.toString())
@@ -146,7 +146,7 @@ class HomeFragment : Fragment(), IDateClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        adapter = TodoRVAdapter(parentFragmentManager,
+        adapter = TodoAdapter(parentFragmentManager,
             todolistItems,
             { id, toActive ->
                 val status = if (toActive) AlarmStatus.ACTIVE else AlarmStatus.INACTIVE

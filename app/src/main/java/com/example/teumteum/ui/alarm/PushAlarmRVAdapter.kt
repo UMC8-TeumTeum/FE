@@ -3,7 +3,7 @@ package com.example.teumteum.ui.alarm
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.teumteum.data.PushAlarmItem
+import com.example.teumteum.data.remote.alarm.PushAlarmItem
 import com.example.teumteum.databinding.ItemPushAlarmBinding
 
 class PushAlarmRVAdapter(private val pushAlarmList: MutableList<PushAlarmItem>) : RecyclerView.Adapter<PushAlarmRVAdapter.ViewHolder>() {
