@@ -62,7 +62,7 @@
 
         <TextView
             android:id="@+id/time_tv"
-            android:text="1일 20시간 35분"
+            tools:text="1일 20시간 35분"
             style="@style/Header1"
             android:textSize="22sp"
             android:textColor="@color/white"
@@ -90,7 +90,7 @@
             android:id="@+id/nickname_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="최아연"
+            tools:text="최아연"
             style="@style/Md15Medium"
             android:textColor="@color/white"
             android:textSize="20sp"
@@ -105,7 +105,7 @@
             android:id="@+id/field_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="  •  UX디자이너"
+            tools:text="  •  UX디자이너"
             style="@style/Md15Medium"
             android:textColor="@color/sub_3"
             android:includeFontPadding="false"
