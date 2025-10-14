@@ -49,23 +49,6 @@ class MyAccountSettingFragment : Fragment() {
                 .commit()
         }
 
-//        binding.logoutLl.setOnClickListener {
-//            if (loggingOut) return@setOnClickListener
-//            loggingOut = true
-//            binding.logoutLl.isEnabled = false
-//
-//            viewLifecycleOwner.lifecycleScope.launch {
-//                try {
-//                    logoutUseCase.deactivateFcmAndLogout()
-//                } catch (_: Exception) {
-//                    Toast.makeText(requireContext(), "로그아웃 중 문제가 발생했어요.", Toast.LENGTH_SHORT).show()
-//                } finally {
-//                    loggingOut = false
-//                    if (isAdded) binding.logoutLl.isEnabled = true
-//                }
-//            }
-//        }
-
         binding.logoutLl.setOnClickListener {
             if (loggingOut) return@setOnClickListener
             showLogoutDialog()
