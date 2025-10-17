@@ -60,5 +60,12 @@ class MySettingFragment : Fragment() {
                 .commit()
         }
 
+        binding.sleepSettingLl.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, MySleepPatternSettingFragment())
+                .addToBackStack(null)
+                .commit()
+        }
+
     }
 }
