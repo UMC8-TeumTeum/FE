@@ -96,6 +96,13 @@ class MyHomeFragment : Fragment() {
                 .addToBackStack(null)
                 .commit()
         }
+
+        binding.routineModLl.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, MyRoutineModifyFragment())
+                .addToBackStack(null)
+                .commit()
+        }
     }
 
     override fun onResume() {

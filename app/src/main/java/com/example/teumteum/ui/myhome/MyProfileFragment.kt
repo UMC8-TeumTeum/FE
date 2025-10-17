@@ -48,6 +48,14 @@ class MyProfileFragment : Fragment() {
                 .commit()
         }
 
+        binding.modifyProfileBtn.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, MyProfileModifyFragment())
+                .addToBackStack(null)
+                .commit()
+        }
+
+
         homeViewModel.teumTimeDays.observe(viewLifecycleOwner) { updateTeumTime() }
         homeViewModel.teumTimeHours.observe(viewLifecycleOwner) { updateTeumTime() }
         homeViewModel.teumTimeMinutes.observe(viewLifecycleOwner) { updateTeumTime() }
