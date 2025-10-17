@@ -129,6 +129,13 @@ class HomeFragment : Fragment(), IDateClickListener {
                 .commit()
         }
 
+        binding.homeHelpIv.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, TutorialFragment())
+                .addToBackStack(null)
+                .commit()
+        }
+
         binding.homeNotificationIv.setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.main_frm, AlarmFragment())
