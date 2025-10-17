@@ -53,5 +53,12 @@ class MySettingFragment : Fragment() {
                 .commit()
         }
 
+        binding.remindSettingLl.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, MyRemindAlarmSettingFragment())
+                .addToBackStack(null)
+                .commit()
+        }
+
     }
 }
