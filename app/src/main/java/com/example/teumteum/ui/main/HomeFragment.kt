@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -68,6 +69,8 @@ class HomeFragment : Fragment(), IDateClickListener {
     private lateinit var weeklyPageChangeCallback: ViewPager2.OnPageChangeCallback
     private lateinit var monthlyPageChangeCallback: ViewPager2.OnPageChangeCallback
 
+    private var backCallback: OnBackPressedCallback? = null
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -130,10 +133,13 @@ class HomeFragment : Fragment(), IDateClickListener {
         }
 
         binding.homeHelpIv.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, TutorialFragment())
-                .addToBackStack(null)
-                .commit()
+            openTutorialOverlay()
+            hookBackToClose()
+            setupCalloutsOnHome()
+        }
+
+        binding.tutorialOverlay.btnCloseTutorial.setOnClickListener {
+            closeTutorialOverlay()
         }
 
         binding.homeNotificationIv.setOnClickListener {
@@ -238,6 +244,61 @@ class HomeFragment : Fragment(), IDateClickListener {
         val b = _binding ?: return
         block(b)
     }
+
+    private fun openTutorialOverlay() {
+        // 오버레이 보이기
+        binding.tutorialOverlay.root.visibility = View.VISIBLE
+        binding.tutorialOverlay.root.isClickable = true
+        binding.tutorialOverlay.root.isFocusable = true
+        binding.tutorialOverlay.root.bringToFront()
+
+        // 바텀 내비 + 플로팅버튼 숨기기
+        requireActivity().findViewById<View>(R.id.main_bnv)?.visibility = View.GONE
+        binding.fabAddIv.isVisible = false
+    }
+
+    private fun hookBackToClose() {
+        backCallback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() = closeTutorialOverlay()
+        }.also { requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, it) }
+    }
+
+    private fun closeTutorialOverlay() {
+        binding.tutorialOverlay.root.visibility = View.GONE
+
+        // 숨겼던 것들 복구
+        requireActivity().findViewById<View>(R.id.main_bnv)?.visibility = View.VISIBLE
+        requireActivity().findViewById<View?>(R.id.fab_add_iv)?.visibility = View.VISIBLE
+
+        backCallback?.remove()
+        backCallback = null
+    }
+
+
+    private fun setupCalloutsOnHome() {
+        // 오버레이 안의 chartView & callouts 기준으로 호출
+        val overlay = binding.tutorialOverlay
+        overlay.spotlightGroup.post {
+            overlay.callouts.setCircleFrom(overlay.spotlightGroup, insetDp = 8f)
+            val cx = overlay.callouts.cx
+            val cy = overlay.callouts.cy
+
+            overlay.callouts.setCallouts(
+                listOf(
+                    Callout(startX = cx - dp(20f), startY = cy - dp(150f),
+                        endAngleDeg = 270f, curveOffsetDp = 32f),
+                    Callout(startX = cx + dp(120f), startY = cy - dp(10f),
+                        endAngleDeg = 0f, curveOffsetDp = 40f),
+                    Callout(startX = cx - dp(120f), startY = cy + dp(90f),
+                        endAngleDeg = 210f, curveOffsetDp = 44f),
+                    Callout(startX = cx - dp(120f), startY = cy - dp(80f),
+                        endAngleDeg = 150f, curveOffsetDp = 36f)
+                )
+            )
+        }
+    }
+
+    private fun dp(v: Float) = v * resources.displayMetrics.density
 
     private fun setupClockPager() {
         clockAdapter = ClockVPAdapter(
@@ -477,6 +538,11 @@ class HomeFragment : Fragment(), IDateClickListener {
             }
         }
         _binding = null
+        // 오버레이가 열려있다면 닫으면서 원복
+        if (binding.tutorialOverlay.root.visibility == View.VISIBLE) {
+            requireActivity().findViewById<View>(R.id.main_bnv)?.visibility = View.VISIBLE
+            requireActivity().findViewById<View?>(R.id.fab_add_iv)?.visibility = View.VISIBLE
+        }
         super.onDestroyView()
     }
 }
