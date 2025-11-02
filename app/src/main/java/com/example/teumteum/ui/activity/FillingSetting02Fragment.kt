@@ -20,7 +20,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.activity.model.AssignAiRequest
 import com.example.teumteum.data.remote.activity.model.AssignWishRequest
-import com.example.teumteum.data.remote.todo.model.enums.ScheduleType
 import com.example.teumteum.databinding.DialogConfirmRegisterBinding
 import com.example.teumteum.databinding.FragmentFillingSetting02Binding
 import com.example.teumteum.ui.activity.viewModel.ActivityViewModel
@@ -61,10 +60,10 @@ class FillingSetting02Fragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         val title = arguments?.getString("title")
-        setTitle(title.toString())
+        binding.assignTitleTv.text = title
 
         val time = arguments?.getString("time")
-        setTime(time.toString())
+        binding.assignTimeTv.text = time
 
         aiId = arguments?.getString("ai_id")
         wishId = arguments?.getLong("wish_id", -1L)
@@ -231,14 +230,6 @@ class FillingSetting02Fragment : Fragment() {
                 targetTextView.text = newTime
             }
         }
-    }
-
-    private fun setTitle(title: String){
-        binding.assignTitleTv.text = title
-    }
-
-    private fun setTime(time: String){
-        binding.assignTimeTv.text = time
     }
 
     private fun combineDateTime(date: String, timeHHmm: String): String {

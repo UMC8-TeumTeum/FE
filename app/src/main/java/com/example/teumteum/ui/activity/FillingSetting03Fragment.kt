@@ -61,10 +61,10 @@ class FillingSetting03Fragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         val title = arguments?.getString("title")
-        setTitle(title.toString())
+        binding.assignTitleTv.text = title
 
         val time = arguments?.getString("time")
-        setTime(time.toString())
+        binding.assignTimeTv.text = time
 
         aiId = arguments?.getString("ai_id")
         wishId = arguments?.getLong("wish_id", -1L)
@@ -223,14 +223,6 @@ class FillingSetting03Fragment : Fragment() {
                 targetTextView.text = newTime
             }
         }
-    }
-
-    private fun setTitle(title: String){
-        binding.assignTitleTv.text = title
-    }
-
-    private fun setTime(time: String){
-        binding.assignTimeTv.text = time
     }
 
     private fun combineDateTime(date: String, timeHHmm: String): String {
