@@ -42,6 +42,7 @@ class BottomSheetAssignCalendarFragment : BottomSheetDialogFragment() {
     private val headerFormatter = DateTimeFormatter.ofPattern(DATE_PATTERN)
     // 서버 요청은 "yyyy-MM-dd"
     private val serverFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    private val displayFormatter = DateTimeFormatter.ofPattern("yy.MM.dd")
 
     // 중복 호출 방지용 캐시: 마지막으로 서버에 요청했던 [시작일, 종료일]
     private var lastRequestedRange: Pair<LocalDate, LocalDate>? = null
@@ -86,6 +87,18 @@ class BottomSheetAssignCalendarFragment : BottomSheetDialogFragment() {
 
         view.post {
             calendarView.findFirstVisibleMonth()?.let { requestForMonth(it) }
+        }
+
+        binding.applyBtn.setOnClickListener {
+            val displayText = formatWithKoreanWeekday(selectedDate)
+
+            parentFragmentManager.setFragmentResult(
+                "assign_date_result",
+                Bundle().apply {
+                    putString("assign_date_display", displayText)
+                }
+            )
+            dismiss()
         }
     }
 
@@ -228,6 +241,22 @@ class BottomSheetAssignCalendarFragment : BottomSheetDialogFragment() {
         DayOfWeek.THURSDAY -> "목"
         DayOfWeek.FRIDAY -> "금"
         DayOfWeek.SATURDAY -> "토"
+    }
+
+    // 요일 포함 포맷터
+    @Suppress("WHEN_ENUM_CAN_BE_NULL_IN_JAVA")
+    private fun formatWithKoreanWeekday(date: LocalDate): String {
+        val base = date.format(displayFormatter) // "yy.MM.dd"
+        val dow = when (date.dayOfWeek) {
+            DayOfWeek.SUNDAY    -> "일"
+            DayOfWeek.MONDAY    -> "월"
+            DayOfWeek.TUESDAY   -> "화"
+            DayOfWeek.WEDNESDAY -> "수"
+            DayOfWeek.THURSDAY  -> "목"
+            DayOfWeek.FRIDAY    -> "금"
+            DayOfWeek.SATURDAY  -> "토"
+        }
+        return "$base($dow)"
     }
 
     // 월 범위 요청 함수 (캘린더 조회용)

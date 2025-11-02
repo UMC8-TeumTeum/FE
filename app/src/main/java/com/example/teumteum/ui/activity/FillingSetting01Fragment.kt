@@ -118,6 +118,14 @@ class FillingSetting01Fragment : Fragment() {
                 .show(parentFragmentManager, "BottomSheetCalendar")
         }
 
+        parentFragmentManager.setFragmentResultListener(
+            "assign_date_result",
+            viewLifecycleOwner
+        ) { _, bundle ->
+            val display = bundle.getString("assign_date_display") ?: return@setFragmentResultListener
+            binding.assignDateTv.text = display
+        }
+
         binding.nextBtn.setOnClickListener {
             if(isDirectInput){
                 val fragment = FillingSetting03Fragment().apply {
