@@ -57,11 +57,21 @@ class FillingActivity02Fragment : Fragment() {
         setupObservers()
         setupLoadingObserver()
 
-        if (firstLoad) {
-            view.post { showLoadingPage() }
-        }
+        val hasWishes = !viewModel.activityWishes.value.isNullOrEmpty()
+        val hasAi = !viewModel.activityAiContents.value.isNullOrEmpty()
+        val hasData = hasWishes || hasAi
 
-        getFillingActivity()
+        if (!hasData) {
+            // 최초 진입일 때
+            view.post { showLoadingPage() }
+            getFillingActivity()
+        } else {
+            firstLoad = false
+            pendingWishEmpty = viewModel.activityWishes.value?.isEmpty()
+            pendingWishEmpty?.let { applyWishEmptyState(it) }
+            wishAdapter.notifyDataSetChanged()
+            aiAdapter.notifyDataSetChanged()
+        }
 
         binding.backArrowIv.setOnClickListener {
             // 초기화 신호 전송
@@ -79,7 +89,7 @@ class FillingActivity02Fragment : Fragment() {
         // 새로고침: 시머 -> 재조회
         binding.fabRefreshIv.setOnClickListener {
             showShimmer()
-            getFillingActivity() // API 재호출
+            getFillingActivity()
         }
     }
 
@@ -146,12 +156,16 @@ class FillingActivity02Fragment : Fragment() {
             if (!isRefreshing) {
                 applyWishEmptyState(isEmpty)
             }
+
+            if (firstLoad) firstLoad = false // 최초 데이터 수신 시 firstLoad 내려주기
             wishAdapter.notifyDataSetChanged()
         }
 
         viewModel.activityAiContents.observe(viewLifecycleOwner) { aiContents ->
             aiList.clear()
             aiList.addAll(aiContents)
+
+            if (firstLoad) firstLoad = false // 최초 데이터 수신 시 firstLoad 내려주기
             aiAdapter.notifyDataSetChanged()
         }
 
