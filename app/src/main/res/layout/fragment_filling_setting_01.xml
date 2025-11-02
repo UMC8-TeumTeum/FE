@@ -96,6 +96,18 @@
                 app:layout_constraintStart_toEndOf="@id/assign_time_layout"
                 app:layout_constraintTop_toTopOf="parent"/>
 
+            <TextView
+                android:id="@+id/assign_date_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="17dp"
+                tools:text="25.06.11(수)"
+                android:fontFamily="@font/noto_sans_kr_regular"
+                android:textSize="15sp"
+                android:textColor="@color/white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 
