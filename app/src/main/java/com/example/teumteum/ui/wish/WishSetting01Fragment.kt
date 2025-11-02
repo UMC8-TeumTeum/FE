@@ -1,8 +1,6 @@
 package com.example.teumteum.ui.wish
 
-import android.R.attr.fragment
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,7 +18,6 @@ import com.example.teumteum.ui.clock.ChartUtils
 import com.example.teumteum.ui.clock.ClockHalf
 import com.example.teumteum.ui.clock.ClockVPAdapter
 import com.example.teumteum.ui.clock.IconPieChartRenderer
-import com.example.teumteum.ui.main.data.TimeBlock
 import com.example.teumteum.ui.main.data.TimeType
 import com.example.teumteum.ui.main.viewModel.HomeViewModel
 import com.example.teumteum.ui.wish.adapter.WishTimeAdapter
@@ -113,6 +110,11 @@ class WishSetting01Fragment : Fragment() {
             val pmPos = clockAdapter.positionOf(ClockHalf.PM)
             val next = if (binding.clockPager.currentItem == amPos) pmPos else amPos
             binding.clockPager.setCurrentItem(next, true)
+        }
+
+        binding.selectDateBtn.setOnClickListener {
+            BottomSheetAssignCalendarFragment()
+                .show(parentFragmentManager, "BottomSheetCalendar")
         }
 
         binding.nextBtn.setOnClickListener {

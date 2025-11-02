@@ -20,6 +20,7 @@ import com.example.teumteum.ui.clock.ClockVPAdapter
 import com.example.teumteum.ui.clock.IconPieChartRenderer
 import com.example.teumteum.ui.main.data.TimeType
 import com.example.teumteum.ui.main.viewModel.HomeViewModel
+import com.example.teumteum.ui.wish.BottomSheetAssignCalendarFragment
 import com.example.teumteum.ui.wish.adapter.WishTimeAdapter
 import com.example.teumteum.ui.wish.data.UiTimeSlot
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -110,6 +111,11 @@ class FillingSetting01Fragment : Fragment() {
             val pmPos = clockAdapter.positionOf(ClockHalf.PM)
             val next = if (binding.clockPager.currentItem == amPos) pmPos else amPos
             binding.clockPager.setCurrentItem(next, true)
+        }
+
+        binding.selectDateBtn.setOnClickListener {
+            BottomSheetAssignCalendarFragment()
+                .show(parentFragmentManager, "BottomSheetCalendar")
         }
 
         binding.nextBtn.setOnClickListener {
