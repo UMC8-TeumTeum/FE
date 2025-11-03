@@ -1,11 +1,18 @@
 package com.example.teumteum.ui.main
 
 import android.content.res.ColorStateList
+import android.graphics.Typeface
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
+import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
+import androidx.annotation.ColorRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -246,15 +253,45 @@ class HomeFragment : Fragment(), IDateClickListener {
     }
 
     private fun openTutorialOverlay() {
-        // 오버레이 보이기
-        binding.tutorialOverlay.root.visibility = View.VISIBLE
-        binding.tutorialOverlay.root.isClickable = true
-        binding.tutorialOverlay.root.isFocusable = true
-        binding.tutorialOverlay.root.bringToFront()
+        binding.tutorialOverlay.root.apply {
+            visibility = View.VISIBLE
+            isClickable = true
+            isFocusable = true
+            bringToFront()
+        }
+
+        binding.tutorialOverlay.labelTop.highlightText("일정과 수면패턴")
+        binding.tutorialOverlay.labelRightTop.highlightText("수면 패턴")
+        binding.tutorialOverlay.labelLeftBottom.highlightText("빈틈")
+        binding.tutorialOverlay.labelLeftTop.highlightText("오늘의 일정")
+        binding.tutorialOverlay.labelBottom.highlightText("오전과 오후")
+        binding.tutorialOverlay.labelCalendar.highlightText("캘린더")
+        binding.tutorialOverlay.labelTodoList.highlightText("투두리스트")
 
         // 바텀 내비 + 플로팅버튼 숨기기
         requireActivity().findViewById<View>(R.id.main_bnv)?.visibility = View.GONE
         binding.fabAddIv.isVisible = false
+    }
+
+    private fun TextView.highlightText(
+        target: String,
+        @ColorRes colorRes: Int = R.color.main_1
+    ) {
+        val fullText = text.toString()
+        val start = fullText.indexOf(target)
+        if (start == -1) return // 대상 단어 없으면 무시
+
+        val end = start + target.length
+        val spannable = SpannableString(fullText).apply {
+            setSpan(StyleSpan(Typeface.BOLD), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            setSpan(
+                ForegroundColorSpan(
+                    ContextCompat.getColor(context, colorRes)
+                ),
+                start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+        text = spannable
     }
 
     private fun hookBackToClose() {
@@ -539,7 +576,7 @@ class HomeFragment : Fragment(), IDateClickListener {
         }
         _binding = null
         // 오버레이가 열려있다면 닫으면서 원복
-        if (binding.tutorialOverlay.root.visibility == View.VISIBLE) {
+        if (binding.tutorialOverlay.root.isVisible) {
             requireActivity().findViewById<View>(R.id.main_bnv)?.visibility = View.VISIBLE
             requireActivity().findViewById<View?>(R.id.fab_add_iv)?.visibility = View.VISIBLE
         }
