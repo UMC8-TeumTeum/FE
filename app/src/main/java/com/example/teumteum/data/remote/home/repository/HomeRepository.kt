@@ -1,6 +1,7 @@
 package com.example.teumteum.data.remote.home.repository
 
 import android.util.Log
+import com.example.teumteum.data.remote.home.model.GetCalendarResponse
 import com.example.teumteum.data.remote.home.model.ScheduleResult
 import com.example.teumteum.data.remote.home.model.TeumTimeResponse
 import com.example.teumteum.data.remote.home.service.HomeService
@@ -21,6 +22,12 @@ class HomeRepository @Inject constructor(
     suspend fun getTeumTime(): Result<TeumTimeResponse> = runCatching {
         val response = homeService.getTeumTime()
         Log.d("HomeSchedule", "response = ${response.body()}")
+        handleApiResponse(response)
+    }
+
+    suspend fun getCalendar(startDate: String, endDate: String): Result<List<GetCalendarResponse>> = runCatching {
+        val response = homeService.getCalendar(startDate, endDate)
+        Log.d("HomeCalendar", "response = ${response.body()}")
         handleApiResponse(response)
     }
 }
