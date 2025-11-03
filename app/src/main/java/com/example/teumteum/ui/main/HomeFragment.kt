@@ -600,12 +600,12 @@ class HomeFragment : Fragment(), IDateClickListener {
                 }
             }
         }
-        _binding = null
         // 오버레이가 열려있다면 닫으면서 원복
         if (binding.tutorialOverlay.root.isVisible) {
             requireActivity().findViewById<View>(R.id.main_bnv)?.visibility = View.VISIBLE
             requireActivity().findViewById<View?>(R.id.fab_add_iv)?.visibility = View.VISIBLE
         }
+        _binding = null
         super.onDestroyView()
     }
 }
