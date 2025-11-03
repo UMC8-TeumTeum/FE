@@ -2,6 +2,7 @@ package com.example.teumteum.ui.main
 
 import android.content.res.ColorStateList
 import android.graphics.Typeface
+import android.os.Build
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
@@ -13,6 +14,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.ColorRes
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -78,6 +80,7 @@ class HomeFragment : Fragment(), IDateClickListener {
 
     private var backCallback: OnBackPressedCallback? = null
 
+    @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -252,6 +255,7 @@ class HomeFragment : Fragment(), IDateClickListener {
         block(b)
     }
 
+    @RequiresApi(Build.VERSION_CODES.R)
     private fun openTutorialOverlay() {
         binding.tutorialOverlay.root.apply {
             visibility = View.VISIBLE
@@ -271,6 +275,14 @@ class HomeFragment : Fragment(), IDateClickListener {
         // 바텀 내비 + 플로팅버튼 숨기기
         requireActivity().findViewById<View>(R.id.main_bnv)?.visibility = View.GONE
         binding.fabAddIv.isVisible = false
+        binding.fabShadowIv.isVisible = false
+
+        // 시스템 UI (상단 상태바 + 하단 네비게이션바) 숨기기
+        requireActivity().window.insetsController?.let { controller ->
+            controller.hide(android.view.WindowInsets.Type.systemBars())
+            controller.systemBarsBehavior =
+                android.view.WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        }
     }
 
     private fun TextView.highlightText(
@@ -296,16 +308,30 @@ class HomeFragment : Fragment(), IDateClickListener {
 
     private fun hookBackToClose() {
         backCallback = object : OnBackPressedCallback(true) {
+            @RequiresApi(Build.VERSION_CODES.R)
             override fun handleOnBackPressed() = closeTutorialOverlay()
         }.also { requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, it) }
     }
 
+    @RequiresApi(Build.VERSION_CODES.R)
     private fun closeTutorialOverlay() {
         binding.tutorialOverlay.root.visibility = View.GONE
 
         // 숨겼던 것들 복구
         requireActivity().findViewById<View>(R.id.main_bnv)?.visibility = View.VISIBLE
-        requireActivity().findViewById<View?>(R.id.fab_add_iv)?.visibility = View.VISIBLE
+        binding.fabAddIv.isVisible = true
+        binding.fabShadowIv.isVisible = true
+
+//        // 그림자 재적용
+//        binding.fabAddIv.post {
+//            applyBlurShadow(
+//                sourceView = binding.fabAddIv,
+//                targetImageView = binding.fabShadowIv
+//            )
+//        }
+
+        // 시스템 UI 복구
+        requireActivity().window.insetsController?.show(android.view.WindowInsets.Type.systemBars())
 
         backCallback?.remove()
         backCallback = null
