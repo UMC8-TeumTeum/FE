@@ -878,8 +878,7 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
             run {
                 listOf(
                     binding.todoTitleEt, binding.startDateTv, binding.startTimeTv,
-                    binding.endDateTv, binding.endTimeTv, binding.addAlarmTv, binding.btnPlus,
-                    binding.detailTextEt, binding.btnTodoSave
+                    binding.endDateTv, binding.endTimeTv, binding.detailTextEt
                 ).forEach { v ->
                     v.isEnabled = true
                     v.alpha = 1f
@@ -890,7 +889,6 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
                 val nh = _normalHintColor ?: binding.detailTextEt.currentHintTextColor
 
                 binding.timerIconIv.clearColorFilter()
-                binding.alarmIconIv.clearColorFilter()
                 binding.publicIconIv.clearColorFilter()
                 binding.includeIconIv.clearColorFilter()
                 binding.detailTextIv.clearColorFilter()
@@ -900,7 +898,6 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
                 binding.startTimeTv.setTextColor(nt)
                 binding.endDateTv.setTextColor(nt)
                 binding.endTimeTv.setTextColor(nt)
-                binding.addAlarmTv.setTextColor(nt)
                 binding.publicSettingTv.setTextColor(nt)
                 binding.includeReportTv.setTextColor(nt)
                 binding.detailTextEt.setTextColor(nt)
@@ -951,7 +948,7 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
             originalIncludeTeum = todo.includeTeum
             originalRemindAlarm = (todo.remindAlarm ?: emptyList()).map { it.alarm }
 
-            //반복일정은 삭제만 가능
+            //반복일정은 알림 편집만 가능
             if (todo.type == ScheduleType.ROUTINE) {
                 val deactiveColor = ContextCompat.getColor(requireContext(), R.color.teumteum_deactive)
 
@@ -961,8 +958,6 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
                 binding.startTimeTv.setTextColor(deactiveColor)
                 binding.endDateTv.setTextColor(deactiveColor)
                 binding.endTimeTv.setTextColor(deactiveColor)
-                binding.alarmIconIv.setColorFilter(deactiveColor)
-                binding.addAlarmTv.setTextColor(deactiveColor)
                 binding.publicIconIv.setColorFilter(deactiveColor)
                 binding.publicSettingTv.setTextColor(deactiveColor)
                 binding.includeIconIv.setColorFilter(deactiveColor)
@@ -976,8 +971,6 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
                 binding.startTimeTv.isEnabled = false
                 binding.endDateTv.isEnabled = false
                 binding.endTimeTv.isEnabled = false
-                binding.addAlarmTv.isEnabled = false
-                binding.btnPlus.isEnabled = false
                 binding.detailTextEt.isEnabled = false
 
                 listOf(
@@ -986,25 +979,6 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
                     t.isEnabled = false
                     t.trackDrawable = ContextCompat.getDrawable(t.context, R.drawable.style_toggle_disabled_btn)?.mutate()
                     t.thumbDrawable = ContextCompat.getDrawable(t.context, R.drawable.style_toggle_disabled_thumb)?.mutate()
-                }
-
-                binding.btnTodoSave.isEnabled = false
-
-                for (i in 0 until binding.alarmLayoutContainer.childCount) {
-                    val alarmView = binding.alarmLayoutContainer.getChildAt(i)
-
-                    if (alarmView is ViewGroup) {
-                        for (j in 0 until alarmView.childCount) {
-                            val child = alarmView.getChildAt(j)
-
-                            (child as? TextView)?.setTextColor(deactiveColor)
-                            (child as? SwitchCompat)?.apply {
-                                isEnabled = false
-                                child.trackDrawable = ContextCompat.getDrawable(child.context, R.drawable.style_toggle_disabled_btn)?.mutate()
-                                child.thumbDrawable = ContextCompat.getDrawable(child.context, R.drawable.style_toggle_disabled_thumb)?.mutate()
-                            }
-                        }
-                    }
                 }
             }
 
