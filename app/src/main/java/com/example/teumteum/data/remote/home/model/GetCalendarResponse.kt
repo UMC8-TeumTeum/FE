@@ -1,4 +1,4 @@
-package com.example.teumteum.data.remote.calendar.model
+package com.example.teumteum.data.remote.home.model
 
 import com.google.gson.annotations.SerializedName
 
