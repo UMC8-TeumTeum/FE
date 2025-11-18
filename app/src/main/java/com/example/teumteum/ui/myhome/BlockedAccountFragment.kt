@@ -1,6 +1,10 @@
 package com.example.teumteum.ui.myhome
 
+import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +12,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.teumteum.R
+import com.example.teumteum.databinding.DialogUnblockBinding
 import com.example.teumteum.databinding.FragmentBlockedAccountBinding
 import com.example.teumteum.ui.myhome.adapter.BlockedAccountAdapter
 import com.example.teumteum.ui.myhome.data.BlockedAccount
@@ -40,16 +45,53 @@ class BlockedAccountFragment : Fragment() {
         )
 
         val adapter = BlockedAccountAdapter(dummyList) { account ->
-            //Todo: 차단해제 API 연동
-            Toast.makeText(requireContext(), "${account.name} 차단 해제", Toast.LENGTH_SHORT).show()
+            showUnblockDialog(account)
         }
 
         binding.blockedAccountRv.adapter = adapter
         binding.blockedAccountRv.layoutManager = LinearLayoutManager(requireContext())
+
+        binding.backArrowIv.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, MySettingFragment())
+                .addToBackStack(null)
+                .commit()
+        }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
+
+    private fun showUnblockDialog(account: BlockedAccount) {
+        val dialogView = DialogUnblockBinding.inflate(layoutInflater)
+
+        dialogView.descriptionTv.text = "${account.name} 님을\n차단 해제하시겠어요?"
+
+        val dialog = Dialog(requireContext())
+        dialog.setContentView(dialogView.root)
+        dialog.window?.apply {
+            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            setGravity(Gravity.CENTER)
+        }
+
+        dialogView.yesBtn.setOnClickListener {
+            Toast.makeText(requireContext(), "${account.name} 차단 해제 완료", Toast.LENGTH_SHORT).show()
+
+            // TODO: 차단 해제 API 연동
+            dialog.dismiss()
+        }
+
+        dialogView.noBtn.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
+
+        val displayMetrics = resources.displayMetrics
+        val dialogWidth = (displayMetrics.widthPixels * 0.9).toInt()
+        dialog.window?.setLayout(dialogWidth, ViewGroup.LayoutParams.WRAP_CONTENT)
+    }
+
 }
