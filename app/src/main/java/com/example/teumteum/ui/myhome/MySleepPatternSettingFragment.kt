@@ -9,7 +9,9 @@ import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentMyRemindAlarmSettingBinding
 import com.example.teumteum.databinding.FragmentMySleepPatternSettingBinding
 import com.example.teumteum.ui.main.MainActivity
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MySleepPatternSettingFragment : Fragment() {
 
     private lateinit var binding: FragmentMySleepPatternSettingBinding
