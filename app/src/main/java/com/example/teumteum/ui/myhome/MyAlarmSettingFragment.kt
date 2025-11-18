@@ -1,11 +1,10 @@
 package com.example.teumteum.ui.myhome
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.teumteum.R
+import androidx.fragment.app.Fragment
 import com.example.teumteum.databinding.FragmentMyAlarmSettingBinding
 import com.example.teumteum.ui.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -33,10 +32,7 @@ class MyAlarmSettingFragment : Fragment() {
         (activity as? MainActivity)?.hideBottomBar()
 
         binding.backArrowIv.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, MySettingFragment())
-                .addToBackStack(null)
-                .commit()
+            parentFragmentManager.popBackStack()
         }
     }
 

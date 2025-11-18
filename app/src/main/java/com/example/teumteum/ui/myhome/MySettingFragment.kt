@@ -74,5 +74,12 @@ class MySettingFragment : Fragment() {
                 .commit()
         }
 
+        binding.serviceInfoLl.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, ServiceInfoFragment())
+                .addToBackStack(null)
+                .commit()
+        }
+
     }
 }

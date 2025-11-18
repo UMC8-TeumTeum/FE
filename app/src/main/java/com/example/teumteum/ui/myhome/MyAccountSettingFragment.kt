@@ -12,9 +12,9 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.teumteum.R
+import com.example.teumteum.data.remote.auth.LogoutUseCase
 import com.example.teumteum.databinding.FragmentMyAccountSettingBinding
 import com.example.teumteum.ui.main.MainActivity
-import com.example.teumteum.data.remote.auth.LogoutUseCase
 import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -43,10 +43,7 @@ class MyAccountSettingFragment : Fragment() {
         (activity as? MainActivity)?.hideBottomBar()
 
         binding.backArrowIv.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, MySettingFragment())
-                .addToBackStack(null)
-                .commit()
+            parentFragmentManager.popBackStack()
         }
 
         binding.logoutLl.setOnClickListener {

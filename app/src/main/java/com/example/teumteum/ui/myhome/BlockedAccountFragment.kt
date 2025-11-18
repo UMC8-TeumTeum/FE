@@ -52,10 +52,7 @@ class BlockedAccountFragment : Fragment() {
         binding.blockedAccountRv.layoutManager = LinearLayoutManager(requireContext())
 
         binding.backArrowIv.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, MySettingFragment())
-                .addToBackStack(null)
-                .commit()
+            parentFragmentManager.popBackStack()
         }
     }
 
