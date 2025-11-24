@@ -2,6 +2,7 @@ package com.example.teumteum.ui.friend
 
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -118,31 +119,35 @@ class FriendProfileFollowFragment : Fragment() {
     // 차단 신고 팝업 표시
     private fun showOptionsPopup(anchorView: View) {
         val popupView = layoutInflater.inflate(R.layout.popup_friend_options, null)
+        val density = resources.displayMetrics.density
+
+        val widthPx = (170 * density).toInt()
+        val heightPx = ViewGroup.LayoutParams.WRAP_CONTENT
+
         val popupWindow = PopupWindow(
             popupView,
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT,
+            widthPx,
+            heightPx,
             true
         )
 
         popupWindow.isOutsideTouchable = true
         popupWindow.isFocusable = true
 
-        // 위치 조정 (anchorView 아래쪽으로)
-        popupWindow.showAsDropDown(anchorView, -50, 10)
+        val xPos = (220 * density).toInt() // Left
+        val yPos = (99 * density).toInt()  // Top
+
+        popupWindow.showAtLocation(anchorView, Gravity.TOP or Gravity.START, xPos, yPos)
 
         // 클릭 리스너 설정
         popupView.findViewById<View>(R.id.btn_block).setOnClickListener {
             popupWindow.dismiss()
-
             val bottomSheet = FriendBlockBottomSheet()
             bottomSheet.show(parentFragmentManager, bottomSheet.tag)
         }
 
         popupView.findViewById<View>(R.id.btn_report).setOnClickListener {
             popupWindow.dismiss()
-
-            // 신고 BottomSheet 열기
             val bottomSheet = FriendReportChoiceBottomSheet()
             bottomSheet.show(parentFragmentManager, bottomSheet.tag)
         }

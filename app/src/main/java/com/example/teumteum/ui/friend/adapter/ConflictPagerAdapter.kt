@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.teumteum.databinding.ItemFriendConflictCardBinding
+import com.example.teumteum.ui.friend.data.ConflictItem
 
 class ConflictPagerAdapter(private val items: List<ConflictItem>) :
     RecyclerView.Adapter<ConflictPagerAdapter.ConflictViewHolder>() {

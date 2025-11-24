@@ -160,18 +160,23 @@ class FriendProfileFollowingFragment : Fragment() {
     // 차단 신고 팝업 표시
     private fun showOptionsPopup(anchorView: View) {
         val popupView = layoutInflater.inflate(R.layout.popup_friend_options, null)
+
+        // [수정된 부분] 원하는 dp 크기를 픽셀(px)로 변환합니다 (예: 110dp)
+        val width = (110 * resources.displayMetrics.density).toInt()
+        val height = ViewGroup.LayoutParams.WRAP_CONTENT
+
         val popupWindow = PopupWindow(
             popupView,
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT,
+            width,  // 여기에 WRAP_CONTENT 대신 계산된 width를 넣습니다
+            height,
             true
         )
 
         popupWindow.isOutsideTouchable = true
         popupWindow.isFocusable = true
 
-        // 위치 조정 (anchorView 아래쪽으로)
-        popupWindow.showAsDropDown(anchorView, -50, 10)
+        // 위치 조정 (가로 폭이 좁아졌으니 x축 위치를 살짝 조정해보세요. 0 또는 -10 추천)
+        popupWindow.showAsDropDown(anchorView, -10, 10)
 
         // 클릭 리스너 설정
         popupView.findViewById<View>(R.id.btn_block).setOnClickListener {

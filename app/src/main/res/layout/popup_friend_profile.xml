@@ -6,13 +6,13 @@
     android:background="@drawable/bg_rounded_white_popup">
 
     <TextView
-        android:id="@+id/btn_block"
+        android:id="@+id/btn_profile"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:gravity="center"
-        android:text="차단"
-        android:textSize="16sp"
+        android:text="사용자 프로필"
+        android:textSize="14sp"
         android:textColor="@color/text_primary"
         android:fontFamily="@font/noto_sans_kr_regular"
         android:background="?attr/selectableItemBackground"
@@ -33,7 +33,7 @@
         android:layout_weight="1"
         android:gravity="center"
         android:text="신고"
-        android:textSize="16sp"
+        android:textSize="14sp"
         android:textColor="#FF473B"
         android:fontFamily="@font/noto_sans_kr_regular"
         android:background="?attr/selectableItemBackground"
