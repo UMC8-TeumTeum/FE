@@ -140,12 +140,12 @@ class HomeFragment : Fragment() {
                 sheet.dismissAllowingStateLoss() // 인스턴스 정리
             }
 
-            val scheduleList = viewModel.scheduleList.value ?: emptyList()
-            val sleepBlocks = scheduleList.filter { it.type == TimeType.SLEEP }
+//            val scheduleList = viewModel.scheduleList.value ?: emptyList()
+//            val sleepBlocks = scheduleList.filter { it.type == TimeType.SLEEP }
 
             BottomSheetTodoRegisterFragment().apply {
                 arguments = Bundle().apply {
-                    putParcelableArrayList("sleepBlocks", ArrayList(sleepBlocks))
+//                    putParcelableArrayList("sleepBlocks", ArrayList(sleepBlocks))
                     putString("defaultDate", selectedDate.toString())
                 }
             }.show(parentFragmentManager, TODO_SHEET_TAG)
@@ -421,12 +421,21 @@ class HomeFragment : Fragment() {
         todoViewModel.getTodoList(date)
         myHomeViewModel.getMyInfo()
 
-        viewModel.scheduleList.observe(viewLifecycleOwner) {
-            clockAdapter.refreshAll()
-            val amPos = clockAdapter.positionOf(ClockHalf.AM)
-            isAM = (binding.clockPager.currentItem == amPos)
-            updateIndicator(isAM)
+//        viewModel.scheduleList.observe(viewLifecycleOwner) {
+//            clockAdapter.refreshAll()
+//            val amPos = clockAdapter.positionOf(ClockHalf.AM)
+//            isAM = (binding.clockPager.currentItem == amPos)
+//            updateIndicator(isAM)
+//        }
+
+        viewModel.sleepTimeList.observe(viewLifecycleOwner) {
+            refreshClockPager()
         }
+
+        viewModel.todoTimeList.observe(viewLifecycleOwner) {
+            refreshClockPager()
+        }
+
 
         // 누적 시간 표시
         viewModel.teumTimeDays.observe(viewLifecycleOwner) { updateTeumTime() }
@@ -552,13 +561,26 @@ class HomeFragment : Fragment() {
             inflate = ItemClockPageBinding::inflate,
             chartOf = { it.clockChart },
             onBindPage = { chart, half ->
-                ChartUtils.setupPieChart(chart)
-                val sleepBitmap = ChartUtils.getBitmapFromVector(requireContext(), R.drawable.ic_sleep_sv)
-                chart.renderer = IconPieChartRenderer(chart, chart.animator, chart.viewPortHandler, sleepBitmap)
 
-                // AM/PM 데이터 바인딩
-                val blocks = viewModel.scheduleList.value.orEmpty()
-                val halfBlocks = ChartUtils.splitAndFillTimeBlocks(blocks, half == ClockHalf.AM)
+                // 1) 기본 PieChart 설정
+                ChartUtils.setupPieChart(chart)
+
+                // 2) 아이콘 렌더러 적용 (옵션)
+//                val sleepBitmap = ChartUtils.getBitmapFromVector(requireContext(), R.drawable.ic_sleep_sv)
+//                chart.renderer = IconPieChartRenderer(chart, chart.animator, chart.viewPortHandler, sleepBitmap)
+
+                // 3) ViewModel의 LiveData 읽기
+                val sleepBlocks = viewModel.sleepTimeList.value.orEmpty()
+                val todoBlocks  = viewModel.todoTimeList.value.orEmpty()
+
+                // 4) Sleep + Todo 기반으로 AM/PM 블록 생성
+                val halfBlocks = ChartUtils.buildBlocksFromSleepTodo(
+                    sleepBlocks = sleepBlocks,
+                    todoBlocks = todoBlocks,
+                    isAM = (half == ClockHalf.AM)
+                )
+
+                // 5) 실제 차트에 데이터 넣기
                 ChartUtils.setTimePieChartData(requireContext(), chart, halfBlocks)
             }
         )
@@ -566,10 +588,11 @@ class HomeFragment : Fragment() {
         binding.clockPager.adapter = clockAdapter
         binding.clockPager.offscreenPageLimit = 1
 
-        val amPos = clockAdapter.positionOf(ClockHalf.AM) // 0
-        val pmPos = clockAdapter.positionOf(ClockHalf.PM) // 1
+        val amPos = clockAdapter.positionOf(ClockHalf.AM)
+        val pmPos = clockAdapter.positionOf(ClockHalf.PM)
 
         binding.clockPager.setCurrentItem(amPos, false)
+        updateIndicator(binding.clockPager.currentItem == amPos)
 
         binding.clockPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
@@ -581,8 +604,6 @@ class HomeFragment : Fragment() {
             val next = if (binding.clockPager.currentItem == amPos) pmPos else amPos
             binding.clockPager.setCurrentItem(next, true)
         }
-
-        updateIndicator(binding.clockPager.currentItem == amPos)
     }
 
     private fun switchToMonth() {
@@ -760,4 +781,13 @@ class HomeFragment : Fragment() {
         _binding = null
         super.onDestroyView()
     }
+
+    private fun refreshClockPager() {
+        if (!::clockAdapter.isInitialized) return
+        clockAdapter.refreshAll()
+
+        val amPos = clockAdapter.positionOf(ClockHalf.AM)
+        updateIndicator(binding.clockPager.currentItem == amPos)
+    }
+
 }

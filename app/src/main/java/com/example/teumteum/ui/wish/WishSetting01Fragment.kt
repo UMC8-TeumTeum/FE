@@ -1,8 +1,6 @@
 package com.example.teumteum.ui.wish
 
-import android.R.attr.fragment
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,15 +17,12 @@ import com.example.teumteum.ui.activity.FillingSetting03Fragment
 import com.example.teumteum.ui.clock.ChartUtils
 import com.example.teumteum.ui.clock.ClockHalf
 import com.example.teumteum.ui.clock.ClockVPAdapter
-import com.example.teumteum.ui.clock.IconPieChartRenderer
-import com.example.teumteum.ui.main.data.TimeBlock
 import com.example.teumteum.ui.main.data.TimeType
 import com.example.teumteum.ui.main.viewModel.HomeViewModel
 import com.example.teumteum.ui.wish.adapter.WishTimeAdapter
 import com.example.teumteum.ui.wish.data.UiTimeSlot
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
-import kotlin.collections.orEmpty
 
 @AndroidEntryPoint
 class WishSetting01Fragment : Fragment() {
@@ -72,9 +67,7 @@ class WishSetting01Fragment : Fragment() {
         bottomNav?.visibility = View.GONE
 
         // EMPTY만 필터 후 변환
-        val emptyBlocks = homeViewModel.scheduleList.value.orEmpty()
-            .filter { it.type == TimeType.EMPTY }   // enum 경로에 맞게 수정
-            .map { UiTimeSlot(it.startTime.toHHmm(), it.endTime.toHHmm()) }
+        val emptyBlocks = calculateEmptyTime()
 
         // 어댑터 생성 (문자열 콜백)
         val wishTimeAdapter = WishTimeAdapter(
@@ -169,23 +162,35 @@ class WishSetting01Fragment : Fragment() {
             inflate = ItemClockMiniPageBinding::inflate,
             chartOf = { it.clockChart },
             onBindPage = { chart, half ->
+
+                // PieChart 기본 설정
                 ChartUtils.setupPieChart(chart)
-                val sleepBitmap = ChartUtils.getBitmapFromVector(requireContext(), R.drawable.ic_sleep_sv)
-                chart.renderer = IconPieChartRenderer(chart, chart.animator, chart.viewPortHandler, sleepBitmap)
 
-                // AM/PM 데이터 바인딩
-                val blocks = homeViewModel.scheduleList.value.orEmpty()
-                val halfBlocks = ChartUtils.splitAndFillTimeBlocks(blocks, half == ClockHalf.AM)
+                // (아이콘 렌더러 제거)
+                // val sleepBitmap = ChartUtils.getBitmapFromVector(requireContext(), R.drawable.ic_sleep_sv)
+                // chart.renderer = IconPieChartRenderer(chart, chart.animator, chart.viewPortHandler, sleepBitmap)
+
+                // HomeViewModel의 시간표 데이터 사용
+                val sleepBlocks = homeViewModel.sleepTimeList.value.orEmpty()
+                val todoBlocks  = homeViewModel.todoTimeList.value.orEmpty()
+
+                // AM/PM 기준으로 Sleep + Todo 병합
+                val halfBlocks = ChartUtils.buildBlocksFromSleepTodo(
+                    sleepBlocks = sleepBlocks,
+                    todoBlocks = todoBlocks,
+                    isAM = (half == ClockHalf.AM)
+                )
+
+                // 차트 적용
                 ChartUtils.setTimePieChartData(requireContext(), chart, halfBlocks)
-
             }
         )
 
         binding.clockPager.adapter = clockAdapter
         binding.clockPager.offscreenPageLimit = 1
 
-        val amPos = clockAdapter.positionOf(ClockHalf.AM) // 0
-        val pmPos = clockAdapter.positionOf(ClockHalf.PM) // 1
+        val amPos = clockAdapter.positionOf(ClockHalf.AM)
+        val pmPos = clockAdapter.positionOf(ClockHalf.PM)
 
         binding.clockPager.setCurrentItem(amPos, false)
 
@@ -199,7 +204,6 @@ class WishSetting01Fragment : Fragment() {
             val next = if (binding.clockPager.currentItem == amPos) pmPos else amPos
             binding.clockPager.setCurrentItem(next, true)
         }
-
     }
 
     private fun updateIndicator(isAM: Boolean) {
@@ -245,5 +249,25 @@ class WishSetting01Fragment : Fragment() {
         val h = norm / 60
         val m = norm % 60
         return String.format("%02d:%02d", h, m)
+    }
+
+    private fun calculateEmptyTime(): List<UiTimeSlot> {
+        val sleepBlocks = homeViewModel.sleepTimeList.value.orEmpty()
+        val todoBlocks = homeViewModel.todoTimeList.value.orEmpty()
+
+        val mergedBlocks = ChartUtils.buildBlocksFromSleepTodo(
+            sleepBlocks = sleepBlocks,
+            todoBlocks = todoBlocks,
+            isAM = true    // AM/PM 구분이 필요 없다면 false도 가능
+        ) + ChartUtils.buildBlocksFromSleepTodo(
+            sleepBlocks = sleepBlocks,
+            todoBlocks = todoBlocks,
+            isAM = false
+        )
+
+        // 원하는 EMPTY 구간만 추출
+        return mergedBlocks
+            .filter { it.type == TimeType.EMPTY }
+            .map { UiTimeSlot(it.startTime.toHHmm(), it.endTime.toHHmm()) }
     }
 }

@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.teumteum.data.remote.home.model.GetCalendarResponse
 import com.example.teumteum.data.remote.home.repository.HomeRepository
 import com.example.teumteum.ui.main.data.TimeBlock
+import com.example.teumteum.ui.main.data.TimeType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -19,8 +20,14 @@ class HomeViewModel @Inject constructor(
     private val repository: HomeRepository
 ) : ViewModel() {
 
-    private val _scheduleList = MutableLiveData<List<TimeBlock>>(emptyList())
-    val scheduleList: LiveData<List<TimeBlock>> = _scheduleList
+//    private val _scheduleList = MutableLiveData<List<TimeBlock>>(emptyList())
+//    val scheduleList: LiveData<List<TimeBlock>> = _scheduleList
+
+    private val _sleepTimeList = MutableLiveData<List<TimeBlock>>(emptyList())
+    val sleepTimeList: LiveData<List<TimeBlock>> = _sleepTimeList
+
+    private val _todoTimeList = MutableLiveData<List<TimeBlock>>(emptyList())
+    val todoTimeList: LiveData<List<TimeBlock>> = _todoTimeList
 
     private val _calendarData = MutableLiveData<List<GetCalendarResponse>>()
     val calendarData: LiveData<List<GetCalendarResponse>> = _calendarData
@@ -46,7 +53,8 @@ class HomeViewModel @Inject constructor(
         if (date == currentDate) return //이미 호출한 날짜면 패스
 
         date = currentDate
-        getTodaySchedule(currentDate)
+//        getTodaySchedule(currentDate)
+        getTimetable(currentDate)
     }
 
     // 캘린더 일정 조회
@@ -63,20 +71,44 @@ class HomeViewModel @Inject constructor(
     }
 
     /** 오늘의 스케줄 가져오기 */
-    private fun getTodaySchedule(date: String) {
+//    private fun getTodaySchedule(date: String) {
+//        viewModelScope.launch {
+//            repository.getTodaySchedule(date)
+//                .onSuccess { result ->
+//                    Log.d("TodaySchedule", result.toString())
+//                    _scheduleList.value = result.map {
+//                        val start = timeToMinutes(it.startTime)
+//                        val end = timeToMinutes(it.endTime)
+//                        TimeBlock(start, end, it.type)
+//                    }
+//                }
+//                .onFailure {
+//                    _error.value = "스케줄 조회 실패: ${it.message}"
+//                    Log.d("TodaySchedule", _error.value.toString() )
+//                }
+//        }
+//    }
+
+    private fun getTimetable(date: String) {
         viewModelScope.launch {
-            repository.getTodaySchedule(date)
+            repository.getTimetable(date)
                 .onSuccess { result ->
                     Log.d("TodaySchedule", result.toString())
-                    _scheduleList.value = result.map {
+                    _sleepTimeList.value = result.sleep.map {
                         val start = timeToMinutes(it.startTime)
                         val end = timeToMinutes(it.endTime)
-                        TimeBlock(start, end, it.type)
+                        TimeBlock(start, end, TimeType.SLEEP)
+                    }
+
+                    _todoTimeList.value = result.todo.map {
+                        val start = timeToMinutes(it.startTime)
+                        val end = timeToMinutes(it.endTime)
+                        TimeBlock(start, end, TimeType.TODO)
                     }
                 }
                 .onFailure {
-                    _error.value = "스케줄 조회 실패: ${it.message}"
-                    Log.d("TodaySchedule", _error.value.toString() )
+                    _error.value = "시간표 조회 실패: ${it.message}"
+                    Log.d("Timetable", _error.value.toString() )
                 }
         }
     }
@@ -109,7 +141,8 @@ class HomeViewModel @Inject constructor(
         Log.d("asdf", "viewmodel")
         val currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
         date = currentDate
-        getTodaySchedule(currentDate)
+//        getTodaySchedule(currentDate)
+        getTimetable(currentDate)
     }
 }
 
