@@ -137,7 +137,8 @@ class FriendRoommateDateFragment : Fragment() {
                 putString("myProfileUrl", viewModel.myProfileUrl.value)
             }
 
-            val fragment = FriendRoommateFriendFragment().apply {
+            // 다음 버튼 클릭 시
+            val fragment = FriendRoommateTimeFragment().apply {
                 arguments = bundle
             }
 

@@ -264,7 +264,7 @@ class FriendViewModel @Inject constructor(
             startTime = time.startTime,
             endTime = time.endTime,
             graphicId = gid,
-            receiverUserIds = main
+            receiverUserId = main
         )
     }
 
