@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupWindow
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.bumptech.glide.Glide
@@ -80,6 +81,11 @@ class FriendProfileFollowingFragment : Fragment() {
             (activity as? MainActivity)?.showBottomBar()
         }
 
+        // 설정 버튼 클릭 시 팝업 띄우기
+        binding.settingBtn.setOnClickListener { anchorView ->
+            showOptionsPopup(anchorView)
+        }
+
         // 팔로잉 버튼 → 언팔로우
         binding.modifyProfileBtn.setOnClickListener {
             if (targetUserId != -1) {
@@ -149,6 +155,44 @@ class FriendProfileFollowingFragment : Fragment() {
 
 
         observeViewModel()
+    }
+
+    // 차단 신고 팝업 표시
+    private fun showOptionsPopup(anchorView: View) {
+        val popupView = layoutInflater.inflate(R.layout.popup_friend_options, null)
+
+        // [수정된 부분] 원하는 dp 크기를 픽셀(px)로 변환합니다 (예: 110dp)
+        val width = (110 * resources.displayMetrics.density).toInt()
+        val height = ViewGroup.LayoutParams.WRAP_CONTENT
+
+        val popupWindow = PopupWindow(
+            popupView,
+            width,  // 여기에 WRAP_CONTENT 대신 계산된 width를 넣습니다
+            height,
+            true
+        )
+
+        popupWindow.isOutsideTouchable = true
+        popupWindow.isFocusable = true
+
+        // 위치 조정 (가로 폭이 좁아졌으니 x축 위치를 살짝 조정해보세요. 0 또는 -10 추천)
+        popupWindow.showAsDropDown(anchorView, -10, 10)
+
+        // 클릭 리스너 설정
+        popupView.findViewById<View>(R.id.btn_block).setOnClickListener {
+            popupWindow.dismiss()
+
+            val bottomSheet = FriendBlockBottomSheet()
+            bottomSheet.show(parentFragmentManager, bottomSheet.tag)
+        }
+
+        popupView.findViewById<View>(R.id.btn_report).setOnClickListener {
+            popupWindow.dismiss()
+
+            // 신고 BottomSheet 열기
+            val bottomSheet = FriendReportChoiceBottomSheet()
+            bottomSheet.show(parentFragmentManager, bottomSheet.tag)
+        }
     }
 
     private fun observeViewModel() {

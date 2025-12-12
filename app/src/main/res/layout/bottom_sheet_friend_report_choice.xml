@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bottom_sheet_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/friend_bg_bottom_sheet" >
+
+    <!-- drag handle -->
+    <View
+        android:id="@+id/bottomSheetHandle"
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="12dp"
+        android:layout_marginStart="168dp"
+        android:layout_marginEnd="168dp"
+        android:background="@drawable/friend_bottom_sheet_handle" />
+
+
+    <!-- Title -->
+    <TextView
+        android:id="@+id/report_title_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="신고 사유를 선택해주세요"
+        android:textSize="20sp"
+        android:gravity="center"
+        android:textColor="@color/text_primary"
+        android:fontFamily="@font/noto_sans_kr_medium"
+        android:lineSpacingExtra="0dp"
+        android:includeFontPadding="false"
+        android:layout_marginTop="62dp"
+        android:layout_marginBottom="6dp" />
+
+    <!-- Subtitle / 설명 -->
+    <TextView
+        android:id="@+id/report_subtitle_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="서비스 규정을 위반한다고 생각되는 문제를 선택해주세요.\n상대방에게는 회원님이 신고했다는 사실을 알리지 않습니다."
+        android:textSize="14sp"
+        android:textColor="@color/text_primary"
+        android:fontFamily="@font/noto_sans_kr_regular"
+        android:lineSpacingExtra="0dp"
+        android:includeFontPadding="false"
+        android:gravity="center"
+        android:layout_marginTop="17dp"
+        android:layout_marginStart="27dp"
+        android:layout_marginEnd="27dp"/>
+
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#EAEAEA"
+        android:layout_marginTop="44dp"
+        android:layout_marginStart="27dp"
+        android:layout_marginEnd="27dp" />
+
+    <!-- Options container; 간단하게 LinearLayout으로 고정 항목들 구현 -->
+    <LinearLayout
+        android:id="@+id/options_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="30dp">
+
+        <!-- 항목들: 텍스트 + 오른쪽 체크박스 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical" >
+
+            <TextView
+                android:id="@+id/opt_abuse_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="욕설 등 혐오 발언"
+                android:textColor="#0F0F0F"
+                android:fontFamily="@font/noto_sans_kr_regular"
+                android:lineSpacingExtra="0dp"
+                android:includeFontPadding="false"
+                android:layout_marginStart="27dp"
+                android:textSize="16sp" />
+
+            <CheckBox
+                android:id="@+id/opt_abuse_cb"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:layout_marginEnd="23dp"
+                android:focusableInTouchMode="false" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="10dp">
+
+            <TextView
+                android:id="@+id/opt_sexual_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="성희롱 또는 음란 발언"
+                android:textColor="#0F0F0F"
+                android:fontFamily="@font/noto_sans_kr_regular"
+                android:lineSpacingExtra="0dp"
+                android:includeFontPadding="false"
+                android:layout_marginStart="27dp"
+                android:textSize="16sp" />
+
+            <CheckBox
+                android:id="@+id/opt_sexual_cb"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:layout_marginEnd="23dp"
+                android:focusableInTouchMode="false" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="10dp">
+
+            <TextView
+                android:id="@+id/opt_scam_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="사기 또는 거짓"
+                android:textColor="#0F0F0F"
+                android:fontFamily="@font/noto_sans_kr_regular"
+                android:lineSpacingExtra="0dp"
+                android:includeFontPadding="false"
+                android:layout_marginStart="27dp"
+                android:textSize="16sp" />
+
+            <CheckBox
+                android:id="@+id/opt_scam_cb"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:layout_marginEnd="23dp"
+                android:focusableInTouchMode="false" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="10dp">
+
+            <TextView
+                android:id="@+id/opt_illegal_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="불법 또는 유해 콘텐츠 공유"
+                android:textColor="#0F0F0F"
+                android:fontFamily="@font/noto_sans_kr_regular"
+                android:lineSpacingExtra="0dp"
+                android:includeFontPadding="false"
+                android:layout_marginStart="27dp"
+                android:textSize="16sp" />
+
+            <CheckBox
+                android:id="@+id/opt_illegal_cb"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:layout_marginEnd="23dp"
+                android:focusableInTouchMode="false" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="10dp">
+
+            <TextView
+                android:id="@+id/opt_privacy_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="개인정보 노출 요구"
+                android:textColor="#0F0F0F"
+                android:fontFamily="@font/noto_sans_kr_regular"
+                android:lineSpacingExtra="0dp"
+                android:includeFontPadding="false"
+                android:layout_marginStart="27dp"
+                android:textSize="16sp" />
+
+            <CheckBox
+                android:id="@+id/opt_privacy_cb"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:layout_marginEnd="23dp"
+                android:focusableInTouchMode="false" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="10dp">
+
+            <TextView
+                android:id="@+id/opt_spam_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="스팸"
+                android:textColor="#0F0F0F"
+                android:fontFamily="@font/noto_sans_kr_regular"
+                android:lineSpacingExtra="0dp"
+                android:includeFontPadding="false"
+                android:layout_marginStart="27dp"
+                android:textSize="16sp" />
+
+            <CheckBox
+                android:id="@+id/opt_spam_cb"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:layout_marginEnd="23dp"
+                android:focusableInTouchMode="false" />
+        </LinearLayout>
+
+        <!-- 마지막 항목: 화살표 아이콘 (관련 사유 없음) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="25dp">
+
+            <TextView
+                android:id="@+id/opt_other_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="해당 리스트에 관련 사유 없음"
+                android:textColor="#0F0F0F"
+                android:fontFamily="@font/noto_sans_kr_regular"
+                android:lineSpacingExtra="0dp"
+                android:includeFontPadding="false"
+                android:layout_marginStart="27dp"
+                android:textSize="16sp" />
+
+            <!-- 화살표: drawable로 넣거나 Material icon 사용 -->
+            <ImageView
+                android:id="@+id/opt_other_arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/friend_arrow"
+                android:layout_marginEnd="30dp"
+                android:contentDescription="arrow" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Spacer -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="14dp" />
+
+    <!-- 신고 버튼 (풀 너비) -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/report_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="19dp"
+        android:layout_marginEnd="19dp"
+        android:layout_marginBottom="19dp"
+        android:fontFamily="@font/noto_sans_kr_medium"
+        android:text="신고"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        app:backgroundTint="@color/text_primary"
+        app:cornerRadius="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+</LinearLayout>
