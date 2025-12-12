@@ -1,9 +1,11 @@
 package com.example.teumteum.ui.friend
 
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupWindow
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.viewpager2.widget.ViewPager2
@@ -13,6 +15,7 @@ import com.example.teumteum.databinding.FragmentFriend02RequestBinding
 import com.example.teumteum.ui.friend.adapter.FriendRequestCardAdapter
 import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.example.teumteum.ui.main.MainActivity
+import com.example.teumteum.ui.myhome.MyProfileFragment
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -105,6 +108,52 @@ class Friend02RequestFragment : Fragment() {
                 .replace(R.id.main_frm, FriendFragment())
                 .addToBackStack(null)
                 .commit()
+        }
+
+        // 설정 버튼 클릭 시 팝업 띄우기
+        binding.settingBtn.setOnClickListener { anchorView ->
+            showOptionsPopup(anchorView)
+        }
+    }
+
+    // 사용자 프로필 신고 팝업 표시
+    private fun showOptionsPopup(anchorView: View) {
+        val popupView = layoutInflater.inflate(R.layout.popup_friend_profile, null)
+        val density = resources.displayMetrics.density
+
+        val widthPx = (160 * density).toInt()
+        val heightPx = ViewGroup.LayoutParams.WRAP_CONTENT
+
+        val popupWindow = PopupWindow(
+            popupView,
+            widthPx,
+            heightPx,
+            true
+        )
+
+        popupWindow.isOutsideTouchable = true
+        popupWindow.isFocusable = true
+
+        val xPos = (210 * density).toInt() // Left
+        val yPos = (99 * density).toInt()  // Top
+
+        popupWindow.showAtLocation(anchorView, Gravity.TOP or Gravity.START, xPos, yPos)
+
+        // 클릭 리스너 설정
+        popupView.findViewById<View>(R.id.btn_profile).setOnClickListener {
+            popupWindow.dismiss()
+            val targetFragment = MyProfileFragment()
+
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, targetFragment)
+                .addToBackStack(null)
+                .commit()
+        }
+
+        popupView.findViewById<View>(R.id.btn_report).setOnClickListener {
+            popupWindow.dismiss()
+            val bottomSheet = FriendReportChoiceBottomSheet()
+            bottomSheet.show(parentFragmentManager, bottomSheet.tag)
         }
     }
 
