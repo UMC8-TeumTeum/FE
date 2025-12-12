@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@drawable/friend_bg_bottom_sheet"
+    android:gravity="center_horizontal">
+
+    <!-- 드래그 핸들 -->
+    <View
+        android:layout_width="54dp"
+        android:layout_height="4dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginStart="165dp"
+        android:layout_marginEnd="164dp"
+        android:background="@drawable/friend_bottom_sheet_handle" />
+
+    <!-- 제목 -->
+    <TextView
+        android:id="@+id/titleText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="51dp"
+        android:layout_marginStart="65dp"
+        android:layout_marginEnd="64dp"
+        android:text="이미 해당 시간에 투두가 있어요!"
+        android:textSize="20sp"
+        android:textColor="@color/text_primary"
+        android:fontFamily="@font/noto_sans_kr_medium"
+        android:includeFontPadding="false" />
+
+    <!-- 설명 -->
+    <TextView
+        android:id="@+id/subText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="요청을 수락하면 기존 투두와 중복된 시간에 등록돼요"
+        android:textSize="15sp"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginEnd="35dp"
+        android:textColor="@color/text_primary"
+        android:fontFamily="@font/noto_sans_kr_regular"
+        android:includeFontPadding="false"/>
+
+    <!-- 기존 RecyclerView 영역 -->
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/existingTodoViewPager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:layout_marginHorizontal="20dp"
+        android:orientation="horizontal"
+        tools:listitem="@layout/item_teum_event_card" />
+
+
+    <!-- 하단 공백 / indicator -->
+    <!-- Dots Indicator -->
+    <com.tbuonomo.viewpagerdotsindicator.DotsIndicator
+        android:id="@+id/dotsIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        app:dotsColor="#B1B2B3"
+        app:dotsCornerRadius="5dp"
+        app:dotsSize="5.68dp"
+        app:dotsSpacing="4dp"
+        app:dotsStrokeWidth="0dp"
+        app:dotsWidthFactor="1.0"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/requestViewPager"
+        app:selectedDotColor="#0F0F0F" />
+
+    <!-- 버튼 영역 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="19dp"
+        android:layout_marginTop="46dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_cancel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="취소"
+            android:textSize="16sp"
+            android:textColor="@color/text_primary"
+            android:fontFamily="@font/noto_sans_kr_medium"
+            android:layout_marginBottom="19dp"
+            app:backgroundTint="#F6F6F6"
+            app:cornerRadius="12dp"
+            android:layout_marginEnd="8dp"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_accept"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="수락"
+            android:textSize="16sp"
+            android:fontFamily="@font/noto_sans_kr_medium"
+            android:textColor="@android:color/white"
+            android:layout_marginBottom="19dp"
+            app:backgroundTint="#0f0f0f"
+            app:cornerRadius="12dp" />
+    </LinearLayout>
+</LinearLayout>
