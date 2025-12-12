@@ -91,11 +91,13 @@ class BottomSheetAssignCalendarFragment : BottomSheetDialogFragment() {
 
         binding.applyBtn.setOnClickListener {
             val displayText = formatWithKoreanWeekday(selectedDate)
+            val serverDate = selectedDate.format(serverFormatter)
 
             parentFragmentManager.setFragmentResult(
                 "assign_date_result",
                 Bundle().apply {
                     putString("assign_date_display", displayText)
+                    putString("assign_date_server", serverDate)
                 }
             )
             dismiss()

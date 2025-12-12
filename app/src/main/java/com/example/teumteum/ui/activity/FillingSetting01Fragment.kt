@@ -32,8 +32,6 @@ class FillingSetting01Fragment : Fragment() {
 
     private lateinit var binding: FragmentFillingSetting01Binding
 
-    private var selectedButtonId: Int? = null
-
     private var selectedTimeText: String? = null
     private var selectedStartTime: String? = null
     private var selectedEndTime: String? = null
@@ -47,6 +45,8 @@ class FillingSetting01Fragment : Fragment() {
     private var wishId: Long? = null
 
     private lateinit var clockAdapter: ClockVPAdapter<ItemClockMiniPageBinding>
+
+    private var selectedDateServer: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -123,7 +123,10 @@ class FillingSetting01Fragment : Fragment() {
             viewLifecycleOwner
         ) { _, bundle ->
             val display = bundle.getString("assign_date_display") ?: return@setFragmentResultListener
+            val server = bundle.getString("assign_date_server") ?: return@setFragmentResultListener
+
             binding.assignDateTv.text = display
+            selectedDateServer = server
         }
 
         binding.nextBtn.setOnClickListener {
@@ -134,7 +137,7 @@ class FillingSetting01Fragment : Fragment() {
                         wishId?.let { putLong("wish_id", it) }
                         putString("title", title)
                         putString("time", time)
-                        putString("selected_time", selectedTimeText)
+                        putString("selected_date", selectedDateServer)
                     }
                 }
 
@@ -149,7 +152,7 @@ class FillingSetting01Fragment : Fragment() {
                         wishId?.let { putLong("wish_id", it) }
                         putString("title", title)
                         putString("time", time)
-                        putString("selected_time", selectedTimeText)
+                        putString("selected_date", selectedDateServer)
                         putString("startTime", selectedStartTime)
                         putString("endTime", selectedEndTime)
                     }
