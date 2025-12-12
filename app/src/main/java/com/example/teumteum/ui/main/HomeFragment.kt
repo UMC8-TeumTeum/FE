@@ -145,7 +145,6 @@ class HomeFragment : Fragment(), IDateClickListener {
         binding.homeHelpIv.setOnClickListener {
             openTutorialOverlay()
             hookBackToClose()
-            setupCalloutsOnHome()
         }
 
         binding.tutorialOverlay.btnCloseTutorial.setOnClickListener {
@@ -322,46 +321,12 @@ class HomeFragment : Fragment(), IDateClickListener {
         binding.fabAddIv.isVisible = true
         binding.fabShadowIv.isVisible = true
 
-//        // 그림자 재적용
-//        binding.fabAddIv.post {
-//            applyBlurShadow(
-//                sourceView = binding.fabAddIv,
-//                targetImageView = binding.fabShadowIv
-//            )
-//        }
-
         // 시스템 UI 복구
         requireActivity().window.insetsController?.show(android.view.WindowInsets.Type.systemBars())
 
         backCallback?.remove()
         backCallback = null
     }
-
-
-    private fun setupCalloutsOnHome() {
-        // 오버레이 안의 chartView & callouts 기준으로 호출
-        val overlay = binding.tutorialOverlay
-        overlay.spotlightGroup.post {
-            overlay.callouts.setCircleFrom(overlay.spotlightGroup, insetDp = 8f)
-            val cx = overlay.callouts.cx
-            val cy = overlay.callouts.cy
-
-            overlay.callouts.setCallouts(
-                listOf(
-                    Callout(startX = cx - dp(20f), startY = cy - dp(150f),
-                        endAngleDeg = 270f, curveOffsetDp = 32f),
-                    Callout(startX = cx + dp(120f), startY = cy - dp(10f),
-                        endAngleDeg = 0f, curveOffsetDp = 40f),
-                    Callout(startX = cx - dp(120f), startY = cy + dp(90f),
-                        endAngleDeg = 210f, curveOffsetDp = 44f),
-                    Callout(startX = cx - dp(120f), startY = cy - dp(80f),
-                        endAngleDeg = 150f, curveOffsetDp = 36f)
-                )
-            )
-        }
-    }
-
-    private fun dp(v: Float) = v * resources.displayMetrics.density
 
     private fun setupClockPager() {
         clockAdapter = ClockVPAdapter(
