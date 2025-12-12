@@ -209,7 +209,7 @@
         <LinearLayout
             android:id="@+id/hintCalendar"
             android:layout_width="match_parent"
-            android:layout_height="170dp"
+            android:layout_height="165dp"
             android:layout_marginStart="17dp"
             android:layout_marginTop="550dp"
             android:layout_marginEnd="17dp"
