@@ -4,14 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.example.teumteum.R
-import com.example.teumteum.data.remote.todo.model.enums.ScheduleType
 import com.example.teumteum.databinding.FragmentFillingSetting01Binding
 import com.example.teumteum.databinding.ItemClockMiniPageBinding
 import com.example.teumteum.ui.clock.ChartUtils
@@ -25,6 +23,7 @@ import com.example.teumteum.ui.wish.adapter.WishTimeAdapter
 import com.example.teumteum.ui.wish.data.UiTimeSlot
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
+import java.time.LocalDate
 import kotlin.collections.orEmpty
 
 @AndroidEntryPoint
@@ -46,7 +45,7 @@ class FillingSetting01Fragment : Fragment() {
 
     private lateinit var clockAdapter: ClockVPAdapter<ItemClockMiniPageBinding>
 
-    private var selectedDateServer: String? = null
+    private var selectedDateServer: String = LocalDate.now().toString()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -114,7 +113,8 @@ class FillingSetting01Fragment : Fragment() {
         }
 
         binding.selectDateBtn.setOnClickListener {
-            BottomSheetAssignCalendarFragment()
+            BottomSheetAssignCalendarFragment
+                .newInstance(selectedDateServer)
                 .show(parentFragmentManager, "BottomSheetCalendar")
         }
 

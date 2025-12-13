@@ -57,6 +57,18 @@ class BottomSheetAssignCalendarFragment : BottomSheetDialogFragment() {
 
     private val homeViewModel: HomeViewModel by activityViewModels()
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        // 부모에서 넘긴 날짜가 있으면 그걸 선택 날짜로 초기화
+        val initial = arguments?.getString(ARG_INITIAL_DATE)
+        if (!initial.isNullOrBlank()) {
+            runCatching { LocalDate.parse(initial) }
+                .getOrNull()
+                ?.let { selectedDate = it }
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -73,17 +85,19 @@ class BottomSheetAssignCalendarFragment : BottomSheetDialogFragment() {
         calendarView = binding.calendarView
 
         setupCalendar()
-        setupHeader()
         setupWeekdayLabels()
         setupCalendarNavigation()
-
-        // 최초 가시 월 기준으로 한 번 조회
-        visibleMonth = YearMonth.now()
-        lastRequestedMonth = null
-
-        onDateSelected(selectedDate)
-
         setupObservers()
+
+        visibleMonth = YearMonth.from(selectedDate)
+        lastRequestedMonth = visibleMonth
+
+        // 선택된 날짜가 속한 달로 이동
+        calendarView.scrollToMonth(visibleMonth)
+        setupHeader()
+
+        // 선택 원(보라색) 갱신
+        calendarView.post { calendarView.notifyDateChanged(selectedDate) }
 
         view.post {
             calendarView.findFirstVisibleMonth()?.let { requestForMonth(it) }
@@ -142,9 +156,10 @@ class BottomSheetAssignCalendarFragment : BottomSheetDialogFragment() {
             visibleMonth = month.yearMonth
             setupHeader()
 
-            // 같은 달로의 반복 호출 방지
+            // 월 범위로 캘린더 점 데이터 조회
             if (lastRequestedMonth != visibleMonth) {
                 lastRequestedMonth = visibleMonth
+                requestForMonth(month)
             }
         }
 
@@ -213,6 +228,7 @@ class BottomSheetAssignCalendarFragment : BottomSheetDialogFragment() {
 
     private fun updateHeader() {
         val ym = YearMonth.from(selectedDate)
+        visibleMonth = ym
         binding.selectedDateTv.text = ym.format(headerFormatter)
     }
 
@@ -306,6 +322,16 @@ class BottomSheetAssignCalendarFragment : BottomSheetDialogFragment() {
 
     companion object {
         private const val DATE_PATTERN = "yyyy년 M월"
+        private const val ARG_INITIAL_DATE = "arg_initial_date"
+
+        // 부모에서 날짜 넘겨서 띄우기
+        fun newInstance(initialDateServer: String): BottomSheetAssignCalendarFragment {
+            return BottomSheetAssignCalendarFragment().apply {
+                arguments = Bundle().apply {
+                    putString(ARG_INITIAL_DATE, initialDateServer)
+                }
+            }
+        }
     }
 
     private fun setupObservers() {

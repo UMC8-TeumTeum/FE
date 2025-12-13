@@ -24,6 +24,7 @@ import com.example.teumteum.ui.wish.adapter.WishTimeAdapter
 import com.example.teumteum.ui.wish.data.UiTimeSlot
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
+import java.time.LocalDate
 import kotlin.collections.orEmpty
 
 @AndroidEntryPoint
@@ -43,7 +44,7 @@ class WishSetting01Fragment : Fragment() {
 
     private lateinit var clockAdapter: ClockVPAdapter<ItemClockMiniPageBinding>
 
-    private var selectedDateServer: String? = null
+    private var selectedDateServer: String = LocalDate.now().toString()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -113,7 +114,8 @@ class WishSetting01Fragment : Fragment() {
         }
 
         binding.selectDateBtn.setOnClickListener {
-            BottomSheetAssignCalendarFragment()
+            BottomSheetAssignCalendarFragment
+                .newInstance(selectedDateServer)
                 .show(parentFragmentManager, "BottomSheetCalendar")
         }
 
