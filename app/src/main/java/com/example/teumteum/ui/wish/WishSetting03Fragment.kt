@@ -56,13 +56,14 @@ class WishSetting03Fragment : Fragment() {
 
         wishId = arguments?.getLong("wish_id")
 
+        val selectedTimeText = arguments?.getString("selected_time_text")
+
+        binding.wishTimeSettingTv.text = selectedTimeText?.takeIf { it.isNotBlank() }
+            ?: "직접 입력하기"
+
         // 바텀 내비게이션 숨기기
         val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
         bottomNav?.visibility = View.GONE
-
-        val selectedTime = arguments?.getString("selected_time")
-
-        binding.wishTimeSettingTv.text = selectedTime
 
         binding.wishStartContainer.setOnClickListener {
             showCustomTimePicker(binding.startChoiceTv)

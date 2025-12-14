@@ -76,13 +76,14 @@ class FillingSetting03Fragment : Fragment() {
             return
         }
 
+        val selectedTimeText = arguments?.getString("selected_time_text")
+
+        binding.assignTimeSettingTv.text = selectedTimeText?.takeIf { it.isNotBlank() }
+            ?: "직접 입력하기"
+
         // 바텀 내비게이션 숨기기
         val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
         bottomNav?.visibility = View.GONE
-
-        val selectedTime = arguments?.getString("selected_time")
-
-        binding.assignTimeSettingTv.text = selectedTime
 
         binding.assignStartContainer.setOnClickListener {
             showCustomTimePicker(binding.startChoiceTv)
