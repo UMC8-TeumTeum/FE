@@ -213,17 +213,15 @@ class WishSetting03Fragment : Fragment() {
         binding.wishTimeTv.text = time
     }
 
-    private fun combineDateTime(date: String, timeHHmm: String): String {
-        return "${date}T$timeHHmm"
-    }
-
     private fun assignWishRequest(isForce: Boolean): AssignWishRequest {
         val startHHmm = binding.startChoiceTv.text.toString()
         val endHHmm = binding.endChoiceTv.text.toString()
 
-        val date = selectedDate ?: LocalDate.now().format(DateTimeFormatter.ISO_DATE)
-        val startIso = combineDateTime(date, startHHmm)
-        val endIso = combineDateTime(date, endHHmm)
+        val startDate = getStartDate()
+        val startIso = "${startDate}T$startHHmm"
+
+        val (endDate, endTime) = getEndDate(startDate, endHHmm)
+        val endIso = "${endDate}T$endTime"
 
         return AssignWishRequest(
             startTime = startIso,
@@ -318,6 +316,20 @@ class WishSetting03Fragment : Fragment() {
                     }
                 }
             }
+        }
+    }
+
+    private fun getStartDate(): String {
+        return arguments?.getString("selected_date")
+            ?: arguments?.getString("startDate")
+            ?: LocalDate.now().format(DateTimeFormatter.ISO_DATE)
+    }
+
+    private fun getEndDate(startDate: String, endHHmm: String): Pair<String, String> {
+        return if (endHHmm == "24:00") {
+            LocalDate.parse(startDate).plusDays(1).toString() to "00:00"
+        } else {
+            startDate to endHHmm
         }
     }
 }

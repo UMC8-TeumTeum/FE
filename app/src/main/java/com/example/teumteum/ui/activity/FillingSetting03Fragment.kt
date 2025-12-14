@@ -20,7 +20,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.activity.model.AssignAiRequest
 import com.example.teumteum.data.remote.activity.model.AssignWishRequest
-import com.example.teumteum.data.remote.todo.model.enums.ScheduleType
 import com.example.teumteum.databinding.DialogConfirmRegisterBinding
 import com.example.teumteum.databinding.FragmentFillingSetting03Binding
 import com.example.teumteum.ui.activity.viewModel.ActivityViewModel
@@ -233,17 +232,15 @@ class FillingSetting03Fragment : Fragment() {
         binding.assignTimeTv.text = time
     }
 
-    private fun combineDateTime(date: String, timeHHmm: String): String {
-        return "${date}T$timeHHmm"
-    }
-
     private fun assignAiRequest(isForce: Boolean): AssignAiRequest {
         val startHHmm = binding.startChoiceTv.text.toString()
         val endHHmm = binding.endChoiceTv.text.toString()
 
-        val date = selectedDate ?: LocalDate.now().format(DateTimeFormatter.ISO_DATE)
-        val startIso = combineDateTime(date, startHHmm)
-        val endIso = combineDateTime(date, endHHmm)
+        val startDate = getStartDate()
+        val startIso = "${startDate}T$startHHmm"
+
+        val (endDate, endTime) = getEndDate(startDate, endHHmm)
+        val endIso = "${endDate}T$endTime"
 
         return AssignAiRequest(
             id = aiId!!,
@@ -257,9 +254,11 @@ class FillingSetting03Fragment : Fragment() {
         val startHHmm = binding.startChoiceTv.text.toString()
         val endHHmm = binding.endChoiceTv.text.toString()
 
-        val date = selectedDate ?: LocalDate.now().format(DateTimeFormatter.ISO_DATE)
-        val startIso = combineDateTime(date, startHHmm)
-        val endIso = combineDateTime(date, endHHmm)
+        val startDate = getStartDate()
+        val startIso = "${startDate}T$startHHmm"
+
+        val (endDate, endTime) = getEndDate(startDate, endHHmm)
+        val endIso = "${endDate}T$endTime"
 
         return AssignWishRequest(
             startTime = startIso,
@@ -355,6 +354,20 @@ class FillingSetting03Fragment : Fragment() {
                     }
                 }
             }
+        }
+    }
+
+    private fun getStartDate(): String {
+        return arguments?.getString("selected_date")
+            ?: arguments?.getString("startDate")
+            ?: LocalDate.now().format(DateTimeFormatter.ISO_DATE)
+    }
+
+    private fun getEndDate(startDate: String, endHHmm: String): Pair<String, String> {
+        return if (endHHmm == "24:00") {
+            LocalDate.parse(startDate).plusDays(1).toString() to "00:00"
+        } else {
+            startDate to endHHmm
         }
     }
 }
