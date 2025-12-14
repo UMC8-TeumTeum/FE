@@ -159,4 +159,13 @@ class WishTimeAdapter(
         if (old != RecyclerView.NO_POSITION) notifyItemChanged(old)
         notifyItemChanged(0)
     }
+
+    // 선택 초기화
+    fun clearSelection() {
+        val old = selectedPos
+        selectedPos = RecyclerView.NO_POSITION
+        if (old != RecyclerView.NO_POSITION) {
+            notifyItemChanged(old)
+        }
+    }
 }

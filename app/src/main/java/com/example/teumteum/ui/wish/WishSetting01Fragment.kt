@@ -43,6 +43,7 @@ class WishSetting01Fragment : Fragment() {
     private var isDirectInput: Boolean = true
 
     private lateinit var clockAdapter: ClockVPAdapter<ItemClockMiniPageBinding>
+    private lateinit var wishTimeAdapter: WishTimeAdapter
 
     private var selectedDateServer: String = LocalDate.now().toString()
 
@@ -69,13 +70,8 @@ class WishSetting01Fragment : Fragment() {
         val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
         bottomNav?.visibility = View.GONE
 
-        // EMPTY만 필터 후 변환
-        val emptyBlocks = homeViewModel.scheduleList.value.orEmpty()
-            .filter { it.type == TimeType.EMPTY }   // enum 경로에 맞게 수정
-            .map { UiTimeSlot(it.startTime.toHHmm(), it.endTime.toHHmm()) }
-
         // 어댑터 생성 (문자열 콜백)
-        val wishTimeAdapter = WishTimeAdapter(
+        wishTimeAdapter = WishTimeAdapter(
             onSelect = { _, slot ->
                 selectedStartTime = slot.startTime
                 selectedEndTime   = slot.endTime
@@ -86,8 +82,6 @@ class WishSetting01Fragment : Fragment() {
             },
             onDirectInput = {
                 isDirectInput = true
-                // 직접 입력 바텀시트/다이얼로그 띄우고 완료되면 selectedStartTime/EndTime에 "HH:mm" 셋팅
-                // 예: showTimeInputBottomSheet { start, end -> selectedStartTime = start; selectedEndTime = end }
                 selectedTimeText = "직접 입력하기"
                 enableNextButton()
             }
@@ -96,15 +90,14 @@ class WishSetting01Fragment : Fragment() {
         binding.wishTimeRc.adapter = wishTimeAdapter
         binding.wishTimeRc.layoutManager = LinearLayoutManager(requireContext())
 
-        wishTimeAdapter.submitList(emptyBlocks)
-
-
         binding.backArrowIv.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
 
         setupClockPager()
-        updateIndicator(isAM)
+        setupObservers()
+
+        homeViewModel.getTodaySchedule(selectedDateServer)
 
         binding.amPmTv.setOnClickListener {
             val amPos = clockAdapter.positionOf(ClockHalf.AM)
@@ -128,6 +121,18 @@ class WishSetting01Fragment : Fragment() {
 
             binding.assignDateTv.text = display
             selectedDateServer = server
+
+            selectedStartTime = null
+            selectedEndTime = null
+            selectedTimeText = null
+            isDirectInput = true
+
+            binding.nextBtn.isEnabled = false
+            binding.nextBtn.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.teumteum_bg))
+            binding.nextBtn.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
+
+            wishTimeAdapter.clearSelection()
+            homeViewModel.getTodaySchedule(server)
         }
 
         binding.nextBtn.setOnClickListener {
@@ -162,6 +167,23 @@ class WishSetting01Fragment : Fragment() {
                     .addToBackStack(null)
                     .commit()
             }
+        }
+
+        updateIndicator(isAM)
+    }
+
+    private fun setupObservers() {
+        homeViewModel.scheduleList.observe(viewLifecycleOwner) { scheduleList ->
+            // EMPTY 시간 추출 및 어댑터 갱신
+            val emptyBlocks = scheduleList
+                .filter { it.type == TimeType.EMPTY }
+                .map { UiTimeSlot(it.startTime.toHHmm(), it.endTime.toHHmm()) }
+
+            wishTimeAdapter.submitList(emptyBlocks) {
+                wishTimeAdapter.notifyDataSetChanged()
+            }
+
+            clockAdapter.notifyDataSetChanged()
         }
     }
 
@@ -255,6 +277,7 @@ class WishSetting01Fragment : Fragment() {
 
     // 분 → "HH:mm"
     private fun Int.toHHmm(): String {
+        if (this == 24 * 60) return "24:00"
         val minutesInDay = 24 * 60
         val norm = ((this % minutesInDay) + minutesInDay) % minutesInDay
         val h = norm / 60
