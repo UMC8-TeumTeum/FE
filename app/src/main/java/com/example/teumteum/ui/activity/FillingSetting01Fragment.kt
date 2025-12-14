@@ -138,7 +138,7 @@ class FillingSetting01Fragment : Fragment() {
         }
 
         binding.nextBtn.setOnClickListener {
-            if(isDirectInput){
+            if (isDirectInput) {
                 val fragment = FillingSetting03Fragment().apply {
                     arguments = Bundle().apply {
                         aiId?.let { putString("ai_id", it)}
@@ -153,16 +153,32 @@ class FillingSetting01Fragment : Fragment() {
                     .replace(R.id.main_frm, fragment)
                     .addToBackStack(null)
                     .commit()
-            }else{
+            } else {
+
+                val startDate = selectedDateServer
+                var endDate = selectedDateServer
+                val sendStartTime = selectedStartTime ?: return@setOnClickListener
+                var sendEndTime = selectedEndTime ?: return@setOnClickListener
+
+                // 24:00 -> 다음날 00:00 변환
+                if (sendEndTime == "24:00") {
+                    endDate = LocalDate.parse(selectedDateServer)
+                        .plusDays(1)
+                        .toString()
+                    sendEndTime = "00:00"
+                }
+
                 val fragment = FillingSetting02Fragment().apply {
                     arguments = Bundle().apply {
                         aiId?.let { putString("ai_id", it)}
                         wishId?.let { putLong("wish_id", it) }
                         putString("title", title)
                         putString("time", time)
-                        putString("selected_date", selectedDateServer)
-                        putString("startTime", selectedStartTime)
-                        putString("endTime", selectedEndTime)
+
+                        putString("startDate", startDate)
+                        putString("endDate", endDate)
+                        putString("startTime", sendStartTime)
+                        putString("endTime", sendEndTime)
                     }
                 }
 
