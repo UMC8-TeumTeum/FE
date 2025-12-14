@@ -10,6 +10,7 @@ data class ActivityWishResponse(
 data class ActivityWishResult(
     @SerializedName("id") val id: Long,
     @SerializedName("title") val title: String,
+    @SerializedName("content") val content: String,
     @SerializedName("estimatedDuration") val estimatedDuration: String
 )
 
@@ -20,5 +21,6 @@ data class ActivityAiResponse(
 data class ActivityAiResult(
     @SerializedName("id") val id: String,
     @SerializedName("title") val title: String,
+    @SerializedName("content") val content: String,
     @SerializedName("estimatedDuration") val estimatedDuration: String
 )

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.example.teumteum.R
 import com.example.teumteum.databinding.BottomSheetContentBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
@@ -29,21 +30,40 @@ class BottomSheetContentFragment : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val title = arguments?.getString("title")
-        setTitle(title.toString())
+        binding.titleTv.text = title
 
         val content = arguments?.getString("content")
-        setContent(content.toString())
+        binding.contentTv.text = content
+
+        val estimatedDuration = arguments?.getString("time")
+        binding.wishTimeTv.text = estimatedDuration
 
         aiId = arguments?.getString("ai_id")
         wishId = arguments?.getLong("wish_id", -1L)
             ?.takeIf { it > 0L }
+
+        binding.selectBtn.setOnClickListener {
+            val fragment = FillingSetting01Fragment().apply {
+                arguments = Bundle().apply {
+                    aiId?.let { putString("ai_id", it)}
+                    wishId?.let { putLong("wish_id", it) }
+                    putString("title", title)
+                    putString("content", content)
+                    putString("time", estimatedDuration)
+                }
+            }
+
+            dismiss()
+
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, fragment)
+                .addToBackStack(null)
+                .commit()
+        }
     }
 
-    private fun setTitle(title: String){
-        binding.titleTv.text = title
-    }
-
-    private fun setContent(content: String){
-        binding.contentTv.text = content
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

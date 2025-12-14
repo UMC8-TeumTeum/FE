@@ -24,6 +24,8 @@ import com.example.teumteum.ui.wish.data.UiTimeSlot
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 import kotlin.collections.orEmpty
 
 @AndroidEntryPoint
@@ -60,14 +62,20 @@ class FillingSetting01Fragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         val title = arguments?.getString("title")
-        setTitle(title.toString())
+        binding.assignTitleTv.text = title
 
         val time = arguments?.getString("time")
-        setTime(time.toString())
+        binding.assignTimeTv.text = time
 
         aiId = arguments?.getString("ai_id")
         wishId = arguments?.getLong("wish_id", -1L)
             ?.takeIf { it > 0L }
+
+        val today = LocalDate.now()
+        selectedDateServer = today.toString()
+
+        val displayFormatter = DateTimeFormatter.ofPattern("yy.MM.dd(E)", Locale.KOREAN)
+        binding.assignDateTv.text = today.format(displayFormatter)
 
         // 바텀 내비게이션 숨기기
         val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
@@ -250,15 +258,6 @@ class FillingSetting01Fragment : Fragment() {
         binding.nextBtn.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
         binding.nextBtn.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
     }
-
-    private fun setTitle(title: String){
-        binding.assignTitleTv.text = title
-    }
-
-    private fun setTime(time: String){
-        binding.assignTimeTv.text = time
-    }
-
 
     private fun updateIndicator(isAM: Boolean) {
         val leftView = binding.leftView

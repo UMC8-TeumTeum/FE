@@ -25,6 +25,8 @@ import com.example.teumteum.ui.wish.data.UiTimeSlot
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 import kotlin.collections.orEmpty
 
 @AndroidEntryPoint
@@ -65,6 +67,12 @@ class WishSetting01Fragment : Fragment() {
         setTime(time.toString())
 
         wishId = arguments?.getLong("wish_id")
+
+        val today = LocalDate.now()
+        selectedDateServer = today.toString()
+
+        val displayFormatter = DateTimeFormatter.ofPattern("yy.MM.dd(E)", Locale.KOREAN)
+        binding.assignDateTv.text = today.format(displayFormatter)
 
         // 바텀 내비게이션 숨기기
         val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
