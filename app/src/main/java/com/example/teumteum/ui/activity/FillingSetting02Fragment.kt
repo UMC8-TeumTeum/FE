@@ -86,6 +86,15 @@ class FillingSetting02Fragment : Fragment() {
         val startTime = arguments?.getString("startTime")
         val endTime = arguments?.getString("endTime")
 
+        val selectedTimeText = arguments?.getString("selected_time_text")
+
+        binding.assignTimeSettingTv.text = selectedTimeText
+            ?: run {
+                val s = arguments?.getString("startTime")
+                val e = arguments?.getString("endTime")
+                if (!s.isNullOrEmpty() && !e.isNullOrEmpty()) "$s ~ $e" else ""
+            }
+
         if (!startTime.isNullOrEmpty() && !endTime.isNullOrEmpty()) {
             binding.startChoiceTv.text = startTime
             selectedStartTime = startTime

@@ -187,6 +187,8 @@ class FillingSetting01Fragment : Fragment() {
                         putString("endDate", endDate)
                         putString("startTime", sendStartTime)
                         putString("endTime", sendEndTime)
+
+                        putString("selected_time_text", selectedTimeText)
                     }
                 }
 
