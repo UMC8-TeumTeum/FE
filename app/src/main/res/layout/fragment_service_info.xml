@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -22,7 +21,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/noto_sans_kr_medium"
         android:includeFontPadding="false"
-        android:text="계정 설정"
+        android:text="서비스 정보"
         android:textColor="@color/text_primary"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="@+id/back_arrow_iv"
@@ -31,7 +30,7 @@
         android:layout_marginStart="12dp"/>
 
     <LinearLayout
-        android:id="@+id/logout_ll"
+        android:id="@+id/terms_ll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -44,18 +43,18 @@
         android:layout_marginEnd="17dp">
 
         <TextView
-            android:id="@+id/logout_tv"
+            android:id="@+id/terms_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/noto_sans_kr_medium"
             android:includeFontPadding="false"
-            android:text="로그아웃"
+            android:text="이용약관"
             android:layout_weight="1"
             android:textColor="@color/text_primary"
             android:textSize="18sp" />
 
         <ImageView
-            android:id="@+id/logout_arrow_iv"
+            android:id="@+id/terms_arrow_iv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_arrow_sv"
@@ -66,31 +65,31 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/delete_account_ll"
+        android:id="@+id/privacy_policy_ll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/logout_ll"
+        app:layout_constraintTop_toBottomOf="@+id/terms_ll"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="28dp"
         android:layout_marginStart="17dp"
         android:layout_marginEnd="17dp">
 
         <TextView
-            android:id="@+id/delete_account_tv"
+            android:id="@+id/privacy_policy_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/noto_sans_kr_medium"
             android:includeFontPadding="false"
-            android:text="회원 탈퇴"
+            android:text="개인정보 정책"
             android:layout_weight="1"
             android:textColor="@color/text_primary"
             android:textSize="18sp" />
 
         <ImageView
-            android:id="@+id/delete_account_arrow_iv"
+            android:id="@+id/privacy_policy_arrow_iv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_arrow_sv"
