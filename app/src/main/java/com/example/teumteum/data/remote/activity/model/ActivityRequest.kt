@@ -19,12 +19,10 @@ data class ActivityAiRequest(
 data class AssignWishRequest(
     @SerializedName("startTime") val startTime: String,
     @SerializedName("endTime") val endTime: String,
-    @SerializedName("isForce") val isForce: Boolean
 )
 
 data class AssignAiRequest(
     @SerializedName("id") val id: String,
     @SerializedName("startTime") val startTime: String,
     @SerializedName("endTime") val endTime: String,
-    @SerializedName("isForce") val isForce: Boolean
 )

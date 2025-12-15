@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="305dp"
+    android:layout_height="205dp"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="@drawable/rounded_white_bg">
+
+    <TextView
+        android:id="@+id/description_tv"
+        android:gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/noto_sans_kr_medium"
+        android:includeFontPadding="false"
+        android:textSize="18sp"
+        android:textColor="@color/text_primary"
+        tools:text="미나리 님을\n차단 해제하시겠어요?"
+        android:layout_marginTop="28dp"
+        android:layout_gravity="center_horizontal"
+        />
+
+    <TextView
+        android:id="@+id/sub_description_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/noto_sans_kr_regular"
+        android:includeFontPadding="false"
+        android:textSize="13sp"
+        android:textColor="@color/text_secondary"
+        android:text="상대방이 회원님께 팔로우 및 틈 요청을 보낼 수 있습니다.\n상대방에게는 차단을 해제했다는 정보를 알리지 않습니다."
+        android:layout_marginTop="5dp"
+        android:layout_gravity="center_horizontal"
+        />
+
+    <LinearLayout
+        android:id="@+id/button_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:paddingHorizontal="11dp"
+        android:paddingBottom="13dp"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/yes_btn"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1"
+            android:text="네"
+            android:fontFamily="@font/noto_sans_kr_medium"
+            android:textColor="#FF5C5C"
+            android:includeFontPadding="false"
+            android:textSize="16sp"
+            app:cornerRadius="12dp"
+            android:gravity="center"
+            android:textAlignment="center"
+            android:backgroundTint="@color/bg"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:insetLeft="0dp"
+            android:insetRight="0dp"
+            android:padding="0dp"/>
+
+        <View
+            android:layout_width="8dp"
+            android:layout_height="match_parent" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/no_btn"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1"
+            android:text="아니오"
+            android:fontFamily="@font/noto_sans_kr_medium"
+            android:includeFontPadding="false"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            app:cornerRadius="12dp"
+            android:gravity="center"
+            android:textAlignment="center"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:insetLeft="0dp"
+            android:insetRight="0dp"
+            android:padding="0dp"
+            android:backgroundTint="@color/text_primary" />
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -2,16 +2,13 @@ package com.example.teumteum.ui.activity
 
 import android.os.Bundle
 import android.util.Log
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.Button
 import android.widget.NumberPicker
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -20,8 +17,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.activity.model.AssignAiRequest
 import com.example.teumteum.data.remote.activity.model.AssignWishRequest
-import com.example.teumteum.data.remote.todo.model.enums.ScheduleType
-import com.example.teumteum.databinding.DialogConfirmRegisterBinding
 import com.example.teumteum.databinding.FragmentFillingSetting02Binding
 import com.example.teumteum.ui.activity.viewModel.ActivityViewModel
 import com.example.teumteum.ui.main.HomeFragment
@@ -61,10 +56,10 @@ class FillingSetting02Fragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         val title = arguments?.getString("title")
-        setTitle(title.toString())
+        binding.assignTitleTv.text = title
 
         val time = arguments?.getString("time")
-        setTime(time.toString())
+        binding.assignTimeTv.text = time
 
         aiId = arguments?.getString("ai_id")
         wishId = arguments?.getLong("wish_id", -1L)
@@ -133,8 +128,8 @@ class FillingSetting02Fragment : Fragment() {
 
         binding.registerBtn.setOnClickListener {
             when (mode) {
-                AssignMode.AI   -> viewModel.assignAi(assignAiRequest(false))
-                AssignMode.WISH -> viewModel.assignWish(requireNotNull(wishId), assignWishRequest(false))
+                AssignMode.AI   -> viewModel.assignAi(assignAiRequest())
+                AssignMode.WISH -> viewModel.assignWish(requireNotNull(wishId), assignWishRequest())
                 else -> Unit
             }
         }
@@ -233,19 +228,11 @@ class FillingSetting02Fragment : Fragment() {
         }
     }
 
-    private fun setTitle(title: String){
-        binding.assignTitleTv.text = title
-    }
-
-    private fun setTime(time: String){
-        binding.assignTimeTv.text = time
-    }
-
     private fun combineDateTime(date: String, timeHHmm: String): String {
         return "${date}T$timeHHmm"
     }
 
-    private fun assignAiRequest(isForce: Boolean): AssignAiRequest {
+    private fun assignAiRequest(): AssignAiRequest {
         val startHHmm = binding.startChoiceTv.text.toString()
         val endHHmm = binding.endChoiceTv.text.toString()
 
@@ -257,11 +244,10 @@ class FillingSetting02Fragment : Fragment() {
             id = requireNotNull(aiId),
             startTime = startIso,
             endTime = endIso,
-            isForce = isForce
         )
     }
 
-    private fun assignWishRequest(isForce: Boolean): AssignWishRequest {
+    private fun assignWishRequest(): AssignWishRequest {
         val startHHmm = binding.startChoiceTv.text.toString()
         val endHHmm = binding.endChoiceTv.text.toString()
 
@@ -272,48 +258,7 @@ class FillingSetting02Fragment : Fragment() {
         return AssignWishRequest(
             startTime = startIso,
             endTime = endIso,
-            isForce = isForce
         )
-    }
-
-    private fun showRegisterDialog() {
-        val dialogBinding = DialogConfirmRegisterBinding.inflate(layoutInflater)
-
-        val dialog = AlertDialog.Builder(requireContext(), R.style.RoundedAlertDialog)
-            .setView(dialogBinding.root)
-            .create()
-
-        dialogBinding.assignConfirmTv.setOnClickListener {
-            when (mode) {
-                AssignMode.AI   -> viewModel.assignAi(assignAiRequest(true))
-                AssignMode.WISH -> viewModel.assignWish(requireNotNull(wishId), assignWishRequest(true))
-                else -> Unit
-            }
-            dialog.dismiss()
-        }
-
-        dialogBinding.assignCancelTv.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-
-        dialog.setOnShowListener {
-            dialog.window?.let { window ->
-                val layoutParams = window.attributes
-                layoutParams.width = (resources.displayMetrics.widthPixels * 0.85).toInt()
-                layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
-                layoutParams.gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
-                layoutParams.y = (resources.displayMetrics.heightPixels * 0.37).toInt()
-                layoutParams.dimAmount = 0.5f
-                window.attributes = layoutParams
-
-                window.setDimAmount(0.5f)
-                window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
-            }
-        }
-
-        dialog.show()
     }
 
     private fun setupObservers() {
@@ -321,7 +266,7 @@ class FillingSetting02Fragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.assignSuccess.collect {
-                    Log.d("ASSIGN_FRAMENT", "빈틈채우기에 성공하였습니다.")
+                    Log.d("ASSIGN_FRAGMENT", "빈틈채우기에 성공하였습니다.")
 
                     parentFragmentManager.beginTransaction()
                         .replace(R.id.main_frm, HomeFragment())
@@ -335,8 +280,7 @@ class FillingSetting02Fragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.assignError.collect { err ->
                     when (err.code) {
-                        "HOME4092" -> showRegisterDialog()
-                        "CONFLICT4094", "CONFLICT4092", "HOME4001" ->
+                        "CONFLICT4094", "CONFLICT4092", "HOME4092", "ACTIVITY4001", "HOME4001" ->
                             Toast.makeText(requireContext(), err.message, Toast.LENGTH_SHORT).show()
                         else -> err.message.let {
                             Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()

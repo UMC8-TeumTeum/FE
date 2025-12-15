@@ -43,6 +43,7 @@ import com.example.teumteum.databinding.DialogConfirmAiContentDeleteBinding
 import com.example.teumteum.databinding.DialogConfirmTeumDeleteBinding
 import com.example.teumteum.databinding.DialogConfirmTodoDeleteBinding
 import com.example.teumteum.databinding.DialogConfirmTodoEditBinding
+import com.example.teumteum.databinding.DialogConfirmWishDeleteBinding
 
 import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.example.teumteum.ui.todo.adapter.TeumProfileAdapter
@@ -139,6 +140,7 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
             ScheduleType.AI      -> "AI 콘텐츠"
             ScheduleType.TEUM    -> "틈 약속"
             ScheduleType.ROUTINE -> "투두"
+            ScheduleType.WISH    -> "위시"
         }
 
         binding.btnTodo.text = label
@@ -235,6 +237,7 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
                 ScheduleType.TODO    -> showTodoDeleteDialog()
                 ScheduleType.TEUM    -> showTeumDeleteDialog()
                 ScheduleType.AI      -> showAiDeleteDialog()
+                ScheduleType.WISH    -> showWishDeleteDialog()
                 else                 -> showTodoDeleteDialog()
             }
         }
@@ -769,6 +772,23 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
             viewModel.deleteTodo(todoId)
         }
         dialogBinding.todoCancelTv.setOnClickListener { dialog.dismiss() }
+
+        applyDialogWindow(dialog)
+        dialog.show()
+    }
+
+    private fun showWishDeleteDialog() {
+        val dialogBinding = DialogConfirmWishDeleteBinding.inflate(layoutInflater)
+        val dialog = AlertDialog.Builder(requireContext(), R.style.RoundedAlertDialog)
+            .setView(dialogBinding.root)
+            .create()
+
+        dialogBinding.wishConfirmTv.setOnClickListener {
+            dialogBinding.wishConfirmTv.isEnabled = false
+            dialog.dismiss()
+            viewModel.deleteTodo(todoId)
+        }
+        dialogBinding.wishCancelTv.setOnClickListener { dialog.dismiss() }
 
         applyDialogWindow(dialog)
         dialog.show()

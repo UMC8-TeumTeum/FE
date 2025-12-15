@@ -31,8 +31,9 @@ class AiRecommendAdapter(private var aiList: List<ActivityAiResult>, private val
         b.root.setOnClickListener {
             val args = Bundle().apply {
                 putString("ai_id", item.id)
-                putString("title", b.titleTv.text.toString())
-//                putString("content", b.contentTv.text.toString())
+                putString("title", item.title)
+                putString("content", item.content)
+                putString("time", item.estimatedDuration)
             }
             BottomSheetContentFragment().apply { arguments = args }
                 .show(fragmentManager, "ContentBottomSheetFragment")

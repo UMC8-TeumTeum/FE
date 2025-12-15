@@ -59,8 +59,7 @@
             android:textSize="20sp"
             android:textColor="@color/text_primary"
             android:fontFamily="@font/pretendard_medium"
-            android:includeFontPadding="false"
-            app:layout_constraintStart_toEndOf="@id/wish_time_layout"/>
+            android:includeFontPadding="false"/>
     </LinearLayout>
 
     <ImageView
@@ -81,18 +80,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="4dp"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
         tools:text="다육이랑 바질에 물 주고 바질은 창가로 옮겨두기"
         android:textSize="16sp"
         android:textColor="@color/text_primary"
         android:fontFamily="@font/pretendard_regular"
         android:includeFontPadding="false"
-        app:layout_constraintStart_toStartOf="@id/horizon_iv"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/horizon_iv"/>
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_select"
+        android:id="@+id/select_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="100dp"
