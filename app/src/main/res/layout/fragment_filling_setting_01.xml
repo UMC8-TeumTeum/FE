@@ -96,6 +96,18 @@
                 app:layout_constraintStart_toEndOf="@id/assign_time_layout"
                 app:layout_constraintTop_toTopOf="parent"/>
 
+            <TextView
+                android:id="@+id/assign_date_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="17dp"
+                tools:text="25.06.11(수)"
+                android:fontFamily="@font/noto_sans_kr_regular"
+                android:textSize="15sp"
+                android:textColor="@color/white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 
@@ -167,25 +179,42 @@
         android:layout_marginEnd="19dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/clock_indicator_ll"
-        app:layout_constraintBottom_toTopOf="@+id/next_btn"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/clock_indicator_ll" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/next_btn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="다음으로"
-        android:fontFamily="@font/noto_sans_kr_medium"
-        android:textSize="16sp"
-        android:textColor="@color/text_primary"
-        app:cornerRadius="12dp"
-        android:backgroundTint="@color/teumteum_bg"
+    <LinearLayout
+        android:id="@+id/assign_bottom_bar"
+        android:layout_width="0dp"
+        android:layout_height="94dp"
+        android:orientation="horizontal"
+        android:padding="14dp"
+        android:weightSum="2"
+        android:background="@color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginStart="19dp"
-        android:layout_marginEnd="19dp"
-        android:layout_marginBottom="19dp"
-        android:enabled="false"/>
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/select_date_btn"
+            android:layout_width="0dp"
+            android:layout_height="65dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:text="날짜 변경"
+            android:textColor="@color/text_primary"
+            app:backgroundTint="@color/teumteum_bg"
+            app:cornerRadius="12dp"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/next_btn"
+            android:layout_width="0dp"
+            android:layout_height="65dp"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:text="다음"
+            android:textColor="@color/text_primary"
+            android:backgroundTint="@color/teumteum_bg"
+            app:cornerRadius="12dp"
+            android:enabled="false"/>
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

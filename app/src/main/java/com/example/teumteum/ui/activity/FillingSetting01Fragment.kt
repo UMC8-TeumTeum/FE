@@ -18,10 +18,14 @@ import com.example.teumteum.ui.clock.ClockVPAdapter
 import com.example.teumteum.ui.clock.IconPieChartRenderer
 import com.example.teumteum.ui.main.data.TimeType
 import com.example.teumteum.ui.main.viewModel.HomeViewModel
+import com.example.teumteum.ui.wish.BottomSheetAssignCalendarFragment
 import com.example.teumteum.ui.wish.adapter.WishTimeAdapter
 import com.example.teumteum.ui.wish.data.UiTimeSlot
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 import kotlin.collections.orEmpty
 
 @AndroidEntryPoint
@@ -42,6 +46,9 @@ class FillingSetting01Fragment : Fragment() {
     private var wishId: Long? = null
 
     private lateinit var clockAdapter: ClockVPAdapter<ItemClockMiniPageBinding>
+    private lateinit var wishTimeAdapter: WishTimeAdapter
+
+    private var selectedDateServer: String = LocalDate.now().toString()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -64,16 +71,18 @@ class FillingSetting01Fragment : Fragment() {
         wishId = arguments?.getLong("wish_id", -1L)
             ?.takeIf { it > 0L }
 
+        val today = LocalDate.now()
+        selectedDateServer = today.toString()
+
+        val displayFormatter = DateTimeFormatter.ofPattern("yy.MM.dd(E)", Locale.KOREAN)
+        binding.assignDateTv.text = today.format(displayFormatter)
+
         // 바텀 내비게이션 숨기기
         val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
         bottomNav?.visibility = View.GONE
 
-        val emptyBlocks = homeViewModel.scheduleList.value.orEmpty()
-            .filter { it.type == TimeType.EMPTY }   // enum 경로에 맞게 수정
-            .map { UiTimeSlot(it.startTime.toHHmm(), it.endTime.toHHmm()) }
-
         // 어댑터 생성 (문자열 콜백)
-        val wishTimeAdapter = WishTimeAdapter(
+        wishTimeAdapter = WishTimeAdapter(
             onSelect = { _, slot ->
                 selectedStartTime = slot.startTime
                 selectedEndTime   = slot.endTime
@@ -83,8 +92,6 @@ class FillingSetting01Fragment : Fragment() {
             },
             onDirectInput = {
                 isDirectInput = true
-                // 직접 입력 바텀시트/다이얼로그 띄우고 완료되면 selectedStartTime/EndTime에 "HH:mm" 셋팅
-                // 예: showTimeInputBottomSheet { start, end -> selectedStartTime = start; selectedEndTime = end }
                 selectedTimeText = "직접 입력하기"
                 enableNextButton()
             }
@@ -93,13 +100,14 @@ class FillingSetting01Fragment : Fragment() {
         binding.wishTimeRc.adapter = wishTimeAdapter
         binding.wishTimeRc.layoutManager = LinearLayoutManager(requireContext())
 
-        wishTimeAdapter.submitList(emptyBlocks)
-
         binding.backArrowIv.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
 
         setupClockPager()
+        setupObservers()
+
+        homeViewModel.getTodaySchedule(selectedDateServer)
 
         binding.amPmTv.setOnClickListener {
             val amPos = clockAdapter.positionOf(ClockHalf.AM)
@@ -108,15 +116,44 @@ class FillingSetting01Fragment : Fragment() {
             binding.clockPager.setCurrentItem(next, true)
         }
 
+        binding.selectDateBtn.setOnClickListener {
+            BottomSheetAssignCalendarFragment
+                .newInstance(selectedDateServer)
+                .show(parentFragmentManager, "BottomSheetCalendar")
+        }
+
+        parentFragmentManager.setFragmentResultListener(
+            "assign_date_result",
+            viewLifecycleOwner
+        ) { _, bundle ->
+            val display = bundle.getString("assign_date_display") ?: return@setFragmentResultListener
+            val server = bundle.getString("assign_date_server") ?: return@setFragmentResultListener
+
+            binding.assignDateTv.text = display
+            selectedDateServer = server
+
+            selectedStartTime = null
+            selectedEndTime = null
+            selectedTimeText = null
+            isDirectInput = true
+
+            binding.nextBtn.isEnabled = false
+            binding.nextBtn.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.teumteum_bg))
+            binding.nextBtn.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
+
+            wishTimeAdapter.clearSelection()
+            homeViewModel.getTodaySchedule(server)
+        }
+
         binding.nextBtn.setOnClickListener {
-            if(isDirectInput){
+            if (isDirectInput) {
                 val fragment = FillingSetting03Fragment().apply {
                     arguments = Bundle().apply {
                         aiId?.let { putString("ai_id", it)}
                         wishId?.let { putLong("wish_id", it) }
                         putString("title", title)
                         putString("time", time)
-                        putString("selected_time", selectedTimeText)
+                        putString("selected_date", selectedDateServer)
                     }
                 }
 
@@ -124,16 +161,34 @@ class FillingSetting01Fragment : Fragment() {
                     .replace(R.id.main_frm, fragment)
                     .addToBackStack(null)
                     .commit()
-            }else{
+            } else {
+
+                val startDate = selectedDateServer
+                var endDate = selectedDateServer
+                val sendStartTime = selectedStartTime ?: return@setOnClickListener
+                var sendEndTime = selectedEndTime ?: return@setOnClickListener
+
+                // 24:00 -> 다음날 00:00 변환
+                if (sendEndTime == "24:00") {
+                    endDate = LocalDate.parse(selectedDateServer)
+                        .plusDays(1)
+                        .toString()
+                    sendEndTime = "00:00"
+                }
+
                 val fragment = FillingSetting02Fragment().apply {
                     arguments = Bundle().apply {
                         aiId?.let { putString("ai_id", it)}
                         wishId?.let { putLong("wish_id", it) }
                         putString("title", title)
                         putString("time", time)
-                        putString("selected_time", selectedTimeText)
-                        putString("startTime", selectedStartTime)
-                        putString("endTime", selectedEndTime)
+
+                        putString("startDate", startDate)
+                        putString("endDate", endDate)
+                        putString("startTime", sendStartTime)
+                        putString("endTime", sendEndTime)
+
+                        putString("selected_time_text", selectedTimeText)
                     }
                 }
 
@@ -145,6 +200,21 @@ class FillingSetting01Fragment : Fragment() {
         }
 
         updateIndicator(isAM)
+    }
+
+    private fun setupObservers() {
+        homeViewModel.scheduleList.observe(viewLifecycleOwner) { scheduleList ->
+            // EMPTY 시간 추출 및 어댑터 갱신
+            val emptyBlocks = scheduleList
+                .filter { it.type == TimeType.EMPTY }
+                .map { UiTimeSlot(it.startTime.toHHmm(), it.endTime.toHHmm()) }
+
+            wishTimeAdapter.submitList(emptyBlocks) {
+                wishTimeAdapter.notifyDataSetChanged()
+            }
+
+            clockAdapter.notifyDataSetChanged()
+        }
     }
 
     private fun setupClockPager() {
@@ -229,6 +299,7 @@ class FillingSetting01Fragment : Fragment() {
 
     // 분 → "HH:mm"
     private fun Int.toHHmm(): String {
+        if (this == 24 * 60) return "24:00"
         val minutesInDay = 24 * 60
         val norm = ((this % minutesInDay) + minutesInDay) % minutesInDay
         val h = norm / 60

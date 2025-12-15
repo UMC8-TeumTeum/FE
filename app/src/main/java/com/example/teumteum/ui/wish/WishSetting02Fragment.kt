@@ -34,7 +34,6 @@ class WishSetting02Fragment : Fragment() {
 
     private var selectedStartTime: String? = null
     private var selectedEndTime: String? = null
-    private var selectedDate: String? = null
 
     private var wishId: Long? = null
     private val viewModel: WishViewModel by activityViewModels()
@@ -63,21 +62,33 @@ class WishSetting02Fragment : Fragment() {
         val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
         bottomNav?.visibility = View.GONE
 
-        // 오늘 날짜로 폴백
-        selectedDate = arguments?.getString("selected_date")
-            ?: LocalDate.now().format(DateTimeFormatter.ISO_DATE)
+        val startDateArg = arguments?.getString("startDate")
+        val endDateArg = arguments?.getString("endDate")
 
-        val selectedTime = arguments?.getString("selected_time")
         val startTime = arguments?.getString("startTime")
         val endTime = arguments?.getString("endTime")
 
-        binding.wishTimeSettingTv.text = selectedTime
+        val selectedTimeText = arguments?.getString("selected_time_text")
+
+        binding.wishTimeSettingTv.text = selectedTimeText
+            ?: run {
+                val s = arguments?.getString("startTime")
+                val e = arguments?.getString("endTime")
+                if (!s.isNullOrEmpty() && !e.isNullOrEmpty()) "$s ~ $e" else ""
+            }
 
         if (!startTime.isNullOrEmpty() && !endTime.isNullOrEmpty()) {
             binding.startChoiceTv.text = startTime
-            binding.endChoiceTv.text = endTime
             selectedStartTime = startTime
-            selectedEndTime = endTime
+
+            val endDisplay = if (!startDateArg.isNullOrEmpty()
+                && !endDateArg.isNullOrEmpty()
+                && endDateArg != startDateArg
+                && endTime == "00:00"
+            ) "24:00" else endTime
+
+            binding.endChoiceTv.text = endDisplay
+            selectedEndTime = endDisplay
         }
 
         binding.wishStartContainer.setOnClickListener {
@@ -209,17 +220,15 @@ class WishSetting02Fragment : Fragment() {
         }
     }
 
-    private fun combineDateTime(date: String, timeHHmm: String): String {
-        return "${date}T$timeHHmm"
-    }
-
     private fun assignWishRequest(): AssignWishRequest {
         val startHHmm = binding.startChoiceTv.text.toString()
         val endHHmm = binding.endChoiceTv.text.toString()
 
-        val date = selectedDate ?: LocalDate.now().format(DateTimeFormatter.ISO_DATE)
-        val startIso = combineDateTime(date, startHHmm)
-        val endIso = combineDateTime(date, endHHmm)
+        val startDate = getStartDate()
+        val startIso = "${startDate}T$startHHmm"
+
+        val (endDate, endTime) = getEndDate(startDate, endHHmm)
+        val endIso = "${endDate}T$endTime"
 
         return AssignWishRequest(
             startTime = startIso,
@@ -256,6 +265,19 @@ class WishSetting02Fragment : Fragment() {
                     }
                 }
             }
+        }
+    }
+
+    private fun getStartDate(): String {
+        return arguments?.getString("startDate")
+            ?: LocalDate.now().format(DateTimeFormatter.ISO_DATE)
+    }
+
+    private fun getEndDate(startDate: String, endHHmm: String): Pair<String, String> {
+        return if (endHHmm == "24:00") {
+            LocalDate.parse(startDate).plusDays(1).toString() to "00:00"
+        } else {
+            startDate to endHHmm
         }
     }
 }

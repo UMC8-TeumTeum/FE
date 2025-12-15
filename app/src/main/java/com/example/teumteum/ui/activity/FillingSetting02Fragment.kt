@@ -34,7 +34,6 @@ class FillingSetting02Fragment : Fragment() {
 
     private var selectedStartTime: String? = null
     private var selectedEndTime: String? = null
-    private var selectedDate: String? = null
 
     private var aiId: String? = null
     private var wishId: Long? = null
@@ -81,21 +80,33 @@ class FillingSetting02Fragment : Fragment() {
         val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
         bottomNav?.visibility = View.GONE
 
-        // 오늘 날짜로 폴백
-        selectedDate = arguments?.getString("selected_date")
-            ?: LocalDate.now().format(DateTimeFormatter.ISO_DATE)
+        val startDateArg = arguments?.getString("startDate")
+        val endDateArg = arguments?.getString("endDate")
 
-        val selectedTime = arguments?.getString("selected_time")
         val startTime = arguments?.getString("startTime")
         val endTime = arguments?.getString("endTime")
 
-        binding.assignTimeSettingTv.text = selectedTime
+        val selectedTimeText = arguments?.getString("selected_time_text")
+
+        binding.assignTimeSettingTv.text = selectedTimeText
+            ?: run {
+                val s = arguments?.getString("startTime")
+                val e = arguments?.getString("endTime")
+                if (!s.isNullOrEmpty() && !e.isNullOrEmpty()) "$s ~ $e" else ""
+            }
 
         if (!startTime.isNullOrEmpty() && !endTime.isNullOrEmpty()) {
             binding.startChoiceTv.text = startTime
-            binding.endChoiceTv.text = endTime
             selectedStartTime = startTime
-            selectedEndTime = endTime
+
+            val endDisplay = if (!startDateArg.isNullOrEmpty()
+                && !endDateArg.isNullOrEmpty()
+                && endDateArg != startDateArg
+                && endTime == "00:00"
+            ) "24:00" else endTime
+
+            binding.endChoiceTv.text = endDisplay
+            selectedEndTime = endDisplay
         }
 
         binding.assignStartContainer.setOnClickListener {
@@ -228,17 +239,15 @@ class FillingSetting02Fragment : Fragment() {
         }
     }
 
-    private fun combineDateTime(date: String, timeHHmm: String): String {
-        return "${date}T$timeHHmm"
-    }
-
     private fun assignAiRequest(): AssignAiRequest {
         val startHHmm = binding.startChoiceTv.text.toString()
         val endHHmm = binding.endChoiceTv.text.toString()
 
-        val date = selectedDate ?: LocalDate.now().format(DateTimeFormatter.ISO_DATE)
-        val startIso = combineDateTime(date, startHHmm)
-        val endIso = combineDateTime(date, endHHmm)
+        val startDate = getStartDate()
+        val startIso = "${startDate}T$startHHmm"
+
+        val (endDate, endTime) = getEndDate(startDate, endHHmm)
+        val endIso = "${endDate}T$endTime"
 
         return AssignAiRequest(
             id = requireNotNull(aiId),
@@ -251,9 +260,11 @@ class FillingSetting02Fragment : Fragment() {
         val startHHmm = binding.startChoiceTv.text.toString()
         val endHHmm = binding.endChoiceTv.text.toString()
 
-        val date = selectedDate ?: LocalDate.now().format(DateTimeFormatter.ISO_DATE)
-        val startIso = combineDateTime(date, startHHmm)
-        val endIso = combineDateTime(date, endHHmm)
+        val startDate = getStartDate()
+        val startIso = "${startDate}T$startHHmm"
+
+        val (endDate, endTime) = getEndDate(startDate, endHHmm)
+        val endIso = "${endDate}T$endTime"
 
         return AssignWishRequest(
             startTime = startIso,
@@ -288,6 +299,19 @@ class FillingSetting02Fragment : Fragment() {
                     }
                 }
             }
+        }
+    }
+
+    private fun getStartDate(): String {
+        return arguments?.getString("startDate")
+            ?: LocalDate.now().format(DateTimeFormatter.ISO_DATE)
+    }
+
+    private fun getEndDate(startDate: String, endHHmm: String): Pair<String, String> {
+        return if (endHHmm == "24:00") {
+            LocalDate.parse(startDate).plusDays(1).toString() to "00:00"
+        } else {
+            startDate to endHHmm
         }
     }
 }

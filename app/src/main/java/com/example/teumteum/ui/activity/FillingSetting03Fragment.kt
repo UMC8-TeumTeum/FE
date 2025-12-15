@@ -34,7 +34,6 @@ class FillingSetting03Fragment : Fragment() {
 
     private var selectedStartTime: String? = null
     private var selectedEndTime: String? = null
-    private var selectedDate: String? = null
 
     private var aiId: String? = null
     private var wishId: Long? = null
@@ -77,17 +76,14 @@ class FillingSetting03Fragment : Fragment() {
             return
         }
 
+        val selectedTimeText = arguments?.getString("selected_time_text")
+
+        binding.assignTimeSettingTv.text = selectedTimeText?.takeIf { it.isNotBlank() }
+            ?: "직접 입력하기"
+
         // 바텀 내비게이션 숨기기
         val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
         bottomNav?.visibility = View.GONE
-
-        // 오늘 날짜로 폴백
-        selectedDate = arguments?.getString("selected_date")
-            ?: LocalDate.now().format(DateTimeFormatter.ISO_DATE)
-
-        val selectedTime = arguments?.getString("selected_time")
-
-        binding.assignTimeSettingTv.text = selectedTime
 
         binding.assignStartContainer.setOnClickListener {
             showCustomTimePicker(binding.startChoiceTv)
@@ -220,17 +216,15 @@ class FillingSetting03Fragment : Fragment() {
         }
     }
 
-    private fun combineDateTime(date: String, timeHHmm: String): String {
-        return "${date}T$timeHHmm"
-    }
-
     private fun assignAiRequest(): AssignAiRequest {
         val startHHmm = binding.startChoiceTv.text.toString()
         val endHHmm = binding.endChoiceTv.text.toString()
 
-        val date = selectedDate ?: LocalDate.now().format(DateTimeFormatter.ISO_DATE)
-        val startIso = combineDateTime(date, startHHmm)
-        val endIso = combineDateTime(date, endHHmm)
+        val startDate = getStartDate()
+        val startIso = "${startDate}T$startHHmm"
+
+        val (endDate, endTime) = getEndDate(startDate, endHHmm)
+        val endIso = "${endDate}T$endTime"
 
         return AssignAiRequest(
             id = aiId!!,
@@ -243,9 +237,11 @@ class FillingSetting03Fragment : Fragment() {
         val startHHmm = binding.startChoiceTv.text.toString()
         val endHHmm = binding.endChoiceTv.text.toString()
 
-        val date = selectedDate ?: LocalDate.now().format(DateTimeFormatter.ISO_DATE)
-        val startIso = combineDateTime(date, startHHmm)
-        val endIso = combineDateTime(date, endHHmm)
+        val startDate = getStartDate()
+        val startIso = "${startDate}T$startHHmm"
+
+        val (endDate, endTime) = getEndDate(startDate, endHHmm)
+        val endIso = "${endDate}T$endTime"
 
         return AssignWishRequest(
             startTime = startIso,
@@ -299,6 +295,20 @@ class FillingSetting03Fragment : Fragment() {
                     }
                 }
             }
+        }
+    }
+
+    private fun getStartDate(): String {
+        return arguments?.getString("selected_date")
+            ?: arguments?.getString("startDate")
+            ?: LocalDate.now().format(DateTimeFormatter.ISO_DATE)
+    }
+
+    private fun getEndDate(startDate: String, endHHmm: String): Pair<String, String> {
+        return if (endHHmm == "24:00") {
+            LocalDate.parse(startDate).plusDays(1).toString() to "00:00"
+        } else {
+            startDate to endHHmm
         }
     }
 }

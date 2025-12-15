@@ -18,7 +18,6 @@ import com.example.teumteum.R
 import com.example.teumteum.data.remote.activity.model.AssignWishRequest
 import com.example.teumteum.databinding.FragmentWishSetting03Binding
 import com.example.teumteum.ui.main.HomeFragment
-import com.example.teumteum.ui.main.viewModel.HomeViewModel
 import com.example.teumteum.ui.wish.viewModel.WishViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -34,7 +33,6 @@ class WishSetting03Fragment : Fragment() {
 
     private var selectedStartTime: String? = null
     private var selectedEndTime: String? = null
-    private var selectedDate: String? = null
 
     private var wishId: Long? = null
     private val viewModel: WishViewModel by activityViewModels()
@@ -58,17 +56,14 @@ class WishSetting03Fragment : Fragment() {
 
         wishId = arguments?.getLong("wish_id")
 
+        val selectedTimeText = arguments?.getString("selected_time_text")
+
+        binding.wishTimeSettingTv.text = selectedTimeText?.takeIf { it.isNotBlank() }
+            ?: "직접 입력하기"
+
         // 바텀 내비게이션 숨기기
         val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
         bottomNav?.visibility = View.GONE
-
-        // 오늘 날짜로 폴백
-        selectedDate = arguments?.getString("selected_date")
-            ?: LocalDate.now().format(DateTimeFormatter.ISO_DATE)
-
-        val selectedTime = arguments?.getString("selected_time")
-
-        binding.wishTimeSettingTv.text = selectedTime
 
         binding.wishStartContainer.setOnClickListener {
             showCustomTimePicker(binding.startChoiceTv)
@@ -199,17 +194,15 @@ class WishSetting03Fragment : Fragment() {
         }
     }
 
-    private fun combineDateTime(date: String, timeHHmm: String): String {
-        return "${date}T$timeHHmm"
-    }
-
     private fun assignWishRequest(): AssignWishRequest {
         val startHHmm = binding.startChoiceTv.text.toString()
         val endHHmm = binding.endChoiceTv.text.toString()
 
-        val date = selectedDate ?: LocalDate.now().format(DateTimeFormatter.ISO_DATE)
-        val startIso = combineDateTime(date, startHHmm)
-        val endIso = combineDateTime(date, endHHmm)
+        val startDate = getStartDate()
+        val startIso = "${startDate}T$startHHmm"
+
+        val (endDate, endTime) = getEndDate(startDate, endHHmm)
+        val endIso = "${endDate}T$endTime"
 
         return AssignWishRequest(
             startTime = startIso,
@@ -257,6 +250,20 @@ class WishSetting03Fragment : Fragment() {
                     Toast.makeText(requireContext(), err.message, Toast.LENGTH_SHORT).show()
                 }
             }
+        }
+    }
+
+    private fun getStartDate(): String {
+        return arguments?.getString("selected_date")
+            ?: arguments?.getString("startDate")
+            ?: LocalDate.now().format(DateTimeFormatter.ISO_DATE)
+    }
+
+    private fun getEndDate(startDate: String, endHHmm: String): Pair<String, String> {
+        return if (endHHmm == "24:00") {
+            LocalDate.parse(startDate).plusDays(1).toString() to "00:00"
+        } else {
+            startDate to endHHmm
         }
     }
 }
