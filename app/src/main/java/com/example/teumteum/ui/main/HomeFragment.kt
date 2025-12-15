@@ -31,6 +31,7 @@ import java.time.format.DateTimeFormatter
 import com.example.teumteum.data.remote.todo.model.TodoListResult
 import com.example.teumteum.data.remote.todo.model.enums.AlarmStatus
 import com.example.teumteum.databinding.ItemClockPageBinding
+import com.example.teumteum.ui.activity.viewModel.ActivityViewModel
 import com.example.teumteum.ui.todo.viewModel.TodoViewModel
 import com.example.teumteum.ui.clock.ChartUtils
 import com.example.teumteum.ui.clock.ClockHalf
@@ -91,6 +92,7 @@ class HomeFragment : Fragment() {
     private val viewModel: HomeViewModel by activityViewModels()
     private val todoViewModel: TodoViewModel by activityViewModels()
     private val myHomeViewModel: MyHomeViewModel by activityViewModels()
+    private val activityViewModel: ActivityViewModel by activityViewModels()
 
     private var isAM: Boolean = true
 
@@ -157,6 +159,8 @@ class HomeFragment : Fragment() {
                 .addToBackStack(null)
                 .commit()
         }
+
+        activityViewModel.clearActivityResults()
 
         binding.bannerCard.setOnClickListener {
             parentFragmentManager.beginTransaction()

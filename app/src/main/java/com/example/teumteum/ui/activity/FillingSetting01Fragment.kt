@@ -4,14 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.example.teumteum.R
-import com.example.teumteum.data.remote.todo.model.enums.ScheduleType
 import com.example.teumteum.databinding.FragmentFillingSetting01Binding
 import com.example.teumteum.databinding.ItemClockMiniPageBinding
 import com.example.teumteum.ui.clock.ChartUtils
@@ -30,8 +28,6 @@ import kotlin.collections.orEmpty
 class FillingSetting01Fragment : Fragment() {
 
     private lateinit var binding: FragmentFillingSetting01Binding
-
-    private var selectedButtonId: Int? = null
 
     private var selectedTimeText: String? = null
     private var selectedStartTime: String? = null
@@ -59,10 +55,10 @@ class FillingSetting01Fragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         val title = arguments?.getString("title")
-        setTitle(title.toString())
+        binding.assignTitleTv.text = title
 
         val time = arguments?.getString("time")
-        setTime(time.toString())
+        binding.assignTimeTv.text = time
 
         aiId = arguments?.getString("ai_id")
         wishId = arguments?.getLong("wish_id", -1L)
@@ -194,15 +190,6 @@ class FillingSetting01Fragment : Fragment() {
         binding.nextBtn.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
         binding.nextBtn.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
     }
-
-    private fun setTitle(title: String){
-        binding.assignTitleTv.text = title
-    }
-
-    private fun setTime(time: String){
-        binding.assignTimeTv.text = time
-    }
-
 
     private fun updateIndicator(isAM: Boolean) {
         val leftView = binding.leftView

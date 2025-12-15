@@ -51,6 +51,10 @@ class ActivityViewModel @Inject constructor(
     private val _assignError = MutableSharedFlow<ApiException>(replay = 0, extraBufferCapacity = 1)
     val assignError: SharedFlow<ApiException> = _assignError.asSharedFlow()
 
+    // 마지막으로 성공적으로 조회한 파라미터 키
+    var lastQueryKey: String? = null
+        private set
+
     private val _loading = MutableLiveData(false)
     val loading: LiveData<Boolean> = _loading
 
@@ -145,5 +149,12 @@ class ActivityViewModel @Inject constructor(
                 _assignError.tryEmit(ApiException(code ?: "UNKNOWN", msg))
             }
         }
+    }
+
+    fun clearActivityResults() {
+        _activityWishes.value = emptyList()
+        _activityAiContents.value = emptyList()
+        _activityWishSuccess.value = false
+        _activityAiSuccess.value = false
     }
 }
