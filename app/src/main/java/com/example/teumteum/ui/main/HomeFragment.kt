@@ -3,7 +3,12 @@ package com.example.teumteum.ui.main
 import android.content.res.ColorStateList
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
+import android.os.Build
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
+import android.text.style.StyleSpan
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -11,7 +16,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
+import androidx.annotation.ColorRes
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.viewpager2.widget.ViewPager2
@@ -101,6 +110,9 @@ class HomeFragment : Fragment() {
     private lateinit var clockAdapter: ClockVPAdapter<ItemClockPageBinding>
     private lateinit var clockPageChangeCallback: ViewPager2.OnPageChangeCallback
 
+    private var backCallback: OnBackPressedCallback? = null
+
+    @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -167,6 +179,15 @@ class HomeFragment : Fragment() {
                 .replace(R.id.main_frm, FillingActivity01Fragment())
                 .addToBackStack(null)
                 .commit()
+        }
+
+        binding.homeHelpIv.setOnClickListener {
+            openTutorialOverlay()
+            hookBackToClose()
+        }
+
+        binding.tutorialOverlay.btnCloseTutorial.setOnClickListener {
+            closeTutorialOverlay()
         }
 
         binding.homeNotificationIv.setOnClickListener {
@@ -551,6 +572,80 @@ class HomeFragment : Fragment() {
         viewModel.getCalendar(start.format(serverFormatter), end.format(serverFormatter))
     }
 
+    @RequiresApi(Build.VERSION_CODES.R)
+    private fun openTutorialOverlay() {
+        binding.tutorialOverlay.root.apply {
+            visibility = View.VISIBLE
+            isClickable = true
+            isFocusable = true
+            bringToFront()
+        }
+
+        binding.tutorialOverlay.labelTop.highlightText("일정과 수면패턴")
+        binding.tutorialOverlay.labelRightTop.highlightText("수면 패턴")
+        binding.tutorialOverlay.labelLeftBottom.highlightText("빈틈")
+        binding.tutorialOverlay.labelLeftTop.highlightText("오늘의 일정")
+        binding.tutorialOverlay.labelBottom.highlightText("오전과 오후")
+        binding.tutorialOverlay.labelCalendar.highlightText("캘린더")
+        binding.tutorialOverlay.labelTodoList.highlightText("투두리스트")
+
+        // 바텀 내비 + 플로팅버튼 숨기기
+        requireActivity().findViewById<View>(R.id.main_bnv)?.visibility = View.GONE
+        binding.fabAddIv.isVisible = false
+        binding.fabShadowIv.isVisible = false
+
+        // 시스템 UI (상단 상태바 + 하단 네비게이션바) 숨기기
+        requireActivity().window.insetsController?.let { controller ->
+            controller.hide(android.view.WindowInsets.Type.systemBars())
+            controller.systemBarsBehavior =
+                android.view.WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        }
+    }
+
+    private fun TextView.highlightText(
+        target: String,
+        @ColorRes colorRes: Int = R.color.main_1
+    ) {
+        val fullText = text.toString()
+        val start = fullText.indexOf(target)
+        if (start == -1) return // 대상 단어 없으면 무시
+
+        val end = start + target.length
+        val spannable = SpannableString(fullText).apply {
+            setSpan(StyleSpan(Typeface.BOLD), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            setSpan(
+                ForegroundColorSpan(
+                    ContextCompat.getColor(context, colorRes)
+                ),
+                start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+        text = spannable
+    }
+
+    private fun hookBackToClose() {
+        backCallback = object : OnBackPressedCallback(true) {
+            @RequiresApi(Build.VERSION_CODES.R)
+            override fun handleOnBackPressed() = closeTutorialOverlay()
+        }.also { requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, it) }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.R)
+    private fun closeTutorialOverlay() {
+        binding.tutorialOverlay.root.visibility = View.GONE
+
+        // 숨겼던 것들 복구
+        requireActivity().findViewById<View>(R.id.main_bnv)?.visibility = View.VISIBLE
+        binding.fabAddIv.isVisible = true
+        binding.fabShadowIv.isVisible = true
+
+        // 시스템 UI 복구
+        requireActivity().window.insetsController?.show(android.view.WindowInsets.Type.systemBars())
+
+        backCallback?.remove()
+        backCallback = null
+    }
+
     private fun setupClockPager() {
         clockAdapter = ClockVPAdapter(
             inflate = ItemClockPageBinding::inflate,
@@ -760,6 +855,11 @@ class HomeFragment : Fragment() {
                     b.clockPager.unregisterOnPageChangeCallback(clockPageChangeCallback)
                 }
             }
+        }
+        // 오버레이가 열려있다면 닫으면서 원복
+        if (binding.tutorialOverlay.root.isVisible) {
+            requireActivity().findViewById<View>(R.id.main_bnv)?.visibility = View.VISIBLE
+            requireActivity().findViewById<View?>(R.id.fab_add_iv)?.visibility = View.VISIBLE
         }
         _binding = null
         super.onDestroyView()
