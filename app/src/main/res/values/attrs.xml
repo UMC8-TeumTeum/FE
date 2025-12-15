@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="DashCurveView">
+        <attr name="pathData" format="string" />
+        <attr name="viewportWidth" format="float" />
+        <attr name="viewportHeight" format="float" />
+        <attr name="strokeWidth" format="dimension" />
+        <attr name="strokeColor" format="color" />
+        <attr name="strokeAlpha" format="float" />
+        <attr name="dashLength" format="dimension" />
+        <attr name="dashGap" format="dimension" />
+    </declare-styleable>
+</resources>
