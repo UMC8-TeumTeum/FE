@@ -1,10 +1,10 @@
 package com.example.teumteum.ui.myhome
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentMySettingBinding
 import com.example.teumteum.ui.main.MainActivity
@@ -49,6 +49,34 @@ class MySettingFragment : Fragment() {
         binding.alarmSettingLl.setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.main_frm, MyAlarmSettingFragment())
+                .addToBackStack(null)
+                .commit()
+        }
+
+        binding.remindSettingLl.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, MyRemindAlarmSettingFragment())
+                .addToBackStack(null)
+                .commit()
+        }
+
+        binding.sleepSettingLl.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, MySleepPatternSettingFragment())
+                .addToBackStack(null)
+                .commit()
+        }
+
+        binding.blockAccountLl.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, BlockedAccountFragment())
+                .addToBackStack(null)
+                .commit()
+        }
+
+        binding.serviceInfoLl.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, ServiceInfoFragment())
                 .addToBackStack(null)
                 .commit()
         }

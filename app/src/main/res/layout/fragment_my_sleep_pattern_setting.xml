@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- 뒤로가기 버튼 -->
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="70dp"
+        android:layout_marginStart="16dp"
+        android:background="@android:color/transparent"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_arrow_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/titleTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/noto_sans_kr_medium"
+        android:includeFontPadding="false"
+        android:text="수면패턴"
+        android:textColor="@color/text_primary"
+        android:textSize="20sp"
+        android:layout_marginStart="12dp"
+        app:layout_constraintTop_toTopOf="@+id/backButton"
+        app:layout_constraintBottom_toBottomOf="@+id/backButton"
+        app:layout_constraintStart_toEndOf="@+id/backButton"
+        />
+
+    <LinearLayout
+        android:id="@+id/sleep_pattern_card_ll"
+        android:layout_width="match_parent"
+        android:layout_height="76dp"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/titleTv"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="50dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:paddingTop="14dp"
+        android:paddingStart="14dp"
+        android:paddingBottom="9dp"
+        android:paddingEnd="16dp"
+        android:background="@drawable/rounded_sleep_pattern">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/sleep_start_container"
+            android:layout_width="0dp"
+            android:layout_height="53dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="31dp">
+
+            <TextView
+                android:id="@+id/start_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/Sm12Regular"
+                android:text="시작"
+                android:textColor="@color/text_secondary"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:includeFontPadding="false"/>
+
+            <TextView
+                android:id="@+id/start_choice_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/Md15Medium"
+                android:text="선택"
+                android:textColor="@color/text_primary"
+                android:textSize="22sp"
+                app:layout_constraintTop_toBottomOf="@id/start_tv"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginTop="4dp"
+                android:includeFontPadding="false"/>
+
+            <ImageView
+                android:id="@+id/start_up_arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_arrow_up"
+                app:layout_constraintTop_toTopOf="@+id/start_choice_tv"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="8dp"
+                />
+
+
+            <ImageView
+                android:id="@+id/start_down_arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_arrow_down"
+                app:layout_constraintTop_toBottomOf="@+id/start_up_arrow"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="6dp"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/sleep_end_container"
+            android:layout_width="0dp"
+            android:layout_height="53dp"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/end_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/Sm12Regular"
+                android:text="종료"
+                android:textColor="@color/text_secondary"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:includeFontPadding="false"/>
+
+            <TextView
+                android:id="@+id/end_choice_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/Md15Medium"
+                android:text="선택"
+                android:textColor="@color/text_primary"
+                android:textSize="22sp"
+                app:layout_constraintTop_toBottomOf="@id/end_tv"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginTop="4dp"
+                android:includeFontPadding="false"/>
+
+            <ImageView
+                android:id="@+id/end_up_arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_arrow_up"
+                app:layout_constraintTop_toTopOf="@+id/end_choice_tv"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="8dp" />
+
+            <ImageView
+                android:id="@+id/end_down_arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_arrow_down"
+                app:layout_constraintTop_toBottomOf="@+id/end_up_arrow"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="6dp"
+                />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/description_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/noto_sans_kr_regular"
+        android:textColor="@color/text_tertiary"
+        android:includeFontPadding="false"
+        android:text="수면패턴은 최대 23시간까지 등록 가능합니다."
+        android:layout_marginTop="18dp"
+        app:layout_constraintTop_toBottomOf="@+id/sleep_pattern_card_ll"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+
+
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

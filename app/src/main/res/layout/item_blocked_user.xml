@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:paddingStart="20dp"
+    android:paddingEnd="17dp"
+    android:paddingBottom="20dp"
+    android:gravity="center_vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/profileLayout"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@color/gray"
+        android:scaleType="centerCrop"
+        app:shapeAppearanceOverlay="@style/CircleImage" />
+
+    <!-- 이름 + 직업 -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/nameTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="이름"
+            android:layout_marginStart="11dp"
+            android:textSize="16sp"
+            android:textColor="@color/text_primary"
+            android:fontFamily="@font/noto_sans_kr_medium"
+            android:includeFontPadding="false"
+            />
+
+        <TextView
+            android:id="@+id/jobTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" · UX디자이너"
+            android:textSize="16sp"
+            android:textColor="#D3D3D3"
+            android:layout_marginStart="8dp"
+            android:fontFamily="@font/noto_sans_kr_medium" />
+    </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/unblock_btn"
+        android:layout_width="0dp"
+        android:layout_height="25dp"
+        android:layout_weight="0.3"
+        android:text="차단 해제"
+        android:fontFamily="@font/pretendard_medium"
+        android:textColor="@color/text_secondary"
+        android:includeFontPadding="false"
+        android:textSize="12sp"
+        app:cornerRadius="30dp"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:backgroundTint="@color/teumteum_line"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:insetLeft="0dp"
+        android:insetRight="0dp"
+        android:padding="0dp"/>
+</LinearLayout>
