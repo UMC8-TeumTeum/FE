@@ -18,7 +18,9 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class AlarmFragment : Fragment() {
 
-    private lateinit var binding: FragmentHomeAlarmBinding
+    private var _binding: FragmentHomeAlarmBinding? = null
+    private val binding get() = _binding!!
+
     private val viewModel: NotificationViewModel by viewModels()
     private lateinit var adapter: AlarmRVAdapter
 
@@ -26,7 +28,7 @@ class AlarmFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentHomeAlarmBinding.inflate(inflater, container, false)
+        _binding = FragmentHomeAlarmBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -85,5 +87,10 @@ class AlarmFragment : Fragment() {
         viewModel.error.observe(viewLifecycleOwner) { msg ->
             msg?.let { Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show() }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

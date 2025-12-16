@@ -43,6 +43,7 @@ import com.example.teumteum.databinding.DialogConfirmAiContentDeleteBinding
 import com.example.teumteum.databinding.DialogConfirmTeumDeleteBinding
 import com.example.teumteum.databinding.DialogConfirmTodoDeleteBinding
 import com.example.teumteum.databinding.DialogConfirmTodoEditBinding
+import com.example.teumteum.databinding.DialogConfirmWishDeleteBinding
 
 import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.example.teumteum.ui.todo.adapter.TeumProfileAdapter
@@ -139,6 +140,7 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
             ScheduleType.AI      -> "AI 콘텐츠"
             ScheduleType.TEUM    -> "틈 약속"
             ScheduleType.ROUTINE -> "투두"
+            ScheduleType.WISH    -> "위시"
         }
 
         binding.btnTodo.text = label
@@ -235,6 +237,7 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
                 ScheduleType.TODO    -> showTodoDeleteDialog()
                 ScheduleType.TEUM    -> showTeumDeleteDialog()
                 ScheduleType.AI      -> showAiDeleteDialog()
+                ScheduleType.WISH    -> showWishDeleteDialog()
                 else                 -> showTodoDeleteDialog()
             }
         }
@@ -774,6 +777,23 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
         dialog.show()
     }
 
+    private fun showWishDeleteDialog() {
+        val dialogBinding = DialogConfirmWishDeleteBinding.inflate(layoutInflater)
+        val dialog = AlertDialog.Builder(requireContext(), R.style.RoundedAlertDialog)
+            .setView(dialogBinding.root)
+            .create()
+
+        dialogBinding.wishConfirmTv.setOnClickListener {
+            dialogBinding.wishConfirmTv.isEnabled = false
+            dialog.dismiss()
+            viewModel.deleteTodo(todoId)
+        }
+        dialogBinding.wishCancelTv.setOnClickListener { dialog.dismiss() }
+
+        applyDialogWindow(dialog)
+        dialog.show()
+    }
+
     private fun applyDialogWindow(dialog: AlertDialog) {
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         dialog.setOnShowListener {
@@ -878,8 +898,7 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
             run {
                 listOf(
                     binding.todoTitleEt, binding.startDateTv, binding.startTimeTv,
-                    binding.endDateTv, binding.endTimeTv, binding.addAlarmTv, binding.btnPlus,
-                    binding.detailTextEt, binding.btnTodoSave
+                    binding.endDateTv, binding.endTimeTv, binding.detailTextEt
                 ).forEach { v ->
                     v.isEnabled = true
                     v.alpha = 1f
@@ -890,7 +909,6 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
                 val nh = _normalHintColor ?: binding.detailTextEt.currentHintTextColor
 
                 binding.timerIconIv.clearColorFilter()
-                binding.alarmIconIv.clearColorFilter()
                 binding.publicIconIv.clearColorFilter()
                 binding.includeIconIv.clearColorFilter()
                 binding.detailTextIv.clearColorFilter()
@@ -900,7 +918,6 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
                 binding.startTimeTv.setTextColor(nt)
                 binding.endDateTv.setTextColor(nt)
                 binding.endTimeTv.setTextColor(nt)
-                binding.addAlarmTv.setTextColor(nt)
                 binding.publicSettingTv.setTextColor(nt)
                 binding.includeReportTv.setTextColor(nt)
                 binding.detailTextEt.setTextColor(nt)
@@ -951,96 +968,14 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
             originalIncludeTeum = todo.includeTeum
             originalRemindAlarm = (todo.remindAlarm ?: emptyList()).map { it.alarm }
 
-            //반복일정은 삭제만 가능
+            // 반복일정은 알림 편집만 가능
             if (todo.type == ScheduleType.ROUTINE) {
-                val deactiveColor = ContextCompat.getColor(requireContext(), R.color.teumteum_deactive)
-
-                binding.todoTitleEt.setTextColor(deactiveColor)
-                binding.timerIconIv.setColorFilter(deactiveColor)
-                binding.startDateTv.setTextColor(deactiveColor)
-                binding.startTimeTv.setTextColor(deactiveColor)
-                binding.endDateTv.setTextColor(deactiveColor)
-                binding.endTimeTv.setTextColor(deactiveColor)
-                binding.alarmIconIv.setColorFilter(deactiveColor)
-                binding.addAlarmTv.setTextColor(deactiveColor)
-                binding.publicIconIv.setColorFilter(deactiveColor)
-                binding.publicSettingTv.setTextColor(deactiveColor)
-                binding.includeIconIv.setColorFilter(deactiveColor)
-                binding.includeReportTv.setTextColor(deactiveColor)
-                binding.detailTextIv.setColorFilter(deactiveColor)
-                binding.detailTextEt.setTextColor(deactiveColor)
-                binding.detailTextEt.setHintTextColor(deactiveColor)
-
-                binding.todoTitleEt.isEnabled = false
-                binding.startDateTv.isEnabled = false
-                binding.startTimeTv.isEnabled = false
-                binding.endDateTv.isEnabled = false
-                binding.endTimeTv.isEnabled = false
-                binding.addAlarmTv.isEnabled = false
-                binding.btnPlus.isEnabled = false
-                binding.detailTextEt.isEnabled = false
-
-                listOf(
-                    binding.publicToggle01Iv, binding.includeToggle01Iv
-                ).forEach { t ->
-                    t.isEnabled = false
-                    t.trackDrawable = ContextCompat.getDrawable(t.context, R.drawable.style_toggle_disabled_btn)?.mutate()
-                    t.thumbDrawable = ContextCompat.getDrawable(t.context, R.drawable.style_toggle_disabled_thumb)?.mutate()
-                }
-
-                binding.btnTodoSave.isEnabled = false
-
-                for (i in 0 until binding.alarmLayoutContainer.childCount) {
-                    val alarmView = binding.alarmLayoutContainer.getChildAt(i)
-
-                    if (alarmView is ViewGroup) {
-                        for (j in 0 until alarmView.childCount) {
-                            val child = alarmView.getChildAt(j)
-
-                            (child as? TextView)?.setTextColor(deactiveColor)
-                            (child as? SwitchCompat)?.apply {
-                                isEnabled = false
-                                child.trackDrawable = ContextCompat.getDrawable(child.context, R.drawable.style_toggle_disabled_btn)?.mutate()
-                                child.thumbDrawable = ContextCompat.getDrawable(child.context, R.drawable.style_toggle_disabled_thumb)?.mutate()
-                            }
-                        }
-                    }
-                }
+                disableRoutineEditing()
             }
 
-            //약속된 틈은 일부 수정 가능(공개 설정, 빈틈시간 기록 포함, 상세 내용)
+            // 약속된 틈은 일부 수정 가능(알림 편집, 공개 설정, 빈틈시간 기록 포함, 상세 내용)
             if (todo.type == ScheduleType.TEUM) {
-                val deactiveColor = ContextCompat.getColor(requireContext(), R.color.teumteum_deactive)
-
-                binding.todoTitleEt.setTextColor(deactiveColor)
-                binding.timerIconIv.setColorFilter(deactiveColor)
-                binding.startDateTv.setTextColor(deactiveColor)
-                binding.startTimeTv.setTextColor(deactiveColor)
-                binding.endDateTv.setTextColor(deactiveColor)
-                binding.endTimeTv.setTextColor(deactiveColor)
-
-                binding.todoTitleEt.isEnabled = false
-                binding.startDateTv.isEnabled = false
-                binding.startTimeTv.isEnabled = false
-                binding.endDateTv.isEnabled = false
-                binding.endTimeTv.isEnabled = false
-
-                for (i in 0 until binding.alarmLayoutContainer.childCount) {
-                    val alarmView = binding.alarmLayoutContainer.getChildAt(i)
-
-                    if (alarmView is ViewGroup) {
-                        for (j in 0 until alarmView.childCount) {
-                            val child = alarmView.getChildAt(j)
-
-                            (child as? TextView)?.setTextColor(deactiveColor)
-                            (child as? SwitchCompat)?.apply {
-                                isEnabled = false
-                                child.trackDrawable = ContextCompat.getDrawable(child.context, R.drawable.style_toggle_disabled_btn)?.mutate()
-                                child.thumbDrawable = ContextCompat.getDrawable(child.context, R.drawable.style_toggle_disabled_thumb)?.mutate()
-                            }
-                        }
-                    }
-                }
+                disableRoutineEditing()
             }
 
             parentFragmentManager.setFragmentResult("todo_get", Bundle())
@@ -1123,6 +1058,80 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
             if (fragment is BottomSheetDialogFragment) {
                 fragment.dismissAllowingStateLoss()
             }
+        }
+    }
+
+    private fun disableRoutineEditing() {
+        val deactiveColor = ContextCompat.getColor(requireContext(), R.color.teumteum_deactive)
+
+        binding.todoTitleEt.setTextColor(deactiveColor)
+        binding.timerIconIv.setColorFilter(deactiveColor)
+        binding.startDateTv.setTextColor(deactiveColor)
+        binding.startTimeTv.setTextColor(deactiveColor)
+        binding.endDateTv.setTextColor(deactiveColor)
+        binding.endTimeTv.setTextColor(deactiveColor)
+        binding.publicIconIv.setColorFilter(deactiveColor)
+        binding.publicSettingTv.setTextColor(deactiveColor)
+        binding.includeIconIv.setColorFilter(deactiveColor)
+        binding.includeReportTv.setTextColor(deactiveColor)
+        binding.detailTextIv.setColorFilter(deactiveColor)
+        binding.detailTextEt.setTextColor(deactiveColor)
+        binding.detailTextEt.setHintTextColor(deactiveColor)
+
+        // 입력/선택 비활성화
+        setViewsEnabled(
+            enabled = false,
+            binding.todoTitleEt,
+            binding.startDateTv, binding.startTimeTv,
+            binding.endDateTv, binding.endTimeTv,
+            binding.detailTextEt,
+        )
+
+        // 토글 비활성화
+        setTogglesEnabled(
+            enabled = false,
+            binding.publicToggle01Iv,
+            binding.includeToggle01Iv
+        )
+    }
+
+    private fun disableTeumEditing() {
+        val deactiveColor = ContextCompat.getColor(requireContext(), R.color.teumteum_deactive)
+
+        binding.todoTitleEt.setTextColor(deactiveColor)
+        binding.timerIconIv.setColorFilter(deactiveColor)
+        binding.startDateTv.setTextColor(deactiveColor)
+        binding.startTimeTv.setTextColor(deactiveColor)
+        binding.endDateTv.setTextColor(deactiveColor)
+        binding.endTimeTv.setTextColor(deactiveColor)
+
+        // 입력/선택 비활성화
+        setViewsEnabled(
+            enabled = false,
+            binding.todoTitleEt,
+            binding.startDateTv, binding.startTimeTv,
+            binding.endDateTv, binding.endTimeTv,
+        )
+    }
+
+    private fun setViewsEnabled(enabled: Boolean, vararg views: View) {
+        views.forEach { v ->
+            v.isEnabled = enabled
+            v.alpha = if (enabled) 1f else 1f
+        }
+    }
+
+    private fun setTogglesEnabled(enabled: Boolean, vararg toggles: SwitchCompat) {
+        toggles.forEach { t ->
+            t.isEnabled = enabled
+            t.trackDrawable = ContextCompat.getDrawable(
+                t.context,
+                if (enabled) R.drawable.style_toggle_btn else R.drawable.style_toggle_disabled_btn
+            )?.mutate()
+            t.thumbDrawable = ContextCompat.getDrawable(
+                t.context,
+                if (enabled) R.drawable.style_toggle_thumb else R.drawable.style_toggle_disabled_thumb
+            )?.mutate()
         }
     }
 

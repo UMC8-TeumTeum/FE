@@ -5,35 +5,34 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.example.teumteum.databinding.FragmentMyAlarmSettingBinding
-import com.example.teumteum.ui.main.MainActivity
+import com.example.teumteum.databinding.FragmentServiceInfoBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MyAlarmSettingFragment : Fragment() {
+class ServiceInfoFragment : Fragment() {
 
-    private lateinit var binding: FragmentMyAlarmSettingBinding
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
+    private var _binding: FragmentServiceInfoBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentMyAlarmSettingBinding.inflate(inflater,container,false)
+    ): View {
+        _binding = FragmentServiceInfoBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (activity as? MainActivity)?.hideBottomBar()
 
         binding.backArrowIv.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 }

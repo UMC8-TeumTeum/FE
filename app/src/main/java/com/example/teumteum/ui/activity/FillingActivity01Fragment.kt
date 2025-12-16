@@ -19,7 +19,8 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class FillingActivity01Fragment : Fragment() {
 
-    private lateinit var binding: FragmentFillingActivity01Binding
+    private var _binding: FragmentFillingActivity01Binding? = null
+    private val binding get() = _binding!!
 
     private var selectedTimeTag: String? = null
     private var selectedTimeButton: View? = null
@@ -37,7 +38,7 @@ class FillingActivity01Fragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentFillingActivity01Binding.inflate(inflater, container, false)
+        _binding = FragmentFillingActivity01Binding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -49,6 +50,21 @@ class FillingActivity01Fragment : Fragment() {
         val selectedText = ContextCompat.getColor(requireContext(), R.color.white)
         val defaultBg = ContextCompat.getColor(requireContext(), R.color.main_2)
         val defaultText = ContextCompat.getColor(requireContext(), R.color.text_primary)
+
+        // 자동 상태 복원 방지
+        binding.fillingActivityLocationEt.isSaveEnabled = false
+        binding.fillingActivityCategoryEt.isSaveEnabled = false
+
+        // 이전 View 참조 제거
+        selectedTimeButton = null
+        selectedLocationButton = null
+        selectedCategoryButton = null
+
+        // 내부 상태 동기화
+        selectedLocationText = binding.fillingActivityLocationEt.text?.toString()?.trim()?.takeIf { it.isNotEmpty() }
+        selectedCategoryText = binding.fillingActivityCategoryEt.text?.toString()?.trim()?.takeIf { it.isNotEmpty() }
+
+        updateNextButtonState()
 
         activity?.findViewById<BottomNavigationView>(R.id.main_bnv)?.visibility = View.GONE
 
@@ -245,6 +261,8 @@ class FillingActivity01Fragment : Fragment() {
                 arguments = bundle
             }
 
+            viewModel.clearActivityResults()
+
             parentFragmentManager.beginTransaction()
                 .replace(R.id.main_frm, fragment)
                 .addToBackStack(null)
@@ -340,9 +358,16 @@ class FillingActivity01Fragment : Fragment() {
         selectedCategoryText = null
         binding.fillingActivityCategoryEt.setText("")
 
+        binding.searchBtn.isEnabled = false
+
         updateNextButtonState()
 
         // 포커스 해제
         binding.root.clearFocus()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

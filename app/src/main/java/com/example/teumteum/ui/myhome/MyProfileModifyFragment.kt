@@ -13,9 +13,11 @@ import com.example.teumteum.databinding.FragmentMyProfileModifyBinding
 import com.example.teumteum.ui.main.MainActivity
 import com.example.teumteum.ui.main.viewModel.HomeViewModel
 import com.example.teumteum.ui.myhome.viewModel.MyHomeViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
+@AndroidEntryPoint
 class MyProfileModifyFragment : Fragment() {
 
     private lateinit var binding: FragmentMyProfileModifyBinding
