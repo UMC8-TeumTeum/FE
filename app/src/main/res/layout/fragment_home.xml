@@ -65,9 +65,9 @@
                         android:layout_height="4dp"
                         android:background="@drawable/clock_indicator_bar"/>
 
-                    <Space
+                    <android.widget.Space
                         android:layout_width="4dp"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="0dp"/>
 
                     <!-- 오른쪽 -->
                     <View
