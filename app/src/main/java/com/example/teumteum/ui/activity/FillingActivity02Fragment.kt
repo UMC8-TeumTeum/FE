@@ -23,7 +23,9 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class FillingActivity02Fragment : Fragment() {
 
-    private lateinit var binding: FragmentFillingActivity02Binding
+    private var _binding: FragmentFillingActivity02Binding? = null
+    private val binding get() = _binding!!
+
     private lateinit var aiAdapter: AiRecommendAdapter
     private lateinit var wishAdapter: WishRecommendAdapter
     private val wishList = mutableListOf<ActivityWishResult>()
@@ -39,7 +41,7 @@ class FillingActivity02Fragment : Fragment() {
     private val minShimmerShownMs = 600L
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, s: Bundle?): View {
-        binding = FragmentFillingActivity02Binding.inflate(inflater, container, false)
+        _binding = FragmentFillingActivity02Binding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -235,5 +237,10 @@ class FillingActivity02Fragment : Fragment() {
             pendingWishEmpty?.let { applyWishEmptyState(it) }
             isRefreshing = false
         }, delay)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

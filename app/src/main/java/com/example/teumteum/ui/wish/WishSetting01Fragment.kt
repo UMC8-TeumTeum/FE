@@ -32,7 +32,8 @@ import kotlin.collections.orEmpty
 @AndroidEntryPoint
 class WishSetting01Fragment : Fragment() {
 
-    private lateinit var binding: FragmentWishSetting01Binding
+    private var _binding: FragmentWishSetting01Binding? = null
+    private val binding get() = _binding!!
 
     private var selectedTimeText: String? = null
     private var selectedStartTime: String? = null
@@ -54,7 +55,7 @@ class WishSetting01Fragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentWishSetting01Binding.inflate(inflater, container, false)
+        _binding = FragmentWishSetting01Binding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -309,5 +310,10 @@ class WishSetting01Fragment : Fragment() {
         val h = norm / 60
         val m = norm % 60
         return String.format("%02d:%02d", h, m)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
