@@ -19,7 +19,8 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class FillingActivity01Fragment : Fragment() {
 
-    private lateinit var binding: FragmentFillingActivity01Binding
+    private var _binding: FragmentFillingActivity01Binding? = null
+    private val binding get() = _binding!!
 
     private var selectedTimeTag: String? = null
     private var selectedTimeButton: View? = null
@@ -37,7 +38,7 @@ class FillingActivity01Fragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentFillingActivity01Binding.inflate(inflater, container, false)
+        _binding = FragmentFillingActivity01Binding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -363,5 +364,10 @@ class FillingActivity01Fragment : Fragment() {
 
         // 포커스 해제
         binding.root.clearFocus()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

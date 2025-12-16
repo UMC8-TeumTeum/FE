@@ -31,7 +31,8 @@ import kotlin.collections.orEmpty
 @AndroidEntryPoint
 class FillingSetting01Fragment : Fragment() {
 
-    private lateinit var binding: FragmentFillingSetting01Binding
+    private var _binding: FragmentFillingSetting01Binding? = null
+    private val binding get() = _binding!!
 
     private var selectedTimeText: String? = null
     private var selectedStartTime: String? = null
@@ -55,7 +56,7 @@ class FillingSetting01Fragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentFillingSetting01Binding.inflate(inflater, container, false)
+        _binding = FragmentFillingSetting01Binding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -305,5 +306,10 @@ class FillingSetting01Fragment : Fragment() {
         val h = norm / 60
         val m = norm % 60
         return String.format("%02d:%02d", h, m)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
