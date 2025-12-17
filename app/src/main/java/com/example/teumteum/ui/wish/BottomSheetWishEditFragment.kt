@@ -306,6 +306,7 @@ class BottomSheetWishEditFragment : BottomSheetDialogFragment() {
     }
 
     private fun setupTimeButtons(currentTime: String) {
+        selectedTimeButton = null // 재바인딩 시 초기화
         val timeButtons = listOf(
             binding.btnWishTime01,
             binding.btnWishTime02,
@@ -342,6 +343,8 @@ class BottomSheetWishEditFragment : BottomSheetDialogFragment() {
     }
 
     private fun setupCategoryButtons(wish: WishResult) {
+        selectedCategoryButtons.clear() // 누적 방지
+
         val categoryButtons = listOf(
             binding.btnWishCategory01,
             binding.btnWishCategory02,

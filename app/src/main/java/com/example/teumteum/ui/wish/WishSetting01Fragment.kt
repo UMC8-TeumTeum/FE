@@ -22,6 +22,7 @@ import com.example.teumteum.ui.main.data.TimeType
 import com.example.teumteum.ui.main.viewModel.HomeViewModel
 import com.example.teumteum.ui.wish.adapter.WishTimeAdapter
 import com.example.teumteum.ui.wish.data.UiTimeSlot
+import com.example.teumteum.utils.setOnSingleClickListener
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
@@ -49,6 +50,8 @@ class WishSetting01Fragment : Fragment() {
     private lateinit var wishTimeAdapter: WishTimeAdapter
 
     private var selectedDateServer: String = LocalDate.now().toString()
+
+    private val CALENDAR_SHEET_TAG = "BottomSheetCalendar"
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -115,10 +118,12 @@ class WishSetting01Fragment : Fragment() {
             binding.clockPager.setCurrentItem(next, true)
         }
 
-        binding.selectDateBtn.setOnClickListener {
+        binding.selectDateBtn.setOnSingleClickListener {
+            if (parentFragmentManager.findFragmentByTag(CALENDAR_SHEET_TAG) != null) return@setOnSingleClickListener
+
             BottomSheetAssignCalendarFragment
                 .newInstance(selectedDateServer)
-                .show(parentFragmentManager, "BottomSheetCalendar")
+                .show(parentFragmentManager, CALENDAR_SHEET_TAG)
         }
 
         parentFragmentManager.setFragmentResultListener(

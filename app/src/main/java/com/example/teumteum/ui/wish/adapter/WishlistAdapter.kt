@@ -10,8 +10,11 @@ import com.example.teumteum.data.remote.wish.model.WishlistItem
 import com.example.teumteum.databinding.ItemWishlistBinding
 import com.example.teumteum.ui.wish.BottomSheetWishEditFragment
 import com.example.teumteum.ui.wish.WishSetting01Fragment
+import com.example.teumteum.utils.setOnSingleClickListener
 
 class WishlistAdapter(private var wishlist: List<WishlistItem>, private val fragmentManager: FragmentManager) : RecyclerView.Adapter<WishlistAdapter.ViewHolder>() {
+
+    private val EDIT_SHEET_TAG = "WishEditBottomSheet"
 
     inner class ViewHolder(val binding: ItemWishlistBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -26,9 +29,13 @@ class WishlistAdapter(private var wishlist: List<WishlistItem>, private val frag
         binding.titleTv.text = item.title
         binding.timeTv.text = item.estimatedDuration
 
-        binding.root.setOnClickListener {
-            val bottomSheet = BottomSheetWishEditFragment.newInstance(item.id)
-            bottomSheet.show(fragmentManager, bottomSheet.tag)
+        binding.root.setOnSingleClickListener {
+            // 이미 바텀시트 떠있으면 막기
+            if (fragmentManager.findFragmentByTag(EDIT_SHEET_TAG) != null) return@setOnSingleClickListener
+
+            BottomSheetWishEditFragment
+                .newInstance(item.id)
+                .show(fragmentManager, EDIT_SHEET_TAG)
         }
 
         binding.selectButton.setOnClickListener {
