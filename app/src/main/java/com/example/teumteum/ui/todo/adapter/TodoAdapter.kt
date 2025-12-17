@@ -13,6 +13,7 @@ import com.example.teumteum.data.remote.todo.model.enums.AlarmStatus
 import com.example.teumteum.data.remote.todo.model.enums.ScheduleType
 import com.example.teumteum.databinding.ItemTodolistBinding
 import com.example.teumteum.ui.todo.BottomSheetTodoEditFragment
+import com.example.teumteum.utils.setOnSingleClickListener
 
 class TodoAdapter(
     private val fragmentManager: FragmentManager,
@@ -20,8 +21,9 @@ class TodoAdapter(
     private val onToggleAlarm: (id: Long, toActive: Boolean) -> Unit,
 ) : RecyclerView.Adapter<TodoAdapter.ViewHolder>() {
 
-    inner class ViewHolder(val binding: ItemTodolistBinding) : RecyclerView.ViewHolder(binding.root)
+    private val EDIT_SHEET_TAG = "TodoEditBottomSheet"
 
+    inner class ViewHolder(val binding: ItemTodolistBinding) : RecyclerView.ViewHolder(binding.root)
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         val binding: ItemTodolistBinding =
             ItemTodolistBinding.inflate(LayoutInflater.from(viewGroup.context), viewGroup, false)
@@ -44,7 +46,10 @@ class TodoAdapter(
             ContextCompat.getColor(b.root.context, if (isRoutine) R.color.main_2 else R.color.white)
         )
 
-        b.root.setOnClickListener {
+        b.root.setOnSingleClickListener {
+            // 이미 바텀시트 떠있으면 막기
+            if (fragmentManager.findFragmentByTag(EDIT_SHEET_TAG) != null) return@setOnSingleClickListener
+
             val scheduleTypeName = runCatching { item.type.name }
                 .getOrDefault(ScheduleType.TODO.name) // 기본값 투두
             val args = Bundle().apply {
@@ -52,7 +57,7 @@ class TodoAdapter(
                 putString("schedule_type", scheduleTypeName)
             }
             BottomSheetTodoEditFragment().apply { arguments = args }
-                .show(fragmentManager, "TodoEditBottomSheet")
+                .show(fragmentManager, EDIT_SHEET_TAG)
         }
 
         if (item.alarmStatus == AlarmStatus.NONE) {

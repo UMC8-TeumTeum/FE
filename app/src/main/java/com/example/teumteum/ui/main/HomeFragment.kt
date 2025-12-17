@@ -50,6 +50,7 @@ import com.example.teumteum.ui.main.data.TimeType
 import com.example.teumteum.ui.main.viewModel.HomeViewModel
 import com.example.teumteum.ui.myhome.viewModel.MyHomeViewModel
 import com.example.teumteum.utils.applyBlurShadow
+import com.example.teumteum.utils.setOnSingleClickListener
 
 import com.kizitonwose.calendar.view.CalendarView
 import com.kizitonwose.calendar.view.MonthDayBinder
@@ -148,10 +149,11 @@ class HomeFragment : Fragment() {
             }
         }
 
-        binding.fabAddIv.setOnClickListener {
+        binding.fabAddIv.setOnSingleClickListener {
+            // 이미 떠있는 바텀시트 있으면 중복 방지 + 인스턴스 정리
             (parentFragmentManager.findFragmentByTag(TODO_SHEET_TAG) as? BottomSheetTodoRegisterFragment)?.let { sheet ->
-                if (sheet.dialog?.isShowing == true) return@setOnClickListener
-                sheet.dismissAllowingStateLoss() // 인스턴스 정리
+                if (sheet.dialog?.isShowing == true) return@setOnSingleClickListener
+                sheet.dismissAllowingStateLoss()
             }
 
             val scheduleList = viewModel.scheduleList.value ?: emptyList()

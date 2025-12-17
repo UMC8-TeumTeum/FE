@@ -16,7 +16,9 @@ import com.example.teumteum.databinding.FragmentWishlistBinding
 import com.example.teumteum.ui.wish.adapter.WishlistAdapter
 import com.example.teumteum.ui.wish.viewModel.WishViewModel
 import com.example.teumteum.utils.applyBlurShadow
+import com.example.teumteum.utils.setOnSingleClickListener
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -36,6 +38,8 @@ class WishlistFragment : Fragment() {
     // 스크롤에서 중복 호출 방지용
     private var loadingScrollGuard = false
 
+    private val WISH_SHEET_TAG = "WishRegisterSheet"
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -50,11 +54,16 @@ class WishlistFragment : Fragment() {
                 .commit()
         }
 
-        binding.fabAddIv.setOnClickListener {
-            val bottomSheet = BottomSheetWishRegisterFragment().apply {
-                arguments = Bundle().apply { putBoolean("isFromWish", true) }
+        binding.fabAddIv.setOnSingleClickListener {
+            // 이미 떠있는 바텀시트 있으면 중복 방지 + 인스턴스 정리
+            (parentFragmentManager.findFragmentByTag(WISH_SHEET_TAG) as? BottomSheetDialogFragment)?.let { sheet ->
+                if (sheet.dialog?.isShowing == true) return@setOnSingleClickListener
+                sheet.dismissAllowingStateLoss()
             }
-            bottomSheet.show(parentFragmentManager, bottomSheet.tag)
+
+            BottomSheetWishRegisterFragment().apply {
+                arguments = Bundle().apply { putBoolean("isFromWish", true) }
+            }.show(parentFragmentManager, WISH_SHEET_TAG)
         }
 
         return binding.root
