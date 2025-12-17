@@ -427,6 +427,7 @@ class HomeFragment : Fragment() {
             viewModel.refreshTodaySchedule()
             viewModel.getTeumTime()
             refreshTodolist()
+            refreshCalendarDots()
         }
 
         // 투두 수정 성공 이벤트 수신
@@ -434,6 +435,7 @@ class HomeFragment : Fragment() {
             viewModel.refreshTodaySchedule()
             viewModel.getTeumTime()
             refreshTodolist()
+            refreshCalendarDots()
         }
 
         // 투두 삭제 성공 이벤트 수신
@@ -441,6 +443,7 @@ class HomeFragment : Fragment() {
             viewModel.refreshTodaySchedule()
             viewModel.getTeumTime()
             refreshTodolist()
+            refreshCalendarDots()
         }
 
         todoViewModel.getTodoList(date)
@@ -846,6 +849,17 @@ class HomeFragment : Fragment() {
     private inner class DayViewContainer(view: View) : ViewContainer(view) {
         val textView: TextView = view.findViewById(R.id.calendar_day_tv)
         val dotView: View = view.findViewById(R.id.dot_view)
+    }
+
+    // 캘린더 갱신
+    private fun refreshCalendarDots() {
+        lastRequestedRange = null
+
+        if (isWeeklyMode) {
+            weekCalendar.findFirstVisibleWeek()?.let { requestForWeek(it) }
+        } else {
+            monthCalendar.findFirstVisibleMonth()?.let { requestForMonth(it) }
+        }
     }
 
     override fun onDestroyView() {
