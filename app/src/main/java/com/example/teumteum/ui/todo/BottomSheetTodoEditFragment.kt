@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -105,7 +106,7 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
     private var originalDescription: String = ""
     private var originalIsPublic: Boolean = false
     private var originalIncludeTeum: Boolean = false
-    private var originalRemindAlarm: List<Int> = emptyList()
+    private var originalRemindAlarm: List<ReminderAlarm> = emptyList()
 
     private var _normalTextColor: Int? = null
     private var _normalHintColor: Int? = null
@@ -470,6 +471,37 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
         return if (result.isEmpty()) null else result
     }
 
+    // 리마인드 알림 비교 (변경 감지 전용)
+    private fun getRemindAlarmsForCompare(): List<ReminderAlarm> {
+        val list = mutableListOf<ReminderAlarm>()
+
+        for (i in 0 until binding.alarmLayoutContainer.childCount) {
+            val child = binding.alarmLayoutContainer.getChildAt(i)
+            val toggle = child.findViewById<SwitchCompat>(R.id.alarm_toggle_tv)
+            val label = child.findViewById<TextView>(R.id.alarm_set_tv).text.toString()
+            val minute = alarmLabelToMinutes[label] ?: continue
+
+            list.add(
+                ReminderAlarm(
+                    alarm = minute,
+                    status = if (toggle.isChecked) AlarmStatus.ACTIVE else AlarmStatus.INACTIVE
+                )
+            )
+        }
+
+        return list.sortedBy { it.alarm }
+    }
+
+    // 시간 파싱 후 통일 (변경 감지 전용)
+    private fun normalizeToMinuteIso(raw: String): String {
+        return try {
+            val dt = parseApiDateTime(raw)
+            dt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"))
+        } catch (e: Exception) {
+            raw.take(16)
+        }
+    }
+
     private fun isModified(): Boolean {
         val currentTitle = binding.todoTitleEt.text.toString().trim()
 
@@ -479,17 +511,7 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
         val currentDescription = binding.detailTextEt.text.toString().trim()
         val currentIsPublic = binding.publicToggle01Iv.isChecked
         val currentIncludeTeum = binding.includeToggle01Iv.isChecked
-        val currentRemindAlarm = getSelectedRemindAlarms()
-
-        Log.d("isModifiedCheck", """
-        currentTitle: $currentTitle / originalTitle: $originalTitle / changed: ${currentTitle != originalTitle}
-        currentStartTime: $currentStartTime / originalStartTime: $originalStartTime / changed: ${currentStartTime != originalStartTime}
-        currentEndTime: $currentEndTime / originalEndTime: $originalEndTime / changed: ${currentEndTime != originalEndTime}
-        currentDescription: $currentDescription / originalDescription: $originalDescription / changed: ${currentDescription != originalDescription}
-        currentIsPublic: $currentIsPublic / originalIsPublic: $originalIsPublic / changed: ${currentIsPublic != originalIsPublic}
-        currentIncludeTeum: $currentIncludeTeum / originalIncludeTeum: $originalIncludeTeum / changed: ${currentIncludeTeum != originalIncludeTeum}
-        currentRemindAlarm: $currentRemindAlarm / originalRemindAlarm: $originalRemindAlarm / changed: ${currentRemindAlarm != originalRemindAlarm}
-    """.trimIndent())
+        val currentRemindAlarm = getRemindAlarmsForCompare()
 
         return currentTitle != originalTitle ||
                 currentStartTime != originalStartTime ||
@@ -706,7 +728,7 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
         }
 
         dialog.setOnKeyListener { _, keyCode, event ->
-            if (keyCode == android.view.KeyEvent.KEYCODE_BACK && event.action == android.view.KeyEvent.ACTION_UP) {
+            if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP) {
                 if (isModified()) {
                     showTodoCancelEditDialog()
                 } else {
@@ -959,14 +981,13 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
 
             // 선택 여부 확인용 원본 저장
             originalTitle = todo.title
-            combineDateTime(binding.startDateTv, binding.startTimeTv)
-            originalStartTime = todo.startTime
-            originalEndTime = todo.endTime
+            originalStartTime = normalizeToMinuteIso(todo.startTime)
+            originalEndTime = normalizeToMinuteIso(todo.endTime)
 
             originalDescription = todo.description
             originalIsPublic = todo.isPublic
             originalIncludeTeum = todo.includeTeum
-            originalRemindAlarm = (todo.remindAlarm ?: emptyList()).map { it.alarm }
+            originalRemindAlarm = (todo.remindAlarm ?: emptyList()).sortedBy { it.alarm }
 
             // 반복일정은 알림 편집만 가능
             if (todo.type == ScheduleType.ROUTINE) {
