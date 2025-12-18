@@ -5,6 +5,7 @@ import com.example.teumteum.data.remote.mypage.model.PushAlarmRequest
 import com.example.teumteum.data.remote.mypage.model.RemindAlarmRequest
 import com.example.teumteum.data.remote.mypage.model.RemindAlarmResponse
 import com.example.teumteum.data.remote.mypage.service.SettingService
+import com.example.teumteum.data.remote.onboarding.model.SleepPatternRequest
 import com.example.teumteum.utils.handleApiResponse
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -30,6 +31,13 @@ class SettingRepository @Inject constructor(
     //알림 수정
     suspend fun updatePushAlarms(pushAlarms: PushAlarmRequest): Result<Unit> = runCatching {
         val response = settingService.updatePushAlarms(pushAlarms)
+        Log.d("Setting", "response = ${response.body()}")
+        handleApiResponse(response)
+    }
+
+    //수면패턴 수정
+    suspend fun updateSleepPattern(sleepPattern: SleepPatternRequest): Result<Unit> = runCatching {
+        val response = settingService.updateSleepPattern(sleepPattern)
         Log.d("Setting", "response = ${response.body()}")
         handleApiResponse(response)
     }

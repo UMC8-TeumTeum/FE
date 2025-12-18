@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.teumteum.data.remote.mypage.model.PushAlarmRequest
 import com.example.teumteum.data.remote.mypage.model.RemindAlarmRequest
 import com.example.teumteum.data.remote.mypage.repository.SettingRepository
+import com.example.teumteum.data.remote.onboarding.model.SleepPatternRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -64,6 +65,18 @@ class SettingViewModel @Inject constructor(
                     _error.value = "알림 설정 저장 실패: ${it.message}"
                     Log.d("Setting", _error.value.toString())
                 }
+        }
+    }
+
+    fun updateSleepPattern(request: SleepPatternRequest) {
+        viewModelScope.launch {
+            viewModelScope.launch {
+                repository.updateSleepPattern(request)
+                    .onFailure {
+                        _error.value = "수면패턴 설정 저장 실패: ${it.message}"
+                        Log.d("Setting", _error.value.toString())
+                    }
+            }
         }
     }
 }

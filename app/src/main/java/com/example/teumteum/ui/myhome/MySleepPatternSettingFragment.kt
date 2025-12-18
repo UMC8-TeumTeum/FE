@@ -8,9 +8,12 @@ import android.widget.Button
 import android.widget.NumberPicker
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.example.teumteum.R
+import com.example.teumteum.data.remote.onboarding.model.SleepPatternRequest
 import com.example.teumteum.databinding.FragmentMySleepPatternSettingBinding
 import com.example.teumteum.ui.main.MainActivity
+import com.example.teumteum.ui.myhome.viewModel.SettingViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalTime
@@ -21,10 +24,9 @@ class MySleepPatternSettingFragment : Fragment() {
 
     private lateinit var binding: FragmentMySleepPatternSettingBinding
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    private val viewModel: SettingViewModel by viewModels()
 
-    }
+    private val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,29 +47,35 @@ class MySleepPatternSettingFragment : Fragment() {
         binding.sleepStartContainer.setOnClickListener {
             showCustomTimePicker { time ->
                 binding.startChoiceTv.text = time.format(DateTimeFormatter.ofPattern("HH:mm"))
+                tryUpdateSleepPattern()
             }
         }
 
         binding.sleepEndContainer.setOnClickListener {
             showCustomTimePicker { time ->
                 binding.endChoiceTv.text = time.format(DateTimeFormatter.ofPattern("HH:mm"))
+                tryUpdateSleepPattern()
             }
         }
 
         binding.startUpArrow.setOnClickListener {
             changeHour(binding.startChoiceTv, true, true)
+            tryUpdateSleepPattern()
         }
 
         binding.startDownArrow.setOnClickListener {
             changeHour(binding.startChoiceTv, false, true)
+            tryUpdateSleepPattern()
         }
 
         binding.endUpArrow.setOnClickListener {
             changeHour(binding.endChoiceTv, true, false)
+            tryUpdateSleepPattern()
         }
 
         binding.endDownArrow.setOnClickListener {
             changeHour(binding.endChoiceTv, false, false)
+            tryUpdateSleepPattern()
         }
     }
 
@@ -120,5 +128,19 @@ class MySleepPatternSettingFragment : Fragment() {
             val newTime = if (increase) currentTime.plusHours(1) else currentTime.minusHours(1)
             targetTextView.text = newTime.format(DateTimeFormatter.ofPattern("HH:mm"))
         }
+    }
+
+    private fun tryUpdateSleepPattern() {
+        val startText = binding.startChoiceTv.text.toString().trim()
+        val endText = binding.endChoiceTv.text.toString().trim()
+
+        if (startText.isBlank() || endText.isBlank()) return
+
+        val start = runCatching { LocalTime.parse(startText, timeFormatter) }.getOrNull() ?: return
+        val end = runCatching { LocalTime.parse(endText, timeFormatter) }.getOrNull() ?: return
+
+        viewModel.updateSleepPattern(
+            SleepPatternRequest(start.toString(), end.toString())
+        )
     }
 }

@@ -3,6 +3,7 @@ package com.example.teumteum.data.remote.mypage.service
 import com.example.teumteum.data.remote.mypage.model.PushAlarmRequest
 import com.example.teumteum.data.remote.mypage.model.RemindAlarmRequest
 import com.example.teumteum.data.remote.mypage.model.RemindAlarmResponse
+import com.example.teumteum.data.remote.onboarding.model.SleepPatternRequest
 import com.example.teumteum.utils.ApiResponse
 import retrofit2.Response
 import retrofit2.http.Body
@@ -18,4 +19,7 @@ interface SettingService {
 
     @PATCH("/api/users/mypage/alarm")
     suspend fun updatePushAlarms(@Body pushAlarms: PushAlarmRequest): Response<ApiResponse<Unit>>
+
+    @PATCH("/api/users/mypage/sleep-pattern")
+    suspend fun updateSleepPattern(@Body sleepPattern: SleepPatternRequest): Response<ApiResponse<Unit>>
 }
