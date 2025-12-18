@@ -7,10 +7,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.teumteum.databinding.ActivityLoginBinding
-import com.example.teumteum.ui.main.MainActivity
+import com.example.teumteum.ui.auth.SignUpActivity
 import com.example.teumteum.ui.auth.data.LoginResult
 import com.example.teumteum.ui.auth.viewModel.LoginViewModel
-import com.example.teumteum.ui.auth.SignUpActivity
+import com.example.teumteum.ui.main.MainActivity
 import com.example.teumteum.utils.FlowPrefs
 import com.example.teumteum.utils.NextStep
 import com.kakao.sdk.user.UserApiClient
@@ -30,10 +30,6 @@ class LoginActivity : AppCompatActivity() {
         enableEdgeToEdge()
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        binding.signupLayout.setOnClickListener {
-            startActivity(Intent(this, SignUpActivity::class.java))
-        }
 
         binding.kakaoLoginBtn.setOnClickListener {
             startKakaoLogin()
