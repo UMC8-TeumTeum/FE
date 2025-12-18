@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.teumteum.data.remote.mypage.model.PushAlarmRequest
 import com.example.teumteum.data.remote.mypage.model.RemindAlarmRequest
 import com.example.teumteum.data.remote.mypage.repository.SettingRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -53,6 +54,16 @@ class SettingViewModel @Inject constructor(
                 }
 
             _saving.value = false
+        }
+    }
+
+    fun updatePushAlarmSetting(request: PushAlarmRequest) {
+        viewModelScope.launch {
+            repository.updatePushAlarms(request)
+                .onFailure {
+                    _error.value = "알림 설정 저장 실패: ${it.message}"
+                    Log.d("Setting", _error.value.toString())
+                }
         }
     }
 }

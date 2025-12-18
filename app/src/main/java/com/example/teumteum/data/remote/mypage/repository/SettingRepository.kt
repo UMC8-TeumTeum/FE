@@ -1,6 +1,7 @@
 package com.example.teumteum.data.remote.mypage.repository
 
 import android.util.Log
+import com.example.teumteum.data.remote.mypage.model.PushAlarmRequest
 import com.example.teumteum.data.remote.mypage.model.RemindAlarmRequest
 import com.example.teumteum.data.remote.mypage.model.RemindAlarmResponse
 import com.example.teumteum.data.remote.mypage.service.SettingService
@@ -22,6 +23,13 @@ class SettingRepository @Inject constructor(
     //리마인드 알림 수정
     suspend fun updateRemindAlarms(remindAlarms: RemindAlarmRequest): Result<Unit> = runCatching {
         val response = settingService.updateRemindAlarms(remindAlarms)
+        Log.d("Setting", "response = ${response.body()}")
+        handleApiResponse(response)
+    }
+
+    //알림 수정
+    suspend fun updatePushAlarms(pushAlarms: PushAlarmRequest): Result<Unit> = runCatching {
+        val response = settingService.updatePushAlarms(pushAlarms)
         Log.d("Setting", "response = ${response.body()}")
         handleApiResponse(response)
     }
