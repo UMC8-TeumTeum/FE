@@ -5,10 +5,6 @@ import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import android.os.Bundle
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.style.ForegroundColorSpan
-import android.text.style.StyleSpan
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -17,7 +13,6 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
-import androidx.annotation.ColorRes
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -186,10 +181,6 @@ class HomeFragment : Fragment() {
         binding.homeHelpIv.setOnClickListener {
             openTutorialOverlay()
             hookBackToClose()
-        }
-
-        binding.tutorialOverlay.btnCloseTutorial.setOnClickListener {
-            closeTutorialOverlay()
         }
 
         binding.homeNotificationIv.setOnClickListener {
@@ -448,6 +439,19 @@ class HomeFragment : Fragment() {
             refreshCalendarDots()
         }
 
+        // 오버레이 닫힘 이벤트 수신
+        parentFragmentManager.setFragmentResultListener("tutorial_closed", viewLifecycleOwner) { _, _ ->
+            binding.fabAddIv.isVisible = true
+            binding.fabShadowIv.isVisible = true
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                requireActivity().window.insetsController?.show(android.view.WindowInsets.Type.systemBars())
+            }
+
+            backCallback?.remove()
+            backCallback = null
+        }
+
         todoViewModel.getTodoList(date)
         myHomeViewModel.getMyInfo()
 
@@ -579,23 +583,8 @@ class HomeFragment : Fragment() {
 
     @RequiresApi(Build.VERSION_CODES.R)
     private fun openTutorialOverlay() {
-        binding.tutorialOverlay.root.apply {
-            visibility = View.VISIBLE
-            isClickable = true
-            isFocusable = true
-            bringToFront()
-        }
+        (activity as? MainActivity)?.showTutorialOverlay()
 
-        binding.tutorialOverlay.labelTop.highlightText("일정과 수면패턴")
-        binding.tutorialOverlay.labelRightTop.highlightText("수면 패턴")
-        binding.tutorialOverlay.labelLeftBottom.highlightText("빈틈")
-        binding.tutorialOverlay.labelLeftTop.highlightText("오늘의 일정")
-        binding.tutorialOverlay.labelBottom.highlightText("오전과 오후")
-        binding.tutorialOverlay.labelCalendar.highlightText("캘린더")
-        binding.tutorialOverlay.labelTodoList.highlightText("투두리스트")
-
-        // 바텀 내비 + 플로팅버튼 숨기기
-        requireActivity().findViewById<View>(R.id.main_bnv)?.visibility = View.GONE
         binding.fabAddIv.isVisible = false
         binding.fabShadowIv.isVisible = false
 
@@ -607,27 +596,6 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun TextView.highlightText(
-        target: String,
-        @ColorRes colorRes: Int = R.color.main_1
-    ) {
-        val fullText = text.toString()
-        val start = fullText.indexOf(target)
-        if (start == -1) return // 대상 단어 없으면 무시
-
-        val end = start + target.length
-        val spannable = SpannableString(fullText).apply {
-            setSpan(StyleSpan(Typeface.BOLD), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-            setSpan(
-                ForegroundColorSpan(
-                    ContextCompat.getColor(context, colorRes)
-                ),
-                start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
-        }
-        text = spannable
-    }
-
     private fun hookBackToClose() {
         backCallback = object : OnBackPressedCallback(true) {
             @RequiresApi(Build.VERSION_CODES.R)
@@ -637,10 +605,9 @@ class HomeFragment : Fragment() {
 
     @RequiresApi(Build.VERSION_CODES.R)
     private fun closeTutorialOverlay() {
-        binding.tutorialOverlay.root.visibility = View.GONE
+        (activity as? MainActivity)?.hideTutorialOverlay()
 
         // 숨겼던 것들 복구
-        requireActivity().findViewById<View>(R.id.main_bnv)?.visibility = View.VISIBLE
         binding.fabAddIv.isVisible = true
         binding.fabShadowIv.isVisible = true
 
@@ -872,11 +839,9 @@ class HomeFragment : Fragment() {
                 }
             }
         }
-        // 오버레이가 열려있다면 닫으면서 원복
-        if (binding.tutorialOverlay.root.isVisible) {
-            requireActivity().findViewById<View>(R.id.main_bnv)?.visibility = View.VISIBLE
-            requireActivity().findViewById<View?>(R.id.fab_add_iv)?.visibility = View.VISIBLE
-        }
+        binding.fabAddIv.isVisible = true
+        binding.fabShadowIv.isVisible = true
+
         _binding = null
         super.onDestroyView()
     }
