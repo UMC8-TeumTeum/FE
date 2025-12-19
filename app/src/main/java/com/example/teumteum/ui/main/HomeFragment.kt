@@ -10,6 +10,8 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowInsets
+import android.view.WindowInsetsController
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
@@ -590,9 +592,9 @@ class HomeFragment : Fragment() {
 
         // 시스템 UI (상단 상태바 + 하단 네비게이션바) 숨기기
         requireActivity().window.insetsController?.let { controller ->
-            controller.hide(android.view.WindowInsets.Type.systemBars())
+            controller.hide(WindowInsets.Type.systemBars())
             controller.systemBarsBehavior =
-                android.view.WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         }
     }
 
@@ -612,7 +614,7 @@ class HomeFragment : Fragment() {
         binding.fabShadowIv.isVisible = true
 
         // 시스템 UI 복구
-        requireActivity().window.insetsController?.show(android.view.WindowInsets.Type.systemBars())
+        requireActivity().window.insetsController?.show(WindowInsets.Type.systemBars())
 
         backCallback?.remove()
         backCallback = null
