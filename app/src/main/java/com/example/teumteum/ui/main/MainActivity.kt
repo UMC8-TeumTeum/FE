@@ -4,12 +4,19 @@ import android.Manifest
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.graphics.Typeface
 import android.os.Build
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
+import android.text.style.StyleSpan
 import android.util.Log
 import android.view.View
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.ColorRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
@@ -57,6 +64,10 @@ class MainActivity : AppCompatActivity() {
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, 0, systemBars.right, 0)
             insets
+        }
+
+        binding.tutorialOverlayContainer.btnCloseTutorial.setOnClickListener {
+            hideTutorialOverlay()
         }
 
         FirebaseMessaging.getInstance().token
@@ -126,11 +137,49 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun hideBottomBar() {
+    fun hideBottomBar() { binding.mainBnv.visibility = View.GONE }
+    fun showBottomBar() { binding.mainBnv.visibility = View.VISIBLE }
+
+    fun showTutorialOverlay() {
+        binding.tutorialOverlayContainer.root.visibility = View.VISIBLE
+        binding.tutorialOverlayContainer.root.bringToFront()
+
         binding.mainBnv.visibility = View.GONE
+        binding.bottomNavDivider.visibility = View.GONE
+
+        binding.tutorialOverlayContainer.labelTop.highlightText("일정과 수면패턴")
+        binding.tutorialOverlayContainer.labelRightTop.highlightText("수면 패턴")
+        binding.tutorialOverlayContainer.labelLeftBottom.highlightText("빈틈")
+        binding.tutorialOverlayContainer.labelLeftTop.highlightText("오늘의 일정")
+        binding.tutorialOverlayContainer.labelBottom.highlightText("오전과 오후")
+        binding.tutorialOverlayContainer.labelCalendar.highlightText("캘린더")
+        binding.tutorialOverlayContainer.labelTodoList.highlightText("투두리스트")
     }
 
-    fun showBottomBar() {
+    fun hideTutorialOverlay() {
+        binding.tutorialOverlayContainer.root.visibility = View.GONE
         binding.mainBnv.visibility = View.VISIBLE
+        binding.bottomNavDivider.visibility = View.VISIBLE
+
+        supportFragmentManager.setFragmentResult("tutorial_closed", Bundle.EMPTY)
+    }
+
+    private fun TextView.highlightText(
+        target: String,
+        @ColorRes colorRes: Int = R.color.main_1
+    ) {
+        val fullText = text.toString()
+        val start = fullText.indexOf(target)
+        if (start == -1) return
+
+        val end = start + target.length
+        val spannable = SpannableString(fullText).apply {
+            setSpan(StyleSpan(Typeface.BOLD), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            setSpan(
+                ForegroundColorSpan(ContextCompat.getColor(context, colorRes)),
+                start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+        text = spannable
     }
 }

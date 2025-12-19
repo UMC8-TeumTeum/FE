@@ -27,7 +27,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="6dp"
-        android:paddingBottom="4dp"
         android:background="@color/white"
         app:itemIconSize="28dp"
         app:itemIconTint="@drawable/btm_color_selector"
@@ -37,5 +36,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/bottom_nav" />
+
+    <include
+        android:id="@+id/tutorial_overlay_container"
+        layout="@layout/tutorial_overlay"
+        android:visibility="gone"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
