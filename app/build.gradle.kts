@@ -45,6 +45,10 @@ android {
 
         buildConfigField("String", "NAVER_CLIENT_SECRET", "\"${properties["NAVER_CLIENT_SECRET"]}\"")
         manifestPlaceholders["NAVER_CLIENT_SECRET"] = properties["NAVER_CLIENT_SECRET"] ?: ""
+
+        buildConfigField("String", "GOOGLE_CLIENT_ID", "\"${properties["GOOGLE_CLIENT_ID"]}\"")
+        manifestPlaceholders["GOOGLE_CLIENT_ID"] = properties["GOOGLE_CLIENT_ID"] ?: ""
+
     }
 
     buildTypes {
@@ -127,6 +131,12 @@ dependencies {
 
     //naver
     implementation("com.navercorp.nid:oauth:5.11.0")
+
+    //google login
+    implementation("com.google.android.gms:play-services-auth:<latest>")
+    implementation("androidx.credentials:credentials:1.5.0")
+    implementation("androidx.credentials:credentials-play-services-auth:1.5.0")
+    implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
 
     //shimmer
     implementation("com.facebook.shimmer:shimmer:0.5.0")

@@ -4,8 +4,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.example.teumteum.BuildConfig
 import com.example.teumteum.databinding.ActivityLoginBinding
 import com.example.teumteum.ui.auth.data.LoginResult
 import com.example.teumteum.ui.auth.data.SocialProvider
@@ -13,6 +15,9 @@ import com.example.teumteum.ui.auth.viewModel.LoginViewModel
 import com.example.teumteum.ui.main.MainActivity
 import com.example.teumteum.utils.FlowPrefs
 import com.example.teumteum.utils.NextStep
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 import com.kakao.sdk.user.UserApiClient
 import com.navercorp.nid.NidOAuth
 import com.navercorp.nid.oauth.util.NidOAuthCallback
@@ -39,6 +44,10 @@ class LoginActivity : AppCompatActivity() {
 
         binding.naverLoginBtn.setOnClickListener {
             startNaverLogin()
+        }
+
+        binding.googleLoginBtn.setOnClickListener {
+            startGoogleLogin()
         }
 
         observeViewModel()
@@ -115,6 +124,56 @@ class LoginActivity : AppCompatActivity() {
         }
 
         NidOAuth.requestLogin(this, callback)
+    }
+
+    private val googleLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+
+            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+
+            try {
+                val account = task.getResult(ApiException::class.java)
+                val idToken = account.idToken
+
+                if (idToken.isNullOrBlank()) {
+                    viewModel.onSocialLoginFailed(
+                        SocialProvider.GOOGLE,
+                        RuntimeException("Google ID token is null")
+                    )
+                    return@registerForActivityResult
+                }
+
+                viewModel.exchangeGoogleToken(idToken)
+
+            } catch (e: ApiException) {
+                // ✅ 여기 statusCode가 핵심
+                Log.e("GoogleLogin", "ApiException statusCode=${e.statusCode}, msg=${e.message}", e)
+
+                // statusCode=12501 이면 사용자가 취소한 게 맞는 케이스가 많음
+                if (e.statusCode == 12501) {
+                    Log.d("GoogleLogin", "User canceled Google sign-in")
+                    return@registerForActivityResult
+                }
+
+                viewModel.onSocialLoginFailed(SocialProvider.GOOGLE, e)
+            }
+        }
+
+    // ✅ 2) 버튼 클릭에서 호출할 함수
+    private fun startGoogleLogin() {
+        val client = GoogleSignIn.getClient(
+            this,
+            GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .requestIdToken(BuildConfig.GOOGLE_CLIENT_ID)
+                .build()
+        )
+
+        // 항상 계정 선택 UI 띄우고 싶으면 signOut 후 실행
+        client.signOut().addOnCompleteListener {
+            googleLauncher.launch(client.signInIntent)
+        }
+
     }
 
 }
