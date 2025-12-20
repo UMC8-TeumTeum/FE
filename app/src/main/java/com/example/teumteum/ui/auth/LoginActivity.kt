@@ -7,13 +7,15 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.teumteum.databinding.ActivityLoginBinding
-import com.example.teumteum.ui.auth.SignUpActivity
 import com.example.teumteum.ui.auth.data.LoginResult
+import com.example.teumteum.ui.auth.data.SocialProvider
 import com.example.teumteum.ui.auth.viewModel.LoginViewModel
 import com.example.teumteum.ui.main.MainActivity
 import com.example.teumteum.utils.FlowPrefs
 import com.example.teumteum.utils.NextStep
 import com.kakao.sdk.user.UserApiClient
+import com.navercorp.nid.NidOAuth
+import com.navercorp.nid.oauth.util.NidOAuthCallback
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -33,6 +35,10 @@ class LoginActivity : AppCompatActivity() {
 
         binding.kakaoLoginBtn.setOnClickListener {
             startKakaoLogin()
+        }
+
+        binding.naverLoginBtn.setOnClickListener {
+            startNaverLogin()
         }
 
         observeViewModel()
@@ -57,7 +63,7 @@ class LoginActivity : AppCompatActivity() {
                     finish()
                 }
                 is LoginResult.Error -> {
-                    Log.d("KakaoLogin", "카카오 로그인 실패 ${result.message}")
+                    Log.d("Login", "소셜 로그인 실패 ${result.message}")
                 }
             }
         }
@@ -66,7 +72,7 @@ class LoginActivity : AppCompatActivity() {
     private fun startKakaoLogin() {
         val callback: (com.kakao.sdk.auth.model.OAuthToken?, Throwable?) -> Unit = { token, error ->
             if (error != null) {
-                viewModel.onKakaoLoginFailed(error)
+                viewModel.onSocialLoginFailed(SocialProvider.KAKAO, error)
             } else if (token != null) {
                 viewModel.exchangeKakaoToken(token.accessToken)
             }
@@ -84,4 +90,31 @@ class LoginActivity : AppCompatActivity() {
             UserApiClient.instance.loginWithKakaoAccount(this, callback = callback)
         }
     }
+
+    private fun startNaverLogin() {
+        val callback = object : NidOAuthCallback {
+
+            override fun onSuccess() {
+                val accessToken = NidOAuth.getAccessToken()
+                Log.d("NAVER", accessToken.toString())
+
+                if (accessToken.isNullOrBlank()) {
+                    return
+                }
+
+                viewModel.exchangeNaverToken(accessToken)
+            }
+
+            override fun onFailure(errorCode: String, errorDesc: String) {
+                Log.d("NaverLogin", "네이버 로그인 실패: $errorCode / $errorDesc")
+                viewModel.onSocialLoginFailed(
+                    SocialProvider.NAVER,
+                    RuntimeException("$errorCode / $errorDesc")
+                )
+            }
+        }
+
+        NidOAuth.requestLogin(this, callback)
+    }
+
 }
