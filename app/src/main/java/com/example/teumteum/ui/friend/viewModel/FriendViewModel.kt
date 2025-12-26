@@ -251,10 +251,11 @@ class FriendViewModel @Inject constructor(
         val gid   = _teumRequestGraphicId.value ?: return null
         val main  = _teumRequestMainTargetUserId.value ?: return null
 
-        val receiversRaw = _teumRequestReceiverUserIds.value.orEmpty()
-
-        val receivers = listOf(main) + receiversRaw
-        val finalReceivers = receivers.distinct()
+//        단일 수신자 아닐 때
+//        val receiversRaw = _teumRequestReceiverUserIds.value.orEmpty()
+//
+//        val receivers = listOf(main) + receiversRaw
+//        val finalReceivers = receivers.distinct()
 
         return TeumRequest(
             title = title,
@@ -263,7 +264,7 @@ class FriendViewModel @Inject constructor(
             startTime = time.startTime,
             endTime = time.endTime,
             graphicId = gid,
-            receiverUserIds = finalReceivers
+            receiverUserId = main
         )
     }
 

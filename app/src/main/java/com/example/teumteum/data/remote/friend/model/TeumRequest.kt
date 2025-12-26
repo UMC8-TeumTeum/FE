@@ -10,5 +10,5 @@ data class TeumRequest(
     @SerializedName("startTime") val startTime: String, // "HH:MM"
     @SerializedName("endTime") val endTime: String,   // "HH:MM"
     @SerializedName("graphicId") val graphicId: Int,
-    @SerializedName("receiverUserIds") val receiverUserIds: List<Int>
+    @SerializedName("receiverUserId") val receiverUserId: Int
 )
