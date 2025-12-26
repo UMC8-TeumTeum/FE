@@ -1,0 +1,78 @@
+language: ko-KR
+
+reviews:
+  profile: chill
+  high_level_summary: true
+  review_status: true
+  request_changes_workflow: false
+  sequence_diagrams: false
+  poem: false
+  auto_review:
+    enabled: true
+    drafts: true
+    branches:
+      - main
+      - dev
+
+  path_instructions:
+    - path: "app/src/**/ui/**"
+      instructions: |
+        [UI(Kotlin) 점검]
+        - ViewBinding 생명주기: Fragment는 onDestroyView()에서 binding=null 처리, 외부에 뷰 참조 보관 금지.
+        - 수명주기 안전 수집: repeatOnLifecycle + viewLifecycleOwner 사용, GlobalScope 금지, cancel 처리 확인.
+        - 리스트/어댑터: DiffUtil 사용, notifyDataSetChanged 지양, ViewHolder 바인딩 최소화.
+        - 상태 반영: 중복 네비게이션/중복 클릭 방지, 단발성 이벤트는 SharedFlow/Channel로 처리.
+
+    - path: "app/src/**/data/**"
+      instructions: |
+        [Data 레이어 점검]
+        - Repository 경계 명확성(네트워크/DB/캐시 분리), Result/Either 일관성.
+        - Retrofit/OkHttp: 타임아웃, 로깅, 에러 파싱, 204 응답은 Response<Unit>로 처리(빈 본문 파싱 금지).
+        - Room: 트랜잭션/인덱스/마이그레이션 점검. DTO↔Entity/Domain 매핑 중복 제거.
+
+    - path: "app/build.gradle.kts"
+      instructions: |
+        [Gradle(KTS) 점검]
+        - 버전 카탈로그/버전 상수 일원화, 중복 의존성 제거.
+        - configuration cache/parallel 등 빌드 성능 옵션 확인.
+        - ksp 전환 가능성, 릴리즈/디버그 분리, 민감정보는 gradle.properties로 분리.
+
+    - path: "app/src/main/res/layout/**/*.xml"
+      instructions: |
+        [Layout 점검]
+        - 구조: include/merge 적절 활용으로 중첩 최소화, 재사용성 확보.
+        - ConstraintLayout: 제약 조건 충돌/경고 여부, 체인/가이드라인/Barrier 등으로 가로세로 정렬 일관성.
+        - 성능: 중첩 뷰 최소화, 불필요한 weights 제거, list item 레이아웃은 경량 설계.
+        - 미리보기용 tools: 속성 적극 활용(visibility, text 등), runtime 빌드에 영향 없게 유지.
+        - 이미지: 벡터 드로어블 우선, 큰 비트맵은 적절한 크기/압축 사용.
+
+  path_filters:
+    # 포함: Kotlin/Java/kts + 레이아웃 XML
+    - "**/*.kt"
+    - "**/*.java"
+    - "**/*.kts"
+    - "app/src/main/res/layout/**/*.xml"
+
+    # 제외: 빌드/아티팩트/테스트/IDE/일반 리소스/문서 등
+    - "!**/build/**"
+    - "!**/out/**"
+    - "!.gradle/**"
+    - "!.idea/**"
+    - "!**/*.iml"
+    - "!**/generated/**"
+    - "!**/src/test/**"
+    - "!**/src/androidTest/**"
+    - "!**/node_modules/**"
+    - "!**/*.md"
+    - "!**/*.txt"
+    - "!**/*.png"
+    - "!**/*.jpg"
+    - "!**/*.jpeg"
+    - "!**/*.webp"
+    - "!**/*.svg"
+    - "!**/*.yaml"
+    - "!**/*.yml"
+    - "!**/*.json"
+    - "!app/src/main/res/values/**"
+    - "!app/src/main/res/drawable/**"
+    - "!app/src/main/res/mipmap-*/**"
