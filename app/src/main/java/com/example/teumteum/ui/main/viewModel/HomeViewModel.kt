@@ -20,8 +20,8 @@ class HomeViewModel @Inject constructor(
     private val repository: HomeRepository
 ) : ViewModel() {
 
-//    private val _scheduleList = MutableLiveData<List<TimeBlock>>(emptyList())
-//    val scheduleList: LiveData<List<TimeBlock>> = _scheduleList
+    private val _scheduleList = MutableLiveData<List<TimeBlock>>(emptyList())
+    val scheduleList: LiveData<List<TimeBlock>> = _scheduleList
 
     private val _sleepTimeList = MutableLiveData<List<TimeBlock>>(emptyList())
     val sleepTimeList: LiveData<List<TimeBlock>> = _sleepTimeList
@@ -71,23 +71,23 @@ class HomeViewModel @Inject constructor(
     }
 
     /** 오늘의 스케줄 가져오기 */
-//    private fun getTodaySchedule(date: String) {
-//        viewModelScope.launch {
-//            repository.getTodaySchedule(date)
-//                .onSuccess { result ->
-//                    Log.d("TodaySchedule", result.toString())
-//                    _scheduleList.value = result.map {
-//                        val start = timeToMinutes(it.startTime)
-//                        val end = timeToMinutes(it.endTime)
-//                        TimeBlock(start, end, it.type)
-//                    }
-//                }
-//                .onFailure {
-//                    _error.value = "스케줄 조회 실패: ${it.message}"
-//                    Log.d("TodaySchedule", _error.value.toString() )
-//                }
-//        }
-//    }
+    private fun getTodaySchedule(date: String) {
+        viewModelScope.launch {
+            repository.getTodaySchedule(date)
+                .onSuccess { result ->
+                    Log.d("TodaySchedule", result.toString())
+                    _scheduleList.value = result.map {
+                        val start = timeToMinutes(it.startTime)
+                        val end = timeToMinutes(it.endTime)
+                        TimeBlock(start, end, it.type)
+                    }
+                }
+                .onFailure {
+                    _error.value = "스케줄 조회 실패: ${it.message}"
+                    Log.d("TodaySchedule", _error.value.toString() )
+                }
+        }
+    }
 
     private fun getTimetable(date: String) {
         viewModelScope.launch {
