@@ -22,6 +22,10 @@ class BlockedAccountViewModel @Inject constructor(
     private val _error = MutableLiveData<String>()
     val error: LiveData<String> = _error
 
+    // 차단 해제 결과 LiveData
+    private val _unblockResult = MutableLiveData<String>() // 메시지 전달
+    val unblockResult: LiveData<String> = _unblockResult
+
     fun getBlockedAccounts() {
         viewModelScope.launch {
             try {
@@ -34,4 +38,22 @@ class BlockedAccountViewModel @Inject constructor(
             }
         }
     }
+
+    // 사용자 차단 해제
+    fun unblockUser(userId: Long) {
+        viewModelScope.launch {
+            repository.unblockUser(userId)
+                .onSuccess { res ->
+                    Log.d("UnBlockedAccounts", "차단 해제 성공: ${res.message}")
+                    _unblockResult.value = res.message
+                    // 리스트에서 제거
+                    _blockedAccountList.value = _blockedAccountList.value?.filter { it.userId != userId }
+                }
+                .onFailure { e ->
+                    Log.d("UnBlockedAccounts", "차단 해제 실패: ${e.message}")
+                    _error.value = e.message ?: "차단 해제 실패"
+                }
+        }
+    }
 }
+

@@ -88,12 +88,9 @@ class BlockedAccountFragment : Fragment() {
         }
 
         dialogView.yesBtn.setOnClickListener {
-            // TODO 차단 해제 API 연결 예정
-            Toast.makeText(
-                requireContext(),
-                "차단이 해제되었습니다.",
-                Toast.LENGTH_SHORT
-            ).show()
+            // 차단 해제 API 호출
+            viewModel.unblockUser(account.userId)
+
             dialog.dismiss()
         }
 
@@ -102,7 +99,6 @@ class BlockedAccountFragment : Fragment() {
         }
 
         dialog.show()
-
         val dialogWidth = (resources.displayMetrics.widthPixels * 0.9).toInt()
         dialog.window?.setLayout(dialogWidth, ViewGroup.LayoutParams.WRAP_CONTENT)
     }

@@ -2,6 +2,7 @@ package com.example.teumteum.data.remote.mypage.repository
 
 import android.util.Log
 import com.example.teumteum.data.remote.mypage.model.BlockedUser
+import com.example.teumteum.data.remote.mypage.model.UnBlockResponse
 import com.example.teumteum.data.remote.mypage.service.BlockService
 import com.example.teumteum.ui.myhome.data.BlockedAccount
 import com.example.teumteum.utils.AuthRetrofit
@@ -35,7 +36,6 @@ class BlockedAccountRepository @Inject constructor(
             throw Exception(body.message)
         }
 
-        // DTO -> UI용 데이터 클래스 변환
         val users: List<BlockedUser> = body.result?.content ?: emptyList()
         return users.map { user ->
             BlockedAccount(
@@ -44,6 +44,20 @@ class BlockedAccountRepository @Inject constructor(
                 job = user.job ?: "",
                 profileImageUrl = user.profileImageUrl
             )
+        }
+    }
+
+    // 사용자 차단 해제
+    suspend fun unblockUser(userId: Long): Result<UnBlockResponse> {
+        return try {
+            val response = blockService.unblockUser(userId)
+            if (response.isSuccessful && response.body() != null) {
+                Result.success(response.body()!!)
+            } else {
+                Result.failure(Exception("서버 오류"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
         }
     }
 }
