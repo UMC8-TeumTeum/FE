@@ -25,6 +25,7 @@ class FriendProfileFollowFragment : Fragment() {
     private var _binding: FragmentFriendProfileFollowBinding? = null
     private val binding get() = _binding!!
 
+    private var targetUserId: Int = -1
     private val viewModel: FriendViewModel by viewModels()
 
     override fun onCreateView(
@@ -134,22 +135,33 @@ class FriendProfileFollowFragment : Fragment() {
         popupWindow.isOutsideTouchable = true
         popupWindow.isFocusable = true
 
-        val xPos = (220 * density).toInt() // Left
-        val yPos = (99 * density).toInt()  // Top
+        val xPos = (220 * density).toInt()
+        val yPos = (99 * density).toInt()
 
         popupWindow.showAtLocation(anchorView, Gravity.TOP or Gravity.START, xPos, yPos)
 
-        // 클릭 리스너 설정
+        // 차단 버튼 클릭
         popupView.findViewById<View>(R.id.btn_block).setOnClickListener {
             popupWindow.dismiss()
-            val bottomSheet = FriendBlockBottomSheet()
-            bottomSheet.show(parentFragmentManager, bottomSheet.tag)
+
+            if (targetUserId == -1) {
+                Log.e("FriendProfile", "차단 실패: targetUserId 없음")
+                return@setOnClickListener
+            }
+
+            val userName = binding.profileNicknameTv.text.toString()
+
+            FriendBlockBottomSheet
+                .newInstance(targetUserId, userName)
+                .show(parentFragmentManager, "FriendBlockBottomSheet")
         }
 
+        // 신고 버튼
         popupView.findViewById<View>(R.id.btn_report).setOnClickListener {
             popupWindow.dismiss()
-            val bottomSheet = FriendReportChoiceBottomSheet()
-            bottomSheet.show(parentFragmentManager, bottomSheet.tag)
+
+            FriendReportChoiceBottomSheet()
+                .show(parentFragmentManager, "FriendReportChoiceBottomSheet")
         }
     }
 

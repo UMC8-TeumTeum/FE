@@ -2,6 +2,7 @@ package com.example.teumteum.ui.friend
 
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -160,40 +161,51 @@ class FriendProfileFollowingFragment : Fragment() {
     // 차단 신고 팝업 표시
     private fun showOptionsPopup(anchorView: View) {
         val popupView = layoutInflater.inflate(R.layout.popup_friend_options, null)
+        val density = resources.displayMetrics.density
 
-        // [수정된 부분] 원하는 dp 크기를 픽셀(px)로 변환합니다 (예: 110dp)
-        val width = (110 * resources.displayMetrics.density).toInt()
-        val height = ViewGroup.LayoutParams.WRAP_CONTENT
+        val widthPx = (170 * density).toInt()
+        val heightPx = ViewGroup.LayoutParams.WRAP_CONTENT
 
         val popupWindow = PopupWindow(
             popupView,
-            width,  // 여기에 WRAP_CONTENT 대신 계산된 width를 넣습니다
-            height,
+            widthPx,
+            heightPx,
             true
         )
 
         popupWindow.isOutsideTouchable = true
         popupWindow.isFocusable = true
 
-        // 위치 조정 (가로 폭이 좁아졌으니 x축 위치를 살짝 조정해보세요. 0 또는 -10 추천)
-        popupWindow.showAsDropDown(anchorView, -10, 10)
+        val xPos = (220 * density).toInt()
+        val yPos = (99 * density).toInt()
 
-        // 클릭 리스너 설정
+        popupWindow.showAtLocation(anchorView, Gravity.TOP or Gravity.START, xPos, yPos)
+
+        // 차단 버튼 클릭
         popupView.findViewById<View>(R.id.btn_block).setOnClickListener {
             popupWindow.dismiss()
 
-            val bottomSheet = FriendBlockBottomSheet()
-            bottomSheet.show(parentFragmentManager, bottomSheet.tag)
+            if (targetUserId == -1) {
+                Log.e("FriendProfile", "차단 실패: targetUserId 없음")
+                return@setOnClickListener
+            }
+
+            val userName = binding.profileNicknameTv.text.toString()
+
+            FriendBlockBottomSheet
+                .newInstance(targetUserId, userName)
+                .show(parentFragmentManager, "FriendBlockBottomSheet")
         }
 
+        // 신고 버튼
         popupView.findViewById<View>(R.id.btn_report).setOnClickListener {
             popupWindow.dismiss()
 
-            // 신고 BottomSheet 열기
-            val bottomSheet = FriendReportChoiceBottomSheet()
-            bottomSheet.show(parentFragmentManager, bottomSheet.tag)
+            FriendReportChoiceBottomSheet()
+                .show(parentFragmentManager, "FriendReportChoiceBottomSheet")
         }
     }
+
 
     private fun observeViewModel() {
         // 언팔로우 결과 메시지
