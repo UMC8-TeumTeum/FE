@@ -10,7 +10,9 @@ import com.example.teumteum.databinding.FragmentMyProfileBinding
 import com.example.teumteum.databinding.FragmentMyRoutineModifyBinding
 import com.example.teumteum.databinding.FragmentMySettingBinding
 import com.example.teumteum.ui.main.MainActivity
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MyRoutineModifyFragment : Fragment() {
 
     private lateinit var binding: FragmentMyRoutineModifyBinding

@@ -26,6 +26,7 @@
     <color name="Jblue">#20DDF4</color>
 
     <color name="teumteum_gray">#D3D3D3</color>
+    <color name="teumteum_gray_80">#CCD3D3D3</color>
     <color name="teumteum_line">#EAEAEA</color>
     <color name="teumteum_deactive">#B1B2B3</color>
     <color name="teumteum_bg">#F6F6F6</color>
@@ -37,5 +38,7 @@
 
     <color name="skeleton_card">#F6F6F6</color>
     <color name="skeleton_block">#EAEAEA</color>
+
+    <color name="overlay_scrim">#CC0E1220</color> <!-- 진한 남색계열 반투명 -->
 
 </resources>

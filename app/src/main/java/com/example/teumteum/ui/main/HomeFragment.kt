@@ -3,15 +3,21 @@ package com.example.teumteum.ui.main
 import android.content.res.ColorStateList
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
+import android.os.Build
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowInsets
+import android.view.WindowInsetsController
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.viewpager2.widget.ViewPager2
@@ -31,6 +37,7 @@ import java.time.format.DateTimeFormatter
 import com.example.teumteum.data.remote.todo.model.TodoListResult
 import com.example.teumteum.data.remote.todo.model.enums.AlarmStatus
 import com.example.teumteum.databinding.ItemClockPageBinding
+import com.example.teumteum.ui.activity.viewModel.ActivityViewModel
 import com.example.teumteum.ui.todo.viewModel.TodoViewModel
 import com.example.teumteum.ui.clock.ChartUtils
 import com.example.teumteum.ui.clock.ClockHalf
@@ -40,6 +47,7 @@ import com.example.teumteum.ui.main.data.TimeType
 import com.example.teumteum.ui.main.viewModel.HomeViewModel
 import com.example.teumteum.ui.myhome.viewModel.MyHomeViewModel
 import com.example.teumteum.utils.applyBlurShadow
+import com.example.teumteum.utils.setOnSingleClickListener
 
 import com.kizitonwose.calendar.view.CalendarView
 import com.kizitonwose.calendar.view.MonthDayBinder
@@ -91,6 +99,7 @@ class HomeFragment : Fragment() {
     private val viewModel: HomeViewModel by activityViewModels()
     private val todoViewModel: TodoViewModel by activityViewModels()
     private val myHomeViewModel: MyHomeViewModel by activityViewModels()
+    private val activityViewModel: ActivityViewModel by activityViewModels()
 
     private var isAM: Boolean = true
 
@@ -99,6 +108,9 @@ class HomeFragment : Fragment() {
     private lateinit var clockAdapter: ClockVPAdapter<ItemClockPageBinding>
     private lateinit var clockPageChangeCallback: ViewPager2.OnPageChangeCallback
 
+    private var backCallback: OnBackPressedCallback? = null
+
+    @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -134,10 +146,11 @@ class HomeFragment : Fragment() {
             }
         }
 
-        binding.fabAddIv.setOnClickListener {
+        binding.fabAddIv.setOnSingleClickListener {
+            // 이미 떠있는 바텀시트 있으면 중복 방지 + 인스턴스 정리
             (parentFragmentManager.findFragmentByTag(TODO_SHEET_TAG) as? BottomSheetTodoRegisterFragment)?.let { sheet ->
-                if (sheet.dialog?.isShowing == true) return@setOnClickListener
-                sheet.dismissAllowingStateLoss() // 인스턴스 정리
+                if (sheet.dialog?.isShowing == true) return@setOnSingleClickListener
+                sheet.dismissAllowingStateLoss()
             }
 
 //            val scheduleList = viewModel.scheduleList.value ?: emptyList()
@@ -158,11 +171,18 @@ class HomeFragment : Fragment() {
                 .commit()
         }
 
+        activityViewModel.clearActivityResults()
+
         binding.bannerCard.setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.main_frm, FillingActivity01Fragment())
                 .addToBackStack(null)
                 .commit()
+        }
+
+        binding.homeHelpIv.setOnClickListener {
+            openTutorialOverlay()
+            hookBackToClose()
         }
 
         binding.homeNotificationIv.setOnClickListener {
@@ -402,6 +422,7 @@ class HomeFragment : Fragment() {
             viewModel.refreshTodaySchedule()
             viewModel.getTeumTime()
             refreshTodolist()
+            refreshCalendarDots()
         }
 
         // 투두 수정 성공 이벤트 수신
@@ -409,6 +430,7 @@ class HomeFragment : Fragment() {
             viewModel.refreshTodaySchedule()
             viewModel.getTeumTime()
             refreshTodolist()
+            refreshCalendarDots()
         }
 
         // 투두 삭제 성공 이벤트 수신
@@ -416,6 +438,20 @@ class HomeFragment : Fragment() {
             viewModel.refreshTodaySchedule()
             viewModel.getTeumTime()
             refreshTodolist()
+            refreshCalendarDots()
+        }
+
+        // 오버레이 닫힘 이벤트 수신
+        parentFragmentManager.setFragmentResultListener("tutorial_closed", viewLifecycleOwner) { _, _ ->
+            binding.fabAddIv.isVisible = true
+            binding.fabShadowIv.isVisible = true
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                requireActivity().window.insetsController?.show(android.view.WindowInsets.Type.systemBars())
+            }
+
+            backCallback?.remove()
+            backCallback = null
         }
 
         todoViewModel.getTodoList(date)
@@ -554,6 +590,43 @@ class HomeFragment : Fragment() {
         lastRequestedRange = range
 
         viewModel.getCalendar(start.format(serverFormatter), end.format(serverFormatter))
+    }
+
+    @RequiresApi(Build.VERSION_CODES.R)
+    private fun openTutorialOverlay() {
+        (activity as? MainActivity)?.showTutorialOverlay()
+
+        binding.fabAddIv.isVisible = false
+        binding.fabShadowIv.isVisible = false
+
+        // 시스템 UI (상단 상태바 + 하단 네비게이션바) 숨기기
+        requireActivity().window.insetsController?.let { controller ->
+            controller.hide(WindowInsets.Type.systemBars())
+            controller.systemBarsBehavior =
+                WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        }
+    }
+
+    private fun hookBackToClose() {
+        backCallback = object : OnBackPressedCallback(true) {
+            @RequiresApi(Build.VERSION_CODES.R)
+            override fun handleOnBackPressed() = closeTutorialOverlay()
+        }.also { requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, it) }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.R)
+    private fun closeTutorialOverlay() {
+        (activity as? MainActivity)?.hideTutorialOverlay()
+
+        // 숨겼던 것들 복구
+        binding.fabAddIv.isVisible = true
+        binding.fabShadowIv.isVisible = true
+
+        // 시스템 UI 복구
+        requireActivity().window.insetsController?.show(WindowInsets.Type.systemBars())
+
+        backCallback?.remove()
+        backCallback = null
     }
 
     private fun setupClockPager() {
@@ -770,6 +843,17 @@ class HomeFragment : Fragment() {
         val dotView: View = view.findViewById(R.id.dot_view)
     }
 
+    // 캘린더 갱신
+    private fun refreshCalendarDots() {
+        lastRequestedRange = null
+
+        if (isWeeklyMode) {
+            weekCalendar.findFirstVisibleWeek()?.let { requestForWeek(it) }
+        } else {
+            monthCalendar.findFirstVisibleMonth()?.let { requestForMonth(it) }
+        }
+    }
+
     override fun onDestroyView() {
         _binding?.let { b ->
             runCatching {
@@ -778,6 +862,9 @@ class HomeFragment : Fragment() {
                 }
             }
         }
+        binding.fabAddIv.isVisible = true
+        binding.fabShadowIv.isVisible = true
+
         _binding = null
         super.onDestroyView()
     }

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:background="@drawable/friend_bg_bottom_sheet"
+    android:gravity="center_horizontal">
+
+    <!-- 드래그 핸들 -->
+    <View
+        android:layout_width="54dp"
+        android:layout_height="4dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginStart="165dp"
+        android:layout_marginEnd="164dp"
+        android:background="@drawable/friend_bottom_sheet_handle" />
+
+    <!-- 제목 -->
+    <TextView
+        android:id="@+id/titleText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="51dp"
+        android:layout_marginStart="35dp"
+        android:layout_marginEnd="35dp"
+        android:text="이미 해당 시간에 전송한 요청이 있어요!"
+        android:textSize="20sp"
+        android:textColor="@color/text_primary"
+        android:fontFamily="@font/noto_sans_kr_medium"
+        android:includeFontPadding="false" />
+
+    <!-- 설명 -->
+    <TextView
+        android:id="@+id/subText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="해당 요청을 보낼 경우 이중 약속이 발생할 수 있어요"
+        android:textSize="15sp"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="39dp"
+        android:layout_marginEnd="39dp"
+        android:textColor="@color/text_primary"
+        android:fontFamily="@font/noto_sans_kr_regular"
+        android:includeFontPadding="false"/>
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPagerConflict"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="33dp"
+        android:layout_marginHorizontal="20dp"
+        android:orientation="horizontal"
+        tools:listitem="@layout/item_friend_conflict_card" />
+
+    <com.tbuonomo.viewpagerdotsindicator.DotsIndicator
+        android:id="@+id/dotsIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        app:dotsColor="#B1B2B3"
+        app:dotsCornerRadius="5dp"
+        app:dotsSize="5.68dp"
+        app:dotsSpacing="4dp"
+        app:dotsStrokeWidth="0dp"
+        app:dotsWidthFactor="1.0"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/requestViewPager"
+        app:selectedDotColor="#0F0F0F" />
+
+    <TextView
+        android:id="@+id/tv_footer_note"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp"
+        android:layout_marginHorizontal="55dp"
+        android:text="기존 요청을 회수하고 싶을 경우, 요청 기록에서 취소하세요"
+        android:textColor="#B1B2B3"
+        android:fontFamily="@font/noto_sans_kr_regular"
+        android:includeFontPadding="false"
+        android:textSize="12sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="19dp"
+        android:layout_marginTop="46dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_cancel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="취소"
+            android:textSize="16sp"
+            android:textColor="@color/text_primary"
+            android:fontFamily="@font/noto_sans_kr_medium"
+            android:layout_marginBottom="19dp"
+            app:backgroundTint="#F6F6F6"
+            app:cornerRadius="12dp"
+            android:layout_marginEnd="8dp"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_accept"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="수락"
+            android:textSize="16sp"
+            android:fontFamily="@font/noto_sans_kr_medium"
+            android:textColor="@android:color/white"
+            android:layout_marginBottom="19dp"
+            app:backgroundTint="#0f0f0f"
+            app:cornerRadius="12dp" />
+    </LinearLayout>
+</LinearLayout>

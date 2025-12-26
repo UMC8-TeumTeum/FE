@@ -71,7 +71,7 @@ class HomeViewModel @Inject constructor(
     }
 
     /** 오늘의 스케줄 가져오기 */
-    private fun getTodaySchedule(date: String) {
+    fun getTodaySchedule(date: String) {
         viewModelScope.launch {
             repository.getTodaySchedule(date)
                 .onSuccess { result ->

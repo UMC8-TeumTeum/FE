@@ -8,9 +8,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.activity.model.ActivityWishResult
 import com.example.teumteum.databinding.ItemWishlistBinding
+import com.example.teumteum.ui.activity.BottomSheetContentFragment
 import com.example.teumteum.ui.activity.FillingSetting01Fragment
+import com.example.teumteum.utils.setOnSingleClickListener
 
 class WishRecommendAdapter(private var wishList: List<ActivityWishResult>, private val fragmentManager: FragmentManager) : RecyclerView.Adapter<WishRecommendAdapter.ViewHolder>() {
+
+    private val CONTENT_SHEET_TAG = "ContentBottomSheetFragment"
 
     inner class ViewHolder(val binding: ItemWishlistBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -26,6 +30,20 @@ class WishRecommendAdapter(private var wishList: List<ActivityWishResult>, priva
         b.titleTv.text = item.title
         b.timeTv.text =
             when (item.estimatedDuration.lowercase()) { "1h" -> "1h-" ; else -> item.estimatedDuration }
+
+        b.root.setOnSingleClickListener {
+            // 이미 바텀시트 떠있으면 막기
+            if (fragmentManager.findFragmentByTag(CONTENT_SHEET_TAG) != null) return@setOnSingleClickListener
+
+            val args = Bundle().apply {
+                putLong("wish_id", item.id)
+                putString("title", item.title)
+                putString("content", item.content)
+                putString("time", item.estimatedDuration)
+            }
+            BottomSheetContentFragment().apply { arguments = args }
+                .show(fragmentManager, CONTENT_SHEET_TAG)
+        }
 
         b.selectButton.setOnClickListener {
             val fragment = FillingSetting01Fragment().apply {

@@ -1,6 +1,10 @@
 package com.example.teumteum.ui.myhome
 
+import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,9 +12,10 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.teumteum.R
+import com.example.teumteum.data.remote.auth.LogoutUseCase
 import com.example.teumteum.databinding.FragmentMyAccountSettingBinding
 import com.example.teumteum.ui.main.MainActivity
-import com.example.teumteum.data.remote.auth.LogoutUseCase
+import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -38,29 +43,92 @@ class MyAccountSettingFragment : Fragment() {
         (activity as? MainActivity)?.hideBottomBar()
 
         binding.backArrowIv.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, MySettingFragment())
-                .addToBackStack(null)
-                .commit()
+            parentFragmentManager.popBackStack()
         }
 
         binding.logoutLl.setOnClickListener {
             if (loggingOut) return@setOnClickListener
-            loggingOut = true
-            binding.logoutLl.isEnabled = false
-
-            viewLifecycleOwner.lifecycleScope.launch {
-                try {
-                    logoutUseCase.deactivateFcmAndLogout()
-                } catch (_: Exception) {
-                    Toast.makeText(requireContext(), "로그아웃 중 문제가 발생했어요.", Toast.LENGTH_SHORT).show()
-                } finally {
-                    loggingOut = false
-                    if (isAdded) binding.logoutLl.isEnabled = true
-                }
-            }
+            showLogoutDialog()
         }
 
+        binding.deleteAccountLl.setOnClickListener {
+            showDeleteAccountDialog()
+        }
+
+    }
+
+    private fun showLogoutDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_logout, null)
+        val dialog = Dialog(requireContext())
+        dialog.setContentView(dialogView)
+
+        dialog.window?.apply {
+            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            setGravity(Gravity.CENTER)
+        }
+
+        val yesBtn = dialogView.findViewById<MaterialButton>(R.id.yes_btn)
+        val noBtn = dialogView.findViewById<MaterialButton>(R.id.no_btn)
+
+        yesBtn.setOnClickListener {
+            dialog.dismiss()
+            performLogout()
+        }
+
+        noBtn.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
+
+        val displayMetrics = resources.displayMetrics
+        val dialogWidth = (displayMetrics.widthPixels * 0.9).toInt()
+        dialog.window?.setLayout(dialogWidth, ViewGroup.LayoutParams.WRAP_CONTENT)
+    }
+
+    private fun showDeleteAccountDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_delete_account, null)
+        val dialog = Dialog(requireContext())
+        dialog.setContentView(dialogView)
+
+        dialog.window?.apply {
+            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            setGravity(Gravity.CENTER)
+        }
+
+        val yesBtn = dialogView.findViewById<MaterialButton>(R.id.yes_btn)
+        val noBtn = dialogView.findViewById<MaterialButton>(R.id.no_btn)
+
+        yesBtn.setOnClickListener {
+            dialog.dismiss()
+            //todo: 회원탈퇴 호출 로직
+        }
+
+        noBtn.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
+
+        val displayMetrics = resources.displayMetrics
+        val dialogWidth = (displayMetrics.widthPixels * 0.9).toInt()
+        dialog.window?.setLayout(dialogWidth, ViewGroup.LayoutParams.WRAP_CONTENT)
+    }
+
+    private fun performLogout() {
+        loggingOut = true
+        binding.logoutLl.isEnabled = false
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                logoutUseCase.deactivateFcmAndLogout()
+            } catch (_: Exception) {
+                Toast.makeText(requireContext(), "로그아웃 중 문제가 발생했어요.", Toast.LENGTH_SHORT).show()
+            } finally {
+                loggingOut = false
+                if (isAdded) binding.logoutLl.isEnabled = true
+            }
+        }
     }
 
     override fun onDestroyView() {
