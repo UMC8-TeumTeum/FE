@@ -41,12 +41,9 @@ class FriendProfileFollowFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         (activity as? MainActivity)?.hideBottomBar()
 
-        val userId = arguments?.getInt("userId") ?: -1
-        if (userId == -1) {
-            Log.e("FRIEND_PROFILE_FRAGMENT", "userId가 유효하지 않음")
-            parentFragmentManager.popBackStack()
-            return
-        }
+        targetUserId = arguments?.getInt("userId") ?: -1
+        val userId = targetUserId
+
 
         // 프로필 정보 요청
         viewModel.getFriendProfile(userId) { profile ->
