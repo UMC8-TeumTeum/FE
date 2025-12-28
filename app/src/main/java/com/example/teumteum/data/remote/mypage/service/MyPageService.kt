@@ -5,6 +5,7 @@ import com.example.teumteum.data.remote.mypage.model.ProfileUpdateRequest
 import com.example.teumteum.data.remote.onboarding.model.PresignedRequest
 import com.example.teumteum.data.remote.onboarding.model.PresignedResponse
 import com.example.teumteum.data.remote.onboarding.model.ProfileImageRequest
+import com.example.teumteum.data.remote.onboarding.model.Schedule
 import com.example.teumteum.data.remote.todo.model.TodoListResult
 import com.example.teumteum.utils.ApiResponse
 import retrofit2.Response
@@ -31,4 +32,7 @@ interface MyPageService {
 
     @PATCH("/api/users/mypage/profile")
     suspend fun updateProfile(@Body request: ProfileUpdateRequest) : Response<ApiResponse<Unit>>
+
+    @GET("/api/users/mypage/routines")
+    suspend fun getMyRoutine(@Query("weekday") weekday: String): Response<ApiResponse<List<Schedule>>>
 }

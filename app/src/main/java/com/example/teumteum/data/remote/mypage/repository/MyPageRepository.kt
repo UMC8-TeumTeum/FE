@@ -7,6 +7,8 @@ import com.example.teumteum.data.remote.mypage.service.MyPageService
 import com.example.teumteum.data.remote.onboarding.model.PresignedRequest
 import com.example.teumteum.data.remote.onboarding.model.PresignedResponse
 import com.example.teumteum.data.remote.onboarding.model.ProfileImageRequest
+import com.example.teumteum.data.remote.onboarding.model.Schedule
+import com.example.teumteum.data.remote.onboarding.model.Week
 import com.example.teumteum.data.remote.todo.model.TodoListResult
 import com.example.teumteum.utils.handleApiResponse
 import com.example.teumteum.utils.handleApiResponseUnit
@@ -104,5 +106,12 @@ class MyPageRepository @Inject constructor(
         val response = myPageService.updateProfile(request)
         Log.d("ProfileUpdate", "response = ${response.body()}")
         handleApiResponseUnit(response)
+    }
+
+    //반복일정 조회
+    suspend fun getMyRoutine(weekday: Week): Result<List<Schedule>> = runCatching {
+        val response = myPageService.getMyRoutine(weekday.name)
+        Log.d("Routine", "response = ${response.body()}")
+        handleApiResponse(response)
     }
 }

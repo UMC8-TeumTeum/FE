@@ -1,12 +1,12 @@
-package com.example.teumteum.ui.onboarding
+package com.example.teumteum.ui.onboarding.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.teumteum.ui.onboarding.data.Schedule
 import com.example.teumteum.databinding.ItemScheduleBinding
+import com.example.teumteum.ui.onboarding.data.Schedule
 
 class ScheduleAdapter : ListAdapter<Schedule, ScheduleAdapter.ScheduleViewHolder>(DIFF_CALLBACK) {
 
