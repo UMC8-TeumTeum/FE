@@ -13,8 +13,8 @@ import com.example.teumteum.R
 import com.example.teumteum.data.remote.onboarding.model.Week
 import com.example.teumteum.databinding.FragmentMyRoutineModifyBinding
 import com.example.teumteum.ui.main.MainActivity
+import com.example.teumteum.ui.myhome.adapter.MyRoutineAdapter
 import com.example.teumteum.ui.myhome.viewModel.MyRoutineViewModel
-import com.example.teumteum.ui.onboarding.adapter.ScheduleAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Calendar
 
@@ -23,7 +23,7 @@ class MyRoutineModifyFragment : Fragment() {
 
     private lateinit var binding: FragmentMyRoutineModifyBinding
 
-    private val scheduleAdapter by lazy { ScheduleAdapter() }
+    private val scheduleAdapter by lazy { MyRoutineAdapter() }
     private val viewModel: MyRoutineViewModel by activityViewModels()
 
     private lateinit var dayTextViews: List<TextView>
@@ -154,7 +154,7 @@ class MyRoutineModifyFragment : Fragment() {
     }
 
     private fun observeViewModel() {
-        viewModel.currentDayScheduleList.observe(viewLifecycleOwner) { list ->
+        viewModel.currentDayRoutineList.observe(viewLifecycleOwner) { list ->
             scheduleAdapter.submitList(list)
         }
     }

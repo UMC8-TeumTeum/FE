@@ -2,12 +2,12 @@ package com.example.teumteum.data.remote.mypage.repository
 
 import android.util.Log
 import com.example.teumteum.data.remote.mypage.model.MyInfoResponse
+import com.example.teumteum.data.remote.mypage.model.MyRoutineResponse
 import com.example.teumteum.data.remote.mypage.model.ProfileUpdateRequest
 import com.example.teumteum.data.remote.mypage.service.MyPageService
 import com.example.teumteum.data.remote.onboarding.model.PresignedRequest
 import com.example.teumteum.data.remote.onboarding.model.PresignedResponse
 import com.example.teumteum.data.remote.onboarding.model.ProfileImageRequest
-import com.example.teumteum.data.remote.onboarding.model.Schedule
 import com.example.teumteum.data.remote.onboarding.model.Week
 import com.example.teumteum.data.remote.todo.model.TodoListResult
 import com.example.teumteum.utils.handleApiResponse
@@ -109,9 +109,11 @@ class MyPageRepository @Inject constructor(
     }
 
     //반복일정 조회
-    suspend fun getMyRoutine(weekday: Week): Result<List<Schedule>> = runCatching {
+    suspend fun getMyRoutine(weekday: Week): Result<List<MyRoutineResponse>> = runCatching {
         val response = myPageService.getMyRoutine(weekday.name)
         Log.d("Routine", "response = ${response.body()}")
         handleApiResponse(response)
     }
+
+    //반복일정 추가
 }

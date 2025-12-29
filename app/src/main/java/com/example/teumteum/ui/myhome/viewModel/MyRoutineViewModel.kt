@@ -5,34 +5,38 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.teumteum.data.remote.mypage.model.MyRoutineResponse
 import com.example.teumteum.data.remote.mypage.repository.MyPageRepository
 import com.example.teumteum.data.remote.onboarding.model.Week
+import com.example.teumteum.ui.myhome.data.MyRoutine
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
-import com.example.teumteum.data.remote.onboarding.model.Schedule as RemoteSchedule
-import com.example.teumteum.ui.onboarding.data.Schedule as UiSchedule
 
 @HiltViewModel
 class MyRoutineViewModel @Inject constructor(
     private val repository: MyPageRepository
 ) : ViewModel() {
 
-    val scheduleMap: MutableMap<Int, MutableList<UiSchedule>> =
-        mutableMapOf<Int, MutableList<UiSchedule>>().apply {
+    companion object {
+        private val TIME_FMT: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+    }
+
+    val routineMap: MutableMap<Int, MutableList<MyRoutine>> =
+        mutableMapOf<Int, MutableList<MyRoutine>>().apply {
             for (i in 0..6) put(i, mutableListOf())
         }
 
-    private val _currentDayScheduleList = MutableLiveData<List<UiSchedule>>(emptyList())
-    val currentDayScheduleList: LiveData<List<UiSchedule>> = _currentDayScheduleList
+    private val _currentDayRoutineList = MutableLiveData<List<MyRoutine>>(emptyList())
+    val currentDayRoutineList: LiveData<List<MyRoutine>> = _currentDayRoutineList
 
     private var selectedDayIndex: Int = 0
 
     fun updateCurrentDaySchedule(dayIndex: Int) {
         selectedDayIndex = dayIndex
-        _currentDayScheduleList.value = scheduleMap[dayIndex]?.toList().orEmpty()
+        _currentDayRoutineList.value = routineMap[dayIndex]?.toList().orEmpty()
     }
 
     fun fetchMyRoutine(weekday: Week) {
@@ -41,33 +45,22 @@ class MyRoutineViewModel @Inject constructor(
         viewModelScope.launch {
             repository.getMyRoutine(weekday)
                 .onSuccess { remoteList ->
-                    val uiList = remoteList.map { it.toUiSchedule() }
+                    val uiList = remoteList.map { it.toMyRoutine() }
 
-                    scheduleMap[dayIndex] = uiList.toMutableList()
+                    routineMap[dayIndex] = uiList.toMutableList()
 
                     if (dayIndex == selectedDayIndex) {
-                        _currentDayScheduleList.value = uiList
+                        _currentDayRoutineList.value = uiList
                     }
                 }
                 .onFailure { e ->
                     Log.e("Routine", "fetchMyRoutine failed: $weekday", e)
 
                     if (dayIndex == selectedDayIndex) {
-                        _currentDayScheduleList.value = emptyList()
+                        _currentDayRoutineList.value = emptyList()
                     }
                 }
         }
-    }
-
-    private fun RemoteSchedule.toUiSchedule(): UiSchedule {
-        val fmt = DateTimeFormatter.ofPattern("HH:mm")
-        return UiSchedule(
-            title = title,
-            day = weekday.toString(),
-            startTime = LocalTime.parse(startTime, fmt),
-            endTime = LocalTime.parse(endTime, fmt),
-            description = description
-        )
     }
 
     private fun weekToIndex(week: Week): Int = when (week) {
@@ -79,4 +72,16 @@ class MyRoutineViewModel @Inject constructor(
         Week.FRIDAY -> 5
         Week.SATURDAY -> 6
     }
+
+    private fun MyRoutineResponse.toMyRoutine(): MyRoutine {
+        return MyRoutine(
+            routineId = routineId,
+            title = title,
+            weekday = weekday.toString(),
+            startTime = LocalTime.parse(startTime, TIME_FMT),
+            endTime = LocalTime.parse(endTime, TIME_FMT),
+            description = description
+        )
+    }
 }
+
