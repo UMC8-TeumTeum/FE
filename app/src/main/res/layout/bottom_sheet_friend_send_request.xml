@@ -54,21 +54,13 @@
         android:orientation="horizontal"
         tools:listitem="@layout/item_friend_conflict_card" />
 
-    <com.tbuonomo.viewpagerdotsindicator.DotsIndicator
-        android:id="@+id/dotsIndicator"
+    <LinearLayout
+        android:id="@+id/clock_indicator_ll"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        app:dotsColor="#B1B2B3"
-        app:dotsCornerRadius="5dp"
-        app:dotsSize="5.68dp"
-        app:dotsSpacing="4dp"
-        app:dotsStrokeWidth="0dp"
-        app:dotsWidthFactor="1.0"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/requestViewPager"
-        app:selectedDotColor="#0F0F0F" />
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="12dp"/>
 
     <TextView
         android:id="@+id/tv_footer_note"
@@ -99,7 +91,6 @@
             android:textSize="16sp"
             android:textColor="@color/text_primary"
             android:fontFamily="@font/noto_sans_kr_medium"
-            android:layout_marginBottom="19dp"
             app:backgroundTint="#F6F6F6"
             app:cornerRadius="12dp"
             android:layout_marginEnd="8dp"/>
@@ -113,7 +104,6 @@
             android:textSize="16sp"
             android:fontFamily="@font/noto_sans_kr_medium"
             android:textColor="@android:color/white"
-            android:layout_marginBottom="19dp"
             app:backgroundTint="#0f0f0f"
             app:cornerRadius="12dp" />
     </LinearLayout>

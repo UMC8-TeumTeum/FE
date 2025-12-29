@@ -59,40 +59,43 @@ class FriendMatchingPreviewDialog : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 초기 텍스트 설정
+        // ✅ 1. 무조건 ViewModel 기반 전체 세팅
         updateSuggestion()
+
+        // ✅ 2. 겹침 조회에서 넘어온 값이 있으면 덮어쓰기
+        arguments?.let { args ->
+            binding.title.text = args.getString("title") ?: binding.title.text
+            binding.detailSentence.text =
+                args.getString("description") ?: binding.detailSentence.text
+
+            val start = args.getString("startTime")
+            val end = args.getString("endTime")
+            if (!start.isNullOrBlank() && !end.isNullOrBlank()) {
+                binding.tvTime.text = "$start ~ $end"
+            }
+        }
+
         updateImage()
 
-        // 다음 버튼
-        binding.btnNext.setOnClickListener {
+    binding.btnNext.setOnClickListener {
             currentIndex = (currentIndex + 1) % imageList.size
             updateImage()
         }
 
-        // 이전 버튼
         binding.btnPrev.setOnClickListener {
             currentIndex = if (currentIndex == 0) imageList.size - 1 else currentIndex - 1
             updateImage()
         }
 
-        // 전송 버튼
         binding.btnSend.setOnClickListener {
-
             val request = viewModel.buildTeumRequest()
-
             setLoading(true)
+            if (request == null) return@setOnClickListener
 
-            Log.d("SEND_TEUM_REQUEST", request.toString())
-            if (request == null) {
-                return@setOnClickListener
-            }
-
-            // 전송
             viewModel.sendTeumRequest(
                 request,
                 onSuccess = {
                     viewModel.setTeumRequestReceiverUserIds(emptyList())
-
                     if (isAdded &&
                         this@FriendMatchingPreviewDialog.view != null &&
                         lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)
@@ -107,8 +110,8 @@ class FriendMatchingPreviewDialog : DialogFragment() {
                 onError = { msg ->
                     setLoading(false)
                     Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
-                    Log.d("FRIEND_MATCHING_PREVIEW_DIALOG", msg.toString())
-                })
+                }
+            )
         }
     }
 
@@ -168,5 +171,9 @@ class FriendMatchingPreviewDialog : DialogFragment() {
         // 다이얼로그 취소/바깥터치 방지
         isCancelable = !loading
         dialog?.setCanceledOnTouchOutside(!loading)
+    }
+
+    companion object {
+        const val TAG = "FriendMatchingPreviewDialog"  // public by default
     }
 }
