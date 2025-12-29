@@ -133,6 +133,15 @@ class BottomSheetRoutineModifyFragment(
 
             dismiss()
         }
+
+        binding.deleteBtn.setOnClickListener {
+            viewModel.deleteRoutine(
+                routineId = targetRoutine.routineId,
+                dayIndex = selectedDayIndex
+            )
+
+            dismiss()
+        }
     }
 
     private fun setupPickers() {

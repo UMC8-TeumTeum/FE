@@ -131,6 +131,23 @@ class MyRoutineViewModel @Inject constructor(
         }
     }
 
+    fun deleteRoutine(
+        routineId: Long,
+        dayIndex: Int
+    ) {
+        val weekday = indexToWeek(dayIndex)
+
+        viewModelScope.launch {
+            repository.deleteMyRoutine(routineId)
+                .onSuccess { created ->
+                    fetchMyRoutine(weekday)
+                }
+                .onFailure { e ->
+                    Log.e("Routine", "addRoutine failed", e)
+                }
+        }
+    }
+
     private fun indexToWeek(dayIndex: Int): Week = when (dayIndex) {
         0 -> Week.SUNDAY
         1 -> Week.MONDAY
