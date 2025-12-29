@@ -2,6 +2,7 @@ package com.example.teumteum.data.remote.mypage.repository
 
 import android.util.Log
 import com.example.teumteum.data.remote.mypage.model.MyInfoResponse
+import com.example.teumteum.data.remote.mypage.model.MyRoutineRequest
 import com.example.teumteum.data.remote.mypage.model.MyRoutineResponse
 import com.example.teumteum.data.remote.mypage.model.ProfileUpdateRequest
 import com.example.teumteum.data.remote.mypage.service.MyPageService
@@ -116,4 +117,23 @@ class MyPageRepository @Inject constructor(
     }
 
     //반복일정 추가
+    suspend fun addMyRoutine(request: MyRoutineRequest): Result<Unit> = runCatching {
+        val response = myPageService.addMyRoutine(request)
+        Log.d("Routine", "response = ${response.body()}")
+        handleApiResponseUnit(response)
+    }
+
+    //반복일정 수정
+    suspend fun modifyMyRoutine(routineId: Long, request: MyRoutineRequest): Result<Unit> = runCatching {
+        val response = myPageService.modifyMyRoutine(routineId, request)
+        Log.d("Routine", "response = ${response.body()}")
+        handleApiResponseUnit(response)
+    }
+
+    //반복일정 삭제
+    suspend fun deleteMyRoutine(routineId: Long): Result<Unit> = runCatching {
+        val response = myPageService.deleteMyRoutine(routineId)
+        Log.d("Routine", "response = ${response.body()}")
+        handleApiResponseUnit(response)
+    }
 }

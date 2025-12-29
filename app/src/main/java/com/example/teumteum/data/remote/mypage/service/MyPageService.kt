@@ -11,9 +11,11 @@ import com.example.teumteum.data.remote.todo.model.TodoListResult
 import com.example.teumteum.utils.ApiResponse
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 
@@ -37,6 +39,15 @@ interface MyPageService {
     @GET("/api/users/mypage/routines")
     suspend fun getMyRoutine(@Query("weekday") weekday: String): Response<ApiResponse<List<MyRoutineResponse>>>
 
-    @GET("/api/users/mypage/routines")
+    @POST("/api/users/mypage/routines")
     suspend fun addMyRoutine(@Body request: MyRoutineRequest) : Response<ApiResponse<Unit>>
+
+    @PATCH("/api/users/mypage/routines/{routineId}")
+    suspend fun modifyMyRoutine(
+        @Path("routineId") routineId: Long,
+        @Body request: MyRoutineRequest
+    ) : Response<ApiResponse<Unit>>
+
+    @DELETE("/api/users/mypage/routines/{routineId}")
+    suspend fun deleteMyRoutine(@Path("routineId") routineId: Long) : Response<ApiResponse<Unit>>
 }

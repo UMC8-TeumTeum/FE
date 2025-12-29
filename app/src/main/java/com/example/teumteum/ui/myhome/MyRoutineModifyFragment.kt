@@ -85,31 +85,34 @@ class MyRoutineModifyFragment : Fragment() {
 
         setupDaySelection()
 
-        // ✅ 초기 선택 요일 하이라이트 + 로컬 반영
         updateDayHighlight(selectedDayIndex)
 
-        // ✅ 초기 진입 시 서버에서 해당 요일 루틴 조회
         fetchRoutine(selectedDayIndex)
 
+        binding.fabAddIv.setOnClickListener {
+            val existing = viewModel.routineMap[selectedDayIndex]?.toList() ?: emptyList()
+            val bottomSheet = BottomSheetRoutineFragment(
+                selectedDayIndex,
+                existing
+            )
+            bottomSheet.show(parentFragmentManager, "BottomSheetRoutineFragment")
+        }
 
-//        binding.fabAddIv.setOnClickListener {
-//            val existing = viewModel.scheduleMap[selectedDayIndex]?.toList() ?: emptyList()
-//            val bottomSheet = BottomSheetScheduleFragment(
-//                selectedDayIndex,
-//                existing
-//            )
-//            bottomSheet.show(parentFragmentManager, "BottomSheetScheduleFragment")
-//        }
+        binding.scheduleRv.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = scheduleAdapter
+        }
 
-//        binding.nextBtn.setOnClickListener {
-//            val hasAnySchedule = viewModel.scheduleMap.values.any { it.isNotEmpty() }
-//            if (hasAnySchedule) {
-//                val request = getScheduleRequest()
-//                viewModel.postSchedule(request)
-//            } else {
-//                navigateToNext()
-//            }
-//        }
+        scheduleAdapter.setOnItemClickListener { selectedRoutine ->
+            val existing = viewModel.routineMap[selectedDayIndex]?.toList().orEmpty()
+
+            val bottomSheet = BottomSheetRoutineModifyFragment(
+                selectedDayIndex = selectedDayIndex,
+                existingSchedules = existing,
+                targetRoutine = selectedRoutine
+            )
+            bottomSheet.show(parentFragmentManager, "BottomSheetRoutineModifyFragment")
+        }
     }
 
     private fun setupDaySelection() {

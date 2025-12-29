@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.teumteum.data.remote.mypage.model.MyRoutineRequest
 import com.example.teumteum.data.remote.mypage.model.MyRoutineResponse
 import com.example.teumteum.data.remote.mypage.repository.MyPageRepository
 import com.example.teumteum.data.remote.onboarding.model.Week
@@ -71,6 +72,74 @@ class MyRoutineViewModel @Inject constructor(
         Week.THURSDAY -> 4
         Week.FRIDAY -> 5
         Week.SATURDAY -> 6
+    }
+
+    fun addRoutine(
+        dayIndex: Int,
+        title: String,
+        description: String,
+        start: LocalTime,
+        end: LocalTime
+    ) {
+        val weekday = indexToWeek(dayIndex)
+
+        val req = MyRoutineRequest(
+            title = title,
+            description = description,
+            weekday = weekday,
+            startTime = start.format(TIME_FMT),
+            endTime = end.format(TIME_FMT)
+        )
+
+        viewModelScope.launch {
+            repository.addMyRoutine(req)
+                .onSuccess { created ->
+                    fetchMyRoutine(weekday)
+                }
+                .onFailure { e ->
+                    Log.e("Routine", "addRoutine failed", e)
+                }
+        }
+    }
+
+    fun modifyRoutine(
+        routineId: Long,
+        dayIndex: Int,
+        title: String,
+        description: String,
+        start: LocalTime,
+        end: LocalTime
+    ) {
+        val weekday = indexToWeek(dayIndex)
+
+        val req = MyRoutineRequest(
+            title = title,
+            description = description,
+            weekday = weekday,
+            startTime = start.format(TIME_FMT),
+            endTime = end.format(TIME_FMT)
+        )
+
+        viewModelScope.launch {
+            repository.modifyMyRoutine(routineId, req)
+                .onSuccess { created ->
+                    fetchMyRoutine(weekday)
+                }
+                .onFailure { e ->
+                    Log.e("Routine", "addRoutine failed", e)
+                }
+        }
+    }
+
+    private fun indexToWeek(dayIndex: Int): Week = when (dayIndex) {
+        0 -> Week.SUNDAY
+        1 -> Week.MONDAY
+        2 -> Week.TUESDAY
+        3 -> Week.WEDNESDAY
+        4 -> Week.THURSDAY
+        5 -> Week.FRIDAY
+        6 -> Week.SATURDAY
+        else -> Week.SUNDAY
     }
 
     private fun MyRoutineResponse.toMyRoutine(): MyRoutine {

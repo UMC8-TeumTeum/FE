@@ -10,6 +10,12 @@ import com.example.teumteum.ui.myhome.data.MyRoutine
 
 class MyRoutineAdapter : ListAdapter<MyRoutine, MyRoutineAdapter.MyRoutineViewHolder>(DIFF_CALLBACK) {
 
+    private var onItemClick: ((MyRoutine) -> Unit)? = null
+
+    fun setOnItemClickListener(listener: (MyRoutine) -> Unit) {
+        onItemClick = listener
+    }
+
     inner class MyRoutineViewHolder(private val binding: ItemScheduleBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -20,6 +26,10 @@ class MyRoutineAdapter : ListAdapter<MyRoutine, MyRoutineAdapter.MyRoutineViewHo
             binding.timeStartTv.text = startTime.toString()
             binding.timeEndTv.text = endTime.toString()
             binding.titleTv.text = item.title
+
+            binding.root.setOnClickListener {
+                onItemClick?.invoke(item)
+            }
         }
     }
 
@@ -34,7 +44,7 @@ class MyRoutineAdapter : ListAdapter<MyRoutine, MyRoutineAdapter.MyRoutineViewHo
 
     companion object {
         val DIFF_CALLBACK = object : DiffUtil.ItemCallback<MyRoutine>() {
-            override fun areItemsTheSame(oldItem: MyRoutine, newItem: MyRoutine) = oldItem === newItem
+            override fun areItemsTheSame(oldItem: MyRoutine, newItem: MyRoutine) = oldItem.routineId == newItem.routineId
             override fun areContentsTheSame(oldItem: MyRoutine, newItem: MyRoutine) = oldItem == newItem
         }
     }
