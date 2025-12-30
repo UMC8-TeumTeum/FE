@@ -52,6 +52,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -663,16 +665,29 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
             .map { (min, st) -> ReminderAlarm(alarm = min, status = st) }
     }
 
-    private fun getTodayFormatted(): String {
-        val today = LocalDate.now()
-        val formatter = DateTimeFormatter.ofPattern("M월 d일 (E)", Locale.KOREAN)
-        return today.format(formatter)
+    private fun parseKoreanAmPmTime(timeText: String): LocalTime {
+        val parts = timeText.trim().split(" ")
+        val ampm = parts[0] // 오전/오후
+        val (hStr, mStr) = parts[1].split(":")
+        var hour = hStr.toInt()
+        val minute = mStr.toInt()
+
+        if (ampm == "오후" && hour != 12) hour += 12
+        if (ampm == "오전" && hour == 12) hour = 0
+
+        return LocalTime.of(hour, minute)
     }
 
     private fun getTodoRequest(): RegisterTodoRequest {
         val title = binding.todoTitleEt.text.toString()
-        val startTime = combineDateTime(binding.startDateTv, binding.startTimeTv)
-        val endTime = combineDateTime(binding.endDateTv, binding.endTimeTv)
+
+        val startLocalTime = parseKoreanAmPmTime(binding.startTimeTv.text.toString())
+        val endLocalTime = parseKoreanAmPmTime(binding.endTimeTv.text.toString())
+
+        val startDateTime = LocalDateTime.of(selectedStartDate, startLocalTime)
+        val endDateTime = LocalDateTime.of(selectedEndDate, endLocalTime)
+
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")
 
         val description = binding.detailTextEt.text.toString()
         val isPublic = binding.publicToggle01Iv.isChecked
@@ -681,8 +696,8 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
 
         return RegisterTodoRequest(
             title = title,
-            startTime = startTime,
-            endTime = endTime,
+            startTime = startDateTime.format(formatter),
+            endTime = endDateTime.format(formatter),
             description = description,
             isPublic = isPublic,
             includeTeum = includeTeum,
