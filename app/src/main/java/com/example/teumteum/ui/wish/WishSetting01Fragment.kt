@@ -205,6 +205,14 @@ class WishSetting01Fragment : Fragment() {
         }
 
         updateIndicator(isAM)
+
+        homeViewModel.sleepTimeList.observe(viewLifecycleOwner) {
+            clockAdapter.refreshAll()
+        }
+
+        homeViewModel.todoTimeList.observe(viewLifecycleOwner) {
+            clockAdapter.refreshAll()
+        }
     }
 
     private fun setupObservers() {
