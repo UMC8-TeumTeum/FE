@@ -8,6 +8,7 @@ import android.widget.Button
 import android.widget.NumberPicker
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.onboarding.model.SleepPatternRequest
@@ -26,7 +27,7 @@ class MySleepPatternSettingFragment : Fragment() {
     private lateinit var binding: FragmentMySleepPatternSettingBinding
 
     private val viewModel: SettingViewModel by viewModels()
-    private val homeViewModel: HomeViewModel by viewModels()
+    private val homeViewModel: HomeViewModel by activityViewModels()
 
     private val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
@@ -41,6 +42,8 @@ class MySleepPatternSettingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity as? MainActivity)?.hideBottomBar()
+
+        initSleepPattern()
 
         binding.backButton.setOnClickListener {
             parentFragmentManager.popBackStack()
@@ -144,5 +147,19 @@ class MySleepPatternSettingFragment : Fragment() {
         viewModel.updateSleepPattern(
             SleepPatternRequest(start.toString(), end.toString())
         )
+    }
+
+    private fun initSleepPattern() {
+        homeViewModel.sleepStartTime.observe(viewLifecycleOwner) { start ->
+            if (start != null) {
+                binding.startChoiceTv.text = start.format(timeFormatter)
+            }
+        }
+
+        homeViewModel.sleepEndTime.observe(viewLifecycleOwner) { end ->
+            if (end != null) {
+                binding.endChoiceTv.text = end.format(timeFormatter)
+            }
+        }
     }
 }
