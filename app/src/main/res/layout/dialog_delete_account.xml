@@ -29,7 +29,7 @@
         android:includeFontPadding="false"
         android:textSize="15sp"
         android:textColor="@color/text_secondary"
-        android:text="기존에 등록한 일정 및 친구 기록이 모두 삭제돼요"
+        android:text="모든 일정 및 친구 기록이 삭제돼요"
         android:layout_marginTop="5dp"
         android:layout_gravity="center_horizontal"
         />

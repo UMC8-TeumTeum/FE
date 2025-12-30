@@ -30,9 +30,10 @@
         android:includeFontPadding="false"
         android:textSize="13sp"
         android:textColor="@color/text_secondary"
-        android:text="상대방이 회원님께 팔로우 및 틈 요청을 보낼 수 있습니다.\n상대방에게는 차단을 해제했다는 정보를 알리지 않습니다."
+        android:text="해제 시 팔로우 및 틈 요청을 보낼 수 있습니다\n상대방에게 차단을 해제했다는 정보를 알리지 않습니다"
         android:layout_marginTop="5dp"
         android:layout_gravity="center_horizontal"
+        android:textAlignment="center"
         />
 
     <LinearLayout
