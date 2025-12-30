@@ -110,8 +110,6 @@ class FillingSetting01Fragment : Fragment() {
 
         homeViewModel.getTodaySchedule(selectedDateServer)
 
-        clockAdapter.refreshAll()
-
         binding.amPmTv.setOnClickListener {
             val amPos = clockAdapter.positionOf(ClockHalf.AM)
             val pmPos = clockAdapter.positionOf(ClockHalf.PM)
