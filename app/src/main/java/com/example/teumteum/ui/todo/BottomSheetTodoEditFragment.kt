@@ -63,6 +63,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 import java.util.Locale
@@ -283,7 +284,7 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
     }
 
     private fun setupStartCalendar() {
-        val currentMonth = java.time.YearMonth.now()
+        val currentMonth = YearMonth.now()
         val startMonth = currentMonth.minusYears(50)
         val endMonth = currentMonth.plusYears(50)
         val firstDayOfWeek = firstDayOfWeekFromLocale()
@@ -331,7 +332,7 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
     }
 
     private fun setupEndCalendar() {
-        val currentMonth = java.time.YearMonth.now()
+        val currentMonth = YearMonth.now()
         val startMonth = currentMonth.minusYears(50)
         val endMonth = currentMonth.plusYears(50)
         val firstDayOfWeek = firstDayOfWeekFromLocale()
