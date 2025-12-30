@@ -87,6 +87,8 @@ class FillingActivity02Fragment : Fragment() {
             val activity = requireActivity()
             val bottomNav = activity.findViewById<BottomNavigationView>(R.id.main_bnv)
 
+            it.isEnabled = false
+
             // 백스택 전부 제거
             activity.supportFragmentManager.popBackStack(
                 null,
@@ -94,6 +96,8 @@ class FillingActivity02Fragment : Fragment() {
             )
 
             bottomNav.selectedItemId = R.id.fragment_friend
+
+            it.postDelayed({ it.isEnabled = true }, 500) // 네비게이션 완료 후 클릭 재활성화
         }
 
         // 새로고침: 시머 -> 재조회
