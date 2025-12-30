@@ -5,10 +5,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.teumteum.data.remote.friend.model.PublicTodoResult
 import com.example.teumteum.data.remote.mypage.repository.MyPageRepository
 import com.example.teumteum.data.remote.todo.model.TodoListResult
-import com.example.teumteum.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
