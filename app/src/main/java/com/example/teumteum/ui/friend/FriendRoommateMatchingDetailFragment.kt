@@ -19,6 +19,7 @@ import com.example.teumteum.ui.friend.data.SelectedTime
 import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.example.teumteum.ui.main.MainActivity
 import com.example.teumteum.ui.auth.SignUpActivity
+import com.example.teumteum.ui.friend.adapter.TimeConflictCardAdapter
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
@@ -32,7 +33,7 @@ import kotlin.getValue
 class FriendRoommateMatchingDetailFragment : Fragment() {
 
     private lateinit var binding: FragmentFriendRoommateMatchingDetailBinding
-    private lateinit var timeCardAdapter: TimeCardAdapter
+    private lateinit var timeConflictCardAdapter: TimeConflictCardAdapter
 
     // 선택된 날짜 저장 (이전 Fragment에서 전달)
     private var selectedDate: String = ""
@@ -100,12 +101,12 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
 
         setupTimeCardRecyclerView()
         observeViewModel()
-        timeCardAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+        timeConflictCardAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
             override fun onItemRangeChanged(positionStart: Int, itemCount: Int) {
                 // notify 이후 다음 프레임에 상태 읽기 (선택 반영 보장)
                 binding.possibleTimeRc.post { updateNextButtonState() }
             }
-            override fun onChanged() = onItemRangeChanged(0, timeCardAdapter.itemCount)
+            override fun onChanged() = onItemRangeChanged(0, timeConflictCardAdapter.itemCount)
         })
 
         // 초기 버튼 상태 설정
@@ -114,7 +115,7 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
     }
 
     private fun updateNextButtonState() {
-        val isTimeSelected = timeCardAdapter.getSelectedItem() != null
+        val isTimeSelected = timeConflictCardAdapter.getSelectedItem() != null
         val isTitleFilled = binding.editTextTitle.text.toString().isNotBlank()
         val isEnabled = isTimeSelected && isTitleFilled
 
@@ -128,27 +129,25 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
     }
 
     private fun setupTimeCardRecyclerView() {
-        timeCardAdapter = TimeCardAdapter { position, isStart, startBound, endBound, current ->
-            showCustomTimePicker(initial = current) { picked ->
-                // 1) 카드의 허용 범위 [startBound, endBound] 검사
-                if (!isWithinRange(picked, startBound, endBound)) {
-                    Toast.makeText(requireContext(), "가능한 시간대에서 벗어났어요.", Toast.LENGTH_SHORT).show()
-                    return@showCustomTimePicker
+        timeConflictCardAdapter = TimeConflictCardAdapter(
+            onTimeClick = { position, isStart, _, _, current ->
+                showCustomTimePicker(initial = current) { picked ->
+                    // 범위 제한 제거
+                    timeConflictCardAdapter.updateTime(position, isStart, picked)
                 }
-
-                // 2) 오늘 선택 시 현재 시각 이후인지 검사
-                if (!isAfterCurrentTime(picked)) {
-                    Toast.makeText(requireContext(), "현재 시각 이후의 시간을 선택해주세요.", Toast.LENGTH_SHORT).show()
-                    return@showCustomTimePicker
-                }
-
-                timeCardAdapter.updateTime(position, isStart, picked)
-                binding.possibleTimeRc.post { updateNextButtonState() }
+            },
+            onTimeCompleted = { start, end ->
+                viewModel.checkTeumConflict(
+                    date = convertDateFormat(selectedDate),
+                    startTime = start,
+                    endTime = end
+                )
             }
-        }
+        )
+
         binding.possibleTimeRc.apply {
             layoutManager = LinearLayoutManager(requireContext())
-            adapter = timeCardAdapter
+            adapter = timeConflictCardAdapter
         }
     }
 
@@ -244,9 +243,22 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
                 nonNullList
             }
 
-            timeCardAdapter.setData(filteredList)
+            timeConflictCardAdapter.setData(filteredList)
             updateNextButtonState()
         }
+
+        viewModel.teumConflict.observe(viewLifecycleOwner) { response ->
+            response ?: return@observe
+
+            if (response.hasConflict && response.conflictingRequests.isNotEmpty()) {
+                FriendSendRequestBottomSheet
+                    .newInstance(response.conflictingRequests)
+                    .show(parentFragmentManager, FriendSendRequestBottomSheet.TAG)
+
+                viewModel.clearTeumConflict()
+            }
+        }
+
     }
 
     // 선택 시간이 (선택 날짜가 오늘인 경우) 현재 시각 이후인지 확인
@@ -288,7 +300,7 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
     }
 
     private fun setViewModelData() {
-        val selectedTime = timeCardAdapter.getSelectedItem()
+        val selectedTime = timeConflictCardAdapter.getSelectedItem()
         viewModel.setTeumRequestSelectedTime(
             SelectedTime(
                 startTime = convert24To00(selectedTime!!.startTime),

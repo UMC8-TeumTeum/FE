@@ -242,6 +242,9 @@ class FriendViewModel @Inject constructor(
     fun setTeumRequestMainTargetUserName(v: String)   { _teumRequestMainTargetUserName.value = v }
     fun setTeumRequestMainTargetProfileImage(v: String) { _teumRequestMainTargetProfileImage.value = v }
 
+    fun clearTeumConflict() { _teumConflict.value = null }
+
+
     //요청 생성 메소드
     fun buildTeumRequest(): TeumRequest? {
         val title = _teumRequestTitle.value?.takeIf { it.isNotBlank() } ?: return null
@@ -900,4 +903,42 @@ class FriendViewModel @Inject constructor(
                 }
         }
     }
+
+    // 틈 요청 시 겹치는 틈 요청 조회
+    private val _teumConflict = MutableLiveData<TeumConflictResponse?>()
+    val teumConflict: LiveData<TeumConflictResponse?> get() = _teumConflict
+
+    fun checkTeumConflict(
+        date: String,
+        startTime: String,
+        endTime: String
+    ) {
+        Log.d(
+            "TEUM2016",
+            "checkTeumConflict 호출 → date=$date, start=$startTime, end=$endTime"
+        )
+
+        viewModelScope.launch {
+            repository.checkTeumConflict(date, startTime, endTime)
+                .onSuccess { response ->
+                    Log.d(
+                        "TEUM2016",
+                        "API 성공 → hasConflict=${response.hasConflict}, " +
+                                "listSize=${response.conflictingRequests.size}"
+                    )
+
+                    _teumConflict.value = response
+                }
+                .onFailure { e ->
+                    Log.e(
+                        "TEUM4001",
+                        "API 실패 → ${e.message}",
+                        e
+                    )
+                }
+        }
+    }
+
+
+
 }
