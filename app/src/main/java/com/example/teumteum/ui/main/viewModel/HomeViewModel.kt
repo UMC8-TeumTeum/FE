@@ -76,11 +76,18 @@ class HomeViewModel @Inject constructor(
             repository.getTodaySchedule(date)
                 .onSuccess { result ->
                     Log.d("TodaySchedule", result.toString())
-                    _scheduleList.value = result.map {
+
+                    val blocks = result.map {
                         val start = timeToMinutes(it.startTime)
                         val end = timeToMinutes(it.endTime)
                         TimeBlock(start, end, it.type)
                     }
+
+                    _scheduleList.value = blocks
+
+                    // clock용 데이터 분리
+                    _sleepTimeList.value = blocks.filter { it.type == TimeType.SLEEP }
+                    _todoTimeList.value = blocks.filter { it.type == TimeType.TODO }
                 }
                 .onFailure {
                     _error.value = "스케줄 조회 실패: ${it.message}"
