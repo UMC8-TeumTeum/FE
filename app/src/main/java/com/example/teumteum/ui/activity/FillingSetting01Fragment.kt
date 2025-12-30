@@ -25,7 +25,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
-import kotlin.collections.orEmpty
 
 @AndroidEntryPoint
 class FillingSetting01Fragment : Fragment() {
@@ -81,7 +80,7 @@ class FillingSetting01Fragment : Fragment() {
         val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
         bottomNav?.visibility = View.GONE
 
-        val emptyBlocks = calculateEmptyTime()
+//        val emptyBlocks = calculateEmptyTime()
 
         // 어댑터 생성 (문자열 콜백)
         wishTimeAdapter = WishTimeAdapter(

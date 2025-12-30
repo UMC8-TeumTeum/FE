@@ -17,7 +17,6 @@ import com.example.teumteum.ui.activity.FillingSetting03Fragment
 import com.example.teumteum.ui.clock.ChartUtils
 import com.example.teumteum.ui.clock.ClockHalf
 import com.example.teumteum.ui.clock.ClockVPAdapter
-import com.example.teumteum.ui.clock.IconPieChartRenderer
 import com.example.teumteum.ui.main.data.TimeType
 import com.example.teumteum.ui.main.viewModel.HomeViewModel
 import com.example.teumteum.ui.wish.adapter.WishTimeAdapter
@@ -28,7 +27,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
-import kotlin.collections.orEmpty
 
 @AndroidEntryPoint
 class WishSetting01Fragment : Fragment() {
@@ -83,7 +81,7 @@ class WishSetting01Fragment : Fragment() {
         bottomNav?.visibility = View.GONE
 
         // EMPTY만 필터 후 변환
-        val emptyBlocks = calculateEmptyTime()
+//        val emptyBlocks = calculateEmptyTime()
 
         // 어댑터 생성 (문자열 콜백)
         wishTimeAdapter = WishTimeAdapter(
