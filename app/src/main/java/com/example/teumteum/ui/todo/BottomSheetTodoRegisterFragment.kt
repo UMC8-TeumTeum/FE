@@ -1,6 +1,5 @@
 package com.example.teumteum.ui.todo
 
-import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
 import android.graphics.Typeface
@@ -10,7 +9,6 @@ import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
@@ -44,6 +42,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 import com.example.teumteum.ui.myhome.viewModel.MyHomeViewModel
 import com.example.teumteum.ui.todo.viewModel.TodoViewModel
+import com.example.teumteum.utils.disableScroll
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.DayPosition
 import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
@@ -263,17 +262,9 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
         }
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     private fun disableCalendarScroll() {
-        val blockScroll = View.OnTouchListener { _, event ->
-            when (event.actionMasked) {
-                MotionEvent.ACTION_MOVE -> true // 스크롤 차단
-                else -> false // 날짜 선택 가능
-            }
-        }
-
-        binding.calendarView01.setOnTouchListener(blockScroll)
-        binding.calendarView02.setOnTouchListener(blockScroll)
+        binding.calendarView01.disableScroll()
+        binding.calendarView02.disableScroll()
     }
 
     private fun setupStartCalendar() {
