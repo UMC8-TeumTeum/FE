@@ -34,6 +34,7 @@
     <color name="clock_sleep">#605ADB</color>
     <color name="clock_teum">#FFFFFF</color>
     <color name="clock_todo">#847EFF</color>
+    <color name="clock_overlap">#7069F4</color>
 
     <color name="skeleton_card">#F6F6F6</color>
     <color name="skeleton_block">#EAEAEA</color>

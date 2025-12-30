@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.teumteum.data.remote.home.model.GetCalendarResponse
 import com.example.teumteum.data.remote.home.repository.HomeRepository
 import com.example.teumteum.ui.main.data.TimeBlock
+import com.example.teumteum.ui.main.data.TimeType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -21,6 +22,12 @@ class HomeViewModel @Inject constructor(
 
     private val _scheduleList = MutableLiveData<List<TimeBlock>>(emptyList())
     val scheduleList: LiveData<List<TimeBlock>> = _scheduleList
+
+    private val _sleepTimeList = MutableLiveData<List<TimeBlock>>(emptyList())
+    val sleepTimeList: LiveData<List<TimeBlock>> = _sleepTimeList
+
+    private val _todoTimeList = MutableLiveData<List<TimeBlock>>(emptyList())
+    val todoTimeList: LiveData<List<TimeBlock>> = _todoTimeList
 
     private val _calendarData = MutableLiveData<List<GetCalendarResponse>>()
     val calendarData: LiveData<List<GetCalendarResponse>> = _calendarData
@@ -46,7 +53,8 @@ class HomeViewModel @Inject constructor(
         if (date == currentDate) return //이미 호출한 날짜면 패스
 
         date = currentDate
-        getTodaySchedule(currentDate)
+//        getTodaySchedule(currentDate)
+        getTimetable(currentDate)
     }
 
     // 캘린더 일정 조회
@@ -81,6 +89,30 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    private fun getTimetable(date: String) {
+        viewModelScope.launch {
+            repository.getTimetable(date)
+                .onSuccess { result ->
+                    Log.d("TodaySchedule", result.toString())
+                    _sleepTimeList.value = result.sleep.map {
+                        val start = timeToMinutes(it.startTime)
+                        val end = timeToMinutes(it.endTime)
+                        TimeBlock(start, end, TimeType.SLEEP)
+                    }
+
+                    _todoTimeList.value = result.todo.map {
+                        val start = timeToMinutes(it.startTime)
+                        val end = timeToMinutes(it.endTime)
+                        TimeBlock(start, end, TimeType.TODO)
+                    }
+                }
+                .onFailure {
+                    _error.value = "시간표 조회 실패: ${it.message}"
+                    Log.d("Timetable", _error.value.toString() )
+                }
+        }
+    }
+
     /** 지금까지 채운 빈틈 */
     fun getTeumTime(){
         viewModelScope.launch {
@@ -109,7 +141,8 @@ class HomeViewModel @Inject constructor(
         Log.d("asdf", "viewmodel")
         val currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
         date = currentDate
-        getTodaySchedule(currentDate)
+//        getTodaySchedule(currentDate)
+        getTimetable(currentDate)
     }
 }
 

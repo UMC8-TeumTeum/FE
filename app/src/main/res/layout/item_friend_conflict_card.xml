@@ -3,15 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     app:cardCornerRadius="10dp"
     app:cardElevation="0dp"
-    android:layout_marginBottom="40dp"
     app:cardBackgroundColor="@android:color/white">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
         <!-- 약속 상태 표시용 TextView -->
@@ -83,7 +82,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
-                        android:layout_marginEnd="18dp"
+                        android:layout_marginEnd="10dp"
                         android:layout_weight="1"
                         android:fontFamily="@font/noto_sans_kr_medium"
                         android:text="이름"
@@ -111,7 +110,7 @@
                         android:id="@+id/tvTime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="21dp"
+                        android:layout_marginEnd="118dp"
                         android:fontFamily="@font/noto_sans_kr_regular"
                         android:text="15:20 ~ 16:10"
                         android:textColor="#FFFFFF"

@@ -160,4 +160,11 @@ interface FriendService {
     @POST("/api/blocks/{userId}")
     suspend fun blockUser(@Path("userId") userId: Int): Response<ApiResponse<Int>>
 
+    // 틈 요청 시 겹치는 틈 요청 조회
+    @GET("/api/teums/request/conflicts")
+    suspend fun checkTeumConflict(
+        @Query("date") date: String,      // YYYY-MM-DD
+        @Query("startTime") startTime: String, // HH:MM
+        @Query("endTime") endTime: String      // HH:MM
+    ): Response<ApiResponse<TeumConflictResponse>>
 }

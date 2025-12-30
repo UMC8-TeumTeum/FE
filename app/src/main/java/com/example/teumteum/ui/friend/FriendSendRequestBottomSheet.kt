@@ -2,21 +2,38 @@ package com.example.teumteum.ui.friend
 
 import android.app.Dialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import android.widget.LinearLayout
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.activityViewModels
+import androidx.viewpager2.widget.ViewPager2
 import com.example.teumteum.R
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.example.teumteum.data.remote.friend.model.TeumConflictItem
 import com.example.teumteum.databinding.BottomSheetFriendSendRequestBinding
-import com.example.teumteum.ui.friend.data.ConflictItem
+import com.example.teumteum.ui.friend.data.SelectedTime
+import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
-
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class FriendSendRequestBottomSheet : BottomSheetDialogFragment() {
 
     private var _binding: BottomSheetFriendSendRequestBinding? = null
     private val binding get() = _binding!!
+    private val viewModel: FriendViewModel by activityViewModels()
+
+    // 수락 버튼 리스너
+    interface OnRequestSendListener {
+        fun onAcceptClicked()
+    }
+
+    private var listener: OnRequestSendListener? = null
+
+    fun setOnRequestSendListener(listener: OnRequestSendListener) {
+        this.listener = listener
+    }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
@@ -26,16 +43,6 @@ class FriendSendRequestBottomSheet : BottomSheetDialogFragment() {
             bottomSheet?.setBackgroundResource(R.drawable.calendar_background)
         }
         return dialog
-    }
-
-
-    // '수락' 버튼 클릭 리스너 인터페이스
-    interface OnRequestSendListener {
-        fun onAcceptClicked()
-    }
-    private var listener: OnRequestSendListener? = null
-    fun setOnRequestSendListener(listener: OnRequestSendListener) {
-        this.listener = listener
     }
 
     override fun onCreateView(
@@ -50,39 +57,110 @@ class FriendSendRequestBottomSheet : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // TODO: 실제 데이터로 교체해야 하는 예시 데이터
-        val conflictList = listOf(
-            ConflictItem(
-                "종강 기념 한강 피크닉",
-                "종강 기념 한강 피크닉 가자!...",
-                "문혜원",
-                "15:20 ~ 16:10"
-            ),
-            ConflictItem(
-                "다른 약속",
-                "다른 약속 상세 내용",
-                "김철수",
-                "15:30 ~ 16:00"
-            )
+        // Fragment에서 전달받은 실제 충돌 리스트
+        val conflictList =
+            arguments?.getParcelableArrayList<TeumConflictItem>(ARG_CONFLICT_LIST)
+                ?: emptyList()
+
+        // ViewPager 어댑터 세팅
+        binding.viewPagerConflict.adapter =
+            ConflictPagerAdapter(conflictList)
+
+        // 인디케이터 초기화
+        if (conflictList.isNotEmpty()) {
+            setupIndicator(conflictList.size)
+            updateIndicator(0)
+        }
+
+        // 페이지 변경 감지
+        binding.viewPagerConflict.registerOnPageChangeCallback(
+            object : ViewPager2.OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    updateIndicator(position)
+                }
+            }
         )
 
-        // 1. (분리된) 어댑터 생성 및 설정
-        val pagerAdapter = ConflictPagerAdapter(conflictList)
-        binding.viewPagerConflict.adapter = pagerAdapter
-
-        // 2. DotsIndicator와 ViewPager2 연결
-        binding.dotsIndicator.setViewPager2(binding.viewPagerConflict)
-
-        // 3. 버튼 클릭 리스너
-        binding.btnCancel.setOnClickListener {
-            dismiss()
-        }
+        binding.btnCancel.setOnClickListener { dismiss() }
 
         binding.btnAccept.setOnClickListener {
-            listener?.onAcceptClicked()
-            Toast.makeText(requireContext(), "수락되었습니다.", Toast.LENGTH_SHORT).show()
+            val selectedConflict = conflictList.getOrNull(0) ?: return@setOnClickListener
+
+            val dialog = FriendMatchingPreviewDialog().apply {
+                arguments = Bundle().apply {
+                    putString("title", selectedConflict.title)
+                    putString("description", selectedConflict.description)
+                    putString("startTime", selectedConflict.startTime)
+                    putString("endTime", selectedConflict.endTime)
+                }
+                Log.d("BOTTOM_SHEET_CLICK", selectedConflict.toString())
+
+            }
+            dialog.show(parentFragmentManager, FriendMatchingPreviewDialog.TAG)
             dismiss()
         }
+
+
+
+
+    }
+
+    // =========================
+    // Indicator 관련 함수
+    // =========================
+
+    private fun setupIndicator(count: Int) {
+        binding.clockIndicatorLl.removeAllViews()
+
+        repeat(count) {
+            val indicator = View(requireContext())
+
+            val params = LinearLayout.LayoutParams(
+                dpToPx(4),
+                dpToPx(4)
+            ).apply {
+                marginEnd = dpToPx(6)
+            }
+
+            indicator.layoutParams = params
+            indicator.background =
+                ContextCompat.getDrawable(requireContext(), R.drawable.clock_indicator_dot)
+
+            binding.clockIndicatorLl.addView(indicator)
+        }
+    }
+
+    private fun updateIndicator(position: Int) {
+        for (i in 0 until binding.clockIndicatorLl.childCount) {
+            val view = binding.clockIndicatorLl.getChildAt(i)
+            val params = view.layoutParams as LinearLayout.LayoutParams
+
+            if (i == position) {
+                // 선택된 카드 → 보라색 막대
+                params.width = dpToPx(28)
+                params.height = dpToPx(4)
+                view.background =
+                    ContextCompat.getDrawable(
+                        requireContext(),
+                        R.drawable.clock_indicator_bar_gray
+                    )
+            } else {
+                // 나머지 → 회색 점
+                params.width = dpToPx(4)
+                params.height = dpToPx(4)
+                view.background =
+                    ContextCompat.getDrawable(
+                        requireContext(),
+                        R.drawable.clock_indicator_dot
+                    )
+            }
+
+            view.layoutParams = params
+        }
+    }
+
+    private fun dpToPx(dp: Int): Int {
+        return (dp * resources.displayMetrics.density).toInt()
     }
 
     override fun onDestroyView() {
@@ -91,10 +169,21 @@ class FriendSendRequestBottomSheet : BottomSheetDialogFragment() {
     }
 
     companion object {
+        private const val ARG_CONFLICT_LIST = "arg_conflict_list"
         const val TAG = "FriendSendRequestBottomSheet"
-        fun newInstance(): FriendSendRequestBottomSheet {
-            // TODO: newInstance를 통해 데이터를 받아야 한다면 인자 추가
-            return FriendSendRequestBottomSheet()
+
+        // 실제 충돌 리스트를 받아 생성
+        fun newInstance(
+            list: List<TeumConflictItem>
+        ): FriendSendRequestBottomSheet {
+            return FriendSendRequestBottomSheet().apply {
+                arguments = Bundle().apply {
+                    putParcelableArrayList(
+                        ARG_CONFLICT_LIST,
+                        ArrayList(list)
+                    )
+                }
+            }
         }
     }
 }

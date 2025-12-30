@@ -3,13 +3,14 @@ package com.example.teumteum.utils
 import com.example.teumteum.data.remote.activity.service.ActivityService
 import com.example.teumteum.data.remote.alarm.service.FcmService
 import com.example.teumteum.data.remote.alarm.service.NotificationService
-import com.example.teumteum.data.remote.friend.service.FriendService
-import com.example.teumteum.data.remote.mypage.service.MyPageService
-import com.example.teumteum.data.remote.home.service.HomeService
 import com.example.teumteum.data.remote.auth.service.AuthService
+import com.example.teumteum.data.remote.friend.service.FriendService
+import com.example.teumteum.data.remote.home.service.HomeService
+import com.example.teumteum.data.remote.mypage.service.MyPageService
+import com.example.teumteum.data.remote.mypage.service.SettingService
 import com.example.teumteum.data.remote.onboarding.service.OnBoardingService
-import com.example.teumteum.data.remote.wish.service.WishService
 import com.example.teumteum.data.remote.todo.service.TodoService
+import com.example.teumteum.data.remote.wish.service.WishService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -74,6 +75,12 @@ class ApiModule {
     @Singleton
     fun provideNotificationApi(@AuthRetrofit retrofit: Retrofit): NotificationService {
         return retrofit.create(NotificationService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSettingApi(@AuthRetrofit retrofit: Retrofit): SettingService {
+        return retrofit.create(SettingService::class.java)
     }
 
     // 인증이 필요 없는 API - @NoAuthRetrofit 사용
