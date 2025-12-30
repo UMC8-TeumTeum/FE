@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.activity.model.ActivityAiRequest
@@ -18,6 +19,7 @@ import com.example.teumteum.ui.activity.adapter.AiRecommendAdapter
 import com.example.teumteum.ui.activity.adapter.WishRecommendAdapter
 import com.example.teumteum.ui.activity.viewModel.ActivityViewModel
 import com.example.teumteum.ui.friend.FriendFragment
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -82,10 +84,16 @@ class FillingActivity02Fragment : Fragment() {
         }
 
         binding.fillingActivityFriendSearchCv.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, FriendFragment())
-                .addToBackStack(null)
-                .commit()
+            val activity = requireActivity()
+            val bottomNav = activity.findViewById<BottomNavigationView>(R.id.main_bnv)
+
+            // 백스택 전부 제거
+            activity.supportFragmentManager.popBackStack(
+                null,
+                FragmentManager.POP_BACK_STACK_INCLUSIVE
+            )
+
+            bottomNav.selectedItemId = R.id.fragment_friend
         }
 
         // 새로고침: 시머 -> 재조회
