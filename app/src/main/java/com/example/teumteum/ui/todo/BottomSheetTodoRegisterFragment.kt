@@ -267,7 +267,7 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
     private fun disableCalendarScroll() {
         val blockScroll = View.OnTouchListener { _, event ->
             when (event.actionMasked) {
-                MotionEvent.ACTION_MOVE -> true   // 스크롤 차단
+                MotionEvent.ACTION_MOVE -> true // 스크롤 차단
                 else -> false // 날짜 선택 가능
             }
         }
