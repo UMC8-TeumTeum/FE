@@ -50,6 +50,7 @@ import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.example.teumteum.ui.todo.adapter.TeumProfileAdapter
 import com.example.teumteum.ui.todo.viewModel.TodoViewModel
 import com.example.teumteum.utils.TimeUtils.combineDateTime
+import com.example.teumteum.utils.disableScroll
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.kizitonwose.calendar.core.CalendarDay
@@ -61,6 +62,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 import java.util.Locale
@@ -157,8 +159,11 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
 
         resetAlarmUI()
         setupPickers()
+
         setupStartCalendar()
         setupEndCalendar()
+        disableCalendarScroll()
+
         setupWeekdayLabels()
         setupClickListeners(scheduleType)
         setupObservers()
@@ -264,8 +269,13 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
         }
     }
 
+    private fun disableCalendarScroll() {
+        binding.calendarView01.disableScroll()
+        binding.calendarView02.disableScroll()
+    }
+
     private fun setupStartCalendar() {
-        val currentMonth = java.time.YearMonth.now()
+        val currentMonth = YearMonth.now()
         val startMonth = currentMonth.minusYears(50)
         val endMonth = currentMonth.plusYears(50)
         val firstDayOfWeek = firstDayOfWeekFromLocale()
@@ -313,7 +323,7 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
     }
 
     private fun setupEndCalendar() {
-        val currentMonth = java.time.YearMonth.now()
+        val currentMonth = YearMonth.now()
         val startMonth = currentMonth.minusYears(50)
         val endMonth = currentMonth.plusYears(50)
         val firstDayOfWeek = firstDayOfWeekFromLocale()

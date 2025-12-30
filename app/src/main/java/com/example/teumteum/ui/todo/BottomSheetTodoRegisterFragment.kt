@@ -42,7 +42,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 import com.example.teumteum.ui.myhome.viewModel.MyHomeViewModel
 import com.example.teumteum.ui.todo.viewModel.TodoViewModel
-import com.example.teumteum.utils.TimeUtils.combineDateTime
+import com.example.teumteum.utils.disableScroll
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.DayPosition
 import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
@@ -129,8 +129,11 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
 
         resetAlarmUI()
         setupPickers()
+
         setupStartCalendar()
         setupEndCalendar()
+        disableCalendarScroll()
+
         setupWeekdayLabels()
         setupObservers()
         setupClickListeners()
@@ -257,6 +260,11 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
             isStartDateSelected = false
             toggleCalendarVisibility(show = true)
         }
+    }
+
+    private fun disableCalendarScroll() {
+        binding.calendarView01.disableScroll()
+        binding.calendarView02.disableScroll()
     }
 
     private fun setupStartCalendar() {
