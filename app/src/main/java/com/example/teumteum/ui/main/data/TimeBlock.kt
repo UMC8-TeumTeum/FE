@@ -7,5 +7,5 @@ import kotlinx.parcelize.Parcelize
 data class TimeBlock(
     val startTime: Int,
     val endTime: Int,
-    val type: TimeType // SLEEP, EVENT, EMPTY
+    val type: TimeType
 ) : Parcelable
