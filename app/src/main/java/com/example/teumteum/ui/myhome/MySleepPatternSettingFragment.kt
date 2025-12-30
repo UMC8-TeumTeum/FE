@@ -13,6 +13,7 @@ import com.example.teumteum.R
 import com.example.teumteum.data.remote.onboarding.model.SleepPatternRequest
 import com.example.teumteum.databinding.FragmentMySleepPatternSettingBinding
 import com.example.teumteum.ui.main.MainActivity
+import com.example.teumteum.ui.main.viewModel.HomeViewModel
 import com.example.teumteum.ui.myhome.viewModel.SettingViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
@@ -25,6 +26,7 @@ class MySleepPatternSettingFragment : Fragment() {
     private lateinit var binding: FragmentMySleepPatternSettingBinding
 
     private val viewModel: SettingViewModel by viewModels()
+    private val homeViewModel: HomeViewModel by viewModels()
 
     private val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
