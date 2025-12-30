@@ -156,6 +156,10 @@ interface FriendService {
         @Query("date") date: String // "YYYY-MM-DD"
     ): Response<ApiResponse<List<TeumRequestDateResult>>>
 
+    // 유저 차단하기
+    @POST("/api/blocks/{userId}")
+    suspend fun blockUser(@Path("userId") userId: Int): Response<ApiResponse<Int>>
+
     // 틈 요청 시 겹치는 틈 요청 조회
     @GET("/api/teums/request/conflicts")
     suspend fun checkTeumConflict(

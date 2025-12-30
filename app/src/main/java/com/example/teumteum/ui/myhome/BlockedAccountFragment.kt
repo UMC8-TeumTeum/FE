@@ -9,13 +9,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.teumteum.R
 import com.example.teumteum.databinding.DialogUnblockBinding
 import com.example.teumteum.databinding.FragmentBlockedAccountBinding
 import com.example.teumteum.ui.myhome.adapter.BlockedAccountAdapter
 import com.example.teumteum.ui.myhome.data.BlockedAccount
+import com.example.teumteum.ui.myhome.viewModel.BlockedAccountViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -23,6 +26,9 @@ class BlockedAccountFragment : Fragment() {
 
     private var _binding: FragmentBlockedAccountBinding? = null
     private val binding get() = _binding!!
+
+    private val viewModel: BlockedAccountViewModel by viewModels()
+    private lateinit var adapter: BlockedAccountAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,36 +41,44 @@ class BlockedAccountFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 더미 데이터
-        //Todo: 차단된 계정 API
-        val dummyList = listOf(
-            BlockedAccount("미나리", "UX 디자이너", R.drawable.ic_empty_profile_sv),
-            BlockedAccount("미나리나물", "개발자", R.drawable.ic_empty_profile_sv),
-            BlockedAccount("미나리무침", "학원 강사", R.drawable.ic_empty_profile_sv),
-            BlockedAccount("미미미", "매니저", R.drawable.ic_empty_profile_sv)
-        )
+        setupRecyclerView()
+        observeBlockedAccounts()
+        observeError()
 
-        val adapter = BlockedAccountAdapter(dummyList) { account ->
-            showUnblockDialog(account)
-        }
-
-        binding.blockedAccountRv.adapter = adapter
-        binding.blockedAccountRv.layoutManager = LinearLayoutManager(requireContext())
+        //  차단된 계정 목록 조회
+        viewModel.getBlockedAccounts()
 
         binding.backArrowIv.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    private fun setupRecyclerView() {
+        adapter = BlockedAccountAdapter { account ->
+            showUnblockDialog(account)
+        }
+
+        binding.blockedAccountRv.layoutManager = LinearLayoutManager(requireContext())
+        binding.blockedAccountRv.adapter = adapter
+    }
+
+    private fun observeBlockedAccounts() {
+        viewModel.blockedAccountList.observe(viewLifecycleOwner) { list ->
+            adapter.submitList(list)
+        }
+    }
+
+    private fun observeError() {
+        viewModel.error.observe(viewLifecycleOwner) { message ->
+            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun showUnblockDialog(account: BlockedAccount) {
         val dialogView = DialogUnblockBinding.inflate(layoutInflater)
 
-        dialogView.descriptionTv.text = "${account.name} 님을\n차단 해제하시겠어요?"
+        dialogView.descriptionTv.text =
+            "${account.nickName} 님을\n차단 해제하시겠어요?"
 
         val dialog = Dialog(requireContext())
         dialog.setContentView(dialogView.root)
@@ -74,9 +88,9 @@ class BlockedAccountFragment : Fragment() {
         }
 
         dialogView.yesBtn.setOnClickListener {
-            Toast.makeText(requireContext(), "${account.name} 차단 해제 완료", Toast.LENGTH_SHORT).show()
+            // 차단 해제 API 호출
+            viewModel.unblockUser(account.userId)
 
-            // TODO: 차단 해제 API 연동
             dialog.dismiss()
         }
 
@@ -85,10 +99,12 @@ class BlockedAccountFragment : Fragment() {
         }
 
         dialog.show()
-
-        val displayMetrics = resources.displayMetrics
-        val dialogWidth = (displayMetrics.widthPixels * 0.9).toInt()
+        val dialogWidth = (resources.displayMetrics.widthPixels * 0.9).toInt()
         dialog.window?.setLayout(dialogWidth, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }

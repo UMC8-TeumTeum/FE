@@ -4,22 +4,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.teumteum.R
 import com.example.teumteum.ui.myhome.data.BlockedAccount
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.imageview.ShapeableImageView
 
 class BlockedAccountAdapter(
-    private val items: List<BlockedAccount>,
     private val onUnblockClick: (BlockedAccount) -> Unit
-) : RecyclerView.Adapter<BlockedAccountAdapter.BlockedViewHolder>() {
+) : ListAdapter<BlockedAccount, BlockedAccountAdapter.BlockedViewHolder>(diffUtil) {
 
-    inner class BlockedViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
-        val profile = view.findViewById<ShapeableImageView>(R.id.profileLayout)
-        val name = view.findViewById<TextView>(R.id.nameTv)
-        val job = view.findViewById<TextView>(R.id.jobTv)
-        val unblockButton = view.findViewById<MaterialButton>(R.id.unblock_btn)
+    inner class BlockedViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val profile: ShapeableImageView = view.findViewById(R.id.profileLayout)
+        val name: TextView = view.findViewById(R.id.nameTv)
+        val job: TextView = view.findViewById(R.id.jobTv)
+        val unblockButton: MaterialButton = view.findViewById(R.id.unblock_btn)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BlockedViewHolder {
@@ -29,16 +31,35 @@ class BlockedAccountAdapter(
     }
 
     override fun onBindViewHolder(holder: BlockedViewHolder, position: Int) {
-        val item = items[position]
+        val item = getItem(position)
+        val context = holder.itemView.context
 
-        holder.profile.setImageResource(item.profileRes)
-        holder.name.text = item.name
+        holder.name.text = item.nickName
         holder.job.text = " · ${item.job}"
+
+        //  Glide로 프로필 이미지 로드 (네가 쓰던 방식 그대로)
+        Glide.with(context)
+            .load(item.profileImageUrl)
+            .placeholder(R.drawable.gray_teum)
+            .error(R.drawable.gray_teum)
+            .into(holder.profile)
 
         holder.unblockButton.setOnClickListener {
             onUnblockClick(item)
         }
     }
 
-    override fun getItemCount(): Int = items.size
+    companion object {
+        val diffUtil = object : DiffUtil.ItemCallback<BlockedAccount>() {
+            override fun areItemsTheSame(
+                oldItem: BlockedAccount,
+                newItem: BlockedAccount
+            ): Boolean = oldItem.userId == newItem.userId
+
+            override fun areContentsTheSame(
+                oldItem: BlockedAccount,
+                newItem: BlockedAccount
+            ): Boolean = oldItem == newItem
+        }
+    }
 }

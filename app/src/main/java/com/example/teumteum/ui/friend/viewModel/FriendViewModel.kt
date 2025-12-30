@@ -904,6 +904,25 @@ class FriendViewModel @Inject constructor(
         }
     }
 
+    // 차단 성공 여부를 알리는 LiveData (Event Wrapper 사용 권장)
+    private val _blockComplete = MutableLiveData<Event<Boolean>>()
+    val blockComplete: LiveData<Event<Boolean>> get() = _blockComplete
+
+    // 유저 차단 함수
+    fun blockUser(userId: Int) {
+        viewModelScope.launch {
+            repository.blockUser(userId)
+                .onSuccess {
+                    Log.d("FRIEND_BLOCK", "유저 차단 성공: $userId")
+                    // 성공 이벤트 발생 -> UI에서 감지 후 화면 종료 처리
+                    _blockComplete.value = Event(true)
+                }
+                .onFailure { e ->
+                    Log.e("FRIEND_BLOCK", "유저 차단 실패: ${e.message}")
+                    _errorMessage.value = Event(e.message ?: "차단에 실패했습니다.")
+                }
+        }
+    }
     // 틈 요청 시 겹치는 틈 요청 조회
     private val _teumConflict = MutableLiveData<TeumConflictResponse?>()
     val teumConflict: LiveData<TeumConflictResponse?> get() = _teumConflict
