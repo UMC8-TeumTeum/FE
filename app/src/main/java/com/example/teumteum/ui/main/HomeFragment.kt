@@ -750,7 +750,7 @@ class HomeFragment : Fragment() {
     private fun onDateSelected(date: LocalDate) {
         val dateStr = date.format(serverFormatter) // "yyyy-MM-dd"
         todoViewModel.getTodoList(dateStr)
-        viewModel.getTodaySchedule(dateStr)
+        viewModel.getScheduleForDate(dateStr)
     }
 
     private fun updateIndicator(isAM: Boolean) {
@@ -800,7 +800,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun refreshTodolist() {
-        val dateStr = selectedDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        val dateStr = selectedDate.format(serverFormatter)
         todoViewModel.getTodoList(dateStr)
     }
 

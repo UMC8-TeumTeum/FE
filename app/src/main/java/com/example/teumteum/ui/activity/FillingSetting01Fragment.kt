@@ -108,7 +108,7 @@ class FillingSetting01Fragment : Fragment() {
         setupClockPager()
         setupObservers()
 
-        homeViewModel.getTodaySchedule(selectedDateServer)
+        homeViewModel.getScheduleForDate(selectedDateServer)
 
         binding.amPmTv.setOnClickListener {
             val amPos = clockAdapter.positionOf(ClockHalf.AM)
@@ -143,7 +143,7 @@ class FillingSetting01Fragment : Fragment() {
             binding.nextBtn.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
 
             wishTimeAdapter.clearSelection()
-            homeViewModel.getTodaySchedule(server)
+            homeViewModel.getScheduleForDate(server)
         }
 
         binding.nextBtn.setOnClickListener {
