@@ -748,8 +748,9 @@ class HomeFragment : Fragment() {
     }
 
     private fun onDateSelected(date: LocalDate) {
-        val dateStr = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        val dateStr = date.format(serverFormatter) // "yyyy-MM-dd"
         todoViewModel.getTodoList(dateStr)
+        viewModel.getTodaySchedule(dateStr)
     }
 
     private fun updateIndicator(isAM: Boolean) {
