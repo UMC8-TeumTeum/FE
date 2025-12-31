@@ -659,7 +659,8 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
             }
         }
 
-        val popupWidth = resources.displayMetrics.widthPixels / 2
+        val screenW = resources.displayMetrics.widthPixels
+        val popupWidth = (screenW * 0.6f).toInt()
 
         // 팝업 설정
         popupWindow = PopupWindow(
@@ -672,7 +673,12 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
             elevation = 16f
             setBackgroundDrawable(null)
 
-            showAsDropDown(anchor, -popupWidth + anchor.width, 16)
+            val moveRightPx = dpToPx(10)
+            showAsDropDown(
+                anchor,
+                (-popupWidth + anchor.width) + moveRightPx,
+                dpToPx(8)
+            )
         }
     }
 
@@ -1165,6 +1171,9 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
             )?.mutate()
         }
     }
+
+    private fun dpToPx(dp: Int): Int =
+        (dp * resources.displayMetrics.density).toInt()
 
     override fun onDestroyView() {
         super.onDestroyView()
