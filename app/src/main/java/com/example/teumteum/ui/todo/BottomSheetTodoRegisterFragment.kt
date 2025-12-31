@@ -43,6 +43,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.example.teumteum.ui.myhome.viewModel.MyHomeViewModel
 import com.example.teumteum.ui.todo.viewModel.TodoViewModel
 import com.example.teumteum.utils.disableScroll
+import com.example.teumteum.utils.dpToPx
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.DayPosition
 import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
@@ -571,7 +572,8 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
             }
         }
 
-        val popupWidth = resources.displayMetrics.widthPixels / 2
+        val screenW = resources.displayMetrics.widthPixels
+        val popupWidth = (screenW * 0.6f).toInt()
 
         // 팝업 설정
         popupWindow = PopupWindow(
@@ -584,7 +586,12 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
             elevation = 16f
             setBackgroundDrawable(null)
 
-            showAsDropDown(anchor, -popupWidth + anchor.width, 16)
+            val moveRightPx = anchor.dpToPx(10)
+            showAsDropDown(
+                anchor,
+                (-popupWidth + anchor.width) + moveRightPx,
+                anchor.dpToPx(8)
+            )
         }
     }
 
