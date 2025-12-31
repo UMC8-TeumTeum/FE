@@ -15,3 +15,6 @@ fun View.setOnSingleClickListener(
         onClick(v)
     }
 }
+
+fun View.dpToPx(dp: Int): Int =
+    (dp * resources.displayMetrics.density).toInt()

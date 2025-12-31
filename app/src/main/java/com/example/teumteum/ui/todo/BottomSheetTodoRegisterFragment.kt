@@ -43,6 +43,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.example.teumteum.ui.myhome.viewModel.MyHomeViewModel
 import com.example.teumteum.ui.todo.viewModel.TodoViewModel
 import com.example.teumteum.utils.disableScroll
+import com.example.teumteum.utils.dpToPx
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.DayPosition
 import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
@@ -585,11 +586,11 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
             elevation = 16f
             setBackgroundDrawable(null)
 
-            val moveRightPx = dpToPx(10)
+            val moveRightPx = anchor.dpToPx(10)
             showAsDropDown(
                 anchor,
                 (-popupWidth + anchor.width) + moveRightPx,
-                dpToPx(8)
+                anchor.dpToPx(8)
             )
         }
     }
@@ -816,9 +817,6 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
     private inner class DayViewContainer(view: View) : ViewContainer(view) {
         val textView: TextView = view.findViewById(R.id.calendar_day_tv)
     }
-
-    private fun dpToPx(dp: Int): Int =
-        (dp * resources.displayMetrics.density).toInt()
 
     override fun onDestroyView() {
         super.onDestroyView()

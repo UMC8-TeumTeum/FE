@@ -51,6 +51,7 @@ import com.example.teumteum.ui.todo.adapter.TeumProfileAdapter
 import com.example.teumteum.ui.todo.viewModel.TodoViewModel
 import com.example.teumteum.utils.TimeUtils.combineDateTime
 import com.example.teumteum.utils.disableScroll
+import com.example.teumteum.utils.dpToPx
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.kizitonwose.calendar.core.CalendarDay
@@ -673,11 +674,11 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
             elevation = 16f
             setBackgroundDrawable(null)
 
-            val moveRightPx = dpToPx(10)
+            val moveRightPx = anchor.dpToPx(10)
             showAsDropDown(
                 anchor,
                 (-popupWidth + anchor.width) + moveRightPx,
-                dpToPx(8)
+                anchor.dpToPx(8)
             )
         }
     }
@@ -1171,9 +1172,6 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
             )?.mutate()
         }
     }
-
-    private fun dpToPx(dp: Int): Int =
-        (dp * resources.displayMetrics.density).toInt()
 
     override fun onDestroyView() {
         super.onDestroyView()
