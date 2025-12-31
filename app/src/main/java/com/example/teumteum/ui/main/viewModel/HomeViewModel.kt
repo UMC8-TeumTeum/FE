@@ -70,12 +70,12 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    /** 오늘의 스케줄 가져오기 */
-    fun getTodaySchedule(date: String) {
+    /** 스케줄 가져오기 */
+    fun getScheduleForDate(date: String) {
         viewModelScope.launch {
-            repository.getTodaySchedule(date)
+            repository.getScheduleForDate(date)
                 .onSuccess { result ->
-                    Log.d("TodaySchedule", result.toString())
+                    Log.d("Schedule", result.toString())
 
                     val blocks = result.map {
                         val start = timeToMinutes(it.startTime)
@@ -91,7 +91,7 @@ class HomeViewModel @Inject constructor(
                 }
                 .onFailure {
                     _error.value = "스케줄 조회 실패: ${it.message}"
-                    Log.d("TodaySchedule", _error.value.toString() )
+                    Log.d("Schedule", _error.value.toString() )
                 }
         }
     }

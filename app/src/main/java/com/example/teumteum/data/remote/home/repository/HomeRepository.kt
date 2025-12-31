@@ -14,8 +14,8 @@ import javax.inject.Singleton
 class HomeRepository @Inject constructor(
     private val homeService: HomeService
 ){
-    suspend fun getTodaySchedule(date: String): Result<List<ScheduleResult>> = runCatching {
-        val response = homeService.getTodaySchedule(date)
+    suspend fun getScheduleForDate(date: String): Result<List<ScheduleResult>> = runCatching {
+        val response = homeService.getScheduleForDate(date)
         Log.d("HomeSchedule", "response = ${response.body()}")
         handleApiResponse(response)
     }
