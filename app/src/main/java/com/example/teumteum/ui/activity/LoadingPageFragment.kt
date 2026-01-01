@@ -99,6 +99,7 @@ class LoadingPageFragment : Fragment() {
         super.onDestroyView()
         animator?.cancel()
         animator = null
+        backCallback = null
         _binding = null
     }
 }
