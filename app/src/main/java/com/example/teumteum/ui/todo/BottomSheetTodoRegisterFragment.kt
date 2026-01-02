@@ -42,7 +42,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 import com.example.teumteum.ui.myhome.viewModel.MyHomeViewModel
 import com.example.teumteum.ui.todo.viewModel.TodoViewModel
-import com.example.teumteum.utils.AmPmHourMinuteIndex
+import com.example.teumteum.utils.applyPickerValue
 import com.example.teumteum.utils.disableScroll
 import com.example.teumteum.utils.dpToPx
 import com.example.teumteum.utils.parseKoreanAmPmTimeToPickerValue
@@ -195,7 +195,13 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
                 parseKoreanAmPmTimeToPickerValue(
                     timeText = binding.startTimeTv.text.toString(),
                     minuteOptions = minuteOptions
-                )?.let { applyPickerValue(isStart = true, value = it) }
+                )?.let { v ->
+                    binding.ampmPicker01Np.applyPickerValue(
+                        hourPicker = binding.hourPicker01Np,
+                        minutePicker = binding.minutePicker01Np,
+                        value = v
+                    )
+                }
             }
 
             binding.timePickerStartContainer.isVisible = !isVisibleNow
@@ -215,7 +221,13 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
                 parseKoreanAmPmTimeToPickerValue(
                     timeText = binding.endTimeTv.text.toString(),
                     minuteOptions = minuteOptions
-                )?.let { applyPickerValue(isStart = false, value = it) }
+                )?.let { v ->
+                    binding.ampmPicker02Np.applyPickerValue(
+                        hourPicker = binding.hourPicker02Np,
+                        minutePicker = binding.minutePicker02Np,
+                        value = v
+                    )
+                }
             }
 
             binding.timePickerEndContainer.isVisible = !isVisibleNow
@@ -834,18 +846,6 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
     // DayView의 뷰 홀더
     private inner class DayViewContainer(view: View) : ViewContainer(view) {
         val textView: TextView = view.findViewById(R.id.calendar_day_tv)
-    }
-
-    private fun applyPickerValue(isStart: Boolean, value: AmPmHourMinuteIndex) {
-        if (isStart) {
-            binding.ampmPicker01Np.value = value.ampmValue
-            binding.hourPicker01Np.value = value.hour12
-            binding.minutePicker01Np.value = value.minuteIndex
-        } else {
-            binding.ampmPicker02Np.value = value.ampmValue
-            binding.hourPicker02Np.value = value.hour12
-            binding.minutePicker02Np.value = value.minuteIndex
-        }
     }
 
     override fun onDestroyView() {

@@ -1,10 +1,22 @@
 package com.example.teumteum.utils
 
+import android.widget.NumberPicker
+
 data class AmPmHourMinuteIndex(
-    val ampmValue: Int,   // 0=오전, 1=오후
+    val ampmValue: Int, // 0=오전, 1=오후
     val hour12: Int,
     val minuteIndex: Int
 )
+
+fun NumberPicker.applyPickerValue(
+    hourPicker: NumberPicker,
+    minutePicker: NumberPicker,
+    value: AmPmHourMinuteIndex
+) {
+    this.value = value.ampmValue
+    hourPicker.value = value.hour12
+    minutePicker.value = value.minuteIndex
+}
 
 fun parseKoreanAmPmTimeToPickerValue(
     timeText: String,
