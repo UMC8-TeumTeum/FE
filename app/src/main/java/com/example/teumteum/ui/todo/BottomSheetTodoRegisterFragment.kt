@@ -42,8 +42,10 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 import com.example.teumteum.ui.myhome.viewModel.MyHomeViewModel
 import com.example.teumteum.ui.todo.viewModel.TodoViewModel
+import com.example.teumteum.utils.AmPmHourMinuteIndex
 import com.example.teumteum.utils.disableScroll
 import com.example.teumteum.utils.dpToPx
+import com.example.teumteum.utils.parseKoreanAmPmTimeToPickerValue
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.DayPosition
 import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
@@ -90,6 +92,8 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
 
     private val viewModel: TodoViewModel by activityViewModels()
     private val myHomeViewModel: MyHomeViewModel by activityViewModels()
+
+    private val minuteOptions = arrayOf("00", "10", "20", "30", "40", "50")
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -183,10 +187,17 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
             if (isCalendarVisible) {
                 toggleCalendarVisibility(show = false)
             }
+
             val isVisibleNow = binding.timePickerStartContainer.isVisible
             if (isVisibleNow) {
                 applySelectedTime(isStart = true)
+            } else {
+                parseKoreanAmPmTimeToPickerValue(
+                    timeText = binding.startTimeTv.text.toString(),
+                    minuteOptions = minuteOptions
+                )?.let { applyPickerValue(isStart = true, value = it) }
             }
+
             binding.timePickerStartContainer.isVisible = !isVisibleNow
             binding.timePickerEndContainer.isVisible = false
             currentTargetTextView = binding.startTimeTv.takeIf { !isVisibleNow }
@@ -196,10 +207,17 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
             if (isCalendarVisible) {
                 toggleCalendarVisibility(show = false)
             }
+
             val isVisibleNow = binding.timePickerEndContainer.isVisible
             if (isVisibleNow) {
                 applySelectedTime(isStart = false)
+            } else {
+                parseKoreanAmPmTimeToPickerValue(
+                    timeText = binding.endTimeTv.text.toString(),
+                    minuteOptions = minuteOptions
+                )?.let { applyPickerValue(isStart = false, value = it) }
             }
+
             binding.timePickerEndContainer.isVisible = !isVisibleNow
             binding.timePickerStartContainer.isVisible = false
             currentTargetTextView = binding.endTimeTv.takeIf { !isVisibleNow }
@@ -816,6 +834,18 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
     // DayView의 뷰 홀더
     private inner class DayViewContainer(view: View) : ViewContainer(view) {
         val textView: TextView = view.findViewById(R.id.calendar_day_tv)
+    }
+
+    private fun applyPickerValue(isStart: Boolean, value: AmPmHourMinuteIndex) {
+        if (isStart) {
+            binding.ampmPicker01Np.value = value.ampmValue
+            binding.hourPicker01Np.value = value.hour12
+            binding.minutePicker01Np.value = value.minuteIndex
+        } else {
+            binding.ampmPicker02Np.value = value.ampmValue
+            binding.hourPicker02Np.value = value.hour12
+            binding.minutePicker02Np.value = value.minuteIndex
+        }
     }
 
     override fun onDestroyView() {
