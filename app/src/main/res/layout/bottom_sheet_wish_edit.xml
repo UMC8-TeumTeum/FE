@@ -120,24 +120,26 @@
 
                 </LinearLayout>
 
-                <LinearLayout
-                    android:id="@+id/wish_detail_ll"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/detail_text_cl"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="-3dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="-3dp">
 
                     <ImageView
+                        android:id="@+id/detail_text_iv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
-                        android:src="@drawable/ic_detail_text_sv" />
+                        android:src="@drawable/ic_detail_text_sv"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/detail_text_et"/>
 
                     <EditText
                         android:id="@+id/detail_text_et"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
                         android:background="@color/transparent"
                         android:fontFamily="@font/noto_sans_kr_regular"
                         android:gravity="top|start"
@@ -146,9 +148,14 @@
                         android:maxLines="5"
                         android:minHeight="28dp"
                         android:textColorHint="@color/text_primary"
-                        android:textSize="15sp" />
+                        android:textSize="15sp"
+                        android:includeFontPadding="false"
+                        android:padding="0dp"
+                        app:layout_constraintStart_toEndOf="@id/detail_text_iv"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"/>
 
-                </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
             </LinearLayout>
 
             <ImageView
