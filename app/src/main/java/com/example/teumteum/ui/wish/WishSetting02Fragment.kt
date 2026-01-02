@@ -20,6 +20,8 @@ import com.example.teumteum.databinding.FragmentWishSetting02Binding
 import com.example.teumteum.ui.main.HomeFragment
 import com.example.teumteum.ui.main.viewModel.HomeViewModel
 import com.example.teumteum.ui.wish.viewModel.WishViewModel
+import com.example.teumteum.utils.applyPickerValue
+import com.example.teumteum.utils.parse24hTimeToPickerValue
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
@@ -151,6 +153,17 @@ class WishSetting02Fragment : Fragment() {
         minutePicker.maxValue = minuteValues.size - 1
         minutePicker.displayedValues = minuteValues
         minutePicker.wrapSelectorWheel = true
+
+        parse24hTimeToPickerValue(
+            timeText = targetTextView.text.toString(),
+            minuteOptions = minuteValues
+        )?.let { value ->
+            ampmPicker.applyPickerValue(
+                hourPicker = hourPicker,
+                minutePicker = minutePicker,
+                value = value
+            )
+        }
 
         val dialog = BottomSheetDialog(requireContext())
         dialog.setContentView(dialogView)

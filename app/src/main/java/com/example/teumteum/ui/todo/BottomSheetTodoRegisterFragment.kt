@@ -42,8 +42,10 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 import com.example.teumteum.ui.myhome.viewModel.MyHomeViewModel
 import com.example.teumteum.ui.todo.viewModel.TodoViewModel
+import com.example.teumteum.utils.applyPickerValue
 import com.example.teumteum.utils.disableScroll
 import com.example.teumteum.utils.dpToPx
+import com.example.teumteum.utils.parseKoreanAmPmTimeToPickerValue
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.DayPosition
 import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
@@ -91,9 +93,7 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
     private val viewModel: TodoViewModel by activityViewModels()
     private val myHomeViewModel: MyHomeViewModel by activityViewModels()
 
-    private var bottomSheetView: View? = null
-    private var downY = 0f
-    private var dragging = false
+    private val minuteOptions = arrayOf("00", "10", "20", "30", "40", "50")
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -187,10 +187,23 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
             if (isCalendarVisible) {
                 toggleCalendarVisibility(show = false)
             }
+
             val isVisibleNow = binding.timePickerStartContainer.isVisible
             if (isVisibleNow) {
                 applySelectedTime(isStart = true)
+            } else {
+                parseKoreanAmPmTimeToPickerValue(
+                    timeText = binding.startTimeTv.text.toString(),
+                    minuteOptions = minuteOptions
+                )?.let { v ->
+                    binding.ampmPicker01Np.applyPickerValue(
+                        hourPicker = binding.hourPicker01Np,
+                        minutePicker = binding.minutePicker01Np,
+                        value = v
+                    )
+                }
             }
+
             binding.timePickerStartContainer.isVisible = !isVisibleNow
             binding.timePickerEndContainer.isVisible = false
             currentTargetTextView = binding.startTimeTv.takeIf { !isVisibleNow }
@@ -200,10 +213,23 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
             if (isCalendarVisible) {
                 toggleCalendarVisibility(show = false)
             }
+
             val isVisibleNow = binding.timePickerEndContainer.isVisible
             if (isVisibleNow) {
                 applySelectedTime(isStart = false)
+            } else {
+                parseKoreanAmPmTimeToPickerValue(
+                    timeText = binding.endTimeTv.text.toString(),
+                    minuteOptions = minuteOptions
+                )?.let { v ->
+                    binding.ampmPicker02Np.applyPickerValue(
+                        hourPicker = binding.hourPicker02Np,
+                        minutePicker = binding.minutePicker02Np,
+                        value = v
+                    )
+                }
             }
+
             binding.timePickerEndContainer.isVisible = !isVisibleNow
             binding.timePickerStartContainer.isVisible = false
             currentTargetTextView = binding.endTimeTv.takeIf { !isVisibleNow }
