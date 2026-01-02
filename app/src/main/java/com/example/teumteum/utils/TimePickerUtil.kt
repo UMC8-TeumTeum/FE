@@ -34,3 +34,28 @@ fun parseKoreanAmPmTimeToPickerValue(
         minuteIndex = minuteIndex
     )
 }
+
+fun parse24hTimeToPickerValue(
+    timeText: String,
+    minuteOptions: Array<String> = arrayOf("00", "10", "20", "30", "40", "50")
+): AmPmHourMinuteIndex? {
+    val t = timeText.trim()
+    if (t.isEmpty()) return null
+
+    val hm = t.split(":")
+    if (hm.size < 2) return null
+
+    val hour24 = hm[0].toIntOrNull() ?: return null
+    val minuteStr = hm[1].padStart(2, '0')
+    val minuteIndex = minuteOptions.indexOf(minuteStr).takeIf { it >= 0 } ?: 0
+
+    val ampmValue = if (hour24 >= 12) 1 else 0
+    var hour12 = hour24 % 12
+    if (hour12 == 0) hour12 = 12
+
+    return AmPmHourMinuteIndex(
+        ampmValue = ampmValue,
+        hour12 = hour12.coerceIn(1, 12),
+        minuteIndex = minuteIndex
+    )
+}

@@ -20,6 +20,8 @@ import com.example.teumteum.data.remote.activity.model.AssignWishRequest
 import com.example.teumteum.databinding.FragmentFillingSetting02Binding
 import com.example.teumteum.ui.activity.viewModel.ActivityViewModel
 import com.example.teumteum.ui.main.HomeFragment
+import com.example.teumteum.utils.AmPmHourMinuteIndex
+import com.example.teumteum.utils.parse24hTimeToPickerValue
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
@@ -171,6 +173,13 @@ class FillingSetting02Fragment : Fragment() {
         minutePicker.displayedValues = minuteValues
         minutePicker.wrapSelectorWheel = true
 
+        parse24hTimeToPickerValue(
+            timeText = targetTextView.text.toString(),
+            minuteOptions = minuteValues
+        )?.let { value ->
+            applyPickerValue(ampmPicker, hourPicker, minutePicker, value)
+        }
+
         val dialog = BottomSheetDialog(requireContext())
         dialog.setContentView(dialogView)
 
@@ -314,6 +323,12 @@ class FillingSetting02Fragment : Fragment() {
         } else {
             startDate to endHHmm
         }
+    }
+
+    private fun applyPickerValue(ampmPicker: NumberPicker, hourPicker: NumberPicker, minutePicker: NumberPicker, value: AmPmHourMinuteIndex) {
+        ampmPicker.value = value.ampmValue
+        hourPicker.value = value.hour12
+        minutePicker.value = value.minuteIndex
     }
 
     override fun onDestroyView() {
