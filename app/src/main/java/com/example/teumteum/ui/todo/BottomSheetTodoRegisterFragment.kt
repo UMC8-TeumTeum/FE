@@ -91,6 +91,10 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
     private val viewModel: TodoViewModel by activityViewModels()
     private val myHomeViewModel: MyHomeViewModel by activityViewModels()
 
+    private var bottomSheetView: View? = null
+    private var downY = 0f
+    private var dragging = false
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -642,7 +646,6 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
                 val behavior = BottomSheetBehavior.from(it)
                 behavior.peekHeight = desiredHeight
                 behavior.state = BottomSheetBehavior.STATE_COLLAPSED
-                behavior.isDraggable = false // 확장 불가능
             }
         }
     }

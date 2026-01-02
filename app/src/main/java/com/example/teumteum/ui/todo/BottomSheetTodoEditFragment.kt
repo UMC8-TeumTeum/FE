@@ -730,7 +730,6 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
                 val behavior = BottomSheetBehavior.from(it)
                 behavior.peekHeight = desiredHeight
                 behavior.state = BottomSheetBehavior.STATE_COLLAPSED
-                behavior.isDraggable = false // 확장 불가능
             }
         }
     }
