@@ -1,7 +1,31 @@
 package com.example.teumteum.data.remote.friend.repository
 
 import android.util.Log
-import com.example.teumteum.data.remote.friend.model.*
+import com.example.teumteum.data.remote.friend.model.CancelTeumResult
+import com.example.teumteum.data.remote.friend.model.FavoriteRequest
+import com.example.teumteum.data.remote.friend.model.FavoriteResult
+import com.example.teumteum.data.remote.friend.model.FollowerResult
+import com.example.teumteum.data.remote.friend.model.FollowingResult
+import com.example.teumteum.data.remote.friend.model.FriendProfileResult
+import com.example.teumteum.data.remote.friend.model.FriendSearchResult
+import com.example.teumteum.data.remote.friend.model.MutualFriendItem
+import com.example.teumteum.data.remote.friend.model.PagingResponse
+import com.example.teumteum.data.remote.friend.model.PossibleTimeRequest
+import com.example.teumteum.data.remote.friend.model.PossibleTimeResult
+import com.example.teumteum.data.remote.friend.model.PublicTodoResult
+import com.example.teumteum.data.remote.friend.model.ResendTeumRequest
+import com.example.teumteum.data.remote.friend.model.ResendTeumResult
+import com.example.teumteum.data.remote.friend.model.SharedTeumItem
+import com.example.teumteum.data.remote.friend.model.TeumConflictResponse
+import com.example.teumteum.data.remote.friend.model.TeumReceivedItem
+import com.example.teumteum.data.remote.friend.model.TeumRequest
+import com.example.teumteum.data.remote.friend.model.TeumRequestDateResult
+import com.example.teumteum.data.remote.friend.model.TeumScheduleDetailResult
+import com.example.teumteum.data.remote.friend.model.TeumScheduledResult
+import com.example.teumteum.data.remote.friend.model.TeumStatusRequest
+import com.example.teumteum.data.remote.friend.model.TeumStatusResult
+import com.example.teumteum.data.remote.friend.model.TeumTimeResult
+import com.example.teumteum.data.remote.friend.model.TodoConflictResponse
 import com.example.teumteum.data.remote.friend.service.FriendService
 import com.example.teumteum.utils.ApiResponse
 import com.example.teumteum.utils.handleApiResponse
@@ -410,6 +434,26 @@ class FriendRepository @Inject constructor(
         endTime: String
     ): Result<TeumConflictResponse> = runCatching {
         val response = api.checkTeumConflict(date, startTime, endTime)
+        val body = response.body()
+
+        if (!response.isSuccessful || body == null) {
+            throw Exception("HTTP ${response.code()} - ${response.errorBody()?.string() ?: response.message()}")
+        }
+
+        if (body.isSuccess && body.result != null) {
+            body.result
+        } else {
+            throw Exception("${body.code} - ${body.message}")
+        }
+    }
+
+    // 틈 요청 시 겹치는 틈 요청 조회
+    suspend fun checkTodoConflict(
+        date: String,
+        startTime: String,
+        endTime: String
+    ): Result<TodoConflictResponse> = runCatching {
+        val response = api.checkTodoConflict(date, startTime, endTime)
         val body = response.body()
 
         if (!response.isSuccessful || body == null) {

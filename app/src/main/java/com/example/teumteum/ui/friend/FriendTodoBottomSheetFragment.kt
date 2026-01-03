@@ -5,20 +5,25 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.viewpager2.widget.ViewPager2
+import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
+import com.example.teumteum.data.remote.friend.model.TodoConflictItem
+import com.example.teumteum.databinding.BottomSheetFriendTodoBinding
 import com.example.teumteum.ui.friend.adapter.TodoEventAdapter
 import com.example.teumteum.ui.friend.data.TeumEvent
+import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.android.material.button.MaterialButton
-import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class FriendTodoBottomSheetFragment : BottomSheetDialogFragment() {
 
-    private lateinit var viewPager: ViewPager2
+    private var _binding: BottomSheetFriendTodoBinding? = null
+    private val binding get() = _binding!!
+
     private lateinit var adapter: TodoEventAdapter
-    private lateinit var dotsIndicator: DotsIndicator
+    private val viewModel: FriendViewModel by activityViewModels()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
@@ -34,32 +39,60 @@ class FriendTodoBottomSheetFragment : BottomSheetDialogFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.bottom_sheet_friend_todo, container, false)
+    ): View {
+        _binding = BottomSheetFriendTodoBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        viewPager = view.findViewById(R.id.existingTodoViewPager)
-        dotsIndicator = view.findViewById(R.id.dotsIndicator)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        // 샘플 데이터
-        val sampleList = listOf(
-            TeumEvent("12:00", "14:30", "강아지 산책 가자"),
-            TeumEvent("15:00", "16:00", "회의"),
-            TeumEvent("17:30", "18:30", "홍대 소품샵 투어")
-        )
+        val conflictList: ArrayList<TodoConflictItem> =
+            arguments?.getParcelableArrayList(ARG_CONFLICT_LIST) ?: arrayListOf()
 
-
-        adapter = TodoEventAdapter(sampleList)
-        viewPager.adapter = adapter
-
-        // DotsIndicator 연결
-        dotsIndicator.setViewPager2(viewPager)
-
-        // 버튼 클릭
-        view.findViewById<MaterialButton>(R.id.btnCancel).setOnClickListener { dismiss() }
-        view.findViewById<MaterialButton>(R.id.btnAccept).setOnClickListener {
-            // 수락 처리
+        val events: List<TeumEvent> = conflictList.map {
+            TeumEvent(it.startTime, it.endTime, it.title)
         }
 
-        return view
+        adapter = TodoEventAdapter(events)
+        binding.existingTodoViewPager.adapter = adapter
+        binding.dotsIndicator.setViewPager2(binding.existingTodoViewPager)
+
+        binding.btnCancel.setOnClickListener { dismiss() }
+
+        binding.btnAccept.setOnClickListener {
+            val responseId = arguments?.getInt(ARG_RESPONSE_ID) ?: return@setOnClickListener
+
+            viewModel.respondToTeum(responseId, "accepted")
+
+            dismiss()
+
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, FriendSendFragment())
+                .addToBackStack(null)
+                .commit()
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    companion object {
+        private const val ARG_RESPONSE_ID = "responseId"
+        private const val ARG_CONFLICT_LIST = "conflictList"
+
+        fun newInstance(
+            responseId: Int,
+            conflictList: ArrayList<TodoConflictItem>
+        ): FriendTodoBottomSheetFragment {
+            return FriendTodoBottomSheetFragment().apply {
+                arguments = Bundle().apply {
+                    putInt(ARG_RESPONSE_ID, responseId)
+                    putParcelableArrayList(ARG_CONFLICT_LIST, conflictList)
+                }
+            }
+        }
     }
 }

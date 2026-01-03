@@ -19,7 +19,6 @@ import com.example.teumteum.ui.myhome.MyProfileFragment
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import kotlin.getValue
 
 @AndroidEntryPoint
 class Friend02RequestFragment : Fragment() {
@@ -31,6 +30,9 @@ class Friend02RequestFragment : Fragment() {
     private val viewModel: FriendViewModel by activityViewModels()
 
     var teumList: List<TeumReceivedItem> = emptyList()
+
+    private var pendingAcceptResponseId: Int? = null
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -84,13 +86,42 @@ class Friend02RequestFragment : Fragment() {
         // 6. 인디케이터
         binding.dotsIndicator.setViewPager2(binding.requestViewPager)
 
+        viewModel.todoConflict.observe(viewLifecycleOwner) { response ->
+            val responseId = pendingAcceptResponseId ?: return@observe
+            pendingAcceptResponseId = null
+
+            if (response == null) return@observe
+
+            if (response.hasConflict) {
+                // ✅ 겹침 있음 → 다른 바텀시트
+                val conflictList = ArrayList(response.conflictingSchedules)
+                val bottomSheet = FriendTodoBottomSheetFragment.newInstance(responseId, conflictList)
+                bottomSheet.show(parentFragmentManager, bottomSheet.tag)
+            } else {
+                // ✅ 겹침 없음 → 기존 수락 바텀시트
+                val bottomSheet = Friend02AcceptBottomSheetFragment.newInstance(responseId)
+                bottomSheet.show(parentFragmentManager, bottomSheet.tag)
+            }
+        }
+
+
         // 7. 버튼 이벤트
         binding.btnAccept.setOnClickListener {
             val currentItem = binding.requestViewPager.currentItem
             val responseId = teumList.getOrNull(currentItem)?.responseId ?: return@setOnClickListener
 
-            val bottomSheet = Friend02AcceptBottomSheetFragment.newInstance(responseId)
-            bottomSheet.show(parentFragmentManager, bottomSheet.tag)
+            val teum = teumList.getOrNull(currentItem)
+            val date = teum?.date.toString()
+            val start = teum?.timeSlot?.start.toString()
+            val end = teum?.timeSlot?.end.toString()
+
+//            viewModel.checkTodoConflict(date, start, end)
+//
+//            val bottomSheet = Friend02AcceptBottomSheetFragment.newInstance(responseId)
+//            bottomSheet.show(parentFragmentManager, bottomSheet.tag)
+
+            pendingAcceptResponseId = responseId
+            viewModel.checkTodoConflict(date, start, end)
         }
 
         binding.btnReject.setOnClickListener {
