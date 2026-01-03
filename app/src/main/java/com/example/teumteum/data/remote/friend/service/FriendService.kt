@@ -1,7 +1,31 @@
 package com.example.teumteum.data.remote.friend.service
 
+import com.example.teumteum.data.remote.friend.model.CancelTeumResult
+import com.example.teumteum.data.remote.friend.model.FavoriteRequest
+import com.example.teumteum.data.remote.friend.model.FavoriteResult
+import com.example.teumteum.data.remote.friend.model.FollowerResult
+import com.example.teumteum.data.remote.friend.model.FollowingResult
+import com.example.teumteum.data.remote.friend.model.FriendProfileResult
+import com.example.teumteum.data.remote.friend.model.FriendSearchResult
+import com.example.teumteum.data.remote.friend.model.MutualFriendResult
+import com.example.teumteum.data.remote.friend.model.PagingResponse
+import com.example.teumteum.data.remote.friend.model.PossibleTimeRequest
+import com.example.teumteum.data.remote.friend.model.PossibleTimeResult
+import com.example.teumteum.data.remote.friend.model.PublicTodoResult
+import com.example.teumteum.data.remote.friend.model.ResendTeumRequest
+import com.example.teumteum.data.remote.friend.model.ResendTeumResult
+import com.example.teumteum.data.remote.friend.model.SharedTeumListResult
+import com.example.teumteum.data.remote.friend.model.TeumConflictResponse
+import com.example.teumteum.data.remote.friend.model.TeumReceivedResult
+import com.example.teumteum.data.remote.friend.model.TeumRequest
+import com.example.teumteum.data.remote.friend.model.TeumRequestDateResult
+import com.example.teumteum.data.remote.friend.model.TeumScheduleDetailResult
+import com.example.teumteum.data.remote.friend.model.TeumScheduledResult
+import com.example.teumteum.data.remote.friend.model.TeumStatusRequest
+import com.example.teumteum.data.remote.friend.model.TeumStatusResult
+import com.example.teumteum.data.remote.friend.model.TeumTimeResult
+import com.example.teumteum.data.remote.friend.model.TodoConflictResponse
 import com.example.teumteum.utils.ApiResponse
-import com.example.teumteum.data.remote.friend.model.*
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -167,4 +191,11 @@ interface FriendService {
         @Query("startTime") startTime: String, // HH:MM
         @Query("endTime") endTime: String      // HH:MM
     ): Response<ApiResponse<TeumConflictResponse>>
+
+    @GET("/api/teums/conflicts")
+    suspend fun checkTodoConflict(
+        @Query("date") date: String,      // YYYY-MM-DD
+        @Query("startTime") startTime: String, // HH:MM
+        @Query("endTime") endTime: String      // HH:MM
+    ): Response<ApiResponse<TodoConflictResponse>>
 }

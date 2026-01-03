@@ -12,6 +12,7 @@ import com.example.teumteum.ui.main.data.TimeType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
@@ -20,11 +21,19 @@ class HomeViewModel @Inject constructor(
     private val repository: HomeRepository
 ) : ViewModel() {
 
+    private val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+
     private val _scheduleList = MutableLiveData<List<TimeBlock>>(emptyList())
     val scheduleList: LiveData<List<TimeBlock>> = _scheduleList
 
     private val _sleepTimeList = MutableLiveData<List<TimeBlock>>(emptyList())
     val sleepTimeList: LiveData<List<TimeBlock>> = _sleepTimeList
+
+    private val _sleepStartTime = MutableLiveData<LocalTime>()
+    val sleepStartTime: LiveData<LocalTime> = _sleepStartTime
+
+    private val _sleepEndTime = MutableLiveData<LocalTime>()
+    val sleepEndTime: LiveData<LocalTime> = _sleepEndTime
 
     private val _todoTimeList = MutableLiveData<List<TimeBlock>>(emptyList())
     val todoTimeList: LiveData<List<TimeBlock>> = _todoTimeList
@@ -104,6 +113,7 @@ class HomeViewModel @Inject constructor(
                     _sleepTimeList.value = result.sleep.map {
                         val start = timeToMinutes(it.startTime)
                         val end = timeToMinutes(it.endTime)
+                        setSleepTime(it.startTime, it.endTime)
                         TimeBlock(start, end, TimeType.SLEEP)
                     }
 
@@ -150,6 +160,12 @@ class HomeViewModel @Inject constructor(
         date = currentDate
 //        getTodaySchedule(currentDate)
         getTimetable(currentDate)
+    }
+
+    private fun setSleepTime(startTime: String, endTime: String) {
+        _sleepStartTime.value = LocalTime.parse(startTime, timeFormatter)
+        _sleepEndTime.value = LocalTime.parse(endTime, timeFormatter)
+        Log.d("Sleep", _sleepStartTime.toString())
     }
 }
 

@@ -6,18 +6,32 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.teumteum.data.AppUserManager
-import com.example.teumteum.data.remote.friend.model.*
+import com.example.teumteum.data.remote.friend.model.FollowerResult
+import com.example.teumteum.data.remote.friend.model.FollowingResult
+import com.example.teumteum.data.remote.friend.model.FriendProfileResult
+import com.example.teumteum.data.remote.friend.model.FriendSearchResult
+import com.example.teumteum.data.remote.friend.model.MutualFriendItem
+import com.example.teumteum.data.remote.friend.model.PossibleTimeRequest
+import com.example.teumteum.data.remote.friend.model.PublicTodoResult
+import com.example.teumteum.data.remote.friend.model.ResendTeumRequest
+import com.example.teumteum.data.remote.friend.model.SharedTeumItem
+import com.example.teumteum.data.remote.friend.model.TeumConflictResponse
+import com.example.teumteum.data.remote.friend.model.TeumReceivedItem
+import com.example.teumteum.data.remote.friend.model.TeumRequest
+import com.example.teumteum.data.remote.friend.model.TeumRequestDateResult
+import com.example.teumteum.data.remote.friend.model.TeumScheduleDetailResult
+import com.example.teumteum.data.remote.friend.model.TeumScheduledResult
+import com.example.teumteum.data.remote.friend.model.TeumStatusResult
+import com.example.teumteum.data.remote.friend.model.TeumTimeResult
+import com.example.teumteum.data.remote.friend.model.TodoConflictResponse
 import com.example.teumteum.data.remote.friend.repository.FriendRepository
 import com.example.teumteum.data.remote.mypage.repository.MyPageRepository
 import com.example.teumteum.ui.friend.data.SelectedTime
-
+import com.example.teumteum.ui.friend.data.TimeCardItem
 import com.example.teumteum.utils.Event
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-
-import com.example.teumteum.ui.friend.data.TimeCardItem
-
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.text.Collator
 import java.time.LocalDate
@@ -947,6 +961,36 @@ class FriendViewModel @Inject constructor(
                     )
 
                     _teumConflict.value = response
+                }
+                .onFailure { e ->
+                    Log.e(
+                        "TEUM4001",
+                        "API 실패 → ${e.message}",
+                        e
+                    )
+                }
+        }
+    }
+
+    // 틈 요청 시 겹치는 투두 요청 조회
+    private val _todoConflict = MutableLiveData<TodoConflictResponse?>()
+    val todoConflict: LiveData<TodoConflictResponse?> get() = _todoConflict
+
+    fun checkTodoConflict(
+        date: String,
+        startTime: String,
+        endTime: String
+    ) {
+        viewModelScope.launch {
+            repository.checkTodoConflict(date, startTime, endTime)
+                .onSuccess { response ->
+                    Log.d(
+                        "TEUM2016",
+                        "API 성공 → hasConflict=${response.hasConflict}, " +
+                                "listSize=${response.conflictingSchedules.size}"
+                    )
+
+                    _todoConflict.value = response
                 }
                 .onFailure { e ->
                     Log.e(
