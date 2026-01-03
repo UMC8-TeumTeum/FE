@@ -5,7 +5,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
+import androidx.viewpager2.widget.ViewPager2
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.friend.model.TodoConflictItem
 import com.example.teumteum.databinding.BottomSheetFriendTodoBinding
@@ -24,6 +27,9 @@ class FriendTodoBottomSheetFragment : BottomSheetDialogFragment() {
 
     private lateinit var adapter: TodoEventAdapter
     private val viewModel: FriendViewModel by activityViewModels()
+
+    private lateinit var indicatorLayout: LinearLayout
+
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
@@ -47,6 +53,8 @@ class FriendTodoBottomSheetFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        indicatorLayout = binding.root.findViewById(R.id.clock_indicator_ll)
+
         val conflictList: ArrayList<TodoConflictItem> =
             arguments?.getParcelableArrayList(ARG_CONFLICT_LIST) ?: arrayListOf()
 
@@ -56,7 +64,21 @@ class FriendTodoBottomSheetFragment : BottomSheetDialogFragment() {
 
         adapter = TodoEventAdapter(events)
         binding.existingTodoViewPager.adapter = adapter
-        binding.dotsIndicator.setViewPager2(binding.existingTodoViewPager)
+
+        if (events.isNotEmpty()) {
+            setupIndicator(events.size)
+            updateIndicator(0)
+        } else {
+            indicatorLayout.removeAllViews()
+        }
+
+        binding.existingTodoViewPager.registerOnPageChangeCallback(
+            object : ViewPager2.OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    updateIndicator(position)
+                }
+            }
+        )
 
         binding.btnCancel.setOnClickListener { dismiss() }
 
@@ -73,6 +95,53 @@ class FriendTodoBottomSheetFragment : BottomSheetDialogFragment() {
                 .commit()
         }
     }
+
+    private fun setupIndicator(count: Int) {
+        indicatorLayout.removeAllViews()
+
+        repeat(count) {
+            val indicator = View(requireContext())
+            val params = LinearLayout.LayoutParams(
+                dpToPx(4),
+                dpToPx(4)
+            ).apply {
+                marginEnd = dpToPx(6)
+            }
+
+            indicator.layoutParams = params
+            indicator.background =
+                ContextCompat.getDrawable(requireContext(), R.drawable.clock_indicator_dot)
+
+            indicatorLayout.addView(indicator)
+        }
+    }
+
+    private fun updateIndicator(position: Int) {
+        for (i in 0 until indicatorLayout.childCount) {
+            val v = indicatorLayout.getChildAt(i)
+            val params = v.layoutParams as LinearLayout.LayoutParams
+
+            if (i == position) {
+                params.width = dpToPx(28)
+                params.height = dpToPx(4)
+                v.background = ContextCompat.getDrawable(
+                    requireContext(),
+                    R.drawable.clock_indicator_bar_gray
+                )
+            } else {
+                params.width = dpToPx(4)
+                params.height = dpToPx(4)
+                v.background = ContextCompat.getDrawable(
+                    requireContext(),
+                    R.drawable.clock_indicator_dot
+                )
+            }
+            v.layoutParams = params
+        }
+    }
+
+    private fun dpToPx(dp: Int): Int =
+        (dp * resources.displayMetrics.density).toInt()
 
     override fun onDestroyView() {
         super.onDestroyView()

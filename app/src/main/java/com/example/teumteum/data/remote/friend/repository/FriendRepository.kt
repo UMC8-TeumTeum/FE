@@ -453,6 +453,9 @@ class FriendRepository @Inject constructor(
         startTime: String,
         endTime: String
     ): Result<TodoConflictResponse> = runCatching {
+
+        val endTime = if (endTime == "24:00") "00:00" else endTime
+
         val response = api.checkTodoConflict(date, startTime, endTime)
         val body = response.body()
 
