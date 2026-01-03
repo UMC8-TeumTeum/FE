@@ -41,4 +41,11 @@ class SettingRepository @Inject constructor(
         Log.d("Setting", "response = ${response.body()}")
         handleApiResponse(response)
     }
+
+    //수면패턴 삭제
+    suspend fun deleteSleepPattern(): Result<Unit> = runCatching {
+        val response = settingService.deleteSleepPattern()
+        Log.d("Setting", "response = ${response.body()}")
+        handleApiResponse(response)
+    }
 }
