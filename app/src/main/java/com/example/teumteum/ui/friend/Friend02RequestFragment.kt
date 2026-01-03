@@ -115,11 +115,6 @@ class Friend02RequestFragment : Fragment() {
             val start = teum?.timeSlot?.start.toString()
             val end = teum?.timeSlot?.end.toString()
 
-//            viewModel.checkTodoConflict(date, start, end)
-//
-//            val bottomSheet = Friend02AcceptBottomSheetFragment.newInstance(responseId)
-//            bottomSheet.show(parentFragmentManager, bottomSheet.tag)
-
             pendingAcceptResponseId = responseId
             viewModel.checkTodoConflict(date, start, end)
         }

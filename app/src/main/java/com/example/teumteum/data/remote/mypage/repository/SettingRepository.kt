@@ -7,6 +7,7 @@ import com.example.teumteum.data.remote.mypage.model.RemindAlarmResponse
 import com.example.teumteum.data.remote.mypage.service.SettingService
 import com.example.teumteum.data.remote.onboarding.model.SleepPatternRequest
 import com.example.teumteum.utils.handleApiResponse
+import com.example.teumteum.utils.handleApiResponseUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -46,6 +47,6 @@ class SettingRepository @Inject constructor(
     suspend fun deleteSleepPattern(): Result<Unit> = runCatching {
         val response = settingService.deleteSleepPattern()
         Log.d("Setting", "response = ${response.body()}")
-        handleApiResponse(response)
+        handleApiResponseUnit(response)
     }
 }
