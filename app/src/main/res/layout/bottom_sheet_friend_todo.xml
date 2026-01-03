@@ -53,7 +53,7 @@
         android:layout_marginTop="28dp"
         android:layout_marginHorizontal="20dp"
         android:orientation="horizontal"
-        tools:listitem="@layout/item_teum_event_card" />
+        tools:listitem="@layout/item_teumm_event_card" />
 
     <LinearLayout
         android:id="@+id/clock_indicator_ll"
