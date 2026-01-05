@@ -464,14 +464,39 @@ class HomeFragment : Fragment() {
         val dateStr = bundle?.getString("date") ?: selectedDate.format(serverFormatter)
         val date = runCatching { LocalDate.parse(dateStr) }.getOrNull() ?: selectedDate
 
+        val oldDate = selectedDate
+
         selectedDate = date
         weekCursorDate = date
         visibleMonth = YearMonth.from(date)
 
+        // 캘린더 갱신
+        monthCalendar.notifyDateChanged(oldDate)
+        monthCalendar.notifyDateChanged(selectedDate)
+        weekCalendar.notifyDateChanged(oldDate)
+        weekCalendar.notifyDateChanged(selectedDate)
+
+        // 선택된 날짜로 캘린더 스크롤
+        if (isWeeklyMode) {
+            weekCalendar.scrollToDate(selectedDate)
+        } else {
+            monthCalendar.scrollToMonth(visibleMonth)
+        }
+        updateHeaderForCurrentMode()
+
         onDateSelected(date)
         viewModel.getTeumTime()
         refreshTodolist()
-        refreshCalendarDots()
+
+        // dot 범위 재요청
+        binding.root.post {
+            lastRequestedRange = null
+            if (isWeeklyMode) {
+                weekCalendar.findFirstVisibleWeek()?.let { requestForWeek(it) }
+            } else {
+                monthCalendar.findFirstVisibleMonth()?.let { requestForMonth(it) }
+            }
+        }
     }
 
     override fun onResume() {
