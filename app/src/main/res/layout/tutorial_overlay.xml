@@ -6,18 +6,13 @@
     android:layout_height="match_parent"
     android:clickable="true"
     android:focusable="true"
-    android:visibility="gone">
+    >
 
     <View
         android:id="@+id/scrim"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/overlay_scrim" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/content"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
         <FrameLayout
             android:id="@+id/spotlightGroup"
@@ -112,14 +107,14 @@
             android:id="@+id/labelBottom"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="-15dp"
+            android:layout_marginTop="15dp"
             android:layout_marginEnd="22dp"
             android:fontFamily="@font/noto_sans_kr_regular"
             android:text="오전과 오후 변경"
             android:textColor="@color/white"
             android:textSize="15sp"
             android:includeFontPadding="false"
-            app:layout_constraintTop_toTopOf="@id/dashRightBottom"
+            app:layout_constraintTop_toBottomOf="@id/labelLeftBottom"
             app:layout_constraintEnd_toEndOf="parent" />
 
         <com.example.teumteum.ui.main.DashCurveView
@@ -207,57 +202,42 @@
             app:layout_constraintEnd_toStartOf="@id/labelBottom"
             app:layout_constraintBottom_toBottomOf="@id/spotlightGroup" />
 
-        <LinearLayout
-            android:id="@+id/hintCalendar"
+        <TextView
+            android:id="@+id/labelCalendar"
             android:layout_width="0dp"
             android:layout_height="170dp"
             android:layout_marginStart="17dp"
             android:layout_marginEnd="17dp"
             android:layout_marginTop="45dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="14dp"
             android:background="@drawable/bg_hint_card"
+            android:includeFontPadding="false"
+            android:text="캘린더에서\n날짜별 기록 확인"
+            android:textAlignment="textEnd"
+            android:textColor="@color/white"
+            android:textSize="15sp"
             app:layout_constraintTop_toBottomOf="@id/spotlightGroup"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:layout_constraintEnd_toEndOf="parent"/>
 
-            <TextView
-                android:id="@+id/labelCalendar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="14dp"
-                android:includeFontPadding="false"
-                android:text="캘린더에서\n날짜별 기록 확인"
-                android:textAlignment="textEnd"
-                android:textColor="@color/white"
-                android:textSize="15sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/hintTodo"
-            android:layout_width="0dp"
-            android:layout_height="260dp"
-            android:layout_marginStart="17dp"
-            android:layout_marginEnd="17dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="16dp"
-            android:background="@drawable/bg_hint_card"
-            app:layout_constraintTop_toBottomOf="@id/hintCalendar"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
-
-            <TextView
-                android:id="@+id/labelTodoList"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="14dp"
-                android:includeFontPadding="false"
-                android:text="투두리스트에서\n등록한 일정 확인"
-                android:textAlignment="textEnd"
-                android:textColor="@color/white"
-                android:textSize="15sp" />
-        </LinearLayout>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView
+        android:id="@+id/labelTodoList"
+        android:layout_width="0dp"
+        android:layout_height="260dp"
+        android:layout_marginStart="17dp"
+        android:layout_marginEnd="17dp"
+        android:layout_marginTop="12dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="14dp"
+        android:background="@drawable/bg_hint_card"
+        android:includeFontPadding="false"
+        android:text="투두리스트에서\n등록한 일정 확인"
+        android:textAlignment="textEnd"
+        android:textColor="@color/white"
+        android:textSize="15sp"
+        app:layout_constraintTop_toBottomOf="@id/labelCalendar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
