@@ -174,19 +174,19 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="23dp"
-        android:layout_marginBottom="20dp"
         android:layout_marginStart="19dp"
         android:layout_marginEnd="19dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/clock_indicator_ll" />
+        app:layout_constraintTop_toBottomOf="@+id/clock_indicator_ll"
+        app:layout_constraintBottom_toTopOf="@id/assign_bottom_bar"/>
 
     <LinearLayout
         android:id="@+id/assign_bottom_bar"
         android:layout_width="0dp"
-        android:layout_height="94dp"
+        android:layout_height="85dp"
         android:orientation="horizontal"
-        android:padding="14dp"
+        android:padding="16dp"
         android:weightSum="2"
         android:background="@color/white"
         app:layout_constraintStart_toStartOf="parent"
@@ -196,7 +196,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/select_date_btn"
             android:layout_width="0dp"
-            android:layout_height="65dp"
+            android:layout_height="56dp"
             android:layout_weight="1"
             android:layout_marginEnd="8dp"
             android:text="날짜 변경"
@@ -207,7 +207,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/next_btn"
             android:layout_width="0dp"
-            android:layout_height="65dp"
+            android:layout_height="56dp"
             android:layout_weight="1"
             android:layout_marginStart="8dp"
             android:text="다음"
