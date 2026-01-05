@@ -1040,9 +1040,9 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
                 disableRoutineEditing()
             }
 
-            // 약속된 틈은 일부 수정 가능(알림 편집, 공개 설정, 빈틈시간 기록 포함, 상세 내용)
+            // 약속된 틈은 일부 수정 가능 (알림 편집, 공개 설정, 빈틈시간 기록 포함, 상세 내용)
             if (todo.type == ScheduleType.TEUM) {
-                disableRoutineEditing()
+                disableTeumEditing()
             }
 
             parentFragmentManager.setFragmentResult("todo_get", Bundle())

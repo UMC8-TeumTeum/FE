@@ -289,6 +289,15 @@ class FillingSetting03Fragment : Fragment() {
                 viewModel.assignSuccess.collect {
                     Log.d("ASSIGN_FRAGMENT", "빈틈채우기에 성공하였습니다.")
 
+                    val dateStr = getStartDate() // "yyyy-MM-dd"
+                    val safeDateStr = runCatching { LocalDate.parse(dateStr).toString() }
+                        .getOrElse { LocalDate.now().toString() }
+
+                    val result = Bundle().apply {
+                        putString("date", safeDateStr)
+                    }
+                    parentFragmentManager.setFragmentResult("assign_home", result)
+
                     parentFragmentManager.beginTransaction()
                         .replace(R.id.main_frm, HomeFragment())
                         .addToBackStack(null)

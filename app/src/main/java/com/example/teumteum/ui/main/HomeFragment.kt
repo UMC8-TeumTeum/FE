@@ -415,7 +415,7 @@ class HomeFragment : Fragment() {
             binding.clockPager.setCurrentItem(next, true)
         }
 
-        listOf("todo_register_home", "todo_edit_home", "todo_delete_home")
+        listOf("todo_register_home", "todo_edit_home", "todo_delete_home", "assign_home")
             .forEach { key ->
                 parentFragmentManager.setFragmentResultListener(key, viewLifecycleOwner) { _, bundle ->
                     handleTodoChanged(bundle)
