@@ -306,7 +306,7 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
     }
 
     private fun setupStartCalendar() {
-        val currentMonth = YearMonth.now()
+        val currentMonth = YearMonth.from(selectedStartDate)
         val startMonth = currentMonth.minusYears(50)
         val endMonth = currentMonth.plusYears(50)
         val firstDayOfWeek = firstDayOfWeekFromLocale()
@@ -354,7 +354,7 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
     }
 
     private fun setupEndCalendar() {
-        val currentMonth = YearMonth.now()
+        val currentMonth = YearMonth.from(selectedEndDate)
         val startMonth = currentMonth.minusYears(50)
         val endMonth = currentMonth.plusYears(50)
         val firstDayOfWeek = firstDayOfWeekFromLocale()
@@ -1007,7 +1007,23 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
             binding.todoTitleEt.setText(todo.title)
 
             val startDateTime = parseApiDateTime(todo.startTime)
-            val endDateTime   = parseApiDateTime(todo.endTime)
+            val endDateTime = parseApiDateTime(todo.endTime)
+
+            // 캘린더 선택 날짜를 투두 날짜로 갱신
+            val oldStart = selectedStartDate
+            val oldEnd = selectedEndDate
+
+            selectedStartDate = startDateTime.toLocalDate()
+            selectedEndDate = endDateTime.toLocalDate()
+
+            // 캘린더 선택 표시 갱신
+            binding.calendarView01.notifyDateChanged(oldStart)
+            binding.calendarView01.notifyDateChanged(selectedStartDate)
+            binding.calendarView01.scrollToMonth(YearMonth.from(selectedStartDate))
+
+            binding.calendarView02.notifyDateChanged(oldEnd)
+            binding.calendarView02.notifyDateChanged(selectedEndDate)
+            binding.calendarView02.scrollToMonth(YearMonth.from(selectedEndDate))
 
             val dateFormatter = DateTimeFormatter.ofPattern("M월 d일 (E)", Locale.KOREAN)
             val timeFormatter = DateTimeFormatter.ofPattern("a h:mm", Locale.KOREAN)
