@@ -486,7 +486,6 @@ class HomeFragment : Fragment() {
 
         onDateSelected(date)
         viewModel.getTeumTime()
-        refreshTodolist()
 
         // dot 범위 재요청
         binding.root.post {
