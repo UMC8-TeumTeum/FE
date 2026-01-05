@@ -76,7 +76,7 @@ class MyAccountSettingFragment : Fragment() {
             performLogout()
 
             //네이버 로그아웃
-            NidOAuth.disconnect(object : com.navercorp.nid.oauth.util.NidOAuthCallback {
+            NidOAuth.logout(object : com.navercorp.nid.oauth.util.NidOAuthCallback {
                 override fun onSuccess() {
                 }
 
