@@ -250,6 +250,11 @@ class WishSetting03Fragment : Fragment() {
                 viewModel.assignSuccess.collect {
                     Log.d("ASSIGN_FRAGMENT", "빈틈채우기에 성공하였습니다.")
 
+                    val result = Bundle().apply {
+                        putString("date", getStartDate())
+                    }
+                    parentFragmentManager.setFragmentResult("assign_home", result)
+
                     parentFragmentManager.beginTransaction()
                         .replace(R.id.main_frm, HomeFragment())
                         .addToBackStack(null)

@@ -802,7 +802,10 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.registerSuccess.collect {
                     Log.d("TODO_REGISTER_FRAGMENT", "투두가 성공적으로 등록되었습니다.")
-                    parentFragmentManager.setFragmentResult("todo_register_home", Bundle())
+                    val result = Bundle().apply {
+                        putString("date", selectedStartDate.toString()) // "yyyy-MM-dd"
+                    }
+                    parentFragmentManager.setFragmentResult("todo_register_home", result)
 
                     // 모든 바텀시트 닫기
                     (requireActivity().supportFragmentManager.fragments).forEach { fragment ->

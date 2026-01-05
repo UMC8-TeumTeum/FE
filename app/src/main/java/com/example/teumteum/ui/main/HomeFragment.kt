@@ -42,8 +42,6 @@ import com.example.teumteum.ui.todo.viewModel.TodoViewModel
 import com.example.teumteum.ui.clock.ChartUtils
 import com.example.teumteum.ui.clock.ClockHalf
 import com.example.teumteum.ui.clock.ClockVPAdapter
-import com.example.teumteum.ui.clock.IconPieChartRenderer
-import com.example.teumteum.ui.main.data.TimeType
 import com.example.teumteum.ui.main.viewModel.HomeViewModel
 import com.example.teumteum.ui.myhome.viewModel.MyHomeViewModel
 import com.example.teumteum.utils.applyBlurShadow
@@ -417,29 +415,12 @@ class HomeFragment : Fragment() {
             binding.clockPager.setCurrentItem(next, true)
         }
 
-        // 투두 등록 성공 이벤트 수신
-        parentFragmentManager.setFragmentResultListener("todo_register_home", viewLifecycleOwner) { _, _ ->
-            viewModel.refreshTodaySchedule()
-            viewModel.getTeumTime()
-            refreshTodolist()
-            refreshCalendarDots()
-        }
-
-        // 투두 수정 성공 이벤트 수신
-        parentFragmentManager.setFragmentResultListener("todo_edit_home", viewLifecycleOwner) { _, _ ->
-            viewModel.refreshTodaySchedule()
-            viewModel.getTeumTime()
-            refreshTodolist()
-            refreshCalendarDots()
-        }
-
-        // 투두 삭제 성공 이벤트 수신
-        parentFragmentManager.setFragmentResultListener("todo_delete_home", viewLifecycleOwner) { _, _ ->
-            viewModel.refreshTodaySchedule()
-            viewModel.getTeumTime()
-            refreshTodolist()
-            refreshCalendarDots()
-        }
+        listOf("todo_register_home", "todo_edit_home", "todo_delete_home", "assign_home")
+            .forEach { key ->
+                parentFragmentManager.setFragmentResultListener(key, viewLifecycleOwner) { _, bundle ->
+                    handleTodoChanged(bundle)
+                }
+            }
 
         // 오버레이 닫힘 이벤트 수신
         parentFragmentManager.setFragmentResultListener("tutorial_closed", viewLifecycleOwner) { _, _ ->
@@ -447,7 +428,7 @@ class HomeFragment : Fragment() {
             binding.fabShadowIv.isVisible = true
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                requireActivity().window.insetsController?.show(android.view.WindowInsets.Type.systemBars())
+                requireActivity().window.insetsController?.show(WindowInsets.Type.systemBars())
             }
 
             backCallback?.remove()
@@ -456,13 +437,6 @@ class HomeFragment : Fragment() {
 
         todoViewModel.getTodoList(date)
         myHomeViewModel.getMyInfo()
-
-//        viewModel.scheduleList.observe(viewLifecycleOwner) {
-//            clockAdapter.refreshAll()
-//            val amPos = clockAdapter.positionOf(ClockHalf.AM)
-//            isAM = (binding.clockPager.currentItem == amPos)
-//            updateIndicator(isAM)
-//        }
 
         viewModel.sleepTimeList.observe(viewLifecycleOwner) {
             refreshClockPager()
@@ -483,6 +457,44 @@ class HomeFragment : Fragment() {
         view.post {
             if (isWeeklyMode) weekCalendar.findFirstVisibleWeek()?.let { requestForWeek(it) }
             else monthCalendar.findFirstVisibleMonth()?.let { requestForMonth(it) }
+        }
+    }
+
+    private fun handleTodoChanged(bundle: Bundle?) {
+        val dateStr = bundle?.getString("date") ?: selectedDate.format(serverFormatter)
+        val date = runCatching { LocalDate.parse(dateStr) }.getOrNull() ?: selectedDate
+
+        val oldDate = selectedDate
+
+        selectedDate = date
+        weekCursorDate = date
+        visibleMonth = YearMonth.from(date)
+
+        // 캘린더 갱신
+        monthCalendar.notifyDateChanged(oldDate)
+        monthCalendar.notifyDateChanged(selectedDate)
+        weekCalendar.notifyDateChanged(oldDate)
+        weekCalendar.notifyDateChanged(selectedDate)
+
+        // 선택된 날짜로 캘린더 스크롤
+        if (isWeeklyMode) {
+            weekCalendar.scrollToDate(selectedDate)
+        } else {
+            monthCalendar.scrollToMonth(visibleMonth)
+        }
+        updateHeaderForCurrentMode()
+
+        onDateSelected(date)
+        viewModel.getTeumTime()
+
+        // dot 범위 재요청
+        binding.root.post {
+            lastRequestedRange = null
+            if (isWeeklyMode) {
+                weekCalendar.findFirstVisibleWeek()?.let { requestForWeek(it) }
+            } else {
+                monthCalendar.findFirstVisibleMonth()?.let { requestForMonth(it) }
+            }
         }
     }
 
