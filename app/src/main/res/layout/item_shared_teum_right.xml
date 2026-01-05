@@ -92,7 +92,7 @@
     <!-- 말풍선 -->
     <LinearLayout
         android:id="@+id/messageLayout"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:background="@drawable/bg_teum_time_left"
@@ -101,8 +101,16 @@
         android:paddingTop="10dp"
         android:paddingEnd="14dp"
         android:paddingBottom="10dp"
+        android:gravity="center_vertical|end"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/dateTv">
+
+        <!-- 왼쪽 공간 채우는 스페이서(이게 핵심) -->
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
 
         <!-- 제목 -->
         <TextView
@@ -144,7 +152,7 @@
             android:textSize="12sp"
             tools:text="모교 뒷편 야산에서 텐트 치고..." />
 
-
     </LinearLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

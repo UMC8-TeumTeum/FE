@@ -12,7 +12,6 @@ import com.example.teumteum.databinding.ItemSharedTeumLeftBinding
 import com.example.teumteum.databinding.ItemSharedTeumRightBinding
 
 class SharedTeumAdapter(
-    private val currentUserId: Int
 ) : ListAdapter<SharedTeumItem, RecyclerView.ViewHolder>(diff) {
 
     companion object {
@@ -32,8 +31,7 @@ class SharedTeumAdapter(
 
     override fun getItemViewType(position: Int): Int {
         val item = getItem(position)
-        //  로그인 유저가 보낸 건 오른쪽, 나머지는 왼쪽
-        return if (item.sender.userId == currentUserId) TYPE_RIGHT else TYPE_LEFT
+        return if (item.isSender) TYPE_RIGHT else TYPE_LEFT
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
