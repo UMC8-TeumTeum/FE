@@ -43,7 +43,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.example.teumteum.ui.myhome.viewModel.MyHomeViewModel
 import com.example.teumteum.ui.todo.viewModel.TodoViewModel
 import com.example.teumteum.utils.applyPickerValue
-import com.example.teumteum.utils.disableScroll
 import com.example.teumteum.utils.dpToPx
 import com.example.teumteum.utils.parseKoreanAmPmTimeToPickerValue
 import com.kizitonwose.calendar.core.CalendarDay
@@ -95,6 +94,11 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
 
     private val minuteOptions = arrayOf("00", "10", "20", "30", "40", "50")
 
+    private val headerFormatter = DateTimeFormatter.ofPattern("yyyy년 M월 d일 (E)", Locale.KOREAN)
+
+    private var visibleStartMonth: YearMonth = YearMonth.now()
+    private var visibleEndMonth: YearMonth = YearMonth.now()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -125,6 +129,14 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
         selectedStartDate = baseDate
         selectedEndDate = baseDate
 
+        visibleStartMonth = YearMonth.from(selectedStartDate)
+        visibleEndMonth = YearMonth.from(selectedEndDate)
+
+        updateHeaderForCurrentMode01()
+        updateHeaderForCurrentMode02()
+
+        setupCalendarMonthNavigation()
+
         val formatter = DateTimeFormatter.ofPattern("yyyy년 M월 d일 (E)", Locale.KOREAN)
         val baseDateText = baseDate.format(formatter)
 
@@ -137,7 +149,6 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
 
         setupStartCalendar()
         setupEndCalendar()
-        disableCalendarScroll()
 
         setupWeekdayLabels()
         setupObservers()
@@ -293,19 +304,21 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
         }
     }
 
-    private fun disableCalendarScroll() {
-        binding.calendarView01.disableScroll()
-        binding.calendarView02.disableScroll()
-    }
-
     private fun setupStartCalendar() {
-        val currentMonth = YearMonth.now()
+        val currentMonth = YearMonth.from(selectedStartDate)
         val startMonth = currentMonth.minusYears(50)
         val endMonth = currentMonth.plusYears(50)
         val firstDayOfWeek = firstDayOfWeekFromLocale()
 
+        visibleStartMonth = currentMonth
+
         binding.calendarView01.setup(startMonth, endMonth, firstDayOfWeek)
         binding.calendarView01.scrollToMonth(currentMonth)
+
+        binding.calendarView01.monthScrollListener = { month ->
+            visibleStartMonth = month.yearMonth
+            updateHeaderForCurrentMode01()
+        }
 
         binding.calendarView01.dayBinder = object : MonthDayBinder<DayViewContainer> {
             override fun create(view: View): DayViewContainer = DayViewContainer(view)
@@ -335,11 +348,16 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
 
                 container.view.setOnClickListener {
                     if (!isThisMonth) return@setOnClickListener
+
                     val old = selectedStartDate
                     selectedStartDate = day.date
+
+                    visibleStartMonth = YearMonth.from(selectedStartDate)
+
                     binding.calendarView01.notifyDateChanged(old)
-                    binding.startDateTv.text = day.date.format(DateTimeFormatter.ofPattern("yyyy년 M월 d일 (E)", Locale.KOREAN))
-                    binding.calendarView01.notifyDateChanged(day.date)
+                    binding.calendarView01.notifyDateChanged(selectedStartDate)
+
+                    binding.startDateTv.text = selectedStartDate.format(headerFormatter)
                     toggleCalendarVisibility(show = false)
                 }
             }
@@ -347,13 +365,20 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
     }
 
     private fun setupEndCalendar() {
-        val currentMonth = YearMonth.now()
+        val currentMonth = YearMonth.from(selectedEndDate)
         val startMonth = currentMonth.minusYears(50)
         val endMonth = currentMonth.plusYears(50)
         val firstDayOfWeek = firstDayOfWeekFromLocale()
 
+        visibleEndMonth = currentMonth
+
         binding.calendarView02.setup(startMonth, endMonth, firstDayOfWeek)
         binding.calendarView02.scrollToMonth(currentMonth)
+
+        binding.calendarView02.monthScrollListener = { month ->
+            visibleEndMonth = month.yearMonth
+            updateHeaderForCurrentMode02()
+        }
 
         binding.calendarView02.dayBinder = object : MonthDayBinder<DayViewContainer> {
             override fun create(view: View): DayViewContainer = DayViewContainer(view)
@@ -383,11 +408,16 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
 
                 container.view.setOnClickListener {
                     if (!isThisMonth) return@setOnClickListener
+
                     val old = selectedEndDate
                     selectedEndDate = day.date
+
+                    visibleEndMonth = YearMonth.from(selectedEndDate)
+
                     binding.calendarView02.notifyDateChanged(old)
-                    binding.endDateTv.text = day.date.format(DateTimeFormatter.ofPattern("yyyy년 M월 d일 (E)", Locale.KOREAN))
-                    binding.calendarView02.notifyDateChanged(day.date)
+                    binding.calendarView02.notifyDateChanged(selectedEndDate)
+
+                    binding.endDateTv.text = selectedEndDate.format(headerFormatter)
                     toggleCalendarVisibility(show = false)
                 }
             }
@@ -848,6 +878,43 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
     // DayView의 뷰 홀더
     private inner class DayViewContainer(view: View) : ViewContainer(view) {
         val textView: TextView = view.findViewById(R.id.calendar_day_tv)
+    }
+
+    private fun updateHeaderForCurrentMode01() {
+        val headerDate = visibleStartMonth.atDay(1)
+        binding.startDateTv.text = headerDate.format(headerFormatter)
+    }
+
+    private fun updateHeaderForCurrentMode02() {
+        val headerDate = visibleEndMonth.atDay(1)
+        binding.endDateTv.text = headerDate.format(headerFormatter)
+    }
+
+    private fun setupCalendarMonthNavigation() {
+
+        binding.calendarPreviousDate01Iv.setOnClickListener {
+            visibleStartMonth = visibleStartMonth.minusMonths(1)
+            binding.calendarView01.smoothScrollToMonth(visibleStartMonth)
+            updateHeaderForCurrentMode01()
+        }
+
+        binding.calendarNextDate01Iv.setOnClickListener {
+            visibleStartMonth = visibleStartMonth.plusMonths(1)
+            binding.calendarView01.smoothScrollToMonth(visibleStartMonth)
+            updateHeaderForCurrentMode01()
+        }
+
+        binding.calendarPreviousDate02Iv.setOnClickListener {
+            visibleEndMonth = visibleEndMonth.minusMonths(1)
+            binding.calendarView02.smoothScrollToMonth(visibleEndMonth)
+            updateHeaderForCurrentMode02()
+        }
+
+        binding.calendarNextDate02Iv.setOnClickListener {
+            visibleEndMonth = visibleEndMonth.plusMonths(1)
+            binding.calendarView02.smoothScrollToMonth(visibleEndMonth)
+            updateHeaderForCurrentMode02()
+        }
     }
 
     override fun onDestroyView() {

@@ -189,9 +189,11 @@
                         android:layout_height="16dp"
                         android:layout_marginTop="5dp"
                         android:layout_marginEnd="30dp"
+                        android:layout_marginBottom="10dp"
                         android:src="@drawable/ic_calendar_previous_sv"
                         app:layout_constraintEnd_toStartOf="@id/calendar_next_date_01_iv"
-                        app:layout_constraintTop_toBottomOf="@id/calendar_view_01" />
+                        app:layout_constraintTop_toBottomOf="@id/calendar_view_01"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
 
                     <ImageView
                         android:id="@+id/calendar_next_date_01_iv"
@@ -318,9 +320,11 @@
                         android:layout_height="16dp"
                         android:layout_marginTop="5dp"
                         android:layout_marginEnd="30dp"
+                        android:layout_marginBottom="10dp"
                         android:src="@drawable/ic_calendar_previous_sv"
                         app:layout_constraintEnd_toStartOf="@id/calendar_next_date_02_iv"
-                        app:layout_constraintTop_toBottomOf="@id/calendar_view_02" />
+                        app:layout_constraintTop_toBottomOf="@id/calendar_view_02"
+                        app:layout_constraintBottom_toBottomOf="parent" />
 
                     <ImageView
                         android:id="@+id/calendar_next_date_02_iv"
