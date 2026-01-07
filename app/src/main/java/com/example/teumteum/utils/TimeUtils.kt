@@ -6,7 +6,6 @@ import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatterBuilder
 import java.time.temporal.ChronoField
 import java.util.Locale
-import kotlin.math.abs
 
 object TimeUtils {
 
@@ -26,16 +25,13 @@ object TimeUtils {
                 val dateStr = dateTextView.text.toString()
                 val timeStr = timeTextView.text.toString()
 
-                val combinedStr = "$dateStr $timeStr"
-                val formatter = DateTimeFormatter.ofPattern("M월 d일 '('E')' a h:mm", Locale.KOREAN)
-                val parsed = formatter.parse(combinedStr)
+                val dateFormatter = DateTimeFormatter.ofPattern("yyyy년 M월 d일 (E)", Locale.KOREAN)
+                val timeFormatter = DateTimeFormatter.ofPattern("a h:mm", Locale.KOREAN)
 
-                val year = LocalDate.now().year
-                val month = parsed.get(ChronoField.MONTH_OF_YEAR)
-                val day = parsed.get(ChronoField.DAY_OF_MONTH)
-                val time = LocalTime.from(parsed)
+                val date = LocalDate.parse(dateStr, dateFormatter)
+                val time = LocalTime.parse(timeStr, timeFormatter)
 
-                val dateTime = LocalDateTime.of(year, month, day, time.hour, time.minute)
+                val dateTime = date.atTime(time)
                 return dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"))
         }
 
