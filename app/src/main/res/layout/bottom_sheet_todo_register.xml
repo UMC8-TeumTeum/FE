@@ -182,6 +182,28 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/calendar_weekdays_row_01" />
+
+                    <ImageView
+                        android:id="@+id/calendar_previous_date_01_iv"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="30dp"
+                        android:layout_marginBottom="10dp"
+                        android:src="@drawable/ic_calendar_previous_sv"
+                        app:layout_constraintEnd_toStartOf="@id/calendar_next_date_01_iv"
+                        app:layout_constraintTop_toBottomOf="@id/calendar_view_01"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
+
+                    <ImageView
+                        android:id="@+id/calendar_next_date_01_iv"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_marginEnd="15dp"
+                        android:src="@drawable/ic_calendar_next_sv"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/calendar_previous_date_01_iv" />
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <FrameLayout
@@ -291,6 +313,28 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/calendar_weekdays_row_02" />
+
+                    <ImageView
+                        android:id="@+id/calendar_previous_date_02_iv"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="30dp"
+                        android:layout_marginBottom="10dp"
+                        android:src="@drawable/ic_calendar_previous_sv"
+                        app:layout_constraintEnd_toStartOf="@id/calendar_next_date_02_iv"
+                        app:layout_constraintTop_toBottomOf="@id/calendar_view_02"
+                        app:layout_constraintBottom_toBottomOf="parent" />
+
+                    <ImageView
+                        android:id="@+id/calendar_next_date_02_iv"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_marginEnd="15dp"
+                        android:src="@drawable/ic_calendar_next_sv"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/calendar_previous_date_02_iv" />
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <FrameLayout
