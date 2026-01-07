@@ -46,6 +46,7 @@ import com.example.teumteum.utils.applyPickerValue
 import com.example.teumteum.utils.dpToPx
 import com.example.teumteum.utils.moveCalendarMonth
 import com.example.teumteum.utils.parseKoreanAmPmTimeToPickerValue
+import com.example.teumteum.utils.weekdayShortKorean
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.DayPosition
 import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
@@ -449,16 +450,6 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
             }
             container2.addView(tv2)
         }
-    }
-
-    private fun weekdayShortKorean(dow: DayOfWeek): String = when (dow) {
-        DayOfWeek.SUNDAY -> "일"
-        DayOfWeek.MONDAY -> "월"
-        DayOfWeek.TUESDAY -> "화"
-        DayOfWeek.WEDNESDAY -> "수"
-        DayOfWeek.THURSDAY -> "목"
-        DayOfWeek.FRIDAY -> "금"
-        DayOfWeek.SATURDAY -> "토"
     }
 
     private fun toggleCalendarVisibility(show: Boolean) {

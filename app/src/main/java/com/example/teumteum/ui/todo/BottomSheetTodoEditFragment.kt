@@ -54,6 +54,7 @@ import com.example.teumteum.utils.applyPickerValue
 import com.example.teumteum.utils.dpToPx
 import com.example.teumteum.utils.moveCalendarMonth
 import com.example.teumteum.utils.parseKoreanAmPmTimeToPickerValue
+import com.example.teumteum.utils.weekdayShortKorean
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.kizitonwose.calendar.core.CalendarDay
@@ -139,8 +140,6 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val today = getTodayFormatted()
-
         visibleStartMonth = YearMonth.from(selectedStartDate)
         visibleEndMonth = YearMonth.from(selectedEndDate)
 
@@ -148,10 +147,6 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
         updateMonthHeader02()
 
         setupCalendarMonthNavigation()
-
-        // 시작/종료 날짜를 오늘 날짜로 초기화
-        binding.startDateTv.text = today
-        binding.endDateTv.text = today
 
         val scheduleType: ScheduleType = arguments?.getString("schedule_type")
             ?.let { runCatching { ScheduleType.valueOf(it) }.getOrNull() }
@@ -460,16 +455,6 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
             }
             container2.addView(tv2)
         }
-    }
-
-    private fun weekdayShortKorean(dow: DayOfWeek): String = when (dow) {
-        DayOfWeek.SUNDAY -> "일"
-        DayOfWeek.MONDAY -> "월"
-        DayOfWeek.TUESDAY -> "화"
-        DayOfWeek.WEDNESDAY -> "수"
-        DayOfWeek.THURSDAY -> "목"
-        DayOfWeek.FRIDAY -> "금"
-        DayOfWeek.SATURDAY -> "토"
     }
 
     private fun toggleCalendarVisibility(show: Boolean) {
@@ -977,12 +962,6 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
 
                 selectedItems.add(label)
             }
-    }
-
-    private fun getTodayFormatted(): String {
-        val today = LocalDate.now()
-        val formatter = DateTimeFormatter.ofPattern("yyyy년 M월 d일", Locale.KOREAN)
-        return today.format(formatter)
     }
 
     private fun setupObservers() {
