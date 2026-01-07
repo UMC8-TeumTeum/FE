@@ -25,7 +25,7 @@ object TimeUtils {
                 val dateStr = dateTextView.text.toString()
                 val timeStr = timeTextView.text.toString()
 
-                val dateFormatter = DateTimeFormatter.ofPattern("yyyy년 M월 d일 (E)", Locale.KOREAN)
+                val dateFormatter = DateTimeFormatter.ofPattern("yyyy년 M월 d일", Locale.KOREAN)
                 val timeFormatter = DateTimeFormatter.ofPattern("a h:mm", Locale.KOREAN)
 
                 val date = LocalDate.parse(dateStr, dateFormatter)

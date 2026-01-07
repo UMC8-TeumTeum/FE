@@ -125,7 +125,7 @@
                         android:fontFamily="@font/noto_sans_kr_regular"
                         android:textColor="@color/text_primary"
                         android:textSize="15sp"
-                        tools:text="4월 2일 (수)" />
+                        tools:text="2026년 4월 2일" />
 
                     <TextView
                         android:id="@+id/start_time_tv"
@@ -257,7 +257,7 @@
                         android:fontFamily="@font/noto_sans_kr_regular"
                         android:textColor="@color/text_primary"
                         android:textSize="15sp"
-                        tools:text="4월 2일 (수)" />
+                        tools:text="2026년 4월 2일" />
 
                     <TextView
                         android:id="@+id/end_time_tv"
