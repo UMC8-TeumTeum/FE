@@ -345,7 +345,7 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
                     val old = selectedStartDate
                     selectedStartDate = day.date
                     binding.calendarView01.notifyDateChanged(old)
-                    binding.startDateTv.text = day.date.format(DateTimeFormatter.ofPattern("M월 d일 (E)", Locale.KOREAN))
+                    binding.startDateTv.text = day.date.format(DateTimeFormatter.ofPattern("yyyy년 M월 d일 (E)", Locale.KOREAN))
                     binding.calendarView01.notifyDateChanged(day.date)
                     toggleCalendarVisibility(show = false)
                 }
@@ -393,7 +393,7 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
                     val old = selectedEndDate
                     selectedEndDate = day.date
                     binding.calendarView02.notifyDateChanged(old)
-                    binding.endDateTv.text = day.date.format(DateTimeFormatter.ofPattern("M월 d일 (E)", Locale.KOREAN))
+                    binding.endDateTv.text = day.date.format(DateTimeFormatter.ofPattern("yyyy년 M월 d일 (E)", Locale.KOREAN))
                     binding.calendarView02.notifyDateChanged(day.date)
                     toggleCalendarVisibility(show = false)
                 }
@@ -949,7 +949,7 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
 
     private fun getTodayFormatted(): String {
         val today = LocalDate.now()
-        val formatter = DateTimeFormatter.ofPattern("M월 d일 (E)", Locale.KOREAN)
+        val formatter = DateTimeFormatter.ofPattern("yyyy년 M월 d일 (E)", Locale.KOREAN)
         return today.format(formatter)
     }
 
@@ -1025,7 +1025,7 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
             binding.calendarView02.notifyDateChanged(selectedEndDate)
             binding.calendarView02.scrollToMonth(YearMonth.from(selectedEndDate))
 
-            val dateFormatter = DateTimeFormatter.ofPattern("M월 d일 (E)", Locale.KOREAN)
+            val dateFormatter = DateTimeFormatter.ofPattern("yyyy년 M월 d일 (E)", Locale.KOREAN)
             val timeFormatter = DateTimeFormatter.ofPattern("a h:mm", Locale.KOREAN)
 
             binding.startDateTv.text = startDateTime.toLocalDate().format(dateFormatter)

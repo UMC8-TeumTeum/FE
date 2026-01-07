@@ -125,7 +125,7 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
         selectedStartDate = baseDate
         selectedEndDate = baseDate
 
-        val formatter = DateTimeFormatter.ofPattern("M월 d일 (E)", Locale.KOREAN)
+        val formatter = DateTimeFormatter.ofPattern("yyyy년 M월 d일 (E)", Locale.KOREAN)
         val baseDateText = baseDate.format(formatter)
 
         // 시작/종료 날짜 기본값 세팅
@@ -338,7 +338,7 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
                     val old = selectedStartDate
                     selectedStartDate = day.date
                     binding.calendarView01.notifyDateChanged(old)
-                    binding.startDateTv.text = day.date.format(DateTimeFormatter.ofPattern("M월 d일 (E)", Locale.KOREAN))
+                    binding.startDateTv.text = day.date.format(DateTimeFormatter.ofPattern("yyyy년 M월 d일 (E)", Locale.KOREAN))
                     binding.calendarView01.notifyDateChanged(day.date)
                     toggleCalendarVisibility(show = false)
                 }
@@ -386,7 +386,7 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
                     val old = selectedEndDate
                     selectedEndDate = day.date
                     binding.calendarView02.notifyDateChanged(old)
-                    binding.endDateTv.text = day.date.format(DateTimeFormatter.ofPattern("M월 d일 (E)", Locale.KOREAN))
+                    binding.endDateTv.text = day.date.format(DateTimeFormatter.ofPattern("yyyy년 M월 d일 (E)", Locale.KOREAN))
                     binding.calendarView02.notifyDateChanged(day.date)
                     toggleCalendarVisibility(show = false)
                 }
