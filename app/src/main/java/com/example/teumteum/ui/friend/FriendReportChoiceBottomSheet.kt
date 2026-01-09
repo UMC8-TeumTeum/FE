@@ -2,13 +2,16 @@ package com.example.teumteum.ui.friend
 
 import android.app.Dialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
-import androidx.constraintlayout.widget.ConstraintLayout
+import android.widget.Toast
+import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
 import com.example.teumteum.databinding.BottomSheetFriendReportChoiceBinding
+import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -18,7 +21,10 @@ class FriendReportChoiceBottomSheet : BottomSheetDialogFragment() {
     private var _binding: BottomSheetFriendReportChoiceBinding? = null
     private val binding get() = _binding!!
 
-    private var selectedReason: String? = null
+    private val viewModel: FriendViewModel by activityViewModels()
+
+    //  서버용: reasonId를 저장
+    private var selectedReasonId: Int? = null
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
@@ -29,11 +35,10 @@ class FriendReportChoiceBottomSheet : BottomSheetDialogFragment() {
             val behavior = BottomSheetBehavior.from(bottomSheet!!)
             behavior.state = BottomSheetBehavior.STATE_EXPANDED
 
-            bottomSheet?.setBackgroundResource(R.drawable.calendar_background)
+            bottomSheet.setBackgroundResource(R.drawable.calendar_background)
         }
         return dialog
     }
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,39 +52,60 @@ class FriendReportChoiceBottomSheet : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setupSingleSelection(binding.optAbuseCb, "욕설 등 혐오 발언")
-        setupSingleSelection(binding.optSexualCb, "성희롱 또는 음란 발언")
-        setupSingleSelection(binding.optScamCb, "사기 또는 거짓")
-        setupSingleSelection(binding.optIllegalCb, "불법 또는 유해 콘텐츠 공유")
-        setupSingleSelection(binding.optPrivacyCb, "개인정보 노출 요구")
-        setupSingleSelection(binding.optSpamCb, "스팸")
+        // 1~6만 선택 가능
+        setupSingleSelection(binding.optAbuseCb, 8)
+        setupSingleSelection(binding.optSexualCb, 9)
+        setupSingleSelection(binding.optScamCb, 10)
+        setupSingleSelection(binding.optIllegalCb, 11)
+        setupSingleSelection(binding.optPrivacyCb, 12)
+        setupSingleSelection(binding.optSpamCb, 13)
 
-        // "해당 리스트에 관련 사유 없음" → 다음 바텀시트 이동
+        // 14번은 무조건 텍스트 바텀시트로 이동 (여기서 신고 X)
         binding.optOtherArrow.setOnClickListener {
-            val sheet = FriendReportTextBottomSheet()
-            sheet.show(parentFragmentManager, "FriendReportTextBottomSheet")
-            dismiss() // 이전 바텀시트 닫기 (선택)
+            val targetType =
+                requireArguments().getString(ARG_TARGET_TYPE) ?: return@setOnClickListener
+            val targetId = requireArguments().getLong(ARG_TARGET_ID)
+
+            FriendReportTextBottomSheet
+                .newInstance(targetType, targetId)
+                .show(parentFragmentManager, "FriendReportTextBottomSheet")
+
+            dismiss()
         }
 
-        //  신고 버튼 클릭
+        // 신고 버튼: 8~13만 여기서 신고됨
         binding.reportBtn.setOnClickListener {
-            if (selectedReason == null) {
-                // 필요 시 토스트:
-                // Toast.makeText(requireContext(), "신고 사유를 선택해주세요.", Toast.LENGTH_SHORT).show()
+
+            val reasonId = selectedReasonId
+            if (reasonId == null) {
                 return@setOnClickListener
             }
 
-            // TODO: API 연결
+            val targetType = arguments?.getString(ARG_TARGET_TYPE)
+            val targetId = arguments?.getLong(ARG_TARGET_ID, -1L) ?: -1L
+
+            if (targetType.isNullOrBlank() || targetId <= 0L) {
+                return@setOnClickListener
+            }
+
+            viewModel.createReport(
+                targetType = targetType,
+                targetId = targetId,
+                reasonId = reasonId,
+                otherReason = null
+            )
+
+            Toast.makeText(requireContext(), "신고가 성공적으로 접수되었습니다.", Toast.LENGTH_SHORT).show()
+
             dismiss()
         }
     }
 
-    /** 체크박스 단일 선택 처리 */
-    private fun setupSingleSelection(checkBox: CheckBox, reason: String) {
+    private fun setupSingleSelection(checkBox: CheckBox, reasonId: Int) {
         checkBox.setOnClickListener {
             clearAllChecks()
             checkBox.isChecked = true
-            selectedReason = reason
+            selectedReasonId = reasonId
         }
     }
 
@@ -96,5 +122,17 @@ class FriendReportChoiceBottomSheet : BottomSheetDialogFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object {
+        private const val ARG_TARGET_TYPE = "arg_target_type"
+        private const val ARG_TARGET_ID = "arg_target_id"
+
+        fun newInstance(targetType: String, targetId: Long) = FriendReportChoiceBottomSheet().apply {
+            arguments = Bundle().apply {
+                putString(ARG_TARGET_TYPE, targetType) // "USER" | "TEUM_REQUEST"
+                putLong(ARG_TARGET_ID, targetId)
+            }
+        }
     }
 }
