@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.view.ViewCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
@@ -26,13 +27,25 @@ class FriendReportTextBottomSheet : BottomSheetDialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
+
+        dialog.window?.setSoftInputMode(
+            android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING or
+                    android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN
+        )
+
         dialog.setOnShowListener { dialogInterface ->
             val bottomSheet = (dialogInterface as BottomSheetDialog)
-                .findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+                .findViewById<View>(com.google.android.material.R.id.design_bottom_sheet) ?: return@setOnShowListener
 
-            val behavior = BottomSheetBehavior.from(bottomSheet!!)
+            val behavior = BottomSheetBehavior.from(bottomSheet)
             behavior.state = BottomSheetBehavior.STATE_EXPANDED
 
+            // ✅ 키보드 인셋 반영 막기 (올라가는 원인 차단)
+            ViewCompat.setOnApplyWindowInsetsListener(bottomSheet) { _, insets ->
+                insets
+            }
+
+            bottomSheet.setPadding(0, 0, 0, 0)
             bottomSheet.setBackgroundResource(R.drawable.calendar_background)
         }
         return dialog

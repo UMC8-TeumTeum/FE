@@ -10,8 +10,8 @@
     <!-- drag handle -->
     <View
         android:id="@+id/bottomSheetHandle"
-        android:layout_width="match_parent"
-        android:layout_height="5dp"
+        android:layout_width="54dp"
+        android:layout_height="4dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="12dp"
         android:layout_marginStart="168dp"

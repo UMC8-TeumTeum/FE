@@ -1,6 +1,8 @@
 package com.example.teumteum.ui.friend
 
 import android.app.Dialog
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -51,6 +53,8 @@ class FriendReportChoiceBottomSheet : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        applyCheckBoxTint()
+
 
         // 1~6만 선택 가능
         setupSingleSelection(binding.optAbuseCb, 8)
@@ -106,6 +110,30 @@ class FriendReportChoiceBottomSheet : BottomSheetDialogFragment() {
             clearAllChecks()
             checkBox.isChecked = true
             selectedReasonId = reasonId
+        }
+    }
+
+    private fun applyCheckBoxTint() {
+        val tint = ColorStateList(
+            arrayOf(
+                intArrayOf(android.R.attr.state_checked), // checked
+                intArrayOf(-android.R.attr.state_checked) // unchecked
+            ),
+            intArrayOf(
+                Color.parseColor("#0F0F0F"), // 체크됨
+                Color.parseColor("#788084")  // 체크 안됨
+            )
+        )
+
+        listOf(
+            binding.optAbuseCb,
+            binding.optSexualCb,
+            binding.optScamCb,
+            binding.optIllegalCb,
+            binding.optPrivacyCb,
+            binding.optSpamCb
+        ).forEach { cb ->
+            cb.buttonTintList = tint
         }
     }
 
