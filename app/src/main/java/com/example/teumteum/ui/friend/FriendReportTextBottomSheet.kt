@@ -2,7 +2,6 @@ package com.example.teumteum.ui.friend
 
 import android.app.Dialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,7 +21,6 @@ class FriendReportTextBottomSheet : BottomSheetDialogFragment() {
     private var _binding: BottomSheetFriendReportTextBinding? = null
     private val binding get() = _binding!!
 
-    // ViewModel 추가 (activity 범위 공유)
     private val viewModel: FriendViewModel by activityViewModels()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -35,15 +33,13 @@ class FriendReportTextBottomSheet : BottomSheetDialogFragment() {
 
         dialog.setOnShowListener { dialogInterface ->
             val bottomSheet = (dialogInterface as BottomSheetDialog)
-                .findViewById<View>(com.google.android.material.R.id.design_bottom_sheet) ?: return@setOnShowListener
+                .findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+                ?: return@setOnShowListener
 
             val behavior = BottomSheetBehavior.from(bottomSheet)
             behavior.state = BottomSheetBehavior.STATE_EXPANDED
 
-            // ✅ 키보드 인셋 반영 막기 (올라가는 원인 차단)
-            ViewCompat.setOnApplyWindowInsetsListener(bottomSheet) { _, insets ->
-                insets
-            }
+            ViewCompat.setOnApplyWindowInsetsListener(bottomSheet) { _, insets -> insets }
 
             bottomSheet.setPadding(0, 0, 0, 0)
             bottomSheet.setBackgroundResource(R.drawable.calendar_background)
@@ -63,17 +59,17 @@ class FriendReportTextBottomSheet : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // target 정보 꺼내기 (없으면 그냥 종료)
         val targetType = arguments?.getString(ARG_TARGET_TYPE) ?: return
         val targetId = arguments?.getLong(ARG_TARGET_ID) ?: return
 
-        // 실시간 글자수 표시
+        // ViewModel 결과 관찰 (성공/실패에 따라 토스트/버튼/닫기 처리)
+        observeReportResult()
+
         binding.etReportDetail.addTextChangedListener { editable ->
             val length = editable?.length ?: 0
             binding.tvCharCount.text = "$length / 100"
         }
 
-        // 뒤로가기 버튼
         binding.btnBack.setOnClickListener {
             FriendReportChoiceBottomSheet
                 .newInstance(targetType, targetId)
@@ -81,19 +77,15 @@ class FriendReportTextBottomSheet : BottomSheetDialogFragment() {
             dismiss()
         }
 
-        // 신고 버튼: 14번(기타) 신고는 여기서만
         binding.btnReportSubmit.setOnClickListener {
-            val raw = binding.etReportDetail.text?.toString()
-            val trimmed = raw?.trim()
-
-            Log.e("REPORT_TEXT", "raw=[$raw], trimmed=[$trimmed], len=${trimmed?.length}")
+            val trimmed = binding.etReportDetail.text?.toString()?.trim()
 
             if (trimmed.isNullOrBlank()) {
                 Toast.makeText(requireContext(), "사유를 입력해주세요.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            // 중복 클릭 방지
+            // 중복 클릭 방지 (응답 오기 전까지 비활성화)
             binding.btnReportSubmit.isEnabled = false
 
             viewModel.createReport(
@@ -102,12 +94,24 @@ class FriendReportTextBottomSheet : BottomSheetDialogFragment() {
                 reasonId = 14,
                 otherReason = trimmed
             )
+        }
+    }
 
-            Toast.makeText(requireContext(), "신고가 성공적으로 접수되었습니다.", Toast.LENGTH_SHORT).show()
-
-            dismiss()
+    private fun observeReportResult() {
+        viewModel.successMessage.observe(viewLifecycleOwner) { event ->
+            event.getContentIfNotHandled()?.let { message ->
+                Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+                dismiss()
+            }
         }
 
+        viewModel.errorMessage.observe(viewLifecycleOwner) { event ->
+            event.getContentIfNotHandled()?.let { message ->
+                Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+                // 실패 시 재시도 가능하도록 버튼 다시 활성화
+                binding.btnReportSubmit.isEnabled = true
+            }
+        }
     }
 
     override fun onDestroyView() {

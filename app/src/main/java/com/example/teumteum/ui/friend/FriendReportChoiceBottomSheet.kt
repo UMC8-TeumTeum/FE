@@ -55,6 +55,7 @@ class FriendReportChoiceBottomSheet : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         applyCheckBoxTint()
 
+        observeReportResult()
 
         // 1~6만 선택 가능
         setupSingleSelection(binding.optAbuseCb, 8)
@@ -98,10 +99,21 @@ class FriendReportChoiceBottomSheet : BottomSheetDialogFragment() {
                 reasonId = reasonId,
                 otherReason = null
             )
+        }
+    }
 
-            Toast.makeText(requireContext(), "신고가 성공적으로 접수되었습니다.", Toast.LENGTH_SHORT).show()
+    private fun observeReportResult() {
+        viewModel.successMessage.observe(viewLifecycleOwner) { event ->
+            event.getContentIfNotHandled()?.let { message ->
+                Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+                dismiss()
+            }
+        }
 
-            dismiss()
+        viewModel.errorMessage.observe(viewLifecycleOwner) { event ->
+            event.getContentIfNotHandled()?.let { message ->
+                Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
