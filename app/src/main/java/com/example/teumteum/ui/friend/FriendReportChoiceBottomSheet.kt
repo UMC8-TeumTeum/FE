@@ -67,8 +67,14 @@ class FriendReportChoiceBottomSheet : BottomSheetDialogFragment() {
 
         // 14번은 무조건 텍스트 바텀시트로 이동 (여기서 신고 X)
         binding.optOtherArrow.setOnClickListener {
+            binding.optOtherArrow.isEnabled = false
+
             val targetType =
-                requireArguments().getString(ARG_TARGET_TYPE) ?: return@setOnClickListener
+                requireArguments().getString(ARG_TARGET_TYPE) ?: run {
+                    binding.optOtherArrow.isEnabled = true
+                    return@setOnClickListener
+                }
+            
             val targetId = requireArguments().getLong(ARG_TARGET_ID)
 
             FriendReportTextBottomSheet
