@@ -170,4 +170,9 @@ class WishlistFragment : Fragment() {
             Log.e("WISH_LIST_FRAGMENT", "위시리스트 조회 실패: $error")
         }
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }

@@ -410,4 +410,8 @@ class BottomSheetWishEditFragment : BottomSheetDialogFragment() {
                 currentCategoryIds != originalCategoryIds
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }
