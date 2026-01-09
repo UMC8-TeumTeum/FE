@@ -867,6 +867,14 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private fun refreshClockPager() {
+        if (!::clockAdapter.isInitialized) return
+        clockAdapter.refreshAll()
+
+        val amPos = clockAdapter.positionOf(ClockHalf.AM)
+        updateIndicator(binding.clockPager.currentItem == amPos)
+    }
+
     override fun onDestroyView() {
         _binding?.let { b ->
             runCatching {
@@ -881,13 +889,4 @@ class HomeFragment : Fragment() {
         _binding = null
         super.onDestroyView()
     }
-
-    private fun refreshClockPager() {
-        if (!::clockAdapter.isInitialized) return
-        clockAdapter.refreshAll()
-
-        val amPos = clockAdapter.positionOf(ClockHalf.AM)
-        updateIndicator(binding.clockPager.currentItem == amPos)
-    }
-
 }

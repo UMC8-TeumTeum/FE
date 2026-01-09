@@ -133,4 +133,9 @@ class WishlistEditFragment : Fragment() {
 
         binding.backArrowIv.setOnClickListener { parentFragmentManager.popBackStack() }
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }

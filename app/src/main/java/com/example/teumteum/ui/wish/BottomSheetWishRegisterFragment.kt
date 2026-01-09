@@ -11,6 +11,8 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -26,6 +28,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import kotlin.math.max
 
 @AndroidEntryPoint
 class BottomSheetWishRegisterFragment : BottomSheetDialogFragment() {
@@ -91,21 +94,18 @@ class BottomSheetWishRegisterFragment : BottomSheetDialogFragment() {
         val originalBottomPadding = binding.registerScroll.paddingBottom
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
-            val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+            val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            val sysBottom = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom
 
-            // 버튼 실제 높이
-            val btnH = binding.btnWishRegister.height
+            // 추가 확보 공간
+            val extra = max(0, imeBottom - sysBottom)
 
-            // 1) 스크롤 영역: 키보드 + 버튼 높이만큼 바닥 패딩
-            binding.registerScroll.setPadding(
-                binding.registerScroll.paddingLeft,
-                binding.registerScroll.paddingTop,
-                binding.registerScroll.paddingRight,
-                if (imeVisible) originalBottomPadding + btnH else originalBottomPadding
+            binding.registerScroll.updatePadding(
+                bottom = originalBottomPadding + extra
             )
 
-            // 키보드 올라왔을 때 보이는 흰색 영역 제거
-            binding.btnWishRegister.visibility = if (imeVisible) View.GONE else View.VISIBLE
+            // 키보드 올라오면 하단 버튼 숨김
+            binding.btnWishRegister.isVisible = imeBottom == 0
 
             insets
         }
@@ -320,4 +320,8 @@ class BottomSheetWishRegisterFragment : BottomSheetDialogFragment() {
         )
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }

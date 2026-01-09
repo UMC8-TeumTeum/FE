@@ -13,6 +13,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -31,6 +33,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import kotlin.math.max
 
 @AndroidEntryPoint
 class BottomSheetWishEditFragment : BottomSheetDialogFragment() {
@@ -73,21 +76,18 @@ class BottomSheetWishEditFragment : BottomSheetDialogFragment() {
         val originalBottomPadding = binding.editScroll.paddingBottom
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
-            val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+            val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            val sysBottom = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom
 
-            // 버튼 실제 높이
-            val btnH = binding.wishBottomBar.height
+            // 추가 확보 공간
+            val extra = max(0, imeBottom - sysBottom)
 
-            // 스크롤 영역: 키보드 + 버튼 높이만큼 바닥 패딩
-            binding.editScroll.setPadding(
-                binding.editScroll.paddingLeft,
-                binding.editScroll.paddingTop,
-                binding.editScroll.paddingRight,
-                if (imeVisible) originalBottomPadding + btnH else originalBottomPadding
+            binding.editScroll.updatePadding(
+                bottom = originalBottomPadding + extra
             )
 
-            // 키보드 올라왔을 때 보이는 흰색 영역 제거
-            binding.wishBottomBar.visibility = if (imeVisible) View.GONE else View.VISIBLE
+            // 키보드 올라오면 하단 버튼 숨김
+            binding.wishBottomBar.isVisible = imeBottom == 0
 
             insets
         }
@@ -410,4 +410,8 @@ class BottomSheetWishEditFragment : BottomSheetDialogFragment() {
                 currentCategoryIds != originalCategoryIds
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }

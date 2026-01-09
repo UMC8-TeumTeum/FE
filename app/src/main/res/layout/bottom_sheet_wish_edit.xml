@@ -50,7 +50,6 @@
         android:fillViewport="true"
         android:paddingStart="17dp"
         android:paddingEnd="17dp"
-        android:paddingBottom="60dp"
         app:layout_constraintBottom_toTopOf="@id/wish_bottom_bar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -91,8 +90,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:background="@color/white"
-                android:orientation="vertical"
-                android:padding="5dp">
+                android:orientation="vertical">
 
                 <LinearLayout
                     android:id="@+id/wish_date"
@@ -179,8 +177,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="-5dp"
                     android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="5dp">
+                    android:orientation="horizontal">
 
                     <TextView
                         android:id="@+id/wish_time_tv"
@@ -198,8 +195,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="5dp">
+                    android:orientation="horizontal">
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_wish_time_01"
@@ -282,8 +278,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="-3dp"
                     android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="5dp">
+                    android:orientation="horizontal">
 
                     <TextView
                         android:id="@+id/wish_category_tv"
@@ -300,10 +295,9 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="-7dp"
+                    android:layout_marginBottom="3dp"
                     android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="5dp">
+                    android:orientation="horizontal">
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_wish_category_01"
@@ -354,8 +348,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="34dp"
                     android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="5dp">
+                    android:orientation="horizontal">
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_wish_category_04"

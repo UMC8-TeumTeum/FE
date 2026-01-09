@@ -27,6 +27,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -71,6 +72,7 @@ import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 import java.util.Locale
+import kotlin.math.max
 
 @AndroidEntryPoint
 class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
@@ -185,21 +187,18 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
         val originalBottomPadding = binding.editScroll.paddingBottom
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
-            val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+            val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            val sysBottom = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom
 
-            // 버튼 실제 높이
-            val btnH = binding.todoBottomBar.height
+            // 추가 확보 공간
+            val extra = max(0, imeBottom - sysBottom)
 
-            // 스크롤 영역: 키보드 + 버튼 높이만큼 바닥 패딩
-            binding.editScroll.setPadding(
-                binding.editScroll.paddingLeft,
-                binding.editScroll.paddingTop,
-                binding.editScroll.paddingRight,
-                if (imeVisible) originalBottomPadding + btnH else originalBottomPadding
+            binding.editScroll.updatePadding(
+                bottom = originalBottomPadding + extra
             )
 
-            // 키보드 올라왔을 때 보이는 흰색 영역 제거
-            binding.todoBottomBar.visibility = if (imeVisible) View.GONE else View.VISIBLE
+            // 키보드 올라오면 하단 버튼 숨김
+            binding.todoBottomBar.isVisible = imeBottom == 0
 
             insets
         }
