@@ -35,7 +35,7 @@
             android:includeFontPadding="false"
             android:text="틈 요청 기록"
             android:textColor="#0F0F0F"
-            android:textSize="20dp"
+            android:textSize="20sp"
             app:layout_constraintStart_toEndOf="@+id/btnBack"
             app:layout_constraintTop_toTopOf="parent" />
 
