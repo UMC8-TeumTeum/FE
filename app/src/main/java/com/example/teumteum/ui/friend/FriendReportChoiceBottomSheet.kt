@@ -92,6 +92,7 @@ class FriendReportChoiceBottomSheet : BottomSheetDialogFragment() {
             if (targetType.isNullOrBlank() || targetId <= 0L) {
                 return@setOnClickListener
             }
+            binding.reportBtn.isEnabled = false
 
             viewModel.createReport(
                 targetType = targetType,
@@ -113,6 +114,7 @@ class FriendReportChoiceBottomSheet : BottomSheetDialogFragment() {
         viewModel.errorMessage.observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let { message ->
                 Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+                binding.reportBtn.isEnabled = true
             }
         }
     }
