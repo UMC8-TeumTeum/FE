@@ -1,6 +1,5 @@
 package com.example.teumteum.utils
 
-import android.view.accessibility.AccessibilityNodeInfo
 import android.widget.EditText
 import android.widget.NumberPicker
 
@@ -94,19 +93,12 @@ fun NumberPicker.enableTapToNext(
                 else -> max
             }
 
-            // 스크롤 액션
-            val animated = (next == cur + 1) &&
-                    performAccessibilityAction(
-                        AccessibilityNodeInfo.ACTION_SCROLL_FORWARD,
-                        null
-                    )
-
-            if (!animated) value = next
+            value = next
 
             onAfterChange?.invoke(next)
         }
 
-        // 터치 이벤트 1: 1NumberPicker 자체 클릭
+        // 터치 이벤트 1: NumberPicker 자체 클릭
         setOnClickListener { goNext() }
 
         // 터치 이벤트 2: 내부 EditText 클릭
