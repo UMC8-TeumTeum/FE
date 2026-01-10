@@ -45,6 +45,7 @@ import com.example.teumteum.ui.myhome.viewModel.MyHomeViewModel
 import com.example.teumteum.ui.todo.viewModel.TodoViewModel
 import com.example.teumteum.utils.applyPickerValue
 import com.example.teumteum.utils.dpToPx
+import com.example.teumteum.utils.enableTapToNext
 import com.example.teumteum.utils.moveCalendarMonth
 import com.example.teumteum.utils.parseKoreanAmPmTimeToPickerValue
 import com.example.teumteum.utils.weekdayShortKorean
@@ -55,7 +56,6 @@ import com.kizitonwose.calendar.view.MonthDayBinder
 import com.kizitonwose.calendar.view.ViewContainer
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import java.time.DayOfWeek
 
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -516,13 +516,16 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
             minValue = 0
             maxValue = 1
             displayedValues = arrayOf("오전", "오후")
+            wrapSelectorWheel = true
             post { applyTextStyleToNumberPicker(this, context) }
+            enableTapToNext(wrap = true)
         }
         binding.hourPicker01Np.apply {
             minValue = 1
             maxValue = 12
             wrapSelectorWheel = true
             post { applyTextStyleToNumberPicker(this, context) }
+            enableTapToNext(wrap = true)
         }
         binding.minutePicker01Np.apply {
             minValue = 0
@@ -530,19 +533,23 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
             displayedValues = arrayOf("00", "10", "20", "30", "40", "50")
             wrapSelectorWheel = true
             post { applyTextStyleToNumberPicker(this, context) }
+            enableTapToNext(wrap = true)
         }
 
         binding.ampmPicker02Np.apply {
             minValue = 0
             maxValue = 1
             displayedValues = arrayOf("오전", "오후")
+            wrapSelectorWheel = true
             post { applyTextStyleToNumberPicker(this, context) }
+            enableTapToNext(wrap = true)
         }
         binding.hourPicker02Np.apply {
             minValue = 1
             maxValue = 12
             wrapSelectorWheel = true
             post { applyTextStyleToNumberPicker(this, context) }
+            enableTapToNext(wrap = true)
         }
         binding.minutePicker02Np.apply {
             minValue = 0
@@ -550,6 +557,7 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
             displayedValues = arrayOf("00", "10", "20", "30", "40", "50")
             wrapSelectorWheel = true
             post { applyTextStyleToNumberPicker(this, context) }
+            enableTapToNext(wrap = true)
         }
     }
 
