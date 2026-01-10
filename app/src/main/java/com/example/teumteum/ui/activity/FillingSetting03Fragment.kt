@@ -21,6 +21,7 @@ import com.example.teumteum.databinding.FragmentFillingSetting03Binding
 import com.example.teumteum.ui.activity.viewModel.ActivityViewModel
 import com.example.teumteum.ui.main.HomeFragment
 import com.example.teumteum.utils.applyPickerValue
+import com.example.teumteum.utils.enableTapToNext
 import com.example.teumteum.utils.parse24hTimeToPickerValue
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -139,6 +140,7 @@ class FillingSetting03Fragment : Fragment() {
         ampmPicker.minValue = 0
         ampmPicker.maxValue = 1
         ampmPicker.displayedValues = arrayOf("AM", "PM")
+        ampmPicker.wrapSelectorWheel = true
 
         hourPicker.minValue = 1
         hourPicker.maxValue = 12
@@ -159,6 +161,11 @@ class FillingSetting03Fragment : Fragment() {
                 value = value
             )
         }
+
+        // 탭 스크롤
+        ampmPicker.enableTapToNext(wrap = true)
+        hourPicker.enableTapToNext(wrap = true)
+        minutePicker.enableTapToNext(wrap = true)
 
         val dialog = BottomSheetDialog(requireContext())
         dialog.setContentView(dialogView)

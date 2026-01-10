@@ -1,5 +1,7 @@
 package com.example.teumteum.utils
 
+import android.view.accessibility.AccessibilityNodeInfo
+import android.widget.EditText
 import android.widget.NumberPicker
 
 data class AmPmHourMinuteIndex(
@@ -70,4 +72,54 @@ fun parse24hTimeToPickerValue(
         hour12 = hour12.coerceIn(1, 12),
         minuteIndex = minuteIndex
     )
+}
+
+fun NumberPicker.enableTapToNext(
+    wrap: Boolean = true,
+    onAfterChange: ((newValue: Int) -> Unit)? = null
+) {
+    // 편집 모드 방지
+    descendantFocusability = NumberPicker.FOCUS_BLOCK_DESCENDANTS
+
+    post {
+        fun goNext() {
+            val cur = value
+            val min = minValue
+            val max = maxValue
+
+            // 현재 값 기준으로 다음 값 계산
+            val next = when {
+                cur < max -> cur + 1
+                wrap -> min
+                else -> max
+            }
+
+            // 스크롤 액션
+            val animated = (next == cur + 1) &&
+                    performAccessibilityAction(
+                        AccessibilityNodeInfo.ACTION_SCROLL_FORWARD,
+                        null
+                    )
+
+            if (!animated) value = next
+
+            onAfterChange?.invoke(next)
+        }
+
+        // 터치 이벤트 1: 1NumberPicker 자체 클릭
+        setOnClickListener { goNext() }
+
+        // 터치 이벤트 2: 내부 EditText 클릭
+        val editText = (0 until childCount)
+            .map { getChildAt(it) }
+            .filterIsInstance<EditText>()
+            .firstOrNull()
+
+        editText?.apply {
+            isFocusable = false
+            isFocusableInTouchMode = false
+            isCursorVisible = false
+            setOnClickListener { goNext() }
+        }
+    }
 }
