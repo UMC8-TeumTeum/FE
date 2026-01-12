@@ -612,6 +612,8 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
                     checkIcon.visibility = View.VISIBLE
                     addAlarmItem(label)
                 }
+
+                popupWindow?.dismiss()
             }
 
             popupView.addView(itemView)

@@ -62,7 +62,6 @@
         android:fillViewport="true"
         android:paddingStart="17dp"
         android:paddingEnd="17dp"
-        android:paddingBottom="60dp"
         app:layout_constraintBottom_toTopOf="@id/btn_todo_register"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
