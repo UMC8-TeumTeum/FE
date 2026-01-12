@@ -2,6 +2,7 @@ package com.example.teumteum.ui.auth
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Base64
 import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -30,6 +31,7 @@ import com.navercorp.nid.NidOAuth
 import com.navercorp.nid.oauth.util.NidOAuthCallback
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import java.security.SecureRandom
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -87,26 +89,45 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun startKakaoLogin() {
-        val callback: (com.kakao.sdk.auth.model.OAuthToken?, Throwable?) -> Unit = { token, error ->
+        val nonce = generateNonce()
+        Log.d("KAKAO_NONCE", "generated nonce=$nonce")
+
+        val callback: (com.kakao.sdk.auth.model.OAuthToken?, Throwable?) -> Unit = callback@{ token, error ->
             if (error != null) {
                 viewModel.onSocialLoginFailed(SocialProvider.KAKAO, error)
-            } else if (token != null) {
-                viewModel.exchangeKakaoToken(token.accessToken)
+                return@callback
             }
+
+            if (token == null) return@callback
+
+            val idToken = token.idToken
+            if (idToken.isNullOrBlank()) {
+                Log.e("KAKAO", "idToken is null/blank. Check Kakao OIDC(OpenID Connect) settings.")
+                viewModel.onSocialLoginFailed(
+                    SocialProvider.KAKAO,
+                    RuntimeException("Kakao id_token이 발급되지 않았습니다.")
+                )
+                return@callback
+            }
+
+            Log.d("KAKAO_SEND", "send nonce=$nonce, idToken.len=${idToken.length}")
+
+            viewModel.exchangeKakaoToken(idToken, nonce)
         }
 
         if (UserApiClient.instance.isKakaoTalkLoginAvailable(this)) {
-            UserApiClient.instance.loginWithKakaoTalk(this) { token, error ->
+            UserApiClient.instance.loginWithKakaoTalk(this, nonce = nonce) { token, error ->
                 if (error != null) {
-                    UserApiClient.instance.loginWithKakaoAccount(this, callback = callback)
+                    UserApiClient.instance.loginWithKakaoAccount(this, nonce = nonce, callback = callback)
                 } else {
                     callback(token, null)
                 }
             }
         } else {
-            UserApiClient.instance.loginWithKakaoAccount(this, callback = callback)
+            UserApiClient.instance.loginWithKakaoAccount(this, nonce = nonce, callback = callback)
         }
     }
+
 
     private fun startNaverLogin() {
         val callback = object : NidOAuthCallback {
@@ -138,16 +159,22 @@ class LoginActivity : AppCompatActivity() {
         lifecycleScope.launch {
             val credentialManager = CredentialManager.create(this@LoginActivity)
 
-            val idToken = requestGoogleIdToken(credentialManager) ?: return@launch
+            val nonce = generateNonce()
+            Log.d("GOOGLE_NONCE", "generated nonce=$nonce")
 
-            viewModel.exchangeSocialToken(SocialProvider.GOOGLE, idToken)
+            val idToken = requestGoogleIdToken(credentialManager, nonce) ?: return@launch
+
+            Log.d("GOOGLE_SEND", "send nonce=$nonce, idToken.len=${idToken.length}")
+
+            viewModel.exchangeGoogleToken(idToken, nonce)
         }
     }
 
-    private suspend fun requestGoogleIdToken(cm: CredentialManager): String? {
+
+    private suspend fun requestGoogleIdToken(cm: CredentialManager, nonce: String): String? {
         val webClientId = BuildConfig.GOOGLE_CLIENT_ID
 
-        val first = buildGoogleRequest(webClientId, filterByAuthorizedAccounts = true)
+        val first = buildGoogleRequest(webClientId, filterByAuthorizedAccounts = true, nonce = nonce)
         try {
             val result = cm.getCredential(
                 context = this@LoginActivity,
@@ -166,7 +193,7 @@ class LoginActivity : AppCompatActivity() {
             return null
         }
 
-        val second = buildGoogleRequest(webClientId, filterByAuthorizedAccounts = false)
+        val second = buildGoogleRequest(webClientId, filterByAuthorizedAccounts = false, nonce = nonce)
         try {
             val result = cm.getCredential(
                 context = this@LoginActivity,
@@ -186,18 +213,21 @@ class LoginActivity : AppCompatActivity() {
 
     private fun buildGoogleRequest(
         webClientId: String,
-        filterByAuthorizedAccounts: Boolean
+        filterByAuthorizedAccounts: Boolean,
+        nonce: String
     ): GetCredentialRequest {
         val option = GetGoogleIdOption.Builder()
             .setServerClientId(webClientId)
             .setFilterByAuthorizedAccounts(filterByAuthorizedAccounts)
             .setAutoSelectEnabled(false)
+            .setNonce(nonce)
             .build()
 
         return GetCredentialRequest.Builder()
             .addCredentialOption(option)
             .build()
     }
+
 
     private fun extractGoogleIdToken(response: GetCredentialResponse): String? {
         val credential: Credential = response.credential
@@ -211,5 +241,11 @@ class LoginActivity : AppCompatActivity() {
 
         Log.w("GOOGLE", "Credential is not Google ID token type.")
         return null
+    }
+
+    private fun generateNonce(byteSize: Int = 32): String {
+        val bytes = ByteArray(byteSize)
+        SecureRandom().nextBytes(bytes)
+        return Base64.encodeToString(bytes, Base64.URL_SAFE or Base64.NO_WRAP or Base64.NO_PADDING)
     }
 }

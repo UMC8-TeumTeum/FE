@@ -53,20 +53,40 @@ class LoginViewModel @Inject constructor(
         }
     }
 
+    fun exchangeSocialTokenWithNonce(provider: SocialProvider, token: String, nonce: String) {
+        if (token.isBlank()) {
+            _loginResult.value = LoginResult.Error("${provider.name} 토큰이 비어있습니다.")
+            return
+        }
+
+        _loginResult.value = LoginResult.Loading
+
+        viewModelScope.launch {
+            repository.loginWithIdTokenAndNonce(provider, token, nonce)
+                .onSuccess { res ->
+                    onLoginSuccess(res.accessToken, res.refreshToken, res.nextStep)
+                }
+                .onFailure { e ->
+                    Log.e("SocialLogin", "서버 로그인 실패 provider=${provider.name}, msg=${e.message}", e)
+                    _loginResult.value = LoginResult.Error("서버 로그인 실패: ${e.message}")
+                }
+        }
+    }
+
 
     fun onSocialLoginFailed(provider: SocialProvider, t: Throwable) {
         Log.e("SocialLogin", "${provider.name} 로그인 실패: ${t.message}", t)
         _loginResult.postValue(LoginResult.Error("${provider.name} 로그인 실패: ${t.message}"))
     }
 
-    fun exchangeKakaoToken(kakaoAccessToken: String) =
-        exchangeSocialToken(SocialProvider.KAKAO, kakaoAccessToken)
+    fun exchangeKakaoToken(kakaoIdToken: String, nonce: String) =
+        exchangeSocialTokenWithNonce(SocialProvider.KAKAO, kakaoIdToken, nonce)
 
     fun exchangeNaverToken(naverAccessToken: String) =
         exchangeSocialToken(SocialProvider.NAVER, naverAccessToken)
 
-    fun exchangeGoogleToken(googleToken: String) =
-        exchangeSocialToken(SocialProvider.GOOGLE, googleToken)
+    fun exchangeGoogleToken(googleIdToken: String, nonce: String) =
+        exchangeSocialTokenWithNonce(SocialProvider.GOOGLE, googleIdToken, nonce)
 
 
     // 로그인 성공 공통 처리
