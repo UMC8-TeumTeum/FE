@@ -110,7 +110,7 @@ class WishSetting01Fragment : Fragment() {
         setupClockPager()
         setupObservers()
 
-        homeViewModel.getTodaySchedule(selectedDateServer)
+        homeViewModel.getScheduleForDate(selectedDateServer)
 
         binding.amPmTv.setOnClickListener {
             val amPos = clockAdapter.positionOf(ClockHalf.AM)
@@ -147,7 +147,7 @@ class WishSetting01Fragment : Fragment() {
             binding.nextBtn.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
 
             wishTimeAdapter.clearSelection()
-            homeViewModel.getTodaySchedule(server)
+            homeViewModel.getScheduleForDate(server)
         }
 
         binding.nextBtn.setOnClickListener {
@@ -203,6 +203,14 @@ class WishSetting01Fragment : Fragment() {
         }
 
         updateIndicator(isAM)
+
+        homeViewModel.sleepTimeList.observe(viewLifecycleOwner) {
+            clockAdapter.refreshAll()
+        }
+
+        homeViewModel.todoTimeList.observe(viewLifecycleOwner) {
+            clockAdapter.refreshAll()
+        }
     }
 
     private fun setupObservers() {

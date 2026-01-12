@@ -7,6 +7,7 @@ import com.example.teumteum.data.remote.onboarding.model.SleepPatternRequest
 import com.example.teumteum.utils.ApiResponse
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 
@@ -22,4 +23,7 @@ interface SettingService {
 
     @PATCH("/api/users/mypage/sleep-pattern")
     suspend fun updateSleepPattern(@Body sleepPattern: SleepPatternRequest): Response<ApiResponse<Unit>>
+
+    @DELETE("/api/users/mypage/sleep-pattern")
+    suspend fun deleteSleepPattern(): Response<ApiResponse<Unit>>
 }

@@ -61,7 +61,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="5dp">
 
             <EditText
                 android:id="@+id/todo_title_et"
@@ -71,7 +72,6 @@
                 android:background="@color/transparent"
                 android:fontFamily="@font/noto_sans_kr_medium"
                 android:gravity="top|start"
-                android:hint="새로운 투두를 작성해주세요"
                 android:includeFontPadding="false"
                 android:inputType="textMultiLine"
                 android:maxLines="5"
@@ -99,8 +99,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:background="@color/white"
-                android:orientation="vertical"
-                android:padding="5dp">
+                android:orientation="vertical">
 
                 <LinearLayout
                     android:id="@+id/todo_start_time"
@@ -125,7 +124,7 @@
                         android:fontFamily="@font/noto_sans_kr_regular"
                         android:textColor="@color/text_primary"
                         android:textSize="15sp"
-                        tools:text="4월 2일 (수)" />
+                        tools:text="2026년 4월 2일" />
 
                     <TextView
                         android:id="@+id/start_time_tv"
@@ -169,6 +168,28 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/calendar_weekdays_row_01" />
+
+                    <ImageView
+                        android:id="@+id/calendar_previous_date_01_iv"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="30dp"
+                        android:layout_marginBottom="10dp"
+                        android:src="@drawable/ic_calendar_previous_sv"
+                        app:layout_constraintEnd_toStartOf="@id/calendar_next_date_01_iv"
+                        app:layout_constraintTop_toBottomOf="@id/calendar_view_01"
+                        app:layout_constraintBottom_toBottomOf="parent" />
+
+                    <ImageView
+                        android:id="@+id/calendar_next_date_01_iv"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_marginEnd="15dp"
+                        android:src="@drawable/ic_calendar_next_sv"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/calendar_previous_date_01_iv" />
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <FrameLayout
@@ -235,7 +256,7 @@
                         android:fontFamily="@font/noto_sans_kr_regular"
                         android:textColor="@color/text_primary"
                         android:textSize="15sp"
-                        tools:text="4월 2일 (수)" />
+                        tools:text="2026년 4월 2일" />
 
                     <TextView
                         android:id="@+id/end_time_tv"
@@ -279,6 +300,28 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/calendar_weekdays_row_02" />
+
+                    <ImageView
+                        android:id="@+id/calendar_previous_date_02_iv"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="30dp"
+                        android:layout_marginBottom="10dp"
+                        android:src="@drawable/ic_calendar_previous_sv"
+                        app:layout_constraintEnd_toStartOf="@id/calendar_next_date_02_iv"
+                        app:layout_constraintTop_toBottomOf="@id/calendar_view_02"
+                        app:layout_constraintBottom_toBottomOf="parent" />
+
+                    <ImageView
+                        android:id="@+id/calendar_next_date_02_iv"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_marginEnd="15dp"
+                        android:src="@drawable/ic_calendar_next_sv"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/calendar_previous_date_02_iv" />
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <FrameLayout
@@ -335,8 +378,7 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="5dp">
+                android:layout_height="wrap_content">
 
                 <ImageView
                     android:id="@+id/alarm_icon_iv"
@@ -412,8 +454,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:background="@color/white"
-                android:orientation="vertical"
-                android:padding="5dp">
+                android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -493,27 +534,26 @@
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_horizon_sv" />
 
-            <LinearLayout
-                android:id="@+id/detail_text_ll"
-                android:layout_width="wrap_content"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/detail_text_cl"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="40dp"
-                android:orientation="horizontal"
-                android:padding="5dp">
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="40dp">
 
                 <ImageView
                     android:id="@+id/detail_text_iv"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginEnd="8dp"
-                    android:contentDescription="상세 내용"
-                    android:src="@drawable/ic_detail_text_sv" />
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_detail_text_sv"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/detail_text_et"/>
 
                 <EditText
                     android:id="@+id/detail_text_et"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
                     android:background="@color/transparent"
                     android:fontFamily="@font/noto_sans_kr_regular"
                     android:gravity="top|start"
@@ -522,9 +562,14 @@
                     android:maxLines="5"
                     android:minHeight="28dp"
                     android:textColorHint="@color/text_primary"
-                    android:textSize="15sp" />
+                    android:textSize="15sp"
+                    android:includeFontPadding="false"
+                    android:padding="0dp"
+                    app:layout_constraintStart_toEndOf="@id/detail_text_iv"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
 
-            </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </LinearLayout>
 

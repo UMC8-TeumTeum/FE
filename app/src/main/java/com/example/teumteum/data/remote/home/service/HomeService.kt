@@ -12,7 +12,7 @@ import retrofit2.http.Query
 interface HomeService {
 
     @GET("/api/home/teum")
-    suspend fun getTodaySchedule( @Query("date") date: String ): Response<ApiResponse<List<ScheduleResult>>>
+    suspend fun getScheduleForDate( @Query("date") date: String ): Response<ApiResponse<List<ScheduleResult>>>
 
     @GET("/api/home/teum-time")
     suspend fun getTeumTime(): Response<ApiResponse<TeumTimeResponse>>

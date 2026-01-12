@@ -20,6 +20,9 @@ import com.example.teumteum.data.remote.activity.model.AssignWishRequest
 import com.example.teumteum.databinding.FragmentFillingSetting03Binding
 import com.example.teumteum.ui.activity.viewModel.ActivityViewModel
 import com.example.teumteum.ui.main.HomeFragment
+import com.example.teumteum.utils.applyPickerValue
+import com.example.teumteum.utils.enableTapToNext
+import com.example.teumteum.utils.parse24hTimeToPickerValue
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
@@ -137,6 +140,7 @@ class FillingSetting03Fragment : Fragment() {
         ampmPicker.minValue = 0
         ampmPicker.maxValue = 1
         ampmPicker.displayedValues = arrayOf("AM", "PM")
+        ampmPicker.wrapSelectorWheel = true
 
         hourPicker.minValue = 1
         hourPicker.maxValue = 12
@@ -146,6 +150,22 @@ class FillingSetting03Fragment : Fragment() {
         minutePicker.maxValue = minuteValues.size - 1
         minutePicker.displayedValues = minuteValues
         minutePicker.wrapSelectorWheel = true
+
+        parse24hTimeToPickerValue(
+            timeText = targetTextView.text.toString(),
+            minuteOptions = minuteValues
+        )?.let { value ->
+            ampmPicker.applyPickerValue(
+                hourPicker = hourPicker,
+                minutePicker = minutePicker,
+                value = value
+            )
+        }
+
+        // 탭 스크롤
+        ampmPicker.enableTapToNext(wrap = true)
+        hourPicker.enableTapToNext(wrap = true)
+        minutePicker.enableTapToNext(wrap = true)
 
         val dialog = BottomSheetDialog(requireContext())
         dialog.setContentView(dialogView)
@@ -275,6 +295,11 @@ class FillingSetting03Fragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.assignSuccess.collect {
                     Log.d("ASSIGN_FRAGMENT", "빈틈채우기에 성공하였습니다.")
+
+                    val result = Bundle().apply {
+                        putString("date", getStartDate())
+                    }
+                    parentFragmentManager.setFragmentResult("assign_home", result)
 
                     parentFragmentManager.beginTransaction()
                         .replace(R.id.main_frm, HomeFragment())

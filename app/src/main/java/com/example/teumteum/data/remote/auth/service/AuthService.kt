@@ -1,19 +1,28 @@
 package com.example.teumteum.data.remote.auth.service
 
 import com.example.teumteum.data.remote.auth.model.JwtTokenResponse
-import com.example.teumteum.data.remote.auth.model.KakaoLoginRequest
 import com.example.teumteum.data.remote.auth.model.ReissueRequest
+import com.example.teumteum.data.remote.auth.model.SocialLoginRequest
+import com.example.teumteum.data.remote.auth.model.SocialNonceLoginRequest
 import com.example.teumteum.ui.auth.data.SocialLoginResult
 import com.example.teumteum.utils.ApiResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface AuthService {
 
-    @POST("/api/auth/social-login/kakao")
-    suspend fun loginWithKakao(
-        @Body request: KakaoLoginRequest
+    @POST("/api/auth/social-login/{socialType}")
+    suspend fun socialLogin(
+        @Path("socialType") socialType: String,
+        @Body body: SocialLoginRequest
+    ): Response<ApiResponse<SocialLoginResult>>
+
+    @POST("/api/auth/social-login/{socialType}")
+    suspend fun socialLogin(
+        @Path("socialType") socialType: String,
+        @Body body: SocialNonceLoginRequest
     ): Response<ApiResponse<SocialLoginResult>>
 
     @POST("/api/auth/reissue")

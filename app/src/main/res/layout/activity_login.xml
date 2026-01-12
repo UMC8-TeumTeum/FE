@@ -95,52 +95,31 @@
                 android:insetTop="0dp"
                 android:insetBottom="0dp"/>
 
-            <!-- 틈틈 -->
+            <!-- 구글 -->
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/teumteum_login_btn"
+                android:id="@+id/google_login_btn"
                 style="@style/Md15Medium"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginTop="13dp"
-                android:backgroundTint="#001522"
-                android:paddingStart="24dp"
+                android:backgroundTint="#F2F2F2"
+                android:paddingStart="17dp"
+                android:text="google로 로그인"
+                android:textColor="#1F1F1F"
+                app:cornerRadius="8dp"
+                app:icon="@drawable/ic_google"
+                app:iconGravity="start"
+                app:iconPadding="16dp"
+                app:iconSize="18dp"
+                app:iconTint="@null"
                 android:paddingTop="0dp"
                 android:paddingBottom="0dp"
-                android:text="틈틈 아이디로 시작하기"
-                android:textColor="@color/white"
-                app:cornerRadius="8dp"
                 android:minHeight="0dp"
                 android:layout_marginStart="0dp"
                 android:layout_marginEnd="0dp"
                 android:layout_marginBottom="0dp"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"/>
-
-            <!-- 아이디로 회원가입 -->
-            <LinearLayout
-                android:id="@+id/signup_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="36dp"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/signup_tv"
-                    style="@style/Sm14Regular"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:includeFontPadding="false"
-                    android:text="아이디로 회원가입"
-                    android:textColor="#5C6569" />
-
-                <View
-                    android:id="@+id/signup_underline"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#5C6569" />
-
-            </LinearLayout>
 
         </LinearLayout>
 

@@ -6,11 +6,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.teumteum.data.remote.alarm.FcmTokenStore
 import com.example.teumteum.data.remote.alarm.repository.FcmRepository
 import com.example.teumteum.data.remote.auth.repository.AuthRepository
 import com.example.teumteum.ui.auth.data.LoginResult
-import com.example.teumteum.data.remote.alarm.FcmTokenStore
+import com.example.teumteum.ui.auth.data.SocialProvider
 import com.example.teumteum.utils.FlowPrefs
+import com.example.teumteum.utils.NextStep
 import com.example.teumteum.utils.TokenProvider
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,32 +33,75 @@ class LoginViewModel @Inject constructor(
     private val _loginResult = MutableLiveData<LoginResult>()
     val loginResult: LiveData<LoginResult> = _loginResult
 
-    fun exchangeKakaoToken(kakaoAccessToken: String) {
+    fun exchangeSocialToken(provider: SocialProvider, token: String) {
+        if (token.isBlank()) {
+            _loginResult.value = LoginResult.Error("${provider.name} 토큰이 비어있습니다.")
+            return
+        }
+
         _loginResult.value = LoginResult.Loading
-        getJwtFromServer(kakaoAccessToken)
-    }
 
-    fun onKakaoLoginFailed(t: Throwable) {
-        _loginResult.postValue(LoginResult.Error("카카오 로그인 실패: ${t.message}"))
-    }
-
-    private fun getJwtFromServer(kakaoAccessToken: String) {
         viewModelScope.launch {
-            repository.loginWithKakaoAccessToken(kakaoAccessToken)
+            repository.loginWithSocialAccessToken(provider, token)
                 .onSuccess { res ->
-                    // 1) 액세스/리프레시 토큰 저장
-                    tokenProvider.saveTokens(res.accessToken, res.refreshToken)
-                    // 2) 다음 스텝 저장
-                    flowPrefs.setLastStep(res.nextStep)
-                    // 3) FCM 토큰 동기화
-                    syncFcmTokenAfterLogin()
-                    // 4) 로그인 성공 알림 (FCM 업로드는 백그라운드로 진행)
-                    _loginResult.value = LoginResult.Success(res.nextStep)
+                    onLoginSuccess(res.accessToken, res.refreshToken, res.nextStep)
                 }
                 .onFailure { e ->
+                    Log.e("SocialLogin", "서버 로그인 실패 provider=${provider.name}, msg=${e.message}", e)
                     _loginResult.value = LoginResult.Error("서버 로그인 실패: ${e.message}")
                 }
         }
+    }
+
+    fun exchangeSocialTokenWithNonce(provider: SocialProvider, token: String, nonce: String) {
+        if (token.isBlank()) {
+            _loginResult.value = LoginResult.Error("${provider.name} 토큰이 비어있습니다.")
+            return
+        }
+
+        _loginResult.value = LoginResult.Loading
+
+        viewModelScope.launch {
+            repository.loginWithIdTokenAndNonce(provider, token, nonce)
+                .onSuccess { res ->
+                    onLoginSuccess(res.accessToken, res.refreshToken, res.nextStep)
+                }
+                .onFailure { e ->
+                    Log.e("SocialLogin", "서버 로그인 실패 provider=${provider.name}, msg=${e.message}", e)
+                    _loginResult.value = LoginResult.Error("서버 로그인 실패: ${e.message}")
+                }
+        }
+    }
+
+
+    fun onSocialLoginFailed(provider: SocialProvider, t: Throwable) {
+        Log.e("SocialLogin", "${provider.name} 로그인 실패: ${t.message}", t)
+        _loginResult.postValue(LoginResult.Error("${provider.name} 로그인 실패: ${t.message}"))
+    }
+
+    fun exchangeKakaoToken(kakaoIdToken: String, nonce: String) =
+        exchangeSocialTokenWithNonce(SocialProvider.KAKAO, kakaoIdToken, nonce)
+
+    fun exchangeNaverToken(naverAccessToken: String) =
+        exchangeSocialToken(SocialProvider.NAVER, naverAccessToken)
+
+    fun exchangeGoogleToken(googleIdToken: String, nonce: String) =
+        exchangeSocialTokenWithNonce(SocialProvider.GOOGLE, googleIdToken, nonce)
+
+
+    // 로그인 성공 공통 처리
+    private fun onLoginSuccess(accessToken: String, refreshToken: String, nextStep: NextStep) {
+        //액세스/리프레시 토큰 저장
+        tokenProvider.saveTokens(accessToken, refreshToken)
+
+        //다음 스텝 저장
+        flowPrefs.setLastStep(nextStep)
+
+        //FCM 토큰 동기화 (백그라운드)
+        syncFcmTokenAfterLogin()
+
+        //UI 전환 트리거
+        _loginResult.value = LoginResult.Success(nextStep)
     }
 
     /**
