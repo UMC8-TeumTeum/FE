@@ -3,6 +3,7 @@ package com.example.teumteum.data.remote.mypage.service
 import com.example.teumteum.data.remote.mypage.model.MyInfoResponse
 import com.example.teumteum.data.remote.mypage.model.MyRoutineRequest
 import com.example.teumteum.data.remote.mypage.model.MyRoutineResponse
+import com.example.teumteum.data.remote.mypage.model.MySocialInfoResponse
 import com.example.teumteum.data.remote.mypage.model.ProfileUpdateRequest
 import com.example.teumteum.data.remote.onboarding.model.PresignedRequest
 import com.example.teumteum.data.remote.onboarding.model.PresignedResponse
@@ -50,4 +51,7 @@ interface MyPageService {
 
     @DELETE("/api/users/mypage/routines/{routineId}")
     suspend fun deleteMyRoutine(@Path("routineId") routineId: Long) : Response<ApiResponse<Unit>>
+
+    @GET("/api/users/mypage/accounts")
+    suspend fun getMySocialInfo() : Response<ApiResponse<MySocialInfoResponse>>
 }
