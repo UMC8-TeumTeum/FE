@@ -24,6 +24,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -42,7 +43,12 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 import com.example.teumteum.ui.myhome.viewModel.MyHomeViewModel
 import com.example.teumteum.ui.todo.viewModel.TodoViewModel
-import com.example.teumteum.utils.TimeUtils.combineDateTime
+import com.example.teumteum.utils.applyPickerValue
+import com.example.teumteum.utils.dpToPx
+import com.example.teumteum.utils.enableTapToNext
+import com.example.teumteum.utils.moveCalendarMonth
+import com.example.teumteum.utils.parseKoreanAmPmTimeToPickerValue
+import com.example.teumteum.utils.weekdayShortKorean
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.DayPosition
 import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
@@ -52,9 +58,12 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import kotlin.math.max
 
 @AndroidEntryPoint
 class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
@@ -88,6 +97,13 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
     private val viewModel: TodoViewModel by activityViewModels()
     private val myHomeViewModel: MyHomeViewModel by activityViewModels()
 
+    private val minuteOptions = arrayOf("00", "10", "20", "30", "40", "50")
+
+    private val headerFormatter = DateTimeFormatter.ofPattern("yyyy년 M월 d일", Locale.KOREAN)
+
+    private var visibleStartMonth: YearMonth = YearMonth.now()
+    private var visibleEndMonth: YearMonth = YearMonth.now()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -118,8 +134,12 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
         selectedStartDate = baseDate
         selectedEndDate = baseDate
 
-        val formatter = DateTimeFormatter.ofPattern("M월 d일 (E)", Locale.KOREAN)
-        val baseDateText = baseDate.format(formatter)
+        visibleStartMonth = YearMonth.from(selectedStartDate)
+        visibleEndMonth = YearMonth.from(selectedEndDate)
+
+        setupCalendarMonthNavigation()
+
+        val baseDateText = baseDate.format(headerFormatter)
 
         // 시작/종료 날짜 기본값 세팅
         binding.startDateTv.text = baseDateText
@@ -127,8 +147,10 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
 
         resetAlarmUI()
         setupPickers()
+
         setupStartCalendar()
         setupEndCalendar()
+
         setupWeekdayLabels()
         setupObservers()
         setupClickListeners()
@@ -139,21 +161,18 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
         val originalBottomPadding = binding.registerScroll.paddingBottom
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
-            val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+            val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            val sysBottom = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom
 
-            // 버튼 실제 높이
-            val btnH = binding.btnTodoRegister.height
+            // 추가 확보 공간
+            val extra = max(0, imeBottom - sysBottom)
 
-            // 스크롤 영역: 키보드 + 버튼 높이만큼 바닥 패딩
-            binding.registerScroll.setPadding(
-                binding.registerScroll.paddingLeft,
-                binding.registerScroll.paddingTop,
-                binding.registerScroll.paddingRight,
-                if (imeVisible) originalBottomPadding + btnH else originalBottomPadding
+            binding.registerScroll.updatePadding(
+                bottom = originalBottomPadding + extra
             )
 
-            // 키보드 올라왔을 때 보이는 흰색 영역 제거
-            binding.btnTodoRegister.visibility = if (imeVisible) View.GONE else View.VISIBLE
+            // 키보드 올라오면 하단 버튼 숨김
+            binding.btnTodoRegister.isVisible = imeBottom == 0
 
             insets
         }
@@ -177,10 +196,23 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
             if (isCalendarVisible) {
                 toggleCalendarVisibility(show = false)
             }
+
             val isVisibleNow = binding.timePickerStartContainer.isVisible
             if (isVisibleNow) {
                 applySelectedTime(isStart = true)
+            } else {
+                parseKoreanAmPmTimeToPickerValue(
+                    timeText = binding.startTimeTv.text.toString(),
+                    minuteOptions = minuteOptions
+                )?.let { v ->
+                    binding.ampmPicker01Np.applyPickerValue(
+                        hourPicker = binding.hourPicker01Np,
+                        minutePicker = binding.minutePicker01Np,
+                        value = v
+                    )
+                }
             }
+
             binding.timePickerStartContainer.isVisible = !isVisibleNow
             binding.timePickerEndContainer.isVisible = false
             currentTargetTextView = binding.startTimeTv.takeIf { !isVisibleNow }
@@ -190,10 +222,23 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
             if (isCalendarVisible) {
                 toggleCalendarVisibility(show = false)
             }
+
             val isVisibleNow = binding.timePickerEndContainer.isVisible
             if (isVisibleNow) {
                 applySelectedTime(isStart = false)
+            } else {
+                parseKoreanAmPmTimeToPickerValue(
+                    timeText = binding.endTimeTv.text.toString(),
+                    minuteOptions = minuteOptions
+                )?.let { v ->
+                    binding.ampmPicker02Np.applyPickerValue(
+                        hourPicker = binding.hourPicker02Np,
+                        minutePicker = binding.minutePicker02Np,
+                        value = v
+                    )
+                }
             }
+
             binding.timePickerEndContainer.isVisible = !isVisibleNow
             binding.timePickerStartContainer.isVisible = false
             currentTargetTextView = binding.endTimeTv.takeIf { !isVisibleNow }
@@ -258,13 +303,20 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
     }
 
     private fun setupStartCalendar() {
-        val currentMonth = YearMonth.now()
+        val currentMonth = YearMonth.from(selectedStartDate)
         val startMonth = currentMonth.minusYears(50)
         val endMonth = currentMonth.plusYears(50)
         val firstDayOfWeek = firstDayOfWeekFromLocale()
 
+        visibleStartMonth = currentMonth
+
         binding.calendarView01.setup(startMonth, endMonth, firstDayOfWeek)
         binding.calendarView01.scrollToMonth(currentMonth)
+
+        binding.calendarView01.monthScrollListener = { month ->
+            visibleStartMonth = month.yearMonth
+            updateMonthHeader01()
+        }
 
         binding.calendarView01.dayBinder = object : MonthDayBinder<DayViewContainer> {
             override fun create(view: View): DayViewContainer = DayViewContainer(view)
@@ -294,11 +346,16 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
 
                 container.view.setOnClickListener {
                     if (!isThisMonth) return@setOnClickListener
+
                     val old = selectedStartDate
                     selectedStartDate = day.date
+
+                    visibleStartMonth = YearMonth.from(selectedStartDate)
+
                     binding.calendarView01.notifyDateChanged(old)
-                    binding.startDateTv.text = day.date.format(DateTimeFormatter.ofPattern("M월 d일 (E)", Locale.KOREAN))
-                    binding.calendarView01.notifyDateChanged(day.date)
+                    binding.calendarView01.notifyDateChanged(selectedStartDate)
+
+                    binding.startDateTv.text = selectedStartDate.format(headerFormatter)
                     toggleCalendarVisibility(show = false)
                 }
             }
@@ -306,13 +363,20 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
     }
 
     private fun setupEndCalendar() {
-        val currentMonth = YearMonth.now()
+        val currentMonth = YearMonth.from(selectedEndDate)
         val startMonth = currentMonth.minusYears(50)
         val endMonth = currentMonth.plusYears(50)
         val firstDayOfWeek = firstDayOfWeekFromLocale()
 
+        visibleEndMonth = currentMonth
+
         binding.calendarView02.setup(startMonth, endMonth, firstDayOfWeek)
         binding.calendarView02.scrollToMonth(currentMonth)
+
+        binding.calendarView02.monthScrollListener = { month ->
+            visibleEndMonth = month.yearMonth
+            updateMonthHeader02()
+        }
 
         binding.calendarView02.dayBinder = object : MonthDayBinder<DayViewContainer> {
             override fun create(view: View): DayViewContainer = DayViewContainer(view)
@@ -342,11 +406,16 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
 
                 container.view.setOnClickListener {
                     if (!isThisMonth) return@setOnClickListener
+
                     val old = selectedEndDate
                     selectedEndDate = day.date
+
+                    visibleEndMonth = YearMonth.from(selectedEndDate)
+
                     binding.calendarView02.notifyDateChanged(old)
-                    binding.endDateTv.text = day.date.format(DateTimeFormatter.ofPattern("M월 d일 (E)", Locale.KOREAN))
-                    binding.calendarView02.notifyDateChanged(day.date)
+                    binding.calendarView02.notifyDateChanged(selectedEndDate)
+
+                    binding.endDateTv.text = selectedEndDate.format(headerFormatter)
                     toggleCalendarVisibility(show = false)
                 }
             }
@@ -380,16 +449,6 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
             }
             container2.addView(tv2)
         }
-    }
-
-    private fun weekdayShortKorean(dow: java.time.DayOfWeek): String = when (dow) {
-        java.time.DayOfWeek.SUNDAY -> "일"
-        java.time.DayOfWeek.MONDAY -> "월"
-        java.time.DayOfWeek.TUESDAY -> "화"
-        java.time.DayOfWeek.WEDNESDAY -> "수"
-        java.time.DayOfWeek.THURSDAY -> "목"
-        java.time.DayOfWeek.FRIDAY -> "금"
-        java.time.DayOfWeek.SATURDAY -> "토"
     }
 
     private fun toggleCalendarVisibility(show: Boolean) {
@@ -457,13 +516,16 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
             minValue = 0
             maxValue = 1
             displayedValues = arrayOf("오전", "오후")
+            wrapSelectorWheel = true
             post { applyTextStyleToNumberPicker(this, context) }
+            enableTapToNext(wrap = true)
         }
         binding.hourPicker01Np.apply {
             minValue = 1
             maxValue = 12
             wrapSelectorWheel = true
             post { applyTextStyleToNumberPicker(this, context) }
+            enableTapToNext(wrap = true)
         }
         binding.minutePicker01Np.apply {
             minValue = 0
@@ -471,19 +533,23 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
             displayedValues = arrayOf("00", "10", "20", "30", "40", "50")
             wrapSelectorWheel = true
             post { applyTextStyleToNumberPicker(this, context) }
+            enableTapToNext(wrap = true)
         }
 
         binding.ampmPicker02Np.apply {
             minValue = 0
             maxValue = 1
             displayedValues = arrayOf("오전", "오후")
+            wrapSelectorWheel = true
             post { applyTextStyleToNumberPicker(this, context) }
+            enableTapToNext(wrap = true)
         }
         binding.hourPicker02Np.apply {
             minValue = 1
             maxValue = 12
             wrapSelectorWheel = true
             post { applyTextStyleToNumberPicker(this, context) }
+            enableTapToNext(wrap = true)
         }
         binding.minutePicker02Np.apply {
             minValue = 0
@@ -491,6 +557,7 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
             displayedValues = arrayOf("00", "10", "20", "30", "40", "50")
             wrapSelectorWheel = true
             post { applyTextStyleToNumberPicker(this, context) }
+            enableTapToNext(wrap = true)
         }
     }
 
@@ -561,7 +628,8 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
             }
         }
 
-        val popupWidth = resources.displayMetrics.widthPixels / 2
+        val screenW = resources.displayMetrics.widthPixels
+        val popupWidth = (screenW * 0.6f).toInt()
 
         // 팝업 설정
         popupWindow = PopupWindow(
@@ -574,7 +642,12 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
             elevation = 16f
             setBackgroundDrawable(null)
 
-            showAsDropDown(anchor, -popupWidth + anchor.width, 16)
+            val moveRightPx = anchor.dpToPx(10)
+            showAsDropDown(
+                anchor,
+                (-popupWidth + anchor.width) + moveRightPx,
+                anchor.dpToPx(8)
+            )
         }
     }
 
@@ -625,7 +698,6 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
                 val behavior = BottomSheetBehavior.from(it)
                 behavior.peekHeight = desiredHeight
                 behavior.state = BottomSheetBehavior.STATE_COLLAPSED
-                behavior.isDraggable = false // 확장 불가능
             }
         }
     }
@@ -663,16 +735,29 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
             .map { (min, st) -> ReminderAlarm(alarm = min, status = st) }
     }
 
-    private fun getTodayFormatted(): String {
-        val today = LocalDate.now()
-        val formatter = DateTimeFormatter.ofPattern("M월 d일 (E)", Locale.KOREAN)
-        return today.format(formatter)
+    private fun parseKoreanAmPmTime(timeText: String): LocalTime {
+        val parts = timeText.trim().split(" ")
+        val ampm = parts[0] // 오전/오후
+        val (hStr, mStr) = parts[1].split(":")
+        var hour = hStr.toInt()
+        val minute = mStr.toInt()
+
+        if (ampm == "오후" && hour != 12) hour += 12
+        if (ampm == "오전" && hour == 12) hour = 0
+
+        return LocalTime.of(hour, minute)
     }
 
     private fun getTodoRequest(): RegisterTodoRequest {
         val title = binding.todoTitleEt.text.toString()
-        val startTime = combineDateTime(binding.startDateTv, binding.startTimeTv)
-        val endTime = combineDateTime(binding.endDateTv, binding.endTimeTv)
+
+        val startLocalTime = parseKoreanAmPmTime(binding.startTimeTv.text.toString())
+        val endLocalTime = parseKoreanAmPmTime(binding.endTimeTv.text.toString())
+
+        val startDateTime = LocalDateTime.of(selectedStartDate, startLocalTime)
+        val endDateTime = LocalDateTime.of(selectedEndDate, endLocalTime)
+
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")
 
         val description = binding.detailTextEt.text.toString()
         val isPublic = binding.publicToggle01Iv.isChecked
@@ -681,8 +766,8 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
 
         return RegisterTodoRequest(
             title = title,
-            startTime = startTime,
-            endTime = endTime,
+            startTime = startDateTime.format(formatter),
+            endTime = endDateTime.format(formatter),
             description = description,
             isPublic = isPublic,
             includeTeum = includeTeum,
@@ -743,7 +828,10 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.registerSuccess.collect {
                     Log.d("TODO_REGISTER_FRAGMENT", "투두가 성공적으로 등록되었습니다.")
-                    parentFragmentManager.setFragmentResult("todo_register_home", Bundle())
+                    val result = Bundle().apply {
+                        putString("date", selectedStartDate.toString()) // "yyyy-MM-dd"
+                    }
+                    parentFragmentManager.setFragmentResult("todo_register_home", result)
 
                     // 모든 바텀시트 닫기
                     (requireActivity().supportFragmentManager.fragments).forEach { fragment ->
@@ -786,6 +874,55 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
     // DayView의 뷰 홀더
     private inner class DayViewContainer(view: View) : ViewContainer(view) {
         val textView: TextView = view.findViewById(R.id.calendar_day_tv)
+    }
+
+    private fun updateMonthHeader01() {
+        val headerDate = visibleStartMonth.atDay(1)
+        binding.startDateTv.text = headerDate.format(headerFormatter)
+    }
+
+    private fun updateMonthHeader02() {
+        val headerDate = visibleEndMonth.atDay(1)
+        binding.endDateTv.text = headerDate.format(headerFormatter)
+    }
+
+    private fun setupCalendarMonthNavigation() {
+
+        binding.calendarPreviousDate01Iv.setOnClickListener {
+            visibleStartMonth = moveCalendarMonth(
+                monthStateRef = visibleStartMonth,
+                delta = -1,
+                calendarView = binding.calendarView01
+            )
+            updateMonthHeader01()
+        }
+
+        binding.calendarNextDate01Iv.setOnClickListener {
+            visibleStartMonth = moveCalendarMonth(
+                monthStateRef = visibleStartMonth,
+                delta = 1,
+                calendarView = binding.calendarView01
+            )
+            updateMonthHeader01()
+        }
+
+        binding.calendarPreviousDate02Iv.setOnClickListener {
+            visibleEndMonth = moveCalendarMonth(
+                monthStateRef = visibleEndMonth,
+                delta = -1,
+                calendarView = binding.calendarView02
+            )
+            updateMonthHeader02()
+        }
+
+        binding.calendarNextDate02Iv.setOnClickListener {
+            visibleEndMonth = moveCalendarMonth(
+                monthStateRef = visibleEndMonth,
+                delta = 1,
+                calendarView = binding.calendarView02
+            )
+            updateMonthHeader02()
+        }
     }
 
     override fun onDestroyView() {

@@ -20,7 +20,7 @@ class TodoEventAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_teum_event_card, parent, false)
+            .inflate(R.layout.item_teumm_event_card, parent, false)
         return ViewHolder(view)
     }
 

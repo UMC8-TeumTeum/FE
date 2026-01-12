@@ -62,7 +62,6 @@
         android:fillViewport="true"
         android:paddingStart="17dp"
         android:paddingEnd="17dp"
-        android:paddingBottom="60dp"
         app:layout_constraintBottom_toTopOf="@id/btn_wish_register"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -71,7 +70,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="5dp">
 
             <EditText
                 android:id="@+id/wish_title_et"
@@ -103,8 +103,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:background="@color/white"
-                android:orientation="vertical"
-                android:padding="5dp">
+                android:orientation="vertical">
 
                 <LinearLayout
                     android:id="@+id/wish_date"
@@ -132,24 +131,26 @@
 
                 </LinearLayout>
 
-                <LinearLayout
-                    android:id="@+id/wish_detail_ll"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/detail_text_cl"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="-3dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="-3dp">
 
                     <ImageView
+                        android:id="@+id/detail_text_iv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
-                        android:src="@drawable/ic_detail_text_sv" />
+                        android:src="@drawable/ic_detail_text_sv"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/detail_text_et"/>
 
                     <EditText
                         android:id="@+id/detail_text_et"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
                         android:background="@color/transparent"
                         android:fontFamily="@font/noto_sans_kr_regular"
                         android:gravity="top|start"
@@ -158,9 +159,14 @@
                         android:maxLines="5"
                         android:minHeight="28dp"
                         android:textColorHint="@color/text_primary"
-                        android:textSize="15sp" />
+                        android:textSize="15sp"
+                        android:includeFontPadding="false"
+                        android:padding="0dp"
+                        app:layout_constraintStart_toEndOf="@id/detail_text_iv"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"/>
 
-                </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
             </LinearLayout>
 
             <ImageView
@@ -184,8 +190,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="-5dp"
                     android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="5dp">
+                    android:orientation="horizontal">
 
                     <TextView
                         android:id="@+id/wish_time_tv"
@@ -203,8 +208,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="5dp">
+                    android:orientation="horizontal">
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_wish_time_01"
@@ -285,10 +289,9 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="-3dp"
+                    android:layout_marginBottom="-5dp"
                     android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="5dp">
+                    android:orientation="horizontal">
 
                     <TextView
                         android:id="@+id/wish_category_tv"
@@ -305,10 +308,9 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="-7dp"
+                    android:layout_marginBottom="3dp"
                     android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="5dp">
+                    android:orientation="horizontal">
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_wish_category_01"
@@ -359,8 +361,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="34dp"
                     android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="5dp">
+                    android:orientation="horizontal">
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_wish_category_04"

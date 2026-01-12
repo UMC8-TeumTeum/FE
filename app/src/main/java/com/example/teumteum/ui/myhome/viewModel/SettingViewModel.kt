@@ -77,4 +77,14 @@ class SettingViewModel @Inject constructor(
                 }
         }
     }
+
+    fun deleteSleepPattern() {
+        viewModelScope.launch {
+            repository.deleteSleepPattern()
+                .onFailure {
+                    _error.value = "수면패턴 설정 저장 실패: ${it.message}"
+                    Log.d("Setting", _error.value.toString())
+                }
+        }
+    }
 }

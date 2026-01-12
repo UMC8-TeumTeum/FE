@@ -16,6 +16,7 @@ import com.example.teumteum.data.remote.auth.LogoutUseCase
 import com.example.teumteum.databinding.FragmentMyAccountSettingBinding
 import com.example.teumteum.ui.main.MainActivity
 import com.google.android.material.button.MaterialButton
+import com.navercorp.nid.NidOAuth
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -73,6 +74,15 @@ class MyAccountSettingFragment : Fragment() {
         yesBtn.setOnClickListener {
             dialog.dismiss()
             performLogout()
+
+            //네이버 로그아웃
+            NidOAuth.logout(object : com.navercorp.nid.oauth.util.NidOAuthCallback {
+                override fun onSuccess() {
+                }
+
+                override fun onFailure(errorCode: String, errorDesc: String) {
+                }
+            })
         }
 
         noBtn.setOnClickListener {

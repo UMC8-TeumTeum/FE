@@ -1,18 +1,25 @@
 package com.example.teumteum.ui.myhome
 
+import android.graphics.Paint
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.NumberPicker
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.onboarding.model.SleepPatternRequest
+import com.example.teumteum.databinding.DialogConfirmSleepDeleteBinding
 import com.example.teumteum.databinding.FragmentMySleepPatternSettingBinding
 import com.example.teumteum.ui.main.MainActivity
+import com.example.teumteum.ui.main.viewModel.HomeViewModel
 import com.example.teumteum.ui.myhome.viewModel.SettingViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
@@ -25,6 +32,7 @@ class MySleepPatternSettingFragment : Fragment() {
     private lateinit var binding: FragmentMySleepPatternSettingBinding
 
     private val viewModel: SettingViewModel by viewModels()
+    private val homeViewModel: HomeViewModel by activityViewModels()
 
     private val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
@@ -39,6 +47,9 @@ class MySleepPatternSettingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity as? MainActivity)?.hideBottomBar()
+
+        initSleepPattern()
+        binding.deleteTv.paintFlags = binding.deleteTv.paintFlags or Paint.UNDERLINE_TEXT_FLAG
 
         binding.backButton.setOnClickListener {
             parentFragmentManager.popBackStack()
@@ -76,6 +87,10 @@ class MySleepPatternSettingFragment : Fragment() {
         binding.endDownArrow.setOnClickListener {
             changeHour(binding.endChoiceTv, false, false)
             tryUpdateSleepPattern()
+        }
+
+        binding.deleteTv.setOnClickListener {
+            showDeleteDialog()
         }
     }
 
@@ -142,5 +157,54 @@ class MySleepPatternSettingFragment : Fragment() {
         viewModel.updateSleepPattern(
             SleepPatternRequest(start.toString(), end.toString())
         )
+    }
+
+    private fun initSleepPattern() {
+        homeViewModel.sleepStartTime.observe(viewLifecycleOwner) { start ->
+            if (start != null) {
+                binding.startChoiceTv.text = start.format(timeFormatter)
+            }
+        }
+
+        homeViewModel.sleepEndTime.observe(viewLifecycleOwner) { end ->
+            if (end != null) {
+                binding.endChoiceTv.text = end.format(timeFormatter)
+            }
+        }
+    }
+
+    private fun showDeleteDialog() {
+        val dialogBinding = DialogConfirmSleepDeleteBinding.inflate(LayoutInflater.from(requireContext()))
+        val dialog = AlertDialog.Builder(requireContext(), R.style.RoundedAlertDialog)
+            .setView(dialogBinding.root)
+            .create()
+
+        dialogBinding.confirmTv.setOnClickListener {
+            viewModel.deleteSleepPattern()
+            dialog.dismiss()
+        }
+        dialogBinding.cancelTv.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        applyDialogWindow(dialog)
+        dialog.show()
+    }
+
+    private fun applyDialogWindow(dialog: AlertDialog) {
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.setOnShowListener {
+            dialog.window?.let { window ->
+                val layoutParams = window.attributes
+                layoutParams.width  = (resources.displayMetrics.widthPixels * 0.85).toInt()
+                layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
+                layoutParams.gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
+                layoutParams.y = (resources.displayMetrics.heightPixels * 0.37).toInt()
+                layoutParams.dimAmount = 0.5f
+                window.attributes = layoutParams
+                window.setDimAmount(0.5f)
+                window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+            }
+        }
     }
 }

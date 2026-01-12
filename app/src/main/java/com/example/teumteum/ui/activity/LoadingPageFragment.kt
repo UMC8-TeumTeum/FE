@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import androidx.activity.OnBackPressedCallback
 import androidx.core.animation.doOnEnd
 import androidx.fragment.app.Fragment
 import com.example.teumteum.databinding.FragmentLoadingPageBinding
@@ -26,6 +27,8 @@ class LoadingPageFragment : Fragment() {
     private var animator: ValueAnimator? = null
     private var current = 0 // 진행률 캐시(선택)
 
+    private var backCallback: OnBackPressedCallback? = null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -42,6 +45,15 @@ class LoadingPageFragment : Fragment() {
         current = 0
 
         animateProgress(to = 90)
+
+        backCallback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                dismissNow() // 로딩 화면 제거
+                requireActivity().supportFragmentManager.popBackStack()
+            }
+        }.also {
+            requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, it)
+        }
     }
 
     private fun animateProgress(to: Int, onEnd: (() -> Unit)? = null) {
@@ -75,10 +87,19 @@ class LoadingPageFragment : Fragment() {
         }
     }
 
-    override fun onDestroyView() {
+    fun dismissNow() {
         animator?.cancel()
         animator = null
-        _binding = null
+        parentFragmentManager.beginTransaction()
+            .remove(this)
+            .commitAllowingStateLoss()
+    }
+
+    override fun onDestroyView() {
         super.onDestroyView()
+        animator?.cancel()
+        animator = null
+        backCallback = null
+        _binding = null
     }
 }

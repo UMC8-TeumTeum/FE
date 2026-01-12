@@ -75,23 +75,17 @@ class FriendTeumRequestFragment : Fragment() {
         calendarView = binding.calendarView
         calendarView.isVisible = true
 
+        setupRecyclerView()
         setupCalendar()
         setupHeader()
         setupWeekdayLabels()
         setupCalendarNavigation()
-        setupRecyclerView()
 
         // 최초 가시 월 기준으로 한 번 조회
         visibleMonth = YearMonth.now()
         lastRequestedMonth = null
         // arguments에서 friendUserId 읽은 뒤에 호출
         fetchDotDates()
-
-        // 어댑터 초기화
-        adapter = TeumRequestAdapter()
-        binding.requestHistoryRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-        binding.requestHistoryRecyclerView.adapter = adapter
-        binding.requestHistoryRecyclerView.visibility = View.GONE // 처음엔 숨김
 
         // 뒤로가기
         binding.btnBack.setOnClickListener {
@@ -139,6 +133,10 @@ class FriendTeumRequestFragment : Fragment() {
             visibleMonth = month.yearMonth
             setupHeader()
 
+            // 달이 바뀌면 아래 리스트 숨기고 내용 비우기
+            binding.requestHistoryRecyclerView.visibility = View.GONE
+            adapter.submitList(emptyList())
+
             // 같은 달로의 반복 호출 방지
             if (lastRequestedMonth != visibleMonth) {
                 lastRequestedMonth = visibleMonth
@@ -176,7 +174,8 @@ class FriendTeumRequestFragment : Fragment() {
                 )
 
                 // 일정 점 표시
-                dot.visibility = if (eventDates.contains(day.date) && isThisMonth) View.VISIBLE else View.GONE
+                dot.visibility =
+                    if (eventDates.contains(day.date) && isThisMonth) View.VISIBLE else View.GONE
 
                 // 오늘 표시
                 if (day.date == today) {
@@ -188,7 +187,8 @@ class FriendTeumRequestFragment : Fragment() {
                 // 날짜 선택
                 if (day.date == selectedDate && isThisMonth) {
                     tv.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.white))
-                    tv.background = circleFill(ContextCompat.getColor(requireContext(), R.color.main_1))
+                    tv.background =
+                        circleFill(ContextCompat.getColor(requireContext(), R.color.main_1))
                 }
 
                 // 클릭으로 선택 처리
@@ -301,5 +301,4 @@ class FriendTeumRequestFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
 }
