@@ -58,39 +58,37 @@ class MySleepPatternSettingFragment : Fragment() {
         binding.sleepStartContainer.setOnClickListener {
             showCustomTimePicker { time ->
                 binding.startChoiceTv.text = time.format(DateTimeFormatter.ofPattern("HH:mm"))
-                tryUpdateSleepPattern()
             }
         }
 
         binding.sleepEndContainer.setOnClickListener {
             showCustomTimePicker { time ->
                 binding.endChoiceTv.text = time.format(DateTimeFormatter.ofPattern("HH:mm"))
-                tryUpdateSleepPattern()
             }
         }
 
         binding.startUpArrow.setOnClickListener {
             changeHour(binding.startChoiceTv, true, true)
-            tryUpdateSleepPattern()
         }
 
         binding.startDownArrow.setOnClickListener {
             changeHour(binding.startChoiceTv, false, true)
-            tryUpdateSleepPattern()
         }
 
         binding.endUpArrow.setOnClickListener {
             changeHour(binding.endChoiceTv, true, false)
-            tryUpdateSleepPattern()
         }
 
         binding.endDownArrow.setOnClickListener {
             changeHour(binding.endChoiceTv, false, false)
-            tryUpdateSleepPattern()
         }
 
         binding.deleteTv.setOnClickListener {
             showDeleteDialog()
+        }
+
+        binding.confirmBtn.setOnClickListener {
+            tryUpdateSleepPattern()
         }
     }
 
