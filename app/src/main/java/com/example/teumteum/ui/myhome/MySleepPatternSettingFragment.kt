@@ -21,6 +21,7 @@ import com.example.teumteum.databinding.FragmentMySleepPatternSettingBinding
 import com.example.teumteum.ui.main.MainActivity
 import com.example.teumteum.ui.main.viewModel.HomeViewModel
 import com.example.teumteum.ui.myhome.viewModel.SettingViewModel
+import com.example.teumteum.utils.enableTapToNext
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalTime
@@ -105,13 +106,20 @@ class MySleepPatternSettingFragment : Fragment() {
         ampmPicker.minValue = 0
         ampmPicker.maxValue = 1
         ampmPicker.displayedValues = arrayOf("AM", "PM")
+        ampmPicker.wrapSelectorWheel = true
 
         hourPicker.minValue = 1
         hourPicker.maxValue = 12
+        hourPicker.wrapSelectorWheel = true
 
         minutePicker.minValue = 0
         minutePicker.maxValue = minuteValues.size - 1
         minutePicker.displayedValues = minuteValues
+        minutePicker.wrapSelectorWheel = true
+
+        ampmPicker.enableTapToNext(wrap = true)
+        hourPicker.enableTapToNext(wrap = true)
+        minutePicker.enableTapToNext(wrap = true)
 
         val dialog = BottomSheetDialog(requireContext()).apply {
             setContentView(dialogView)

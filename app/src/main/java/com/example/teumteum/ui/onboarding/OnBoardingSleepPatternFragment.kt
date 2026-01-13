@@ -17,6 +17,7 @@ import com.example.teumteum.databinding.FragmentOnBoardingSleepPatternBinding
 import com.example.teumteum.ui.onboarding.viewModel.OnBoardingUiState
 import com.example.teumteum.ui.onboarding.viewModel.OnBoardingViewModel
 import com.example.teumteum.ui.auth.SignUpActivity
+import com.example.teumteum.utils.enableTapToNext
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalTime
@@ -138,13 +139,20 @@ class OnBoardingSleepPatternFragment : Fragment() {
         ampmPicker.minValue = 0
         ampmPicker.maxValue = 1
         ampmPicker.displayedValues = arrayOf("AM", "PM")
+        ampmPicker.wrapSelectorWheel = true
 
         hourPicker.minValue = 1
         hourPicker.maxValue = 12
+        hourPicker.wrapSelectorWheel = true
 
         minutePicker.minValue = 0
         minutePicker.maxValue = minuteValues.size - 1
         minutePicker.displayedValues = minuteValues
+        minutePicker.wrapSelectorWheel = true
+
+        ampmPicker.enableTapToNext(wrap = true)
+        hourPicker.enableTapToNext(wrap = true)
+        minutePicker.enableTapToNext(wrap = true)
 
         val dialog = BottomSheetDialog(requireContext()).apply {
             setContentView(dialogView)
