@@ -17,6 +17,7 @@ import com.example.teumteum.R
 import com.example.teumteum.databinding.BottomSheetScheduleBinding
 import com.example.teumteum.ui.onboarding.data.Schedule
 import com.example.teumteum.ui.onboarding.viewModel.OnBoardingViewModel
+import com.example.teumteum.utils.enableTapToNext
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import java.time.LocalTime
@@ -148,6 +149,9 @@ class BottomSheetScheduleFragment(
             it.minValue = 0
             it.maxValue = 1
             it.displayedValues = arrayOf("오전", "오후")
+            it.wrapSelectorWheel = true
+
+            it.enableTapToNext(wrap = true)
             applyTextStyleToNumberPicker(it, context)
         }
 
@@ -155,6 +159,8 @@ class BottomSheetScheduleFragment(
             it.minValue = 1
             it.maxValue = 12
             it.wrapSelectorWheel = true
+
+            it.enableTapToNext(wrap = true)
             applyTextStyleToNumberPicker(it, context)
         }
 
@@ -164,6 +170,8 @@ class BottomSheetScheduleFragment(
             it.maxValue = minuteValues.size - 1
             it.displayedValues = minuteValues
             it.wrapSelectorWheel = true
+
+            it.enableTapToNext(wrap = true)
             applyTextStyleToNumberPicker(it, context)
         }
     }

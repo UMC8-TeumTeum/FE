@@ -20,6 +20,7 @@ import com.example.teumteum.databinding.FragmentFriend02SuggestBinding
 import com.example.teumteum.ui.friend.adapter.FriendRequestCardAdapter
 import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.example.teumteum.ui.main.MainActivity
+import com.example.teumteum.utils.enableTapToNext
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
@@ -139,9 +140,23 @@ class Friend02SuggestFragment : Fragment() {
         val m = dialogView.findViewById<NumberPicker>(R.id.minutePicker01Np)
         val mins = arrayOf("00","10","20","30","40","50")
 
-        am.minValue = 0; am.maxValue = 1; am.displayedValues = arrayOf("AM","PM")
-        h.minValue = 1; h.maxValue = 12; h.wrapSelectorWheel = true
-        m.minValue = 0; m.maxValue = mins.size-1; m.displayedValues = mins; m.wrapSelectorWheel = true
+        am.minValue = 0
+        am.maxValue = 1
+        am.displayedValues = arrayOf("AM","PM")
+        am.wrapSelectorWheel = true
+
+        h.minValue = 1
+        h.maxValue = 12
+        h.wrapSelectorWheel = true
+
+        m.minValue = 0
+        m.maxValue = mins.size-1
+        m.displayedValues = mins
+        m.wrapSelectorWheel = true
+
+        am.enableTapToNext(wrap = true)
+        h.enableTapToNext(wrap = true)
+        m.enableTapToNext(wrap = true)
 
         // 초기값 세팅
         runCatching {
