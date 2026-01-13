@@ -104,7 +104,7 @@
                 android:layout_marginTop="5dp"
                 app:cv_dayViewResource="@layout/calendar_day_layout"
                 app:cv_orientation="horizontal"
-                app:cv_outDateStyle="endOfRow"
+                app:cv_outDateStyle="endOfGrid"
                 app:cv_daySize="rectangle"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
