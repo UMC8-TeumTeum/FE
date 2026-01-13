@@ -2,12 +2,13 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:minHeight="40dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <TextView
         android:id="@+id/calendar_day_tv"
-        android:layout_width="28dp"
-        android:layout_height="28dp"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
         android:gravity="center"
         android:textSize="12sp"
         app:layout_constraintTop_toTopOf="parent"
@@ -19,7 +20,6 @@
         android:id="@+id/dot_view"
         android:layout_width="5dp"
         android:layout_height="5dp"
-        android:layout_marginBottom="4dp"
         android:background="@drawable/dot_schedule_exists"
         android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/calendar_day_tv"

@@ -94,6 +94,7 @@
             app:cv_dayViewResource="@layout/calendar_day_layout"
             app:cv_orientation="horizontal"
             app:cv_outDateStyle="endOfRow"
+            app:cv_daySize="rectangle"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/calendar_weekdays_row" />
