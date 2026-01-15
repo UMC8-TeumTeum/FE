@@ -143,7 +143,6 @@
                         android:gravity="top|start"
                         android:hint="상세 내용 입력"
                         android:inputType="textMultiLine"
-                        android:imeOptions="actionDone"
                         android:maxLines="5"
                         android:minHeight="28dp"
                         android:textColorHint="@color/text_primary"

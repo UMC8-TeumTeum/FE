@@ -157,7 +157,7 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
         setupWeekdayLabels()
         setupObservers()
 
-        setupImeForEditTexts()
+        setupTitleImeDone()
         setupClickListeners()
 
         viewModel.getOnboardingReminders()
@@ -932,12 +932,9 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
         }
     }
 
-    private fun setupImeForEditTexts() {
-        applyDoneBehavior(binding.todoTitleEt)
-        applyDoneBehavior(binding.detailTextEt)
-    }
+    private fun setupTitleImeDone() {
+        val et = binding.todoTitleEt
 
-    private fun applyDoneBehavior(et: EditText) {
         // 1. 키보드 Done 액션 처리
         et.setOnEditorActionListener { v, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {

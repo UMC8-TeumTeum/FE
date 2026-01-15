@@ -11,7 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
@@ -65,7 +64,7 @@ class BottomSheetWishRegisterFragment : BottomSheetDialogFragment() {
 
         setupUI()
         setupObservers()
-        setupImeForEditTexts()
+        setupTitleImeDone()
     }
 
     private fun setupUI() {
@@ -326,12 +325,9 @@ class BottomSheetWishRegisterFragment : BottomSheetDialogFragment() {
         )
     }
 
-    private fun setupImeForEditTexts() {
-        applyDoneBehavior(binding.wishTitleEt)
-        applyDoneBehavior(binding.detailTextEt)
-    }
+    private fun setupTitleImeDone() {
+        val et = binding.wishTitleEt
 
-    private fun applyDoneBehavior(et: EditText) {
         // 1. 키보드 Done 액션 처리
         et.setOnEditorActionListener { v, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
