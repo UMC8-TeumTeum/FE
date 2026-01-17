@@ -971,12 +971,22 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
     private fun setupTapOutsideToApplyTime() {
         val touchTargets = listOf(binding.root, binding.registerScroll)
 
+        fun isTouchInside(view: View, event: MotionEvent): Boolean {
+            val loc = IntArray(2)
+            view.getLocationOnScreen(loc)
+            val x = event.rawX
+            val y = event.rawY
+            return x >= loc[0] && x <= loc[0] + view.width && y >= loc[1] && y <= loc[1] + view.height
+        }
+
         touchTargets.forEach { target ->
             target.setOnTouchListener { v, event ->
                 when (event.action) {
                     MotionEvent.ACTION_UP -> {
                         // 타임피커 안 열려있으면 패스
                         if (activeTimePicker == ActiveTimePicker.NONE) return@setOnTouchListener false
+
+                        val isOnTarget = currentTargetTextView?.let { isTouchInside(it, event) } ?: false
 
                         // 바깥 탭이면 적용 + 닫기
                         when (activeTimePicker) {
@@ -988,7 +998,9 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
                         currentTargetTextView = null
 
                         v.performClick() // 접근성용 클릭 이벤트
-                        true
+
+                        // 타임 텍스트 탭은 소비(재오픈 방지), 그 외는 이벤트 전달
+                        return@setOnTouchListener isOnTarget
                     }
 
                     // 다운은 소비하지 않음
