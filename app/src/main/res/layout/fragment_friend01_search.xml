@@ -44,7 +44,7 @@
             android:paddingEnd="12dp"
             android:textSize="14sp"
             android:singleLine="true"
-            android:imeOptions="actionSearch" />
+            android:imeOptions="actionDone" />
 
         <!-- EditText 안의 돋보기는 drawable로 배경에 포함 -->
     </LinearLayout>
