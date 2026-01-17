@@ -303,6 +303,7 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
                 binding.timePickerStartContainer.isVisible = false
                 binding.timePickerEndContainer.isVisible = false
                 currentTargetTextView = null
+                activeTimePicker = ActiveTimePicker.NONE
             }
             isStartDateSelected = true
             toggleCalendarVisibility(show = true)
@@ -313,6 +314,7 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
                 binding.timePickerStartContainer.isVisible = false
                 binding.timePickerEndContainer.isVisible = false
                 currentTargetTextView = null
+                activeTimePicker = ActiveTimePicker.NONE
             }
             isStartDateSelected = false
             toggleCalendarVisibility(show = true)
