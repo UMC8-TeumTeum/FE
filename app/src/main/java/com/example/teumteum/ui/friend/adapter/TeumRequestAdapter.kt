@@ -1,12 +1,14 @@
 package com.example.teumteum.ui.friend.adapter
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.teumteum.R
+import com.example.teumteum.data.AppUserManager
 import com.example.teumteum.data.remote.friend.model.TeumRequestDateResult
 import com.example.teumteum.data.remote.friend.model.UserMiniDto
 import com.example.teumteum.databinding.ItemRequestHistoryBinding
@@ -14,7 +16,9 @@ import com.google.android.flexbox.FlexboxLayout
 import com.google.android.material.imageview.ShapeableImageView
 
 class TeumRequestAdapter(
-    private var itemList: List<TeumRequestDateResult> = emptyList()
+    private var itemList: List<TeumRequestDateResult> = emptyList(),
+    private val myUserId: Long,
+    private val onCancelClick: ((requestId: Long) -> Unit)? = null //  취소 클릭 콜백
 ) : RecyclerView.Adapter<TeumRequestAdapter.TeumRequestViewHolder>() {
 
     inner class TeumRequestViewHolder(val binding: ItemRequestHistoryBinding) :
@@ -28,6 +32,10 @@ class TeumRequestAdapter(
             //  초기화
             binding.tvStatus.visibility = View.GONE
             binding.tvResendNotice.visibility = View.GONE
+
+            // 취소 버튼 기본 숨김
+            binding.btnCancelRequest.visibility = View.GONE
+            binding.btnCancelRequest.setOnClickListener(null)
 
             //  재요청 카드
             if (data.isResend == true) {
@@ -99,6 +107,23 @@ class TeumRequestAdapter(
                 binding.containerPending,
                 data.pending
             )
+
+            // "내가 보낸 요청 + 상대 미응답"이면 취소하기 버튼 노출 & 클릭 처리
+            val isMine = (data.requester.userId.toLong() == myUserId)
+
+            val isPendingOnly =
+                !data.pending.isNullOrEmpty() &&
+                        data.accepted.isNullOrEmpty() &&
+                        data.cancelled.isNullOrEmpty() &&
+                        !data.isCancelled
+
+            if (isMine && isPendingOnly) {
+                binding.btnCancelRequest.visibility = View.VISIBLE
+                binding.btnCancelRequest.setOnClickListener {
+                    onCancelClick?.invoke(data.requestId.toLong())
+                }
+            }
+
         }
 
         private fun updateSectionRow(

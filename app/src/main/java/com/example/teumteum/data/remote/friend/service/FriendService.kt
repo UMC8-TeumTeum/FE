@@ -198,4 +198,10 @@ interface FriendService {
         @Query("startTime") startTime: String, // HH:MM
         @Query("endTime") endTime: String      // HH:MM
     ): Response<ApiResponse<TodoConflictResponse>>
+
+    // 틈 요청 취소
+    @PATCH("/api/teums/request/{requestId}/cancel")
+    suspend fun cancelTeumRequest(
+        @Path("requestId") requestId: Long
+    ): Response<ApiResponse<Unit>>
 }
