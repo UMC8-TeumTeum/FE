@@ -10,6 +10,7 @@ import android.util.TypedValue
 import android.view.Gravity
 import android.view.KeyEvent
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
@@ -51,6 +52,7 @@ import com.example.teumteum.databinding.DialogConfirmWishDeleteBinding
 
 import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.example.teumteum.ui.todo.adapter.TeumProfileAdapter
+import com.example.teumteum.ui.todo.data.ActiveTimePicker
 import com.example.teumteum.ui.todo.viewModel.TodoViewModel
 import com.example.teumteum.utils.TimeUtils.combineDateTime
 import com.example.teumteum.utils.applyPickerValue
@@ -129,6 +131,8 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
     private var visibleStartMonth: YearMonth = YearMonth.now()
     private var visibleEndMonth: YearMonth = YearMonth.now()
 
+    private var activeTimePicker: ActiveTimePicker = ActiveTimePicker.NONE
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         todoId = arguments?.getLong("todo_id") ?: -1L
@@ -185,6 +189,7 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
         setupClickListeners(scheduleType)
         setupObservers()
         setupTitleImeDone()
+        setupTapOutsideToApplyTime()
 
         // 원래 스크롤뷰 패딩 저장
         val originalBottomPadding = binding.editScroll.paddingBottom
@@ -220,6 +225,7 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
             val isVisibleNow = binding.timePickerStartContainer.isVisible
             if (isVisibleNow) {
                 applySelectedTime(isStart = true)
+                activeTimePicker = ActiveTimePicker.NONE
             } else {
                 parseKoreanAmPmTimeToPickerValue(
                     timeText = binding.startTimeTv.text.toString(),
@@ -231,6 +237,7 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
                         value = v
                     )
                 }
+                activeTimePicker = ActiveTimePicker.START
             }
 
             binding.timePickerStartContainer.isVisible = !isVisibleNow
@@ -246,6 +253,7 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
             val isVisibleNow = binding.timePickerEndContainer.isVisible
             if (isVisibleNow) {
                 applySelectedTime(isStart = false)
+                activeTimePicker = ActiveTimePicker.NONE
             } else {
                 parseKoreanAmPmTimeToPickerValue(
                     timeText = binding.endTimeTv.text.toString(),
@@ -257,6 +265,7 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
                         value = v
                     )
                 }
+                activeTimePicker = ActiveTimePicker.END
             }
 
             binding.timePickerEndContainer.isVisible = !isVisibleNow
@@ -1322,6 +1331,39 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
     private fun hideKeyboard(view: View) {
         val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view.windowToken, 0)
+    }
+
+    private fun setupTapOutsideToApplyTime() {
+        val touchTargets = listOf(binding.root, binding.editScroll)
+
+        touchTargets.forEach { target ->
+            target.setOnTouchListener { v, event ->
+                when (event.action) {
+                    MotionEvent.ACTION_UP -> {
+                        // 타임피커 안 열려있으면 패스
+                        if (activeTimePicker == ActiveTimePicker.NONE) return@setOnTouchListener false
+
+                        // 바깥 탭이면 적용 + 닫기
+                        when (activeTimePicker) {
+                            ActiveTimePicker.START -> applySelectedTime(isStart = true)
+                            ActiveTimePicker.END -> applySelectedTime(isStart = false)
+                            else -> {}
+                        }
+                        activeTimePicker = ActiveTimePicker.NONE
+                        currentTargetTextView = null
+
+                        v.performClick() // 접근성용 클릭 이벤트
+                        true
+                    }
+
+                    // 다운은 소비하지 않음
+                    MotionEvent.ACTION_DOWN -> false
+                    else -> false
+                }
+            }
+
+            target.isClickable = true
+        }
     }
 
     override fun onDestroyView() {
