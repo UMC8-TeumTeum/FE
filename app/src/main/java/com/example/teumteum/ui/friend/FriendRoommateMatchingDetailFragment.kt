@@ -1,9 +1,13 @@
 package com.example.teumteum.ui.friend
 
+import android.content.Context
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.NumberPicker
 import android.widget.Toast
@@ -22,6 +26,7 @@ import com.example.teumteum.ui.auth.SignUpActivity
 import com.example.teumteum.ui.friend.adapter.TimeConflictCardAdapter
 import com.example.teumteum.utils.enableTapToNext
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.internal.ViewUtils.hideKeyboard
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -56,6 +61,8 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
 
         // 이전 Fragment에서 선택된 날짜 받기 (예: "25.08.21(목)" 또는 "2025-08-21")
         selectedDate = arguments?.getString("selected_date") ?: ""
+
+        setupImeDoneForEditTexts()
 
         val fullText = "틈 요청 제목을 작성해주세요*"
         val spannable = android.text.SpannableString(fullText)
@@ -128,6 +135,44 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
             if (isEnabled) 0xFFFFFFFF.toInt() else 0xFF0F0F0F.toInt()
         )
     }
+
+    private fun setupImeDoneForEditTexts() {
+        listOf(binding.editTextTitle, binding.editTextDetail).forEach { et ->
+
+            et.setOnEditorActionListener { v, actionId, _ ->
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    v.clearFocus()
+                    hideKeyboard(v)
+
+                    if (binding.sendBtn.isEnabled) {
+                        binding.sendBtn.performClick()
+                    }
+                    true
+                } else false
+            }
+
+            et.setOnKeyListener { v, keyCode, event ->
+                if (keyCode == KeyEvent.KEYCODE_ENTER &&
+                    event.action == KeyEvent.ACTION_DOWN
+                ) {
+                    v.clearFocus()
+                    hideKeyboard(v)
+
+                    if (binding.sendBtn.isEnabled) {
+                        binding.sendBtn.performClick()
+                    }
+                    true
+                } else false
+            }
+        }
+    }
+
+    private fun hideKeyboard(view: View) {
+        val imm =
+            view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
+    }
+
 
     private fun setupTimeCardRecyclerView() {
         timeConflictCardAdapter = TimeConflictCardAdapter(
