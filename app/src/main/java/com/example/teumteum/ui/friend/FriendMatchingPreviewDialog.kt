@@ -34,6 +34,14 @@ class FriendMatchingPreviewDialog : DialogFragment() {
 
     private lateinit var pagerAdapter: TeumImagePagerAdapter
 
+    // ✅ 요청한 부분: 콜백을 멤버로 분리
+    private val pageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
+        override fun onPageSelected(position: Int) {
+            currentIndex = position
+            viewModel.setTeumRequestGraphicId(position)
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -125,14 +133,7 @@ class FriendMatchingPreviewDialog : DialogFragment() {
         // 초기 값 반영
         binding.vpTeum.setCurrentItem(currentIndex, false)
         viewModel.setTeumRequestGraphicId(currentIndex)
-
-        // 드래그로 바뀔 때마다 currentIndex + graphicId 반영
-        binding.vpTeum.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                currentIndex = position
-                viewModel.setTeumRequestGraphicId(position)
-            }
-        })
+        binding.vpTeum.registerOnPageChangeCallback(pageChangeCallback)
     }
 
     private fun updateSuggestion() {
@@ -175,6 +176,7 @@ class FriendMatchingPreviewDialog : DialogFragment() {
     }
 
     override fun onDestroyView() {
+        _binding?.vpTeum?.unregisterOnPageChangeCallback(pageChangeCallback)
         super.onDestroyView()
         _binding = null
     }
