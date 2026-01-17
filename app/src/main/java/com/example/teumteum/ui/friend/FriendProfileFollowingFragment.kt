@@ -1,5 +1,6 @@
 package com.example.teumteum.ui.friend
 
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -208,6 +209,25 @@ class FriendProfileFollowingFragment : Fragment() {
 
 
     private fun observeViewModel() {
+        // 차단 성공 → 버튼 상태 변경
+        viewModel.blockComplete.observe(viewLifecycleOwner) { event ->
+            event.getContentIfNotHandled()?.let { success ->
+                if (success) {
+                    binding.modifyProfileBtn.text = "차단됨"
+                    binding.modifyProfileBtn.isEnabled = false
+                    binding.modifyProfileBtn.alpha = 0.5f
+
+                    binding.modifyProfileBtn.setTextColor(
+                        Color.parseColor("#0F0F0F")
+                    )
+
+                    binding.starBtn.isEnabled = false
+                    binding.sendBtn.isEnabled = false
+                    binding.settingBtn.isEnabled = false
+                }
+            }
+        }
+
         // 언팔로우 결과 메시지
         viewModel.unfollowMessage.observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let { msg ->
