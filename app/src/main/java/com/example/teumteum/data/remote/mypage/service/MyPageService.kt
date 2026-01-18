@@ -54,4 +54,7 @@ interface MyPageService {
 
     @GET("/api/users/mypage/accounts")
     suspend fun getMySocialInfo() : Response<ApiResponse<MySocialInfoResponse>>
+
+    @DELETE("/api/users/mypage")
+    suspend fun deleteUser(): Response<ApiResponse<Unit>>
 }

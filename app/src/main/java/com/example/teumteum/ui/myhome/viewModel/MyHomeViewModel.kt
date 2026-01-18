@@ -86,4 +86,38 @@ class MyHomeViewModel @Inject constructor(
                 }
         }
     }
+
+    sealed class DeleteUserState {
+        object Idle : DeleteUserState()
+        object Loading : DeleteUserState()
+        object Success : DeleteUserState()
+        data class Error(val message: String) : DeleteUserState()
+    }
+
+    private val _deleteUserState = MutableLiveData<DeleteUserState>(DeleteUserState.Idle)
+    val deleteUserState: LiveData<DeleteUserState> = _deleteUserState
+
+    fun deleteUser() {
+        // 중복 호출 방지
+        if (_deleteUserState.value is DeleteUserState.Loading) return
+
+        viewModelScope.launch {
+            _deleteUserState.value = DeleteUserState.Loading
+
+            repository.deleteUser()
+                .onSuccess {
+                    _deleteUserState.value = DeleteUserState.Success
+                }
+                .onFailure { e ->
+                    _deleteUserState.value =
+                        DeleteUserState.Error(e.message ?: "회원탈퇴 중 문제가 발생했어요.")
+                }
+        }
+    }
+
+    // (옵션) 화면에서 한번 처리한 뒤 상태 초기화용
+    fun resetDeleteUserState() {
+        _deleteUserState.value = DeleteUserState.Idle
+    }
+
 }
