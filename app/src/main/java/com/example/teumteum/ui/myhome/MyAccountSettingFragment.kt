@@ -10,11 +10,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.auth.LogoutUseCase
 import com.example.teumteum.databinding.FragmentMyAccountSettingBinding
 import com.example.teumteum.ui.main.MainActivity
+import com.example.teumteum.ui.myhome.viewModel.MyHomeViewModel
 import com.google.android.material.button.MaterialButton
 import com.navercorp.nid.NidOAuth
 import dagger.hilt.android.AndroidEntryPoint
@@ -26,6 +28,8 @@ class MyAccountSettingFragment : Fragment() {
 
     private var _binding: FragmentMyAccountSettingBinding? = null
     private val binding get() = _binding!!
+
+    private val viewModel: MyHomeViewModel by activityViewModels()
 
     @Inject lateinit var logoutUseCase: LogoutUseCase
 
@@ -56,6 +60,8 @@ class MyAccountSettingFragment : Fragment() {
             showDeleteAccountDialog()
         }
 
+        viewModel.getMySocialInfo()
+        observeAccountInfo()
     }
 
     private fun showLogoutDialog() {
@@ -138,6 +144,16 @@ class MyAccountSettingFragment : Fragment() {
                 loggingOut = false
                 if (isAdded) binding.logoutLl.isEnabled = true
             }
+        }
+    }
+
+    private fun observeAccountInfo() {
+        viewModel.email.observe(viewLifecycleOwner) { email ->
+            binding.myAccountTv.text = email ?: "이메일"
+        }
+
+        viewModel.socialType.observe(viewLifecycleOwner) { socialType ->
+            binding.socialTypeTv.text = socialType ?: "TeumTeum"
         }
     }
 
