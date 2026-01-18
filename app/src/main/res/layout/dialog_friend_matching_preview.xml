@@ -148,19 +148,18 @@
                     android:background="@android:color/transparent"
                     android:contentDescription="이전"
                     android:src="@drawable/previousbtn"
-                    app:layout_constraintBottom_toBottomOf="@id/imgTeum"
+                    app:layout_constraintBottom_toBottomOf="@id/vpTeum"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/imgTeum" />
+                    app:layout_constraintTop_toTopOf="@id/vpTeum" />
 
-                <ImageView
-                    android:id="@+id/imgTeum"
+                <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/vpTeum"
                     android:layout_width="230dp"
                     android:layout_height="220dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginEnd="8dp"
-                    android:contentDescription="틈 이미지"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/friend_teum_logo"
+                    android:clipToPadding="false"
+                    android:clipChildren="false"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/btnNext"
                     app:layout_constraintStart_toEndOf="@id/btnPrev"
@@ -175,9 +174,9 @@
                     android:background="@android:color/transparent"
                     android:contentDescription="다음"
                     android:src="@drawable/nextbtn"
-                    app:layout_constraintBottom_toBottomOf="@id/imgTeum"
+                    app:layout_constraintBottom_toBottomOf="@id/vpTeum"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/imgTeum" />
+                    app:layout_constraintTop_toTopOf="@id/vpTeum" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <com.google.android.material.button.MaterialButton

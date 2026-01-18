@@ -67,6 +67,8 @@ class MyAccountSettingFragment : Fragment() {
             showDeleteAccountDialog()
         }
 
+        viewModel.getMySocialInfo()
+        observeAccountInfo()
     }
 
     private fun showLogoutDialog() {
@@ -153,6 +155,16 @@ class MyAccountSettingFragment : Fragment() {
                 loggingOut = false
                 if (isAdded) binding.logoutLl.isEnabled = true
             }
+        }
+    }
+
+    private fun observeAccountInfo() {
+        viewModel.email.observe(viewLifecycleOwner) { email ->
+            binding.myAccountTv.text = email ?: "이메일"
+        }
+
+        viewModel.socialType.observe(viewLifecycleOwner) { socialType ->
+            binding.socialTypeTv.text = socialType ?: "TeumTeum"
         }
     }
 

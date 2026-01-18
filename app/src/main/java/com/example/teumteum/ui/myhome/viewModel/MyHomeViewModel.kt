@@ -25,6 +25,12 @@ class MyHomeViewModel @Inject constructor(
     private val _field = MutableLiveData<String?>()
     val field: LiveData<String?> = _field
 
+    private val _email = MutableLiveData<String?>()
+    val email: LiveData<String?> = _email
+
+    private val _socialType = MutableLiveData<String?>()
+    val socialType: LiveData<String?> = _socialType
+
     //내 정보가 이미 조회되었는지 확인
     var isLoaded = false
         private set
@@ -45,6 +51,20 @@ class MyHomeViewModel @Inject constructor(
                 .onFailure {
                     _error.value = "내 정보 조회 실패: ${it.message}"
                     Log.d("MyInfo", _error.value.toString() )
+                }
+        }
+    }
+
+    fun getMySocialInfo() {
+        viewModelScope.launch {
+            repository.getMySocialInfo()
+                .onSuccess { result ->
+                    _email.value = result.email
+                    _socialType.value = result.socialType
+                }
+                .onFailure {
+                    _error.value = "내 소셜 정보 조회 실패: ${it.message}"
+                    Log.d("MySocialInfo", _error.value.toString() )
                 }
         }
     }

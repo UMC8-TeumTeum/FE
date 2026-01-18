@@ -85,6 +85,7 @@
                 android:includeFontPadding="false"
                 android:inputType="textMultiLine"
                 android:maxLines="5"
+                android:imeOptions="actionDone"
                 android:minHeight="28dp"
                 android:textColor="@color/text_primary"
                 android:textColorHint="@color/teumteum_gray"

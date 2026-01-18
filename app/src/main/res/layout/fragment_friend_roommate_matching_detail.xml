@@ -96,6 +96,7 @@
             android:textColor="#0F0F0F"
             android:textColorHint="#B1B2B3"
             android:textSize="12sp"
+            android:imeOptions="actionDone"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
@@ -165,6 +166,7 @@
             android:textColor="#0F0F0F"
             android:textColorHint="#B1B2B3"
             android:textSize="12sp"
+            android:imeOptions="actionDone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

@@ -10,9 +10,12 @@ import android.util.TypedValue
 import android.view.Gravity
 import android.view.KeyEvent
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -49,6 +52,7 @@ import com.example.teumteum.databinding.DialogConfirmWishDeleteBinding
 
 import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.example.teumteum.ui.todo.adapter.TeumProfileAdapter
+import com.example.teumteum.ui.todo.data.ActiveTimePicker
 import com.example.teumteum.ui.todo.viewModel.TodoViewModel
 import com.example.teumteum.utils.TimeUtils.combineDateTime
 import com.example.teumteum.utils.applyPickerValue
@@ -127,6 +131,8 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
     private var visibleStartMonth: YearMonth = YearMonth.now()
     private var visibleEndMonth: YearMonth = YearMonth.now()
 
+    private var activeTimePicker: ActiveTimePicker = ActiveTimePicker.NONE
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         todoId = arguments?.getLong("todo_id") ?: -1L
@@ -182,6 +188,8 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
         setupWeekdayLabels()
         setupClickListeners(scheduleType)
         setupObservers()
+        setupTitleImeDone()
+        setupTapOutsideToApplyTime()
 
         // 원래 스크롤뷰 패딩 저장
         val originalBottomPadding = binding.editScroll.paddingBottom
@@ -217,6 +225,7 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
             val isVisibleNow = binding.timePickerStartContainer.isVisible
             if (isVisibleNow) {
                 applySelectedTime(isStart = true)
+                activeTimePicker = ActiveTimePicker.NONE
             } else {
                 parseKoreanAmPmTimeToPickerValue(
                     timeText = binding.startTimeTv.text.toString(),
@@ -228,6 +237,7 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
                         value = v
                     )
                 }
+                activeTimePicker = ActiveTimePicker.START
             }
 
             binding.timePickerStartContainer.isVisible = !isVisibleNow
@@ -243,6 +253,7 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
             val isVisibleNow = binding.timePickerEndContainer.isVisible
             if (isVisibleNow) {
                 applySelectedTime(isStart = false)
+                activeTimePicker = ActiveTimePicker.NONE
             } else {
                 parseKoreanAmPmTimeToPickerValue(
                     timeText = binding.endTimeTv.text.toString(),
@@ -254,6 +265,7 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
                         value = v
                     )
                 }
+                activeTimePicker = ActiveTimePicker.END
             }
 
             binding.timePickerEndContainer.isVisible = !isVisibleNow
@@ -291,6 +303,7 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
                 binding.timePickerStartContainer.isVisible = false
                 binding.timePickerEndContainer.isVisible = false
                 currentTargetTextView = null
+                activeTimePicker = ActiveTimePicker.NONE
             }
             isStartDateSelected = true
             toggleCalendarVisibility(show = true)
@@ -301,6 +314,7 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
                 binding.timePickerStartContainer.isVisible = false
                 binding.timePickerEndContainer.isVisible = false
                 currentTargetTextView = null
+                activeTimePicker = ActiveTimePicker.NONE
             }
             isStartDateSelected = false
             toggleCalendarVisibility(show = true)
@@ -1291,6 +1305,78 @@ class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
                 calendarView = binding.calendarView02
             )
             updateMonthHeader02()
+        }
+    }
+
+    private fun setupTitleImeDone() {
+        val et = binding.todoTitleEt
+
+        // 1. 키보드 Done 액션 처리
+        et.setOnEditorActionListener { v, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                v.clearFocus()
+                hideKeyboard(v)
+                true
+            } else false
+        }
+
+        // 2. 멀티라인에서 Enter가 줄바꿈으로 들어오는 케이스도 "완료"로 강제
+        et.setOnKeyListener { v, keyCode, event ->
+            if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN) {
+                v.clearFocus()
+                hideKeyboard(v)
+                true
+            } else false
+        }
+    }
+
+    private fun hideKeyboard(view: View) {
+        val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
+    }
+
+    private fun setupTapOutsideToApplyTime() {
+        val touchTargets = listOf(binding.root, binding.editScroll)
+
+        fun isTouchInside(view: View, event: MotionEvent): Boolean {
+            val loc = IntArray(2)
+            view.getLocationOnScreen(loc)
+            val x = event.rawX
+            val y = event.rawY
+            return x >= loc[0] && x <= loc[0] + view.width && y >= loc[1] && y <= loc[1] + view.height
+        }
+
+        touchTargets.forEach { target ->
+            target.setOnTouchListener { v, event ->
+                when (event.action) {
+                    MotionEvent.ACTION_UP -> {
+                        // 타임피커 안 열려있으면 패스
+                        if (activeTimePicker == ActiveTimePicker.NONE) return@setOnTouchListener false
+
+                        val isOnTarget = currentTargetTextView?.let { isTouchInside(it, event) } ?: false
+
+                        // 바깥 탭이면 적용 + 닫기
+                        when (activeTimePicker) {
+                            ActiveTimePicker.START -> applySelectedTime(isStart = true)
+                            ActiveTimePicker.END -> applySelectedTime(isStart = false)
+                            else -> {}
+                        }
+                        activeTimePicker = ActiveTimePicker.NONE
+                        currentTargetTextView = null
+
+                        v.performClick() // 접근성용 클릭 이벤트
+
+                        // 타임 텍스트 탭은 소비(재오픈 방지), 그 외는 이벤트 전달
+                        return@setOnTouchListener isOnTarget
+                    }
+
+                    // 다운은 소비하지 않음
+                    MotionEvent.ACTION_DOWN -> false
+                    else -> false
+                }
+            }
+
+            target.isClickable = true
         }
     }
 

@@ -1,14 +1,18 @@
 package com.example.teumteum.ui.wish
 
 import android.app.Dialog
+import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.ViewCompat
@@ -66,6 +70,7 @@ class BottomSheetWishEditFragment : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupObservers()
+        setupTitleImeDone()
 
         wishId = arguments?.getLong("wish_id") ?: -1L
         if (wishId != -1L) {
@@ -408,6 +413,33 @@ class BottomSheetWishEditFragment : BottomSheetDialogFragment() {
                 currentContent != originalContent ||
                 currentTime != originalTime ||
                 currentCategoryIds != originalCategoryIds
+    }
+
+    private fun setupTitleImeDone() {
+        val et = binding.wishTitleEt
+
+        // 1. 키보드 Done 액션 처리
+        et.setOnEditorActionListener { v, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                v.clearFocus()
+                hideKeyboard(v)
+                true
+            } else false
+        }
+
+        // 2. 멀티라인에서 Enter가 줄바꿈으로 들어오는 케이스도 "완료"로 강제
+        et.setOnKeyListener { v, keyCode, event ->
+            if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN) {
+                v.clearFocus()
+                hideKeyboard(v)
+                true
+            } else false
+        }
+    }
+
+    private fun hideKeyboard(view: View) {
+        val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
     override fun onDestroyView() {
