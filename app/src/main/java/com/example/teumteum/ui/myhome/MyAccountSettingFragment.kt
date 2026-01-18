@@ -218,55 +218,57 @@ class MyAccountSettingFragment : Fragment() {
     }
 
     private fun cleanupAllSocialAndNavigate() {
-        // 1) FCM 비활성화 + 서버 로그아웃(있으면) — 탈퇴 후 서버 로그아웃이 실패할 수 있으니 예외 무시
         viewLifecycleOwner.lifecycleScope.launch {
-            runCatching { logoutUseCase.deactivateFcmAndLogout() } // 있던거 재활용 (실패해도 무시)
+            runCatching { logoutUseCase.deactivateFcmAndLogout() }
 
-            // 2) 소셜 전부 끊기(실패 무시)
-            unlinkAllSocialProviders()
+            unlinkSocialProviderByType()
 
-            // 3) 로컬 토큰/유저정보 삭제
-            // TODO: 너희 토큰 저장소(DataStore/Prefs) 지우는 코드 연결
-            // ex) sessionStore.clearAll()
-
-            // 4) 로그인 화면 이동(백스택 제거)
             navigateToLoginAndFinish()
         }
     }
 
 
-    private fun unlinkAllSocialProviders() {
-        //네이버
-        runCatching {
-            NidOAuth.disconnect(object : com.navercorp.nid.oauth.util.NidOAuthCallback {
-                override fun onSuccess() {}
-                override fun onFailure(errorCode: String, errorDesc: String) {}
-            })
-        }
-
-        //카카오 (unlink → 실패하면 logout)
-        runCatching {
-            val client = com.kakao.sdk.user.UserApiClient.instance
-            client.unlink { error ->
-                if (error != null) {
-                    client.logout { /* ignore */ }
+    private fun unlinkSocialProviderByType() {
+        when (viewModel.socialType.value?.trim()?.uppercase()) {
+            "NAVER" -> {
+                runCatching {
+                    NidOAuth.disconnect(object : com.navercorp.nid.oauth.util.NidOAuthCallback {
+                        override fun onSuccess() {}
+                        override fun onFailure(errorCode: String, errorDesc: String) {}
+                    })
                 }
             }
-        }
 
-        //구글 (revokeAccess → signOut)
-        runCatching {
-            val gso = com.google.android.gms.auth.api.signin.GoogleSignInOptions.Builder(
-                com.google.android.gms.auth.api.signin.GoogleSignInOptions.DEFAULT_SIGN_IN
-            )
-                .requestEmail()
-                .build()
+            "KAKAO" -> {
+                runCatching {
+                    val client = com.kakao.sdk.user.UserApiClient.instance
+                    client.unlink { error ->
+                        if (error != null) {
+                            client.logout {}
+                        }
+                    }
+                }
+            }
 
-            val client = com.google.android.gms.auth.api.signin.GoogleSignIn.getClient(requireContext(), gso)
+            "GOOGLE" -> {
+                runCatching {
+                    val gso =
+                        com.google.android.gms.auth.api.signin.GoogleSignInOptions.Builder(
+                            com.google.android.gms.auth.api.signin.GoogleSignInOptions.DEFAULT_SIGN_IN
+                        )
+                            .requestEmail()
+                            .build()
 
-            client.revokeAccess().addOnCompleteListener {
-                // revoke가 실패하든 성공하든 signOut은 시도
-                client.signOut()
+                    val client = com.google.android.gms.auth.api.signin.GoogleSignIn
+                        .getClient(requireContext(), gso)
+
+                    client.revokeAccess().addOnCompleteListener {
+                        client.signOut()
+                    }
+                }
+            }
+
+            else -> {
             }
         }
     }
