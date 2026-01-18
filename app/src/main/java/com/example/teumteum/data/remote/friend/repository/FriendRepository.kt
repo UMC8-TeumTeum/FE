@@ -471,7 +471,7 @@ class FriendRepository @Inject constructor(
     }
 
     // 틈 요청 취소
-    suspend fun cancelTeumRequest(requestId: Long): Result<ApiResponse<Unit>> = runCatching {
+    suspend fun cancelTeumRequest(requestId: Long): Result<ApiResponse<Long>> = runCatching {
         val response = api.cancelTeumRequest(requestId)
         val body = response.body()
 

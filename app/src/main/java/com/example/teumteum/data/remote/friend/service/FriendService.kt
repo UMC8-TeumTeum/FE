@@ -203,5 +203,5 @@ interface FriendService {
     @PATCH("/api/teums/request/{requestId}/cancel")
     suspend fun cancelTeumRequest(
         @Path("requestId") requestId: Long
-    ): Response<ApiResponse<Unit>>
+    ): Response<ApiResponse<Long>>
 }
