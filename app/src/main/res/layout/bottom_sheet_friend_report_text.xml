@@ -7,10 +7,10 @@
 
     <View
     android:id="@+id/handle"
-    android:layout_width="match_parent"
+    android:layout_width="54dp"
         android:layout_marginEnd="168dp"
         android:layout_marginStart="168dp"
-    android:layout_height="5dp"
+    android:layout_height="4dp"
     android:layout_marginTop="12dp"
     android:background="@drawable/friend_bottom_sheet_handle"
     app:layout_constraintTop_toTopOf="parent"

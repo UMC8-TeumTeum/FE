@@ -13,6 +13,7 @@ import com.example.teumteum.data.remote.friend.model.FriendSearchResult
 import com.example.teumteum.data.remote.friend.model.MutualFriendItem
 import com.example.teumteum.data.remote.friend.model.PossibleTimeRequest
 import com.example.teumteum.data.remote.friend.model.PublicTodoResult
+import com.example.teumteum.data.remote.friend.model.ReportRequest
 import com.example.teumteum.data.remote.friend.model.ResendTeumRequest
 import com.example.teumteum.data.remote.friend.model.SharedTeumItem
 import com.example.teumteum.data.remote.friend.model.TeumConflictResponse
@@ -1002,6 +1003,46 @@ class FriendViewModel @Inject constructor(
         }
     }
 
+    // 신고 생성
+    fun createReport(
+        targetType: String,   // "USER" | "TEUM_REQUEST"
+        targetId: Long,
+        reasonId: Int,        // 8~14
+        otherReason: String? // reasonId=14 일 때 필수
+    ) {
+        Log.d(
+            "REPORT_API",
+            "createReport 호출 → targetType=$targetType, targetId=$targetId, reasonId=$reasonId, otherReasonText=$otherReason"
+        )
 
+        viewModelScope.launch {
+            repository.createReport(
+                ReportRequest(
+                    targetType = targetType,
+                    targetId = targetId,
+                    reasonId = reasonId,
+                    otherReason = otherReason
+                )
+            ).onSuccess { response ->
+                Log.d(
+                    "REPORT201",
+                    "신고 성공 → code=${response.code}, message=${response.message}"
+                )
+
+                _successMessage.value = Event(response.message)
+
+            }.onFailure { throwable ->
+
+                Log.e(
+                    "REPORT_API",
+                    "신고 실패 → ${throwable.message}",
+                    throwable
+                )
+
+                _errorMessage.value =
+                    Event(throwable.message ?: "신고에 실패했습니다.")
+            }
+        }
+    }
 
 }

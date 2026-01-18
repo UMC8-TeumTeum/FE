@@ -93,12 +93,12 @@ class Friend02RequestFragment : Fragment() {
             if (response == null) return@observe
 
             if (response.hasConflict) {
-                // ✅ 겹침 있음 → 다른 바텀시트
+                // 겹침 있음 → 다른 바텀시트
                 val conflictList = ArrayList(response.conflictingSchedules)
                 val bottomSheet = FriendTodoBottomSheetFragment.newInstance(responseId, conflictList)
                 bottomSheet.show(parentFragmentManager, bottomSheet.tag)
             } else {
-                // ✅ 겹침 없음 → 기존 수락 바텀시트
+                // 겹침 없음 → 기존 수락 바텀시트
                 val bottomSheet = Friend02AcceptBottomSheetFragment.newInstance(responseId)
                 bottomSheet.show(parentFragmentManager, bottomSheet.tag)
             }
@@ -178,9 +178,18 @@ class Friend02RequestFragment : Fragment() {
 
         popupView.findViewById<View>(R.id.btn_report).setOnClickListener {
             popupWindow.dismiss()
-            val bottomSheet = FriendReportChoiceBottomSheet()
-            bottomSheet.show(parentFragmentManager, bottomSheet.tag)
+
+            val current = teumList.getOrNull(binding.requestViewPager.currentItem) ?: return@setOnClickListener
+
+            // 신고 대상: 받은 틈 요청 자체
+            val targetType = "TEUM_REQUEST"
+            val targetId = current.requestId.toLong()
+
+            FriendReportChoiceBottomSheet
+                .newInstance(targetType, targetId)
+                .show(parentFragmentManager, "FriendReportChoiceBottomSheet")
         }
+
     }
 
     //  미확인 → 최신순 정렬
