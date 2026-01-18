@@ -56,14 +56,14 @@ class MySleepPatternSettingFragment : Fragment() {
         }
 
         binding.sleepStartContainer.setOnClickListener {
-            showCustomTimePicker { time ->
-                binding.startChoiceTv.text = time.format(DateTimeFormatter.ofPattern("HH:mm"))
+            showCustomTimePicker(binding.startChoiceTv.text?.toString()) { time ->
+                binding.startChoiceTv.text = time.format(timeFormatter)
             }
         }
 
         binding.sleepEndContainer.setOnClickListener {
-            showCustomTimePicker { time ->
-                binding.endChoiceTv.text = time.format(DateTimeFormatter.ofPattern("HH:mm"))
+            showCustomTimePicker(binding.endChoiceTv.text?.toString()) { time ->
+                binding.endChoiceTv.text = time.format(timeFormatter)
             }
         }
 
@@ -92,8 +92,10 @@ class MySleepPatternSettingFragment : Fragment() {
         }
     }
 
-
-    private fun showCustomTimePicker(onTimeSelected: (LocalTime) -> Unit) {
+    private fun showCustomTimePicker(
+        initialTimeText: String?,
+        onTimeSelected: (LocalTime) -> Unit
+    ) {
         val dialogView = layoutInflater.inflate(R.layout.dialog_time_picker, null)
         val ampmPicker = dialogView.findViewById<NumberPicker>(R.id.ampmPicker01Np)
         val hourPicker = dialogView.findViewById<NumberPicker>(R.id.hourPicker01Np)
@@ -111,6 +113,26 @@ class MySleepPatternSettingFragment : Fragment() {
         minutePicker.maxValue = minuteValues.size - 1
         minutePicker.displayedValues = minuteValues
 
+        val initialTime = runCatching {
+            if (initialTimeText.isNullOrBlank()) null
+            else LocalTime.parse(initialTimeText.trim(), timeFormatter) // HH:mm
+        }.getOrNull()
+
+        if (initialTime != null) {
+            val isPm = initialTime.hour >= 12
+            ampmPicker.value = if (isPm) 1 else 0
+
+            val hour12 = when (val h = initialTime.hour % 12) {
+                0 -> 12
+                else -> h
+            }
+            hourPicker.value = hour12
+
+            val minuteStr = String.format("%02d", initialTime.minute)
+            val minuteIndex = minuteValues.indexOf(minuteStr).let { if (it >= 0) it else 0 }
+            minutePicker.value = minuteIndex
+        }
+
         val dialog = BottomSheetDialog(requireContext()).apply {
             setContentView(dialogView)
             setOnShowListener {
@@ -119,9 +141,7 @@ class MySleepPatternSettingFragment : Fragment() {
             }
         }
 
-        dialogView.findViewById<Button>(R.id.btnCancel).setOnClickListener {
-            dialog.dismiss()
-        }
+        dialogView.findViewById<Button>(R.id.btnCancel).setOnClickListener { dialog.dismiss() }
 
         dialogView.findViewById<Button>(R.id.btnOk).setOnClickListener {
             val hour = hourPicker.value % 12 + if (ampmPicker.value == 1) 12 else 0
@@ -133,6 +153,7 @@ class MySleepPatternSettingFragment : Fragment() {
 
         dialog.show()
     }
+
 
     private fun changeHour(targetTextView: TextView, increase: Boolean, isStart: Boolean) {
         val currentText = targetTextView.text.toString()
