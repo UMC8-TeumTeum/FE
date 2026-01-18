@@ -1,5 +1,6 @@
 package com.example.teumteum.ui.friend
 
+import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.view.KeyEvent
@@ -7,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
@@ -17,6 +19,7 @@ import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentFriend01SearchBinding
 import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.example.teumteum.ui.main.MainActivity
+import com.google.android.material.internal.ViewUtils.hideKeyboard
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -58,33 +61,52 @@ class Friend01SearchFragment : Fragment() {
         }
 
         //  검색 엔터 입력 시
-        binding.searchEditText.setOnEditorActionListener { _, actionId, event ->
-            val isSearchAction = actionId == EditorInfo.IME_ACTION_SEARCH
-            val isEnterKey = event?.action == KeyEvent.ACTION_DOWN && event.keyCode == KeyEvent.KEYCODE_ENTER
+        binding.searchEditText.setOnEditorActionListener { v, actionId, event ->
+            val isSearchAction =
+                actionId == EditorInfo.IME_ACTION_SEARCH ||
+                        actionId == EditorInfo.IME_ACTION_DONE
+
+            val isEnterKey =
+                event?.action == KeyEvent.ACTION_DOWN &&
+                        event.keyCode == KeyEvent.KEYCODE_ENTER
 
             if (isSearchAction || isEnterKey) {
-                val keyword = binding.searchEditText.text.toString().trim()
-                if (keyword.isNotEmpty()) {
-                    viewModel.addRecentKeyword(keyword)
-                    binding.searchEditText.text.clear()
-
-                    // 👉 검색 수행 및 결과 프래그먼트로 이동
-                    val bundle = Bundle().apply {
-                        putString("searchKeyword", keyword)
-                    }
-                    val fragment = Friend01SearchResultFragment()
-                    fragment.arguments = bundle
-
-                    parentFragmentManager.beginTransaction()
-                        .replace(R.id.main_frm, fragment)
-                        .addToBackStack(null)
-                        .commit()
-                }
+                handleSearchAction()
                 true
             } else {
                 false
             }
         }
+    }
+
+    private fun handleSearchAction() {
+        val keyword = binding.searchEditText.text.toString().trim()
+        if (keyword.isEmpty()) return
+
+        // 키보드 닫기
+        hideKeyboard(binding.searchEditText)
+
+        viewModel.addRecentKeyword(keyword)
+        binding.searchEditText.text.clear()
+
+        val bundle = Bundle().apply {
+            putString("searchKeyword", keyword)
+        }
+
+        val fragment = Friend01SearchResultFragment().apply {
+            arguments = bundle
+        }
+
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.main_frm, fragment)
+            .addToBackStack(null)
+            .commit()
+    }
+
+    private fun hideKeyboard(view: View) {
+        val imm =
+            view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
     //  최근 검색어 리스트 업데이트
