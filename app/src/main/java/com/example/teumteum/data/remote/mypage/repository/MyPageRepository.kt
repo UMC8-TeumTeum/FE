@@ -136,4 +136,11 @@ class MyPageRepository @Inject constructor(
         Log.d("Routine", "response = ${response.body()}")
         handleApiResponseUnit(response)
     }
+
+    //회원탈퇴
+    suspend fun deleteUser(): Result<Unit> = runCatching {
+        val response = myPageService.deleteUser()
+        Log.d("User", "response = ${response.body()}")
+        handleApiResponseUnit(response)
+    }
 }

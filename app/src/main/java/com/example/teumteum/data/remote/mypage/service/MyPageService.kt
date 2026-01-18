@@ -50,4 +50,7 @@ interface MyPageService {
 
     @DELETE("/api/users/mypage/routines/{routineId}")
     suspend fun deleteMyRoutine(@Path("routineId") routineId: Long) : Response<ApiResponse<Unit>>
+
+    @DELETE("/api/users/mypage")
+    suspend fun deleteUser(): Response<ApiResponse<Unit>>
 }
