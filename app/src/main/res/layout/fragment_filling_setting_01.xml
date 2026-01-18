@@ -47,14 +47,13 @@
         android:id="@+id/assign_cv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
         app:cardElevation="0dp"
         app:cardCornerRadius="10dp"
-        android:layout_marginHorizontal="10dp"
+        android:layout_marginHorizontal="16dp"
         android:layout_marginTop="10dp"
         android:backgroundTint="@color/main_1"
-        app:layout_constraintStart_toStartOf="@id/assign_select_tv"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/assign_select_tv">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -165,6 +164,7 @@
         android:includeFontPadding="false"
         android:layout_marginEnd="22.5dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/clock_indicator_ll"
         app:layout_constraintBottom_toBottomOf="@id/clock_indicator_ll"
         android:layout_marginStart="16dp"
         />
@@ -186,6 +186,7 @@
         android:layout_width="0dp"
         android:layout_height="94dp"
         android:paddingTop="10dp"
+        android:layout_marginBottom="20dp"
         android:orientation="horizontal"
         android:weightSum="2"
         android:background="@color/white"
@@ -200,9 +201,12 @@
             android:layout_weight="1"
             android:layout_marginStart="19dp"
             android:layout_marginEnd="8dp"
+            android:padding="0dp"
             android:text="날짜 변경"
             android:textColor="@color/text_primary"
             app:backgroundTint="@color/teumteum_bg"
+            android:fontFamily="@font/noto_sans_kr_medium"
+            android:textSize="16sp"
             app:cornerRadius="12dp"/>
 
         <com.google.android.material.button.MaterialButton
@@ -212,9 +216,12 @@
             android:layout_weight="1"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="19dp"
+            android:padding="0dp"
             android:text="다음"
             android:textColor="@color/text_primary"
             android:backgroundTint="@color/teumteum_bg"
+            android:fontFamily="@font/noto_sans_kr_medium"
+            android:textSize="16sp"
             app:cornerRadius="12dp"
             android:enabled="false"/>
     </LinearLayout>
