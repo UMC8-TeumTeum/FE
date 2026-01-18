@@ -11,7 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
-        android:paddingBottom="30dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -38,18 +37,20 @@
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scroll_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:clipToPadding="false"
-        android:paddingBottom="100dp">
+        app:layout_constraintTop_toBottomOf="@id/filling_ll"
+        app:layout_constraintBottom_toTopOf="@id/bottom_container"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="100dp"
-
+            android:paddingBottom="20dp"
             android:orientation="vertical">
 
             <TextView
@@ -206,7 +207,7 @@
                 android:id="@+id/filling_activity_location_select_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="30dp"
                 android:fontFamily="@font/noto_sans_kr_medium"
                 android:includeFontPadding="false"
                 android:text="현재 위치를 선택해주세요"
@@ -220,7 +221,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="5dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="15dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 app:layout_constraintStart_toStartOf="@id/filling_activity_time_select_tv"
@@ -362,7 +363,7 @@
                 android:id="@+id/filling_activity_category_select_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="30dp"
                 android:fontFamily="@font/noto_sans_kr_medium"
                 android:includeFontPadding="false"
                 android:text="원하는 활동 카테고리를 선택해주세요"
@@ -375,7 +376,7 @@
                 android:id="@+id/filling_activity_category_01_ll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="15dp"
                 android:layout_marginHorizontal="5dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
@@ -516,25 +517,24 @@
     </androidx.core.widget.NestedScrollView>
 
     <FrameLayout
+        android:id="@+id/bottom_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <!-- 흰색 배경 View -->
         <View
             android:layout_width="match_parent"
-            android:layout_height="85dp"
+            android:layout_height="94dp"
             android:background="@color/white"/>
 
-        <!-- 버튼 -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/search_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="19dp"
-            android:layout_marginEnd="19dp"
+            android:layout_marginHorizontal="19dp"
             android:layout_marginBottom="19dp"
             android:enabled="false"
             android:fontFamily="@font/noto_sans_kr_medium"
