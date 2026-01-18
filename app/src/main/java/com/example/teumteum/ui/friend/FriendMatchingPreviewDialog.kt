@@ -8,12 +8,11 @@ import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
-import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.example.teumteum.R
 import com.example.teumteum.databinding.DialogFriendMatchingPreviewBinding
-import com.example.teumteum.ui.friend.adapter.TeumImagePagerAdapter
 import com.example.teumteum.ui.friend.viewModel.FriendViewModel
+import kotlin.math.abs
 
 class FriendMatchingPreviewDialog : DialogFragment() {
 
@@ -32,21 +31,17 @@ class FriendMatchingPreviewDialog : DialogFragment() {
         R.drawable.teumi_teuma_juice
     )
 
-    private lateinit var pagerAdapter: TeumImagePagerAdapter
-
-    // ✅ 요청한 부분: 콜백을 멤버로 분리
-    private val pageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
-        override fun onPageSelected(position: Int) {
-            currentIndex = position
-            viewModel.setTeumRequestGraphicId(position)
-        }
-    }
+    private var downX = 0f
+    private val swipeThreshold = 100f   // 드래그 인식 최소 거리(px)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = DialogFriendMatchingPreviewBinding.inflate(inflater, container, false)
+
+        binding.imgTeum.setImageResource(imageList[currentIndex])
+
         return binding.root
     }
 
@@ -68,13 +63,14 @@ class FriendMatchingPreviewDialog : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 1) 무조건 ViewModel 기반 전체 세팅
+        // 1 ViewModel 기반 텍스트/프로필 세팅
         updateSuggestion()
 
-        // 2) 겹침 조회에서 넘어온 값이 있으면 덮어쓰기
+        // 2 arguments로 넘어온 값 덮어쓰기
         arguments?.let { args ->
             binding.title.text = args.getString("title") ?: binding.title.text
-            binding.detailSentence.text = args.getString("description") ?: binding.detailSentence.text
+            binding.detailSentence.text =
+                args.getString("description") ?: binding.detailSentence.text
 
             val start = args.getString("startTime")
             val end = args.getString("endTime")
@@ -83,18 +79,60 @@ class FriendMatchingPreviewDialog : DialogFragment() {
             }
         }
 
-        // 3) ViewPager2로 드래그(스와이프) 이미지 넘기기
-        setupImagePager()
+        // 3 초기 이미지 반영
+        updateImage()
 
-        // 버튼도 그대로 사용하고 싶으면 유지
+        // ▶ 다음 버튼
         binding.btnNext.setOnClickListener {
-            val next = (binding.vpTeum.currentItem + 1) % imageList.size
-            binding.vpTeum.setCurrentItem(next, true)
+            currentIndex = (currentIndex + 1) % imageList.size
+            updateImage()
         }
 
+        // ◀ 이전 버튼
         binding.btnPrev.setOnClickListener {
-            val prev = if (binding.vpTeum.currentItem == 0) imageList.size - 1 else binding.vpTeum.currentItem - 1
-            binding.vpTeum.setCurrentItem(prev, true)
+            currentIndex =
+                if (currentIndex == 0) imageList.size - 1
+                else currentIndex - 1
+            updateImage()
+        }
+
+        binding.imgTeum.setOnTouchListener { v, event ->
+            when (event.action) {
+
+                MotionEvent.ACTION_DOWN -> {
+                    downX = event.x
+                    v.isPressed = true
+                    true
+                }
+
+                MotionEvent.ACTION_UP -> {
+                    v.isPressed = false
+
+                    val diffX = event.x - downX
+                    if (abs(diffX) > swipeThreshold) {
+                        if (diffX < 0) {
+                            // 왼쪽 드래그 → 다음
+                            currentIndex = (currentIndex + 1) % imageList.size
+                        } else {
+                            // 오른쪽 드래그 → 이전
+                            currentIndex =
+                                if (currentIndex == 0) imageList.size - 1
+                                else currentIndex - 1
+                        }
+                        updateImage()
+                    }
+
+                    v.performClick()
+                    true
+                }
+
+                MotionEvent.ACTION_CANCEL -> {
+                    v.isPressed = false
+                    true
+                }
+
+                else -> false
+            }
         }
 
         binding.btnSend.setOnClickListener {
@@ -125,27 +163,16 @@ class FriendMatchingPreviewDialog : DialogFragment() {
         }
     }
 
-    private fun setupImagePager() {
-        pagerAdapter = TeumImagePagerAdapter(imageList)
-        binding.vpTeum.adapter = pagerAdapter
-        binding.vpTeum.offscreenPageLimit = 1
-
-        // 초기 값 반영
-        binding.vpTeum.setCurrentItem(currentIndex, false)
-        viewModel.setTeumRequestGraphicId(currentIndex)
-        binding.vpTeum.registerOnPageChangeCallback(pageChangeCallback)
-    }
-
     private fun updateSuggestion() {
         binding.title.text = viewModel.teumRequestTitle.value
         binding.detailSentence.text = viewModel.teumRequestDescription.value
 
-        viewModel.teumRequestReceiverUserIds.value?.size?.let {
+        viewModel.teumRequestReceiverUserIds.value?.size?.let { count ->
             binding.tvName.text =
-                if (it > 0) {
-                    "${viewModel.teumRequestMainTargetUserName.value} 외 ${it}명"
+                if (count > 0) {
+                    "${viewModel.teumRequestMainTargetUserName.value} 외 ${count}명"
                 } else {
-                    viewModel.teumRequestMainTargetUserName.value ?: ""
+                    viewModel.teumRequestMainTargetUserName.value
                 }
         }
 
@@ -156,13 +183,16 @@ class FriendMatchingPreviewDialog : DialogFragment() {
             .circleCrop()
             .into(binding.imgProfile)
 
-        // 날짜 포맷 적용
         val rawDate = viewModel.teumRequestSelectedDate.value
         binding.tvDate.text = "${formatDate(rawDate)}     |"
 
-        // 시간
         binding.tvTime.text =
             "${viewModel.teumRequestSelectedTime.value?.startTime} ~ ${viewModel.teumRequestSelectedTime.value?.endTime}"
+    }
+
+    private fun updateImage() {
+        binding.imgTeum.setImageResource(imageList[currentIndex])
+        viewModel.setTeumRequestGraphicId(currentIndex)
     }
 
     private fun formatDate(date: String?): String {
@@ -176,21 +206,14 @@ class FriendMatchingPreviewDialog : DialogFragment() {
     }
 
     override fun onDestroyView() {
-        _binding?.vpTeum?.unregisterOnPageChangeCallback(pageChangeCallback)
         super.onDestroyView()
         _binding = null
     }
 
     private fun setLoading(loading: Boolean) {
-        // 버튼 막기
         binding.btnSend.isEnabled = !loading
         binding.btnPrev.isEnabled = !loading
         binding.btnNext.isEnabled = !loading
-
-        // 로딩 중 드래그도 막고 싶으면 켜기
-        binding.vpTeum.isUserInputEnabled = !loading
-
-        // 다이얼로그 취소/바깥터치 방지
         isCancelable = !loading
         dialog?.setCanceledOnTouchOutside(!loading)
     }
