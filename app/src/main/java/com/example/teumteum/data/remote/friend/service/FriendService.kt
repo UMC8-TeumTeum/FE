@@ -12,6 +12,7 @@ import com.example.teumteum.data.remote.friend.model.PagingResponse
 import com.example.teumteum.data.remote.friend.model.PossibleTimeRequest
 import com.example.teumteum.data.remote.friend.model.PossibleTimeResult
 import com.example.teumteum.data.remote.friend.model.PublicTodoResult
+import com.example.teumteum.data.remote.friend.model.ReportRequest
 import com.example.teumteum.data.remote.friend.model.ResendTeumRequest
 import com.example.teumteum.data.remote.friend.model.ResendTeumResult
 import com.example.teumteum.data.remote.friend.model.SharedTeumListResult
@@ -204,4 +205,10 @@ interface FriendService {
     suspend fun cancelTeumRequest(
         @Path("requestId") requestId: Long
     ): Response<ApiResponse<Long>>
+
+    // 신고 생성
+    @POST("/api/reports")
+    suspend fun createReport(
+        @Body request: ReportRequest
+    ): Response<ApiResponse<Unit>>
 }

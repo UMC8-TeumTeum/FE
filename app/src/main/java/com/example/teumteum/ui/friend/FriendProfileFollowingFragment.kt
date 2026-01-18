@@ -202,7 +202,10 @@ class FriendProfileFollowingFragment : Fragment() {
         popupView.findViewById<View>(R.id.btn_report).setOnClickListener {
             popupWindow.dismiss()
 
-            FriendReportChoiceBottomSheet()
+            if (targetUserId == -1) return@setOnClickListener
+
+            FriendReportChoiceBottomSheet
+                .newInstance("USER", targetUserId.toLong())
                 .show(parentFragmentManager, "FriendReportChoiceBottomSheet")
         }
     }

@@ -25,6 +25,12 @@ class MyHomeViewModel @Inject constructor(
     private val _field = MutableLiveData<String?>()
     val field: LiveData<String?> = _field
 
+    private val _email = MutableLiveData<String?>()
+    val email: LiveData<String?> = _email
+
+    private val _socialType = MutableLiveData<String?>()
+    val socialType: LiveData<String?> = _socialType
+
     //내 정보가 이미 조회되었는지 확인
     var isLoaded = false
         private set
@@ -49,6 +55,20 @@ class MyHomeViewModel @Inject constructor(
         }
     }
 
+    fun getMySocialInfo() {
+        viewModelScope.launch {
+            repository.getMySocialInfo()
+                .onSuccess { result ->
+                    _email.value = result.email
+                    _socialType.value = result.socialType
+                }
+                .onFailure {
+                    _error.value = "내 소셜 정보 조회 실패: ${it.message}"
+                    Log.d("MySocialInfo", _error.value.toString() )
+                }
+        }
+    }
+
     // 최근 투두 조회
     private val _recentTodos = MutableLiveData<List<TodoListResult>>()
     val recentTodos: LiveData<List<TodoListResult>> get() = _recentTodos
@@ -66,4 +86,38 @@ class MyHomeViewModel @Inject constructor(
                 }
         }
     }
+
+    sealed class DeleteUserState {
+        object Idle : DeleteUserState()
+        object Loading : DeleteUserState()
+        object Success : DeleteUserState()
+        data class Error(val message: String) : DeleteUserState()
+    }
+
+    private val _deleteUserState = MutableLiveData<DeleteUserState>(DeleteUserState.Idle)
+    val deleteUserState: LiveData<DeleteUserState> = _deleteUserState
+
+    fun deleteUser() {
+        // 중복 호출 방지
+        if (_deleteUserState.value is DeleteUserState.Loading) return
+
+        viewModelScope.launch {
+            _deleteUserState.value = DeleteUserState.Loading
+
+            repository.deleteUser()
+                .onSuccess {
+                    _deleteUserState.value = DeleteUserState.Success
+                }
+                .onFailure { e ->
+                    _deleteUserState.value =
+                        DeleteUserState.Error(e.message ?: "회원탈퇴 중 문제가 발생했어요.")
+                }
+        }
+    }
+
+    // (옵션) 화면에서 한번 처리한 뒤 상태 초기화용
+    fun resetDeleteUserState() {
+        _deleteUserState.value = DeleteUserState.Idle
+    }
+
 }

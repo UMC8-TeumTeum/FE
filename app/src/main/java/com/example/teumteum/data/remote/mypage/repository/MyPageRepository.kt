@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.teumteum.data.remote.mypage.model.MyInfoResponse
 import com.example.teumteum.data.remote.mypage.model.MyRoutineRequest
 import com.example.teumteum.data.remote.mypage.model.MyRoutineResponse
+import com.example.teumteum.data.remote.mypage.model.MySocialInfoResponse
 import com.example.teumteum.data.remote.mypage.model.ProfileUpdateRequest
 import com.example.teumteum.data.remote.mypage.service.MyPageService
 import com.example.teumteum.data.remote.onboarding.model.PresignedRequest
@@ -134,6 +135,20 @@ class MyPageRepository @Inject constructor(
     suspend fun deleteMyRoutine(routineId: Long): Result<Unit> = runCatching {
         val response = myPageService.deleteMyRoutine(routineId)
         Log.d("Routine", "response = ${response.body()}")
+        handleApiResponseUnit(response)
+    }
+
+    //소셜 정보 조회
+    suspend fun getMySocialInfo(): Result<MySocialInfoResponse> = runCatching {
+        val response = myPageService.getMySocialInfo()
+        Log.d("MySocialInfo", "response = ${response.body()}")
+        handleApiResponse(response)
+    }
+
+    //회원탈퇴
+    suspend fun deleteUser(): Result<Unit> = runCatching {
+        val response = myPageService.deleteUser()
+        Log.d("User", "response = ${response.body()}")
         handleApiResponseUnit(response)
     }
 }
