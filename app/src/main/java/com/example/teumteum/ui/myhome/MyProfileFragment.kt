@@ -1,10 +1,10 @@
 package com.example.teumteum.ui.myhome
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.bumptech.glide.Glide
 import com.example.teumteum.R
@@ -64,7 +64,6 @@ class MyProfileFragment : Fragment() {
         viewModel.fetchRecentTodos(date)
 
         viewModel.nickname.observe(viewLifecycleOwner) { nickname ->
-            binding.nicknameTv.text = (nickname + "님의") ?: "닉네임님의"
             binding.profileNicknameTv.text = nickname ?: "닉네임"
         }
 
