@@ -168,10 +168,24 @@ class Friend02RequestFragment : Fragment() {
         // 클릭 리스너 설정
         popupView.findViewById<View>(R.id.btn_profile).setOnClickListener {
             popupWindow.dismiss()
-            val targetFragment = MyProfileFragment()
+
+            val current =
+                teumList.getOrNull(binding.requestViewPager.currentItem)
+                    ?: return@setOnClickListener
+
+            val fragment = FriendProfileFollowingFragment().apply {
+                arguments = Bundle().apply {
+                    // 요청 보낸 사람 id
+                    putInt("userId", current.senderUser.userId)
+
+                    // (선택) 초기 표시용
+//                    putString("name", current.senderUser.nickname)
+                    putString("imageUrl", current.senderUser.profileImageUrl)
+                }
+            }
 
             parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, targetFragment)
+                .replace(R.id.main_frm, fragment)
                 .addToBackStack(null)
                 .commit()
         }
