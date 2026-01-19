@@ -18,7 +18,6 @@ import com.example.teumteum.databinding.FragmentFillingActivity02Binding
 import com.example.teumteum.ui.activity.adapter.AiRecommendAdapter
 import com.example.teumteum.ui.activity.adapter.WishRecommendAdapter
 import com.example.teumteum.ui.activity.viewModel.ActivityViewModel
-import com.example.teumteum.ui.friend.FriendFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -78,8 +77,6 @@ class FillingActivity02Fragment : Fragment() {
         }
 
         binding.backArrowIv.setOnClickListener {
-            // 초기화 신호 전송
-            parentFragmentManager.setFragmentResult("reset_form", Bundle.EMPTY)
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
 

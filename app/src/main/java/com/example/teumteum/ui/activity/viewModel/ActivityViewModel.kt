@@ -11,6 +11,7 @@ import com.example.teumteum.data.remote.activity.model.ActivityWishResult
 import com.example.teumteum.data.remote.activity.model.AssignAiRequest
 import com.example.teumteum.data.remote.activity.model.AssignWishRequest
 import com.example.teumteum.data.remote.activity.repository.ActivityRepository
+import com.example.teumteum.ui.activity.data.FillingFormState
 import com.example.teumteum.utils.ApiException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -51,9 +52,8 @@ class ActivityViewModel @Inject constructor(
     private val _assignError = MutableSharedFlow<ApiException>(replay = 0, extraBufferCapacity = 1)
     val assignError: SharedFlow<ApiException> = _assignError.asSharedFlow()
 
-    // 마지막으로 성공적으로 조회한 파라미터 키
-    var lastQueryKey: String? = null
-        private set
+    private val _fillingFormState = MutableLiveData(FillingFormState())
+    val fillingFormState: LiveData<FillingFormState> = _fillingFormState
 
     private val _loading = MutableLiveData(false)
     val loading: LiveData<Boolean> = _loading
@@ -149,6 +149,14 @@ class ActivityViewModel @Inject constructor(
                 _assignError.tryEmit(ApiException(code ?: "UNKNOWN", msg))
             }
         }
+    }
+
+    fun updateFillingFormState(reducer: (FillingFormState) -> FillingFormState) {
+        _fillingFormState.value = reducer(_fillingFormState.value ?: FillingFormState())
+    }
+
+    fun clearFillingFormState() {
+        _fillingFormState.value = FillingFormState()
     }
 
     fun clearActivityResults() {
