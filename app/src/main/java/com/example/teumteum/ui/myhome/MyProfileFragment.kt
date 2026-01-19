@@ -10,6 +10,7 @@ import com.bumptech.glide.Glide
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.todo.model.TodoListResult
 import com.example.teumteum.databinding.FragmentMyProfileBinding
+import com.example.teumteum.ui.main.HomeFragment
 import com.example.teumteum.ui.main.MainActivity
 import com.example.teumteum.ui.main.viewModel.HomeViewModel
 import com.example.teumteum.ui.myhome.viewModel.MyHomeViewModel
@@ -55,6 +56,12 @@ class MyProfileFragment : Fragment() {
                 .commit()
         }
 
+        binding.seeMoreTv.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, HomeFragment())
+                .addToBackStack(null)
+                .commit()
+        }
 
         homeViewModel.teumTimeDays.observe(viewLifecycleOwner) { updateTeumTime() }
         homeViewModel.teumTimeHours.observe(viewLifecycleOwner) { updateTeumTime() }
