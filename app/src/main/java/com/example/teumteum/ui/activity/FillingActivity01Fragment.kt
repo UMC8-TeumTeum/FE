@@ -440,6 +440,9 @@ class FillingActivity01Fragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        selectedTimeButton = null
+        selectedLocationButton = null
+        selectedCategoryButton = null
         _binding = null
     }
 
