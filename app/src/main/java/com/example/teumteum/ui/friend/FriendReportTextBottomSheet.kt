@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
@@ -58,6 +59,13 @@ class FriendReportTextBottomSheet : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // 네비게이션 바
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val bottomInset = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom
+            v.setPadding(0, 0, 0, bottomInset)
+            insets
+        }
 
         val targetType = arguments?.getString(ARG_TARGET_TYPE) ?: return
         val targetId = arguments?.getLong(ARG_TARGET_ID) ?: return

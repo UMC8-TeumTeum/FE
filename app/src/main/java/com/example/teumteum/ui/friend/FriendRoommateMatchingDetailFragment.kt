@@ -11,6 +11,8 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.NumberPicker
 import android.widget.Toast
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -58,6 +60,13 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         (activity as? SignUpActivity)?.setProgressBar(75)
         (activity as? MainActivity)?.hideBottomBar()
+
+        // 네비게이션 바
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val bottomInset = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom
+            v.setPadding(0, 0, 0, bottomInset)
+            insets
+        }
 
         // 이전 Fragment에서 선택된 날짜 받기 (예: "25.08.21(목)" 또는 "2025-08-21")
         selectedDate = arguments?.getString("selected_date") ?: ""
