@@ -11,7 +11,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.teumteum.R
 import com.example.teumteum.databinding.FragmentHomeAlarmBinding
-import com.example.teumteum.ui.alarm.viewmodel.NotificationViewModel
+import com.example.teumteum.ui.alarm.adapter.AlarmRVAdapter
+import com.example.teumteum.ui.alarm.viewModel.NotificationViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 
