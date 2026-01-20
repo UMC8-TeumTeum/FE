@@ -42,7 +42,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="삭제 시, 1:1의 경우 틈 약속이 취소되고\n단체의 경우 내 이름만 빠져요"
+        android:text="삭제 시, 틈 약속이 취소돼요"
         android:textSize="15sp"
         android:fontFamily="@font/noto_sans_kr_regular"
         android:textColor="@color/text_secondary"
