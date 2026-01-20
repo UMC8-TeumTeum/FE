@@ -137,7 +137,7 @@
             android:id="@+id/recommendRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="183dp"
+            android:layout_marginTop="185dp"
             android:clipToPadding="false"
             android:overScrollMode="never"
             android:paddingStart="21dp"
