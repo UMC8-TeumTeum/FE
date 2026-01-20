@@ -121,13 +121,12 @@
                     android:layout_height="wrap_content"
                     android:text="새로운 틈 요청이 없어요"
                     android:includeFontPadding="false"
-                    android:layout_marginStart="108dp"
-                    android:layout_marginEnd="96dp"
-                    android:layout_marginBottom="31dp"
                     android:textSize="15sp"
                     android:textColor="#0F0F0F"
                     android:layout_marginTop="6dp"
-                    android:fontFamily="@font/noto_sans_kr_medium" />
+                    android:layout_marginBottom="31dp"
+                    android:fontFamily="@font/noto_sans_kr_medium"
+                    android:layout_gravity="center_horizontal" />
             </LinearLayout>
 
         </androidx.cardview.widget.CardView>
