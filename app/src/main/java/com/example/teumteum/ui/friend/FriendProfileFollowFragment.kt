@@ -95,23 +95,6 @@ class FriendProfileFollowFragment : Fragment() {
                 navigateToFollowing(result)
             }
         }
-
-        // 더보기 버튼 클릭 → FriendTodoListFragment로 이동
-        binding.seeMoreTv.setOnClickListener {
-            val nickname = binding.profileNicknameTv.text?.toString().orEmpty()
-
-            val frag = FriendTodoListFragment().apply {
-                arguments = Bundle().apply {
-                    putString("nickname", nickname)
-                    putInt("userId", userId)
-                }
-            }
-
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, frag)
-                .addToBackStack(null)
-                .commit()
-        }
     }
 
     // 차단 신고 팝업 표시
@@ -185,10 +168,6 @@ class FriendProfileFollowFragment : Fragment() {
             }
         }
 
-        // 최근 투두
-        viewModel.recentTodos.observe(viewLifecycleOwner) { list ->
-            bindRecentTodos(list)
-        }
 
         // 팔로우 성공 메시지
         viewModel.followMessage.observe(viewLifecycleOwner) { event ->
@@ -208,29 +187,6 @@ class FriendProfileFollowFragment : Fragment() {
                     (activity as? MainActivity)?.showBottomBar()
                 }
             }
-        }
-    }
-
-    // 최근 공개 투두 2개만 UI 바인딩
-    private fun bindRecentTodos(list: List<PublicTodoResult>) {
-        val l = list.take(2)
-
-        binding.scheduleCardContainer.visibility = if (l.isNotEmpty()) View.VISIBLE else View.GONE
-        if (l.isEmpty()) return
-
-        val first = l[0]
-        binding.schedule1TimeStartTv.text = first.startTime
-        binding.schedule1TimeEndTv.text   = first.endTime
-        binding.schedule1TitleTv.text     = first.title
-
-        if (l.size >= 2) {
-            val second = l[1]
-            binding.schedule2Cl.visibility = View.VISIBLE
-            binding.schedule2TimeStartTv.text = second.startTime
-            binding.schedule2TimeEndTv.text   = second.endTime
-            binding.schedule2TitleTv.text     = second.title
-        } else {
-            binding.schedule2Cl.visibility = View.GONE
         }
     }
 
