@@ -471,6 +471,23 @@ class FriendRepository @Inject constructor(
         }
     }
 
+    // 틈 요청 취소
+    suspend fun cancelTeumRequest(requestId: Long): Result<ApiResponse<Long>> = runCatching {
+        val response = api.cancelTeumRequest(requestId)
+        val body = response.body()
+
+        if (!response.isSuccessful || body == null) {
+            throw Exception(
+                "HTTP ${response.code()} - ${
+                    response.errorBody()?.string() ?: response.message()
+                }"
+            )
+        }
+
+        if (body.isSuccess) body
+        else throw Exception("${body.code} - ${body.message}")
+    }
+
     // 신고 생성
     suspend fun createReport(request: ReportRequest): Result<ApiResponse<Unit>> =
         runCatching {
@@ -478,7 +495,11 @@ class FriendRepository @Inject constructor(
             val body = response.body()
 
             if (!response.isSuccessful || body == null) {
-                throw Exception("HTTP ${response.code()} - ${response.errorBody()?.string() ?: response.message()}")
+                throw Exception(
+                    "HTTP ${response.code()} - ${
+                        response.errorBody()?.string() ?: response.message()
+                    }"
+                )
             }
 
             if (body.isSuccess) body
