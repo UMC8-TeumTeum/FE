@@ -176,10 +176,7 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
 
             // 추가 확보 공간
             val extra = max(0, imeBottom - sysBottom)
-
-            binding.registerScroll.updatePadding(
-                bottom = originalBottomPadding + extra
-            )
+            binding.registerScroll.updatePadding( bottom = originalBottomPadding + extra )
 
             // 키보드 올라오면 하단 버튼 숨김
             binding.btnTodoRegister.isVisible = imeBottom == 0
@@ -704,19 +701,30 @@ class BottomSheetTodoRegisterFragment : BottomSheetDialogFragment()  {
     override fun onStart() {
         super.onStart()
 
-        dialog?.let { dialog ->
-            val bottomSheet = dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
-            bottomSheet?.let {
-                val screenHeight = resources.displayMetrics.heightPixels
-                val desiredHeight = (screenHeight * 0.84).toInt()
+        val dialog = dialog as? BottomSheetDialog ?: return
+        val bottomSheet =
+            dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet) ?: return
 
-                it.layoutParams.height = desiredHeight
-                it.requestLayout()
+        val screenH = resources.displayMetrics.heightPixels
+        val fixedH = (screenH * 0.81f).toInt()
 
-                val behavior = BottomSheetBehavior.from(it)
-                behavior.peekHeight = desiredHeight
-                behavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        fun setHeight(imeBottom: Int) {
+            val targetH = minOf(fixedH, screenH - imeBottom) // 키보드 올라오면 그만큼 줄임
+            bottomSheet.layoutParams.height = targetH
+            bottomSheet.requestLayout()
+
+            BottomSheetBehavior.from(bottomSheet).apply {
+                peekHeight = targetH
+                state = BottomSheetBehavior.STATE_EXPANDED
             }
+        }
+
+        setHeight(0)
+
+        ViewCompat.setOnApplyWindowInsetsListener(bottomSheet) { _, insets ->
+            val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            setHeight(imeBottom)
+            insets
         }
     }
 
