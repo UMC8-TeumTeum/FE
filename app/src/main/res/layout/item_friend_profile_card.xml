@@ -35,18 +35,18 @@
             android:textColor="#0F0F0F"
             android:textSize="16sp" />
 
-        <View
-            android:layout_width="0dp"
-            android:layout_height="7dp"
-            android:layout_weight="1" />
+<!--        <View-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="7dp"-->
+<!--            android:layout_weight="1" />-->
 
-        <ImageButton
-            android:id="@+id/sendButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="12dp"
-            android:background="@android:color/transparent"
-            android:src="@drawable/eyes_on"
-            android:contentDescription="눈 뜸" />
+<!--        <ImageButton-->
+<!--            android:id="@+id/sendButton"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:padding="12dp"-->
+<!--            android:background="@android:color/transparent"-->
+<!--            android:src="@drawable/eyes_on"-->
+<!--            android:contentDescription="눈 뜸" />-->
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

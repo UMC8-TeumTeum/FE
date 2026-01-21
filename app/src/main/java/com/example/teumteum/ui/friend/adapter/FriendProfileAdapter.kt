@@ -39,24 +39,24 @@ class FriendProfileAdapter(
             val isExcluded = excludedIds.contains(profile.userId)
             val isSelf = profile.userId == AppUserManager.userId
 
-            applyEyeUi(isExcluded, isSelf)
+//            applyEyeUi(isExcluded, isSelf)
             applyDimUi(isExcluded)
 
-            binding.sendButton.setOnClickListener {
-                if (isSelf) return@setOnClickListener
-                onToggleExclude(profile.userId)
-            }
+//            binding.sendButton.setOnClickListener {
+//                if (isSelf) return@setOnClickListener
+//                onToggleExclude(profile.userId)
+//            }
         }
 
-        private fun applyEyeUi(isExcluded: Boolean, isSelf: Boolean) {
-            binding.sendButton.setImageResource(
-                if (isExcluded) R.drawable.eyes_off else R.drawable.eyes_on
-            )
-            // 본인은 클릭 불가 + 아이콘만 살짝 흐리게(0.4f)
-            binding.sendButton.isEnabled = !isSelf
-            binding.sendButton.isClickable = !isSelf
-            binding.sendButton.alpha = if (isSelf) 0.4f else 1f
-        }
+//        private fun applyEyeUi(isExcluded: Boolean, isSelf: Boolean) {
+//            binding.sendButton.setImageResource(
+//                if (isExcluded) R.drawable.eyes_off else R.drawable.eyes_on
+//            )
+//            // 본인은 클릭 불가 + 아이콘만 살짝 흐리게(0.4f)
+//            binding.sendButton.isEnabled = !isSelf
+//            binding.sendButton.isClickable = !isSelf
+//            binding.sendButton.alpha = if (isSelf) 0.4f else 1f
+//        }
 
         // 제외된 유저면 카드/프로필/텍스트를 흐리게 보여주기
         private fun applyDimUi(isExcluded: Boolean) {
