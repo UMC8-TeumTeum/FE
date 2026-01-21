@@ -101,7 +101,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="19dp"
         android:layout_marginEnd="19dp"
-        android:layout_marginBottom="19dp"
         android:text="전송할게요"
         android:textColor="#FFFFFF"
         android:textSize="16sp"
