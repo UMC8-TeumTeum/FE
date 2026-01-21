@@ -50,9 +50,16 @@ class SharedTeumTimeFragment : Fragment() {
 
         // 함께한 틈 목록
         viewModel.sharedTeumList.observe(viewLifecycleOwner) { list ->
-            adapter.submitList(list)
+            if (list.isNullOrEmpty()) {
+                binding.emptyLayout.visibility = View.VISIBLE
+                binding.sharedTeumRecyclerView.visibility = View.GONE
+                binding.sharedTotalTimeTv.text = "0시간 0분"
+            } else {
+                binding.emptyLayout.visibility = View.GONE
+                binding.sharedTeumRecyclerView.visibility = View.VISIBLE
+                adapter.submitList(list)
+            }
         }
-
 
         // 에러
         viewModel.errorMessage.observe(viewLifecycleOwner) { event ->
