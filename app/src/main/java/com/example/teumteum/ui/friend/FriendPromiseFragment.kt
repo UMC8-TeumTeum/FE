@@ -13,6 +13,7 @@ import androidx.fragment.app.viewModels
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.friend.model.TeumScheduleDetailResult
 import com.example.teumteum.databinding.FragmentFriendPromiseBinding
+import com.example.teumteum.ui.alarm.AlarmNavigator
 import com.example.teumteum.ui.friend.adapter.TeumEventAdapter
 import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.example.teumteum.ui.main.MainActivity
@@ -73,6 +74,21 @@ class FriendPromiseFragment : Fragment() {
         val nickname = arguments?.getString("nickname")
         binding.tvName.text = ((nickname ?: "닉네임") + "님의")
 
+        // 2) 알림에서 전달된 date로 초기 날짜 세팅
+        val argDateStr = arguments?.getString(AlarmNavigator.ARG_TARGET_DATE)
+        val initialDate = runCatching {
+            argDateStr?.takeIf { it.isNotBlank() }?.let { LocalDate.parse(it) }
+        }.getOrNull()
+
+        if (initialDate != null) {
+            selectedDate = initialDate
+            visibleMonth = YearMonth.from(initialDate)
+        } else {
+            // 기존 기본값 유지
+            selectedDate = LocalDate.now()
+            visibleMonth = YearMonth.now()
+        }
+
         calendarView = binding.calendarView
         calendarView.visibility = View.VISIBLE
 
@@ -83,7 +99,6 @@ class FriendPromiseFragment : Fragment() {
         setupCalendarNavigation()
 
         // 최초 가시 월 기준으로 한 번 조회
-        visibleMonth = YearMonth.now()
         lastRequestedMonth = null
         // arguments에서 friendUserId 읽은 뒤에 호출
         fetchDotDates()
@@ -120,13 +135,15 @@ class FriendPromiseFragment : Fragment() {
 
     private fun setupCalendar() {
         // 해당 라이브러리는 캘린더 범위를 무제한으로 설정할 수 없어 일단은 +-50년으로 설정...
-        val currentMonth = YearMonth.now()
+        val currentMonth = YearMonth.from(selectedDate)
         val startMonth = currentMonth.minusYears(50) // 50년 전
         val endMonth = currentMonth.plusYears(50)  // 50년 후
         val firstDayOfWeek = firstDayOfWeekFromLocale()
 
         calendarView.setup(startMonth, endMonth, firstDayOfWeek)
         calendarView.scrollToMonth(currentMonth)
+
+        visibleMonth = currentMonth
 
         calendarView.monthScrollListener = { month ->
             visibleMonth = month.yearMonth

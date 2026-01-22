@@ -10,6 +10,8 @@ import com.example.teumteum.ui.friend.FriendTeumRequestFragment
 
 object AlarmNavigator {
 
+    const val ARG_TARGET_DATE = "arg_target_date" // "yyyy-MM-dd"
+
     fun createFragmentFor(host: Fragment, n: NotificationResponse): Fragment {
         val fm = host.parentFragmentManager
         val factory = fm.fragmentFactory
@@ -25,7 +27,13 @@ object AlarmNavigator {
         }
 
         return factory.instantiate(cl, className).apply {
-            arguments = (arguments ?: Bundle()) // 우선 현재는 인자를 넘기지 않을 거라 비워둠
+            arguments = (arguments ?: Bundle()).apply {
+
+                // 틈 요청/확정 알림이면 date 전달
+                if (n.type == NotificationType.TEUM_REQUEST || n.type == NotificationType.TEUM_ACCEPTED) {
+                    n.date?.let { putString(ARG_TARGET_DATE, it) }
+                }
+            }
         }
     }
 }
