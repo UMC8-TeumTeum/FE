@@ -85,12 +85,10 @@ class Friend02RequestFragment : Fragment() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
                 val current = teumList.getOrNull(position) ?: return
-                viewModel.selectTeum(current)   //선택된 아이템 갱신
-                if(current.read == false){  //읽은 상태가 아니면
-                    viewModel.readTeumRequest(current.responseId)   //읽기 요청
-                }
+                viewModel.selectTeum(current)
             }
         })
+
 
         // 6. 인디케이터
         binding.dotsIndicator.setViewPager2(binding.requestViewPager)

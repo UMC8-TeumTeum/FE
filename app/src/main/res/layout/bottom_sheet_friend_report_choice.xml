@@ -1,71 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/bottom_sheet_root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:background="@drawable/friend_bg_bottom_sheet" >
+    android:background="@drawable/friend_bg_bottom_sheet">
 
     <!-- drag handle -->
     <View
         android:id="@+id/bottomSheetHandle"
         android:layout_width="54dp"
         android:layout_height="4dp"
-        android:layout_gravity="center_horizontal"
         android:layout_marginTop="12dp"
-        android:layout_marginStart="168dp"
-        android:layout_marginEnd="168dp"
-        android:background="@drawable/friend_bottom_sheet_handle" />
+        android:background="@drawable/friend_bottom_sheet_handle"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 
     <!-- Title -->
     <TextView
         android:id="@+id/report_title_tv"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="신고 사유를 선택해주세요"
         android:textSize="20sp"
         android:gravity="center"
         android:textColor="@color/text_primary"
         android:fontFamily="@font/noto_sans_kr_medium"
-        android:lineSpacingExtra="0dp"
         android:includeFontPadding="false"
         android:layout_marginTop="62dp"
-        android:layout_marginBottom="6dp" />
+        app:layout_constraintTop_toBottomOf="@id/bottomSheetHandle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Subtitle / 설명 -->
     <TextView
         android:id="@+id/report_subtitle_tv"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="서비스 규정을 위반한다고 생각되는 문제를 선택해주세요.\n상대방에게는 회원님이 신고했다는 사실을 알리지 않습니다."
         android:textSize="14sp"
         android:textColor="@color/text_primary"
         android:fontFamily="@font/noto_sans_kr_regular"
-        android:lineSpacingExtra="0dp"
         android:includeFontPadding="false"
         android:gravity="center"
         android:layout_marginTop="17dp"
-        android:layout_marginStart="27dp"
-        android:layout_marginEnd="27dp"/>
+        app:layout_constraintTop_toBottomOf="@id/report_title_tv"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Divider -->
     <View
-        android:layout_width="match_parent"
+        android:id="@+id/report_divider"
+        android:layout_width="0dp"
         android:layout_height="2dp"
         android:background="#EAEAEA"
         android:layout_marginTop="44dp"
         android:layout_marginStart="27dp"
-        android:layout_marginEnd="27dp" />
+        android:layout_marginEnd="27dp"
+        app:layout_constraintTop_toBottomOf="@id/report_subtitle_tv"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Options container; 간단하게 LinearLayout으로 고정 항목들 구현 -->
     <LinearLayout
         android:id="@+id/options_container"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginTop="30dp">
+        android:layout_marginTop="30dp"
+        app:layout_constraintTop_toBottomOf="@id/report_divider"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <!-- 항목들: 텍스트 + 오른쪽 체크박스 -->
         <LinearLayout
@@ -275,25 +283,23 @@
 
     </LinearLayout>
 
-    <!-- Spacer -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="14dp" />
-
     <!-- 신고 버튼 (풀 너비) -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/report_btn"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="19dp"
         android:layout_marginEnd="19dp"
-        android:fontFamily="@font/noto_sans_kr_medium"
+        android:layout_marginTop="15dp"
         android:text="신고"
         android:textColor="@color/white"
         android:textSize="16sp"
+        android:fontFamily="@font/noto_sans_kr_medium"
         app:backgroundTint="@color/text_primary"
         app:cornerRadius="12dp"
+        app:layout_constraintTop_toBottomOf="@id/options_container"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-</LinearLayout>
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
