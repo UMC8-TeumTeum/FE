@@ -316,12 +316,12 @@ class FriendRoommateTimeFragment : Fragment() {
                 // 가용 시간이 없는 경우의 텍스트 분기
                 binding.possibleTime.text = if (selectedDate == today) {
                     if (cards.isEmpty()) {
-                        "이때는 가능한 빈틈이 없어요"  // 원래 서버에서 빈 시간이 없는 경우
+                        "가능한 빈틈이 없어요"  // 원래 서버에서 빈 시간이 없는 경우
                     } else {
                         "현재 시각 이후 가능한 빈틈이 없어요"  // 현재 시각 필터링으로 인해 없어진 경우
                     }
                 } else {
-                    "이때는 가능한 빈틈이 없어요"  // 다른 날짜
+                    "가능한 빈틈이 없어요"  // 다른 날짜
                 }
                 currentFullDayBlocks = listOf(TimeBlock(0, 1440, TimeType.TODO))
                 updateNextButton(false)

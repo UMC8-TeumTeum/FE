@@ -47,7 +47,7 @@
         <View
             android:id="@+id/border"
             android:layout_width="0dp"
-            android:layout_height="0.95dp"
+            android:layout_height="1dp"
             android:layout_marginTop="7dp"
             android:background="#7770FE"
             app:layout_constraintTop_toBottomOf="@id/tvName"
