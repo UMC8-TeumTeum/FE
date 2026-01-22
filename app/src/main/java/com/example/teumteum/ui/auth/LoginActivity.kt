@@ -7,6 +7,8 @@ import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.credentials.Credential
 import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
@@ -47,6 +49,18 @@ class LoginActivity : AppCompatActivity() {
         enableEdgeToEdge()
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+
+            binding.frame2.setPadding(
+                binding.frame2.paddingLeft,
+                binding.frame2.paddingTop,
+                binding.frame2.paddingRight,
+                systemBars.bottom
+            )
+            insets
+        }
 
         binding.kakaoLoginBtn.setOnClickListener {
             startKakaoLogin()
