@@ -72,6 +72,9 @@ class FriendViewModel @Inject constructor(
     private val _followersHasNext = MutableLiveData(true)
     val followersHasNext: LiveData<Boolean> = _followersHasNext
 
+    // 닉네임 검색어 입력 시
+    val currentSearchKeyword = MutableLiveData<String>()
+
 
     //    상단 프로필의 star_btn 과 리스트 아이템의 starIv 가 함께 관찰하는 공통 상태
     private val _favoriteMap = MutableLiveData<Map<Int, Boolean>>(emptyMap())

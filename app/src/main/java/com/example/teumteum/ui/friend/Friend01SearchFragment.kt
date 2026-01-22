@@ -34,6 +34,10 @@ class Friend01SearchFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentFriend01SearchBinding.inflate(inflater, container, false)
+
+        // 검색 화면 "처음 진입" 시 검색어 초기화
+        viewModel.currentSearchKeyword.value = null
+
         return binding.root
     }
 
@@ -77,25 +81,28 @@ class Friend01SearchFragment : Fragment() {
                 false
             }
         }
+
+        viewModel.currentSearchKeyword.observe(viewLifecycleOwner) { keyword ->
+            if (!keyword.isNullOrEmpty()) {
+                binding.searchEditText.setText(keyword)
+                binding.searchEditText.setSelection(keyword.length)
+            }
+        }
+
     }
 
     private fun handleSearchAction() {
         val keyword = binding.searchEditText.text.toString().trim()
         if (keyword.isEmpty()) return
 
-        // 키보드 닫기
         hideKeyboard(binding.searchEditText)
 
+        // 검색어 ViewModel에 저장
+        viewModel.currentSearchKeyword.value = keyword
+
         viewModel.addRecentKeyword(keyword)
-        binding.searchEditText.text.clear()
 
-        val bundle = Bundle().apply {
-            putString("searchKeyword", keyword)
-        }
-
-        val fragment = Friend01SearchResultFragment().apply {
-            arguments = bundle
-        }
+        val fragment = Friend01SearchResultFragment()
 
         parentFragmentManager.beginTransaction()
             .replace(R.id.main_frm, fragment)
@@ -152,6 +159,15 @@ class Friend01SearchFragment : Fragment() {
         } else {
             binding.recentSearchNotExistsCl.visibility = View.GONE
             binding.recentSearchList.visibility = View.VISIBLE
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        // 검색 결과 화면에서 돌아온 경우 검색창 비우기
+        if (viewModel.currentSearchKeyword.value == null) {
+            binding.searchEditText.text.clear()
         }
     }
 

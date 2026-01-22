@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -43,10 +44,6 @@ class Friend01SearchResultFragment : Fragment() {
         // 하단 바 숨기기
         (activity as? MainActivity)?.hideBottomBar()
 
-        // 전달받은 검색 키워드로 유저 검색 요청
-        val keyword = arguments?.getString("searchKeyword") ?: return
-        viewModel.searchUser(keyword)
-
         // 리사이클러뷰 초기화
         adapter = SearchResultAdapter(emptyList()) { userId: Int ->
             navigateToProfile(userId)
@@ -74,38 +71,53 @@ class Friend01SearchResultFragment : Fragment() {
             }
         }
 
+        viewModel.currentSearchKeyword.observe(viewLifecycleOwner) { keyword ->
+            if (!keyword.isNullOrEmpty()) {
+                binding.searchEditText.setText(keyword)
+                binding.searchEditText.setSelection(keyword.length)
+
+                // 검색 API 호출
+                viewModel.searchUser(keyword)
+            }
+        }
+
         binding.searchEditText.setOnEditorActionListener { _, actionId, event ->
             val isSearchAction = actionId == EditorInfo.IME_ACTION_SEARCH
-            val isEnterKey = event?.action == KeyEvent.ACTION_DOWN && event.keyCode == KeyEvent.KEYCODE_ENTER
+            val isEnterKey =
+                event?.action == KeyEvent.ACTION_DOWN && event.keyCode == KeyEvent.KEYCODE_ENTER
 
             if (isSearchAction || isEnterKey) {
                 val keyword = binding.searchEditText.text.toString().trim()
                 if (keyword.isNotEmpty()) {
+
+                    // 검색어 저장
+                    viewModel.currentSearchKeyword.value = keyword
                     viewModel.addRecentKeyword(keyword)
-                    binding.searchEditText.text.clear()
 
-                    // 👉 검색 수행 및 결과 프래그먼트로 이동
-                    val bundle = Bundle().apply {
-                        putString("searchKeyword", keyword)
-                    }
-                    val fragment = Friend01SearchResultFragment()
-                    fragment.arguments = bundle
-
-                    parentFragmentManager.beginTransaction()
-                        .replace(R.id.main_frm, fragment)
-                        .addToBackStack(null)
-                        .commit()
+                    // 같은 Fragment에서 검색만 다시
+                    viewModel.searchUser(keyword)
                 }
                 true
-            } else {
-                false
-            }
+            } else false
         }
 
         // 뒤로가기 버튼
         binding.backButton.setOnClickListener {
+            viewModel.currentSearchKeyword.value = null
             parentFragmentManager.popBackStack()
         }
+
+        // 시스템 뒤로가기까지 커버
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    // 검색 결과 화면을 나갈 때 검색어 제거
+                    viewModel.currentSearchKeyword.value = null
+                    parentFragmentManager.popBackStack()
+                }
+            }
+        )
     }
 
     private fun navigateToProfile(userId: Int) {
