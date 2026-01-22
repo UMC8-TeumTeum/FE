@@ -4,12 +4,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.bumptech.glide.Glide
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.mypage.model.PublicTodoResponse
 import com.example.teumteum.databinding.FragmentMyProfileBinding
+import com.example.teumteum.ui.main.HomeFragment
 import com.example.teumteum.ui.main.MainActivity
 import com.example.teumteum.ui.main.viewModel.HomeViewModel
 import com.example.teumteum.ui.myhome.viewModel.MyHomeViewModel
@@ -39,6 +43,13 @@ class MyProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         (activity as? MainActivity)?.hideBottomBar()
 
+        ViewCompat.setOnApplyWindowInsetsListener(binding.fragmentMyProfileContainer) { _, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+
+            binding.fragmentMyProfileContainer.updatePadding(bottom = systemBars.bottom)
+            insets
+        }
+
         binding.backBtn.setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.main_frm, MyHomeFragment())
@@ -53,6 +64,12 @@ class MyProfileFragment : Fragment() {
                 .commit()
         }
 
+        binding.seeMoreTv.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_frm, HomeFragment())
+                .addToBackStack(null)
+                .commit()
+        }
 
         homeViewModel.teumTimeDays.observe(viewLifecycleOwner) { updateTeumTime() }
         homeViewModel.teumTimeHours.observe(viewLifecycleOwner) { updateTeumTime() }
@@ -61,7 +78,6 @@ class MyProfileFragment : Fragment() {
         viewModel.fetchRecentTodos()
 
         viewModel.nickname.observe(viewLifecycleOwner) { nickname ->
-            binding.nicknameTv.text = (nickname + "님의") ?: "닉네임님의"
             binding.profileNicknameTv.text = nickname ?: "닉네임"
         }
 
