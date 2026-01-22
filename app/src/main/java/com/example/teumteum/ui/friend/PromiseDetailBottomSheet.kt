@@ -93,7 +93,8 @@ class PromiseDetailBottomSheet(
 
         //  클릭 시 취소 요청만 호출
         binding.btnCancelPromise.setOnClickListener {
-            FriendTeumDeleteBottomSheet(scheduleId)
+            FriendTeumDeleteBottomSheet
+                .newInstance(scheduleId)
                 .show(parentFragmentManager, "FriendTeumDeleteBottomSheet")
         }
 

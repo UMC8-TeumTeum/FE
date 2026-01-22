@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import com.example.teumteum.R
 import com.example.teumteum.data.remote.friend.model.TeumReceivedItem
@@ -35,6 +37,13 @@ class Friend02ResponseFragment  : Fragment(){
         super.onViewCreated(view, savedInstanceState)
 
         (activity as? MainActivity)?.hideBottomBar()
+
+        // 네비게이션 바
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val bottomInset = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom
+            v.setPadding(0, 0, 0, bottomInset)
+            insets
+        }
 
         binding.backButton.setOnClickListener {
             parentFragmentManager.popBackStack(null, androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE)
