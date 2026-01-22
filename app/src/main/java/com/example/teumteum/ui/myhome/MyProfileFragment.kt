@@ -1,10 +1,13 @@
 package com.example.teumteum.ui.myhome
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.bumptech.glide.Glide
 import com.example.teumteum.R
@@ -40,6 +43,13 @@ class MyProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity as? MainActivity)?.hideBottomBar()
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.fragmentMyProfileContainer) { _, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+
+            binding.fragmentMyProfileContainer.updatePadding(bottom = systemBars.bottom)
+            insets
+        }
 
         binding.backBtn.setOnClickListener {
             parentFragmentManager.beginTransaction()
