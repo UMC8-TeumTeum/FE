@@ -57,12 +57,24 @@ class FriendTeumDeleteBottomSheet(
             viewModel.cancelTeumSchedule(scheduleId)
             Log.d("CANCEL_DEBUG", "취소 요청할 스케줄 ID: $scheduleId")
 
+            binding.btnYes.isEnabled = false
+        }
+
+        viewModel.cancelScheduleSuccess.observe(viewLifecycleOwner) { event ->
+            event.getContentIfNotHandled()?.let { canceledId ->
+                if (canceledId == scheduleId) {
+                    dismissAllowingStateLoss()
+                    Log.d("BOTTOM_SHEET", "취소 성공 이벤트로 닫힘 scheduleId=$canceledId")
+                }
+            }
         }
 
         /** 성공 시 → 바텀시트 닫기 */
         viewModel.successMessage.observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let {
                 dismissAllowingStateLoss()
+
+                Log.d("BOTTOM_SHEET", "successMessage observe 됨")
             }
         }
 
@@ -70,6 +82,7 @@ class FriendTeumDeleteBottomSheet(
         viewModel.errorMessage.observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let {
                 Log.e("DELETE_CONFIRM", it.toString())
+                binding.btnYes.isEnabled = true
             }
         }
     }

@@ -412,11 +412,15 @@ class FriendViewModel @Inject constructor(
     }
 
     // 9. 약속된 틈 취소
+    private val _cancelScheduleSuccess = MutableLiveData<Event<Int>>()
+    val cancelScheduleSuccess: LiveData<Event<Int>> = _cancelScheduleSuccess
+
     fun cancelTeumSchedule(teumId: Int) {
         viewModelScope.launch {
             repository.cancelTeumSchedule(teumId)
                 .onSuccess { result ->
                     _successMessage.value = Event("약속된 틈이 성공적으로 취소되었습니다.")
+                    _cancelScheduleSuccess.value = Event(teumId)
                     Log.d("SCHEDULED_CANCEL", "취소된 유저 ID: ${result.cancelledUserIds}")
                 }
                 .onFailure { e ->
