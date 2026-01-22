@@ -46,6 +46,17 @@ class PromiseDetailBottomSheet(
         return dialog
     }
 
+    override fun onStart() {
+        super.onStart()
+
+        dialog?.findViewById<View>(
+            com.google.android.material.R.id.design_bottom_sheet
+        )?.let { bottomSheet ->
+            bottomSheet.layoutParams.height =
+                (420 * resources.displayMetrics.density).toInt()
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -69,15 +80,22 @@ class PromiseDetailBottomSheet(
         // 참여자 프로필 동적 추가
         showParticipantProfiles(detail)
 
-        // 과거 시간이면 버튼 숨기기
-        binding.btnCancelPromise.visibility = if (isPast) View.GONE else View.VISIBLE
+        val isPastLocal = run {
+            val date = LocalDate.parse(detail.date)
+            val endTime = LocalTime.parse(
+                if (detail.endTime == "24:00") "00:00" else detail.endTime
+            )
+            date.atTime(endTime).isBefore(java.time.LocalDateTime.now())
+        }
+
+        binding.btnCancelPromise.visibility =
+            if (isPastLocal) View.GONE else View.VISIBLE
 
         //  클릭 시 취소 요청만 호출
         binding.btnCancelPromise.setOnClickListener {
-            Log.d("CANCEL_DEBUG", "취소 요청할 스케줄 ID: $scheduleId")
-            viewModel.cancelTeumSchedule(scheduleId)  //  이게 진짜 스케줄 ID
+            FriendTeumDeleteBottomSheet(scheduleId)
+                .show(parentFragmentManager, "FriendTeumDeleteBottomSheet")
         }
-
 
         //  성공 메시지
         viewModel.successMessage.observe(viewLifecycleOwner) { event ->
