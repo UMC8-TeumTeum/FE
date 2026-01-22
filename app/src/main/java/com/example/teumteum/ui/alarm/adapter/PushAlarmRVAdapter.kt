@@ -1,4 +1,4 @@
-package com.example.teumteum.ui.alarm
+package com.example.teumteum.ui.alarm.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

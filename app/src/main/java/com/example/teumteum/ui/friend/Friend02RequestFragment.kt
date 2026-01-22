@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupWindow
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.viewpager2.widget.ViewPager2
@@ -47,6 +49,13 @@ class Friend02RequestFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         (activity as? MainActivity)?.hideBottomBar()
+
+        // 네비게이션 바
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val bottomInset = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom
+            v.setPadding(0, 0, 0, bottomInset)
+            insets
+        }
 
         val receivedList = viewModel.receivedTeums.value.orEmpty()
         val selected = viewModel.selectedTeum.value
@@ -168,10 +177,24 @@ class Friend02RequestFragment : Fragment() {
         // 클릭 리스너 설정
         popupView.findViewById<View>(R.id.btn_profile).setOnClickListener {
             popupWindow.dismiss()
-            val targetFragment = MyProfileFragment()
+
+            val current =
+                teumList.getOrNull(binding.requestViewPager.currentItem)
+                    ?: return@setOnClickListener
+
+            val fragment = FriendProfileFollowingFragment().apply {
+                arguments = Bundle().apply {
+                    // 요청 보낸 사람 id
+                    putInt("userId", current.senderUser.userId)
+
+                    // (선택) 초기 표시용
+//                    putString("name", current.senderUser.nickname)
+                    putString("imageUrl", current.senderUser.profileImageUrl)
+                }
+            }
 
             parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, targetFragment)
+                .replace(R.id.main_frm, fragment)
                 .addToBackStack(null)
                 .commit()
         }

@@ -256,6 +256,22 @@
                     app:flexWrap="wrap"
                     app:justifyContent="flex_start" />
             </LinearLayout>
+
+            <!-- 취소하기 버튼 (내가 보낸 요청 + 상대 미응답일 때만 노출) -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCancelRequest"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:text="요청 취소"
+                android:textSize="16sp"
+                android:fontFamily="@font/noto_sans_kr_medium"
+                android:textColor="@android:color/white"
+                android:visibility="gone"
+                app:cornerRadius="12dp"
+                app:backgroundTint="#0F0F0F" />
+
+
         </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

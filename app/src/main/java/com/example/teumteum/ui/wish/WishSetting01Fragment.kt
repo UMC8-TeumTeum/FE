@@ -220,6 +220,10 @@ class WishSetting01Fragment : Fragment() {
                 .filter { it.type == TimeType.EMPTY }
                 .map { UiTimeSlot(it.startTime.toHHmm(), it.endTime.toHHmm()) }
 
+            // 빈 시간대가 없는 경우 안내 문구 표시
+            val hasEmpty = emptyBlocks.isNotEmpty()
+            binding.timeNotExistsTv.visibility = if (hasEmpty) View.GONE else View.VISIBLE
+
             wishTimeAdapter.submitList(emptyBlocks) {
                 wishTimeAdapter.notifyDataSetChanged()
             }

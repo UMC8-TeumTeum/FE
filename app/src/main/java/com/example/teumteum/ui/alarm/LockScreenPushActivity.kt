@@ -5,6 +5,7 @@ import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.example.teumteum.data.remote.alarm.PushAlarmItem
 import com.example.teumteum.databinding.ActivityLockScreenPushBinding
+import com.example.teumteum.ui.alarm.adapter.PushAlarmRVAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
 import java.util.*

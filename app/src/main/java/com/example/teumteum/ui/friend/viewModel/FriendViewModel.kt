@@ -26,6 +26,7 @@ import com.example.teumteum.data.remote.friend.model.TeumStatusResult
 import com.example.teumteum.data.remote.friend.model.TeumTimeResult
 import com.example.teumteum.data.remote.friend.model.TodoConflictResponse
 import com.example.teumteum.data.remote.friend.repository.FriendRepository
+import com.example.teumteum.data.remote.mypage.model.MyInfoResponse
 import com.example.teumteum.data.remote.mypage.repository.MyPageRepository
 import com.example.teumteum.ui.friend.data.SelectedTime
 import com.example.teumteum.ui.friend.data.TimeCardItem
@@ -104,11 +105,15 @@ class FriendViewModel @Inject constructor(
     fun fetchMyInfo() {
         viewModelScope.launch {
             myPageRepository.getMyInfo()
-                .onSuccess { info: com.example.teumteum.data.remote.mypage.model.MyInfoResponse ->
+                .onSuccess { info: MyInfoResponse ->
                     _myNickname.value = info.nickname
                     _myProfileUrl.value = info.profileImageUrl
+
+                    AppUserManager.userId = info.userId.toInt()
+
+                    Log.d("MY_INFO", "내 userId 세팅됨: ${AppUserManager.userId}")
                 }
-                .onFailure { e: Throwable ->
+                .onFailure { e ->
                     Log.e("MY_INFO", "내 정보 조회 실패: ${e.message}", e)
                 }
         }
@@ -999,6 +1004,37 @@ class FriendViewModel @Inject constructor(
                         "API 실패 → ${e.message}",
                         e
                     )
+                }
+        }
+    }
+
+    // 틈 요청 취소
+    private val _cancelComplete = MutableLiveData<Event<Boolean>>()
+    val cancelComplete: LiveData<Event<Boolean>> get() = _cancelComplete
+
+    fun cancelTeumRequest(requestId: Long) {
+        viewModelScope.launch {
+            repository.cancelTeumRequest(requestId)
+                .onSuccess {
+                    Log.d("TEUM_CANCEL", "틈 요청 취소 성공: requestId=$requestId")
+                    // 성공 이벤트 발생 -> UI에서 감지 후 리스트 갱신/화면 처리
+                    _cancelComplete.value = Event(true)
+
+                    // (선택) 공통 성공 메시지도 같이 쓰고 싶으면
+                    _successMessage.value = Event("요청이 취소되었습니다.")
+                }
+                .onFailure { e ->
+                    Log.e("TEUM_CANCEL", "틈 요청 취소 실패: ${e.message}")
+
+                    val msg = e.message ?: "요청 취소에 실패했습니다."
+
+                    val uiMsg = when {
+                        msg.contains("TEUM4030") -> "본인이 보낸 요청만 취소할 수 있어요."
+                        msg.contains("TEUM4002") -> "이미 마감되었거나 취소된 요청이에요."
+                        else -> msg
+                    }
+
+                    _errorMessage.value = Event(uiMsg)
                 }
         }
     }

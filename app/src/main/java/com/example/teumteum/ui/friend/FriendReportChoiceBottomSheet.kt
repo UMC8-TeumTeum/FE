@@ -10,6 +10,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.Toast
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.activityViewModels
 import com.example.teumteum.R
 import com.example.teumteum.databinding.BottomSheetFriendReportChoiceBinding
@@ -56,6 +58,13 @@ class FriendReportChoiceBottomSheet : BottomSheetDialogFragment() {
         applyCheckBoxTint()
 
         observeReportResult()
+
+        // 네비게이션 바
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val bottomInset = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom
+            v.setPadding(0, 0, 0, bottomInset)
+            insets
+        }
 
         // 1~6만 선택 가능
         setupSingleSelection(binding.optAbuseCb, 8)

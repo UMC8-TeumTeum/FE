@@ -43,6 +43,15 @@
         app:layout_constraintTop_toBottomOf="@id/assign_tv"
         app:layout_constraintStart_toStartOf="@id/back_arrow_iv"/>
 
+    <TextView
+        android:id="@+id/time_not_exists_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="빈 시간은 없지만 투두와 겹치게 등록할 수 있어요"
+        app:layout_constraintTop_toBottomOf="@id/assign_select_tv"
+        app:layout_constraintStart_toStartOf="@id/assign_select_tv"/>
+
     <androidx.cardview.widget.CardView
         android:id="@+id/assign_cv"
         android:layout_width="match_parent"
@@ -54,7 +63,7 @@
         android:backgroundTint="@color/main_1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/assign_select_tv">
+        app:layout_constraintTop_toBottomOf="@id/time_not_exists_tv">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"

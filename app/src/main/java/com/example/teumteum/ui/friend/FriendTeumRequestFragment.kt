@@ -3,6 +3,7 @@ package com.example.teumteum.ui.friend
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -16,6 +17,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.teumteum.R
+import com.example.teumteum.data.AppUserManager
 import com.example.teumteum.databinding.FragmentFriendTeumRequestBinding
 import com.example.teumteum.ui.friend.adapter.TeumRequestAdapter
 import com.example.teumteum.ui.friend.viewModel.FriendViewModel
@@ -108,6 +110,18 @@ class FriendTeumRequestFragment : Fragment() {
             } else {
                 binding.requestHistoryRecyclerView.visibility = View.VISIBLE
                 adapter.submitList(list) // TeumRequestAdapter가 TeumRequestDateResult를 바로 받게 수정
+            }
+        }
+
+        viewModel.cancelComplete.observe(viewLifecycleOwner) { event ->
+            event.getContentIfNotHandled()?.let { success ->
+                if (success) {
+                    // 1) 현재 날짜 리스트 다시 조회
+                    viewModel.loadTeumRequestsByDate(formatDateForApi(selectedDate))
+
+                    // 2) 달력 점도 다시 조회
+                    fetchDotDates()
+                }
             }
         }
 
@@ -254,10 +268,19 @@ class FriendTeumRequestFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        adapter = TeumRequestAdapter()
-        binding.requestHistoryRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        val myUserId = AppUserManager.userId.toLong()
+
+        adapter = TeumRequestAdapter(
+            myUserId = myUserId,
+            onCancelClick = { requestId ->
+                Log.d("CANCEL_CLICK", "취소 클릭됨 requestId=$requestId")
+                viewModel.cancelTeumRequest(requestId)
+            }
+        )
+
+        binding.requestHistoryRecyclerView.layoutManager =
+            LinearLayoutManager(requireContext())
         binding.requestHistoryRecyclerView.adapter = adapter
-        binding.requestHistoryRecyclerView.isVisible = false
     }
 
     //  현재 표시 월에 대해 ‘틈 요청 날짜 리스트’ API 호출

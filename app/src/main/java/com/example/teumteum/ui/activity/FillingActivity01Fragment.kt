@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
@@ -33,6 +34,8 @@ class FillingActivity01Fragment : Fragment() {
 
     private val viewModel: ActivityViewModel by activityViewModels()
 
+    private var isRestoring = false
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -59,12 +62,9 @@ class FillingActivity01Fragment : Fragment() {
         selectedTimeButton = null
         selectedLocationButton = null
         selectedCategoryButton = null
-
-        // 내부 상태 동기화
-        selectedLocationText = binding.fillingActivityLocationEt.text?.toString()?.trim()?.takeIf { it.isNotEmpty() }
-        selectedCategoryText = binding.fillingActivityCategoryEt.text?.toString()?.trim()?.takeIf { it.isNotEmpty() }
-
-        updateNextButtonState()
+        selectedTimeTag = null
+        selectedLocationText = null
+        selectedCategoryText = null
 
         activity?.findViewById<BottomNavigationView>(R.id.main_bnv)?.visibility = View.GONE
 
@@ -97,6 +97,8 @@ class FillingActivity01Fragment : Fragment() {
                 timeBtn.strokeWidth = 4
                 selectedTimeTag = timeBtn.tag as String
                 selectedTimeButton = timeBtn
+
+                viewModel.updateFillingFormState { it.copy(selectedTime = selectedTimeTag) }
                 updateNextButtonState()
             }
         }
@@ -126,6 +128,8 @@ class FillingActivity01Fragment : Fragment() {
                     locationBtn.setBackgroundColor(defaultBg)
                     locationBtn.setTextColor(defaultText)
                     selectedLocationButton = null
+                    viewModel.updateFillingFormState { it.copy(locationId = null, customLocation = null) }
+
                     updateNextButtonState()
                     return@setOnClickListener
                 }
@@ -138,23 +142,33 @@ class FillingActivity01Fragment : Fragment() {
                 locationBtn.setBackgroundColor(selectedBg)
                 locationBtn.setTextColor(selectedText)
                 selectedLocationButton = locationBtn
+
+                val selectedLocationId = locationBtn.tag as? Long
+                viewModel.updateFillingFormState { it.copy(locationId = selectedLocationId, customLocation = null) }
+
                 updateNextButtonState()
             }
         }
 
         binding.fillingActivityLocationEt.doOnTextChanged { text, _, _, _ ->
-            val categoryText = text?.toString()?.trim()
+            if (isRestoring) return@doOnTextChanged
 
-            // 직접 입력이 있으면 selectedCategoryText에 반영
-            selectedLocationText = if (!categoryText.isNullOrEmpty()) categoryText else null
+            val locationText = text?.toString()?.trim()
+
+            // 직접 입력이 있으면 selectedLocationText에 반영
+            selectedLocationText = if (!locationText.isNullOrEmpty()) locationText else null
 
             // 직접 입력 선택 시 위치 버튼 해제
-            if (!categoryText.isNullOrEmpty() && selectedLocationButton != null) {
-                (selectedLocationButton as? android.widget.TextView)?.apply {
+            if (!locationText.isNullOrEmpty() && selectedLocationButton != null) {
+                (selectedLocationButton as? TextView)?.apply {
                     setBackgroundColor(defaultBg)
                     setTextColor(defaultText)
                 }
                 selectedLocationButton = null
+            }
+
+            viewModel.updateFillingFormState {
+                it.copy(customLocation = selectedLocationText, locationId = null)
             }
 
             // 버튼 상태 갱신
@@ -186,6 +200,9 @@ class FillingActivity01Fragment : Fragment() {
                     categoryBtn.setBackgroundColor(defaultBg)
                     categoryBtn.setTextColor(defaultText)
                     selectedCategoryButton = null
+
+                    viewModel.updateFillingFormState { it.copy(categoryId = null, customCategory = null) }
+
                     updateNextButtonState()
                     return@setOnClickListener
                 }
@@ -198,11 +215,17 @@ class FillingActivity01Fragment : Fragment() {
                 categoryBtn.setBackgroundColor(selectedBg)
                 categoryBtn.setTextColor(selectedText)
                 selectedCategoryButton = categoryBtn
+
+                val selectedCategoryId = categoryBtn.tag as? Long
+                viewModel.updateFillingFormState { it.copy(categoryId = selectedCategoryId, customCategory = null) }
+
                 updateNextButtonState()
             }
         }
 
         binding.fillingActivityCategoryEt.doOnTextChanged { text, _, _, _ ->
+            if (isRestoring) return@doOnTextChanged
+
             val categoryText = text?.toString()?.trim()
 
             // 직접 입력이 있으면 selectedCategoryText에 반영
@@ -210,11 +233,15 @@ class FillingActivity01Fragment : Fragment() {
 
             // 직접 입력 선택 시 카테고리 버튼 해제
             if (!categoryText.isNullOrEmpty() && selectedCategoryButton != null) {
-                (selectedCategoryButton as? android.widget.TextView)?.apply {
+                (selectedCategoryButton as? TextView)?.apply {
                     setBackgroundColor(defaultBg)
                     setTextColor(defaultText)
                 }
                 selectedCategoryButton = null
+            }
+
+            viewModel.updateFillingFormState {
+                it.copy(customCategory = selectedCategoryText, categoryId = null)
             }
 
             // 버튼 상태 갱신
@@ -222,6 +249,7 @@ class FillingActivity01Fragment : Fragment() {
         }
 
         binding.backArrowIv.setOnClickListener {
+            viewModel.clearFillingFormState()
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
 
@@ -271,11 +299,116 @@ class FillingActivity01Fragment : Fragment() {
 
         setupObservers()
 
-        // 초기화 이벤트 수신
-        parentFragmentManager.setFragmentResultListener("reset_form", viewLifecycleOwner) { _, _ ->
-            clearAllInputs()
+        restoreFormFromViewModel() // viewModel 값으로 ui 복원
+        updateNextButtonState()
+    }
+
+    private fun restoreFormFromViewModel() {
+        val state = viewModel.fillingFormState.value ?: return
+
+        val selectedStroke = ContextCompat.getColor(requireContext(), R.color.main_1)
+        val defaultStroke = ContextCompat.getColor(requireContext(), R.color.teumteum_bg)
+
+        val selectedBg = ContextCompat.getColor(requireContext(), R.color.main_1)
+        val selectedText = ContextCompat.getColor(requireContext(), R.color.white)
+        val defaultBg = ContextCompat.getColor(requireContext(), R.color.main_2)
+        val defaultText = ContextCompat.getColor(requireContext(), R.color.text_primary)
+
+        isRestoring = true
+        try {
+            // 시간 복원
+            val timeCards = listOf(
+                binding.fillingActivityTime01Cv.apply { tag = "10m" },
+                binding.fillingActivityTime02Cv.apply { tag = "20m" },
+                binding.fillingActivityTime03Cv.apply { tag = "30m" },
+                binding.fillingActivityTime04Cv.apply { tag = "1h" }
+            )
+
+            timeCards.forEach {
+                it.strokeColor = defaultStroke
+                it.strokeWidth = 0
+            }
+
+            selectedTimeTag = state.selectedTime
+            val timeView = timeCards.firstOrNull { it.tag == state.selectedTime }
+            timeView?.let {
+                it.strokeColor = selectedStroke
+                it.strokeWidth = 4
+                selectedTimeButton = it
+            }
+
+            // 위치 복원
+            val locationButtons = listOf(
+                binding.btnFillingActivityLocation01,
+                binding.btnFillingActivityLocation02,
+                binding.btnFillingActivityLocation03,
+                binding.btnFillingActivityLocation04,
+                binding.btnFillingActivityLocation05,
+                binding.btnFillingActivityLocation06
+            )
+
+            locationButtons.forEach {
+                it.setBackgroundColor(defaultBg)
+                it.setTextColor(defaultText)
+            }
+            selectedLocationButton = null
+            selectedLocationText = null
+            binding.fillingActivityLocationEt.setText("")
+
+            when {
+                state.locationId != null -> {
+                    val btn = locationButtons.firstOrNull { (it.tag as? Long) == state.locationId }
+                    btn?.let {
+                        it.setBackgroundColor(selectedBg)
+                        it.setTextColor(selectedText)
+                        selectedLocationButton = it
+                    }
+                }
+                !state.customLocation.isNullOrBlank() -> {
+                    binding.fillingActivityLocationEt.setText(state.customLocation)
+                    selectedLocationText = state.customLocation
+                }
+            }
+
+            // 카테고리 복원
+            val categoryButtons = listOf(
+                binding.btnFillingActivityCategory01,
+                binding.btnFillingActivityCategory02,
+                binding.btnFillingActivityCategory03,
+                binding.btnFillingActivityCategory04,
+                binding.btnFillingActivityCategory05,
+                binding.btnFillingActivityCategory06
+            )
+
+            categoryButtons.forEach {
+                it.setBackgroundColor(defaultBg)
+                it.setTextColor(defaultText)
+            }
+            selectedCategoryButton = null
+            selectedCategoryText = null
+            binding.fillingActivityCategoryEt.setText("")
+
+            when {
+                state.categoryId != null -> {
+                    val btn = categoryButtons.firstOrNull { (it.tag as? Long) == state.categoryId }
+                    btn?.let {
+                        it.setBackgroundColor(selectedBg)
+                        it.setTextColor(selectedText)
+                        selectedCategoryButton = it
+                    }
+                }
+                !state.customCategory.isNullOrBlank() -> {
+                    binding.fillingActivityCategoryEt.setText(state.customCategory)
+                    selectedCategoryText = state.customCategory
+                }
+            }
+
+            updateNextButtonState()
+        } finally {
+            isRestoring = false
         }
     }
+
 
     private fun updateNextButtonState() {
 
@@ -305,69 +438,19 @@ class FillingActivity01Fragment : Fragment() {
         }
     }
 
-    private fun clearAllInputs() {
-        val defaultStroke = ContextCompat.getColor(requireContext(), R.color.teumteum_bg)
-        val defaultBg = ContextCompat.getColor(requireContext(), R.color.main_2)
-        val defaultText = ContextCompat.getColor(requireContext(), R.color.text_primary)
-
-        // 시간 카드 초기화
-        val timeCards = listOf(
-            binding.fillingActivityTime01Cv,
-            binding.fillingActivityTime02Cv,
-            binding.fillingActivityTime03Cv,
-            binding.fillingActivityTime04Cv
-        )
-        timeCards.forEach {
-            it.strokeColor = defaultStroke
-            it.strokeWidth = 0
-        }
-        selectedTimeTag = null
-        selectedTimeButton = null
-
-        // 위치 버튼 초기화
-        val locationButtons = listOf(
-            binding.btnFillingActivityLocation01,
-            binding.btnFillingActivityLocation02,
-            binding.btnFillingActivityLocation03,
-            binding.btnFillingActivityLocation04,
-            binding.btnFillingActivityLocation05,
-            binding.btnFillingActivityLocation06
-        )
-        locationButtons.forEach {
-            it.setBackgroundColor(defaultBg)
-            it.setTextColor(defaultText)
-        }
-        selectedLocationButton = null
-        selectedLocationText = null
-        binding.fillingActivityLocationEt.setText("")
-
-        // 카테고리 버튼 초기화
-        val categoryButtons = listOf(
-            binding.btnFillingActivityCategory01,
-            binding.btnFillingActivityCategory02,
-            binding.btnFillingActivityCategory03,
-            binding.btnFillingActivityCategory04,
-            binding.btnFillingActivityCategory05,
-            binding.btnFillingActivityCategory06
-        )
-        categoryButtons.forEach {
-            it.setBackgroundColor(defaultBg)
-            it.setTextColor(defaultText)
-        }
-        selectedCategoryButton = null
-        selectedCategoryText = null
-        binding.fillingActivityCategoryEt.setText("")
-
-        binding.searchBtn.isEnabled = false
-
-        updateNextButtonState()
-
-        // 포커스 해제
-        binding.root.clearFocus()
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
+        selectedTimeButton = null
+        selectedLocationButton = null
+        selectedCategoryButton = null
         _binding = null
+    }
+
+    override fun onDestroy() {
+        // 폼 초기화
+        if (isRemoving || (activity?.isFinishing == true)) {
+            viewModel.clearFillingFormState()
+        }
+        super.onDestroy()
     }
 }

@@ -1,4 +1,4 @@
-package com.example.teumteum.ui.alarm.viewmodel
+package com.example.teumteum.ui.alarm.viewModel
 
 
 import androidx.lifecycle.LiveData
