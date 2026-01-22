@@ -72,6 +72,18 @@ class AlarmFragment : Fragment() {
 
     private fun observeViewModel() {
         viewModel.items.observe(viewLifecycleOwner) { list ->
+
+            // 알림이 오지 않은 경우
+            val isEmpty = list.isNullOrEmpty()
+            binding.alarmNotExistsCv.visibility = if (isEmpty) View.VISIBLE else View.GONE
+            binding.alarmRv.visibility = if (isEmpty) View.GONE else View.VISIBLE
+
+            // 비어있는 경우 어댑터 비우고 종료
+            if (isEmpty) {
+                adapter.replaceAll(emptyList())
+                return@observe
+            }
+
             // 첫 페이지인지 아닌지에 따라 처리
             if (adapter.itemCount == 0) {
                 adapter.replaceAll(list)
