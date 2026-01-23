@@ -48,11 +48,9 @@
             android:id="@+id/star_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="229dp"
+            android:layout_marginStart="235dp"
             android:layout_marginTop="67dp"
-            android:layout_marginRight="93dp"
             android:src="@drawable/friend_profile_star"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/back_btn"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -60,12 +58,12 @@
             android:id="@+id/send_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="300dp"
-            android:layout_marginTop="67dp"
+            android:layout_marginStart="14dp"
+            android:layout_marginEnd="23dp"
             android:src="@drawable/friend_profile_send"
             app:layout_constraintEnd_toStartOf="@+id/setting_btn"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toEndOf="@+id/star_btn"
+            app:layout_constraintTop_toTopOf="@+id/star_btn" />
 
         <ImageView
             android:id="@+id/setting_btn"
