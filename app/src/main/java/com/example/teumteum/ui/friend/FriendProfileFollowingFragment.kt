@@ -1,6 +1,7 @@
 package com.example.teumteum.ui.friend
 
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -174,7 +175,7 @@ class FriendProfileFollowingFragment : Fragment() {
         val popupView = layoutInflater.inflate(R.layout.popup_friend_options, null)
         val density = resources.displayMetrics.density
 
-        val widthPx = (170 * density).toInt()
+        val widthPx = (160 * density).toInt()
         val heightPx = ViewGroup.LayoutParams.WRAP_CONTENT
 
         val popupWindow = PopupWindow(
@@ -187,10 +188,16 @@ class FriendProfileFollowingFragment : Fragment() {
         popupWindow.isOutsideTouchable = true
         popupWindow.isFocusable = true
 
-        val xPos = (220 * density).toInt()
-        val yPos = (99 * density).toInt()
+        popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        popupWindow.elevation = 0f
 
-        popupWindow.showAtLocation(anchorView, Gravity.TOP or Gravity.START, xPos, yPos)
+
+        // anchorView 기준으로 위치 계산
+        popupWindow.showAsDropDown(
+            anchorView,
+            anchorView.width - widthPx, // 오른쪽 정렬
+            6                            // 바로 아래
+        )
 
         // 차단 버튼 클릭
         popupView.findViewById<View>(R.id.btn_block).setOnClickListener {

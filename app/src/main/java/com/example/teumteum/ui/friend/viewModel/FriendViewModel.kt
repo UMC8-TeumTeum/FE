@@ -642,10 +642,10 @@ class FriendViewModel @Inject constructor(
                             item
                         }
                     }
-                    _successMessage.value = Event("틈 요청 읽음 처리 성공")
+//                    _successMessage.value = Event("틈 요청 읽음 처리 성공")
                 }
                 .onFailure { e ->
-                    _errorMessage.value = Event("틈 요청 읽음 처리 실패 (${e.message})")
+//                    _errorMessage.value = Event("틈 요청 읽음 처리 실패 (${e.message})")
                     Log.d("ReadTeumRequest", _errorMessage.value.toString())
                 }
         }

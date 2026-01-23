@@ -1,5 +1,7 @@
 package com.example.teumteum.ui.friend
 
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -85,12 +87,10 @@ class Friend02RequestFragment : Fragment() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
                 val current = teumList.getOrNull(position) ?: return
-                viewModel.selectTeum(current)   //선택된 아이템 갱신
-                if(current.read == false){  //읽은 상태가 아니면
-                    viewModel.readTeumRequest(current.responseId)   //읽기 요청
-                }
+                viewModel.selectTeum(current)
             }
         })
+
 
         // 6. 인디케이터
         binding.dotsIndicator.setViewPager2(binding.requestViewPager)
@@ -169,10 +169,16 @@ class Friend02RequestFragment : Fragment() {
         popupWindow.isOutsideTouchable = true
         popupWindow.isFocusable = true
 
-        val xPos = (210 * density).toInt() // Left
-        val yPos = (99 * density).toInt()  // Top
+        popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        popupWindow.elevation = 0f
 
-        popupWindow.showAtLocation(anchorView, Gravity.TOP or Gravity.START, xPos, yPos)
+
+        // anchorView 기준으로 위치 계산
+        popupWindow.showAsDropDown(
+            anchorView,
+            anchorView.width - widthPx, // 오른쪽 정렬
+            6                            // 바로 아래
+        )
 
         // 클릭 리스너 설정
         popupView.findViewById<View>(R.id.btn_profile).setOnClickListener {
