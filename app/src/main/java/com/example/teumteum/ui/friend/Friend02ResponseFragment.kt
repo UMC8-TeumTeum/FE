@@ -1,5 +1,7 @@
 package com.example.teumteum.ui.friend
 
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -18,7 +20,7 @@ import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class Friend02ResponseFragment  : Fragment(){
+class Friend02ResponseFragment  : Fragment() {
 
     private var _binding: FragmentFriend02ResponseBinding? = null
     private val binding get() = _binding!!
@@ -51,7 +53,10 @@ class Friend02ResponseFragment  : Fragment(){
         }
 
         binding.backButton.setOnClickListener {
-            parentFragmentManager.popBackStack(null, androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE)
+            parentFragmentManager.popBackStack(
+                null,
+                androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
+            )
             parentFragmentManager.beginTransaction()
                 .replace(R.id.main_frm, FriendFragment())
                 .commit()
@@ -108,14 +113,16 @@ class Friend02ResponseFragment  : Fragment(){
         popupWindow.isOutsideTouchable = true
         popupWindow.isFocusable = true
 
-        popupWindow.setBackgroundDrawable(
-            android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT)
+        popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        popupWindow.elevation = 0f
+
+
+        // anchorView 기준으로 위치 계산
+        popupWindow.showAsDropDown(
+            anchorView,
+            anchorView.width - widthPx, // 오른쪽 정렬
+            6                            // 바로 아래
         )
-
-        val xPos = (210 * density).toInt() // Left
-        val yPos = (99 * density).toInt()  // Top
-
-        popupWindow.showAtLocation(anchorView, Gravity.TOP or Gravity.START, xPos, yPos)
 
         // 클릭 리스너 설정
         popupView.findViewById<View>(R.id.btn_profile).setOnClickListener {
@@ -145,7 +152,8 @@ class Friend02ResponseFragment  : Fragment(){
         popupView.findViewById<View>(R.id.btn_report).setOnClickListener {
             popupWindow.dismiss()
 
-            val current = teumList.getOrNull(binding.requestViewPager.currentItem) ?: return@setOnClickListener
+            val current = teumList.getOrNull(binding.requestViewPager.currentItem)
+                ?: return@setOnClickListener
 
             // 신고 대상: 받은 틈 요청 자체
             val targetType = "TEUM_REQUEST"
@@ -164,8 +172,8 @@ class Friend02ResponseFragment  : Fragment(){
     }
 
     companion object {
-        fun newInstance(teumList: ArrayList<TeumReceivedItem>): Friend02RequestFragment {
-            return Friend02RequestFragment().apply {
+        fun newInstance(teumList: ArrayList<TeumReceivedItem>): Friend02ResponseFragment {
+            return Friend02ResponseFragment().apply {
                 arguments = Bundle().apply {
                     putParcelableArrayList("teumList", teumList)
                 }
