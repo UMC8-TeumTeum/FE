@@ -117,7 +117,7 @@
             app:layout_constraintTop_toBottomOf="@id/labelLeftBottom"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <com.example.teumteum.ui.main.DashCurveView
+        <com.umc.teumteum.ui.main.DashCurveView
             android:id="@+id/dashRightTop"
             android:layout_width="61dp"
             android:layout_height="62dp"
@@ -134,7 +134,7 @@
             app:layout_constraintEnd_toEndOf="@id/labelRightTop"
             app:layout_constraintTop_toBottomOf="@id/labelRightTop" />
 
-        <com.example.teumteum.ui.main.DashCurveView
+        <com.umc.teumteum.ui.main.DashCurveView
             android:id="@+id/dashTop"
             android:layout_width="2dp"
             android:layout_height="90dp"
@@ -151,7 +151,7 @@
             app:layout_constraintEnd_toEndOf="@id/labelTop"
             app:layout_constraintTop_toBottomOf="@id/labelTop" />
 
-        <com.example.teumteum.ui.main.DashCurveView
+        <com.umc.teumteum.ui.main.DashCurveView
             android:id="@+id/dashLeftTop"
             android:layout_width="61dp"
             android:layout_height="62dp"
@@ -168,7 +168,7 @@
             app:layout_constraintStart_toStartOf="@id/labelLeftTop"
             app:layout_constraintTop_toBottomOf="@id/labelLeftTop" />
 
-        <com.example.teumteum.ui.main.DashCurveView
+        <com.umc.teumteum.ui.main.DashCurveView
             android:id="@+id/dashLeftBottom"
             android:layout_width="59dp"
             android:layout_height="58dp"
@@ -185,7 +185,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/dashLeftTop" />
 
-        <com.example.teumteum.ui.main.DashCurveView
+        <com.umc.teumteum.ui.main.DashCurveView
             android:id="@+id/dashRightBottom"
             android:layout_width="30dp"
             android:layout_height="2dp"

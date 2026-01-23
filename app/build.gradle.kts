@@ -14,7 +14,7 @@ val properties = Properties().apply {
 }
 
 android {
-    namespace = "com.example.teumteum"
+    namespace = "com.umc.teumteum"
     compileSdk = 35
 
     buildFeatures {
@@ -23,7 +23,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.teumteum"
+        applicationId = "com.umc.teumteum"
         minSdk = 26
         targetSdk = 35
         versionCode = 1
