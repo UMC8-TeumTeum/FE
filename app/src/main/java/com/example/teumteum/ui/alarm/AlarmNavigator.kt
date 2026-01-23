@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import com.example.teumteum.data.remote.alarm.dto.NotificationResponse
 import com.example.teumteum.data.remote.alarm.dto.enums.NotificationType
 import com.example.teumteum.ui.friend.FriendFragment
+import com.example.teumteum.ui.friend.FriendProfileFollowFragment
 import com.example.teumteum.ui.friend.FriendPromiseFragment
 import com.example.teumteum.ui.friend.FriendTeumRequestFragment
 
@@ -19,7 +20,7 @@ object AlarmNavigator {
         val cl = host.requireContext().classLoader
 
         val className = when (n.type) {
-            NotificationType.FOLLOW -> FriendFragment::class.java.name
+            NotificationType.FOLLOW -> FriendProfileFollowFragment::class.java.name
             NotificationType.TEUM_REQUEST -> FriendTeumRequestFragment::class.java.name
             NotificationType.TEUM_ACCEPTED -> FriendPromiseFragment::class.java.name
             NotificationType.TEUM_DECLINED -> FriendTeumRequestFragment::class.java.name

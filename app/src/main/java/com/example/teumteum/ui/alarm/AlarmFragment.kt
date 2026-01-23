@@ -10,9 +10,11 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.teumteum.R
+import com.example.teumteum.data.remote.alarm.dto.enums.NotificationType
 import com.example.teumteum.databinding.FragmentHomeAlarmBinding
 import com.example.teumteum.ui.alarm.adapter.AlarmRVAdapter
 import com.example.teumteum.ui.alarm.viewModel.NotificationViewModel
+import com.example.teumteum.ui.friend.FriendProfileFollowFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -38,11 +40,18 @@ class AlarmFragment : Fragment() {
 
         // 어댑터 생성 시 콜백에서 네비게이터 + 트랜젝션 방식 적용
         adapter = AlarmRVAdapter(mutableListOf()) { notification ->
-            val fragment = AlarmNavigator.createFragmentFor(this, notification)
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, fragment)
-                .addToBackStack(null)
-                .commit()
+
+            val fragment = if (notification.type == NotificationType.FOLLOW) {
+                FriendProfileFollowFragment().apply {
+                    arguments = Bundle().apply {
+                        putInt("userId", notification.friendId) // 여기 인수명은 userId로 유지
+                    }
+                }
+            } else {
+                AlarmNavigator.createFragmentFor(this, notification)
+            }
+
+            navigateFromAlarm(fragment)
         }
 
         val lm = LinearLayoutManager(requireContext())
@@ -101,6 +110,29 @@ class AlarmFragment : Fragment() {
             msg?.let { Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show() }
         }
     }
+
+    private fun navigateFromAlarm(target: Fragment) {
+        val fm = parentFragmentManager
+        val bottomNav =
+            requireActivity().findViewById<BottomNavigationView>(R.id.main_bnv)
+
+        // 1) BottomNavigation 선택 상태를 "친구"로 맞춘다
+        bottomNav.selectedItemId = R.id.fragment_friend   // ⬅️ 친구 탭 id
+
+        // 2) FriendFragment를 루트로 교체 (백스택 X)
+        fm.beginTransaction()
+            .replace(R.id.main_frm, com.example.teumteum.ui.friend.FriendFragment())
+            .commit()
+
+        fm.executePendingTransactions()
+
+        // 3) 알림 목적지 Fragment를 그 위에 올림 (백스택 O)
+        fm.beginTransaction()
+            .replace(R.id.main_frm, target)
+            .addToBackStack("from_alarm")
+            .commit()
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
