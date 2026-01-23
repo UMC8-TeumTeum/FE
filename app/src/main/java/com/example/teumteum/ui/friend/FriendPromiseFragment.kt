@@ -3,6 +3,7 @@ package com.example.teumteum.ui.friend
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.util.Log
 import android.util.TypedValue
 import android.view.*
 import android.widget.LinearLayout
@@ -17,6 +18,7 @@ import com.example.teumteum.ui.alarm.AlarmNavigator
 import com.example.teumteum.ui.friend.adapter.TeumEventAdapter
 import com.example.teumteum.ui.friend.viewModel.FriendViewModel
 import com.example.teumteum.ui.main.MainActivity
+import com.example.teumteum.ui.myhome.viewModel.MyHomeViewModel
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.DayPosition
 import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
@@ -37,6 +39,7 @@ class FriendPromiseFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: FriendViewModel by viewModels()
+    private val myHomeViewModel: MyHomeViewModel by viewModels()
 
     private val today = LocalDate.now()
     private var selectedDate: LocalDate = LocalDate.now()
@@ -71,8 +74,14 @@ class FriendPromiseFragment : Fragment() {
         (activity as? MainActivity)?.hideBottomBar()
 
         // 1) 번들로 전달받은 내 닉네임/프로필 표시
-        val nickname = arguments?.getString("nickname")
-        binding.tvName.text = ((nickname ?: "닉네임") + "님의")
+        myHomeViewModel.nickname.observe(viewLifecycleOwner) { myNick ->
+            binding.tvName.text = "${myNick ?: "닉네임"}님의"
+        }
+
+        // 아직 조회 안 했으면 조회
+        if (!myHomeViewModel.isLoaded) {
+            myHomeViewModel.getMyInfo()
+        }
 
         // 2) 알림에서 전달된 date로 초기 날짜 세팅
         val argDateStr = arguments?.getString(AlarmNavigator.ARG_TARGET_DATE)
@@ -80,13 +89,11 @@ class FriendPromiseFragment : Fragment() {
             argDateStr?.takeIf { it.isNotBlank() }?.let { LocalDate.parse(it) }
         }.getOrNull()
 
+        Log.d("FriendPromiseFragment", "ARG_TARGET_DATE=$argDateStr, initialDate=$initialDate")
+
         if (initialDate != null) {
             selectedDate = initialDate
             visibleMonth = YearMonth.from(initialDate)
-        } else {
-            // 기존 기본값 유지
-            selectedDate = LocalDate.now()
-            visibleMonth = YearMonth.now()
         }
 
         calendarView = binding.calendarView
@@ -102,6 +109,24 @@ class FriendPromiseFragment : Fragment() {
         lastRequestedMonth = null
         // arguments에서 friendUserId 읽은 뒤에 호출
         fetchDotDates()
+
+        // 알림 화면에서 진입: 틈 날짜 자동 선택
+        initialDate?.let { target ->
+            val oldSelected = today
+            val targetMonth = YearMonth.from(target)
+
+            selectedDate = target
+            visibleMonth = targetMonth
+
+            calendarView.scrollToMonth(targetMonth)
+
+            // 달 바인딩
+            calendarView.notifyMonthChanged(targetMonth)
+            calendarView.notifyDateChanged(oldSelected)
+            calendarView.notifyDateChanged(selectedDate)
+
+            updateHeader()
+        }
 
         binding.btnBack.setOnClickListener {
             requireActivity().onBackPressed()

@@ -1,6 +1,7 @@
 package com.example.teumteum.ui.alarm
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import com.example.teumteum.data.remote.alarm.dto.NotificationResponse
 import com.example.teumteum.data.remote.alarm.dto.enums.NotificationType
@@ -28,6 +29,8 @@ object AlarmNavigator {
 
         return factory.instantiate(cl, className).apply {
             arguments = (arguments ?: Bundle()).apply {
+
+                Log.d("AlarmNavigator", "type=${n.type}, relatedId=${n.relatedId}, date=${n.date}, createdAt=${n.createdAt}")
 
                 // 틈 요청/확정 알림이면 date 전달
                 if (n.type == NotificationType.TEUM_REQUEST || n.type == NotificationType.TEUM_ACCEPTED) {
