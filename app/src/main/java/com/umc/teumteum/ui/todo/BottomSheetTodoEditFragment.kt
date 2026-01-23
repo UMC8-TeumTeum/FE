@@ -1,0 +1,1400 @@
+package com.umc.teumteum.ui.todo
+
+import android.app.Dialog
+import android.content.Context
+import android.graphics.Typeface
+import android.graphics.drawable.GradientDrawable
+import android.os.Bundle
+import android.util.Log
+import android.util.TypedValue
+import android.view.Gravity
+import android.view.KeyEvent
+import android.view.LayoutInflater
+import android.view.MotionEvent
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.NumberPicker
+import android.widget.PopupWindow
+import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.SwitchCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.umc.teumteum.R
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+
+import com.umc.teumteum.data.remote.todo.model.EditTodoRequest
+import com.umc.teumteum.data.remote.todo.model.ReminderAlarm
+import com.umc.teumteum.data.remote.todo.model.enums.AlarmStatus
+import com.umc.teumteum.data.remote.todo.model.enums.ScheduleType
+import com.umc.teumteum.databinding.BottomSheetTodoEditBinding
+import com.umc.teumteum.databinding.DialogConfirmAiContentDeleteBinding
+import com.umc.teumteum.databinding.DialogConfirmTeumDeleteBinding
+import com.umc.teumteum.databinding.DialogConfirmTodoDeleteBinding
+import com.umc.teumteum.databinding.DialogConfirmTodoEditBinding
+import com.umc.teumteum.databinding.DialogConfirmWishDeleteBinding
+
+import com.umc.teumteum.ui.friend.viewModel.FriendViewModel
+import com.umc.teumteum.ui.todo.adapter.TeumProfileAdapter
+import com.umc.teumteum.ui.todo.data.ActiveTimePicker
+import com.umc.teumteum.ui.todo.viewModel.TodoViewModel
+import com.umc.teumteum.utils.TimeUtils.combineDateTime
+import com.umc.teumteum.utils.applyPickerValue
+import com.umc.teumteum.utils.dpToPx
+import com.umc.teumteum.utils.enableTapToNext
+import com.umc.teumteum.utils.moveCalendarMonth
+import com.umc.teumteum.utils.parseKoreanAmPmTimeToPickerValue
+import com.umc.teumteum.utils.weekdayShortKorean
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.kizitonwose.calendar.core.CalendarDay
+import com.kizitonwose.calendar.core.DayPosition
+import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
+import com.kizitonwose.calendar.view.MonthDayBinder
+import com.kizitonwose.calendar.view.ViewContainer
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.YearMonth
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
+import java.util.Locale
+import kotlin.math.max
+
+@AndroidEntryPoint
+class BottomSheetTodoEditFragment : BottomSheetDialogFragment() {
+
+    private var _binding: BottomSheetTodoEditBinding? = null
+    private val binding get() = _binding!!
+
+    private var currentTargetTextView: TextView? = null
+
+    private var todoId: Long = -1
+
+    private val profileAdapter by lazy { TeumProfileAdapter() }
+
+    private var popupWindow: PopupWindow? = null
+
+    private val alarmLabelToMinutes = mutableMapOf(
+        "30분 전" to 30,
+        "10분 전" to 10,
+        "5분 전" to 5,
+        "3분 전" to 3,
+        "1분 전" to 1
+    )
+
+    private val minutesToLabel = alarmLabelToMinutes.entries.associate { (k, v) -> v to k }.toMutableMap()
+    private val selectedItems = mutableSetOf<String>()
+    private val alarmOptions = mutableListOf<String>().apply { addAll(alarmLabelToMinutes.keys) }
+
+    private var isCalendarVisible = false
+    private var isStartDateSelected = true
+    private var selectedStartDate: LocalDate = LocalDate.now()
+    private var selectedEndDate: LocalDate = LocalDate.now()
+    private val today: LocalDate = LocalDate.now()
+
+    private val viewModel: TodoViewModel by activityViewModels()
+    private val friendViewModel: FriendViewModel by activityViewModels()
+
+    private var originalTitle: String = ""
+    private var originalStartTime: String = ""
+    private var originalEndTime: String = ""
+    private var originalDescription: String = ""
+    private var originalIsPublic: Boolean = false
+    private var originalIncludeTeum: Boolean = false
+    private var originalRemindAlarm: List<ReminderAlarm> = emptyList()
+
+    private var _normalTextColor: Int? = null
+    private var _normalHintColor: Int? = null
+
+    private val minuteOptions = arrayOf("00", "10", "20", "30", "40", "50")
+
+    private val headerFormatter = DateTimeFormatter.ofPattern("yyyy년 M월 d일", Locale.KOREAN)
+
+    private var visibleStartMonth: YearMonth = YearMonth.now()
+    private var visibleEndMonth: YearMonth = YearMonth.now()
+
+    private var activeTimePicker: ActiveTimePicker = ActiveTimePicker.NONE
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        todoId = arguments?.getLong("todo_id") ?: -1L
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View {
+        _binding = BottomSheetTodoEditBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        visibleStartMonth = YearMonth.from(selectedStartDate)
+        visibleEndMonth = YearMonth.from(selectedEndDate)
+
+        updateMonthHeader01()
+        updateMonthHeader02()
+
+        setupCalendarMonthNavigation()
+
+        val scheduleType: ScheduleType = arguments?.getString("schedule_type")
+            ?.let { runCatching { ScheduleType.valueOf(it) }.getOrNull() }
+            ?: ScheduleType.TODO
+
+        val label = when (scheduleType) {
+            ScheduleType.TODO    -> "투두"
+            ScheduleType.AI      -> "AI 콘텐츠"
+            ScheduleType.TEUM    -> "틈 약속"
+            ScheduleType.ROUTINE -> "투두"
+            ScheduleType.WISH    -> "위시"
+        }
+
+        binding.btnTodo.text = label
+
+        binding.profileImageRc.apply {
+            layoutManager = LinearLayoutManager(
+                requireContext(),
+                LinearLayoutManager.HORIZONTAL,
+                false
+            )
+            adapter = profileAdapter
+        }
+
+        resetAlarmUI()
+        setupPickers()
+
+        setupStartCalendar()
+        setupEndCalendar()
+
+        setupWeekdayLabels()
+        setupClickListeners(scheduleType)
+        setupObservers()
+        setupTitleImeDone()
+        setupTapOutsideToApplyTime()
+
+        // 원래 스크롤뷰 패딩 저장
+        val originalBottomPadding = binding.editScroll.paddingBottom
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
+            val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            val sysBottom = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom
+
+            // 추가 확보 공간
+            val extra = max(0, imeBottom - sysBottom)
+
+            binding.editScroll.updatePadding(
+                bottom = originalBottomPadding + extra
+            )
+
+            // 키보드 올라오면 하단 버튼 숨김
+            binding.todoBottomBar.isVisible = imeBottom == 0
+
+            insets
+        }
+
+        if (todoId != -1L) {
+            viewModel.getTodo(todoId)
+        }
+    }
+
+    private fun setupClickListeners(scheduleType: ScheduleType) {
+        binding.startTimeTv.setOnClickListener {
+            if (isCalendarVisible) {
+                toggleCalendarVisibility(show = false)
+            }
+
+            val isVisibleNow = binding.timePickerStartContainer.isVisible
+            if (isVisibleNow) {
+                applySelectedTime(isStart = true)
+                activeTimePicker = ActiveTimePicker.NONE
+            } else {
+                parseKoreanAmPmTimeToPickerValue(
+                    timeText = binding.startTimeTv.text.toString(),
+                    minuteOptions = minuteOptions
+                )?.let { v ->
+                    binding.ampmPicker01Np.applyPickerValue(
+                        hourPicker = binding.hourPicker01Np,
+                        minutePicker = binding.minutePicker01Np,
+                        value = v
+                    )
+                }
+                activeTimePicker = ActiveTimePicker.START
+            }
+
+            binding.timePickerStartContainer.isVisible = !isVisibleNow
+            binding.timePickerEndContainer.isVisible = false
+            currentTargetTextView = binding.startTimeTv.takeIf { !isVisibleNow }
+        }
+
+        binding.endTimeTv.setOnClickListener {
+            if (isCalendarVisible) {
+                toggleCalendarVisibility(show = false)
+            }
+
+            val isVisibleNow = binding.timePickerEndContainer.isVisible
+            if (isVisibleNow) {
+                applySelectedTime(isStart = false)
+                activeTimePicker = ActiveTimePicker.NONE
+            } else {
+                parseKoreanAmPmTimeToPickerValue(
+                    timeText = binding.endTimeTv.text.toString(),
+                    minuteOptions = minuteOptions
+                )?.let { v ->
+                    binding.ampmPicker02Np.applyPickerValue(
+                        hourPicker = binding.hourPicker02Np,
+                        minutePicker = binding.minutePicker02Np,
+                        value = v
+                    )
+                }
+                activeTimePicker = ActiveTimePicker.END
+            }
+
+            binding.timePickerEndContainer.isVisible = !isVisibleNow
+            binding.timePickerStartContainer.isVisible = false
+            currentTargetTextView = binding.endTimeTv.takeIf { !isVisibleNow }
+        }
+
+        listOf(binding.ampmPicker01Np, binding.hourPicker01Np, binding.minutePicker01Np).forEach {
+            it.setOnValueChangedListener { _, _, _ -> }
+        }
+        listOf(binding.ampmPicker02Np, binding.hourPicker02Np, binding.minutePicker02Np).forEach {
+            it.setOnValueChangedListener { _, _, _ -> }
+        }
+
+        binding.btnPlus.setOnClickListener {
+            showAlarmPopupWindow(it)
+        }
+
+        binding.btnTodoSave.setOnClickListener {
+            edit()
+        }
+
+        binding.btnTodoDelete.setOnClickListener {
+            when (scheduleType) {
+                ScheduleType.TODO    -> showTodoDeleteDialog()
+                ScheduleType.TEUM    -> showTeumDeleteDialog()
+                ScheduleType.AI      -> showAiDeleteDialog()
+                ScheduleType.WISH    -> showWishDeleteDialog()
+                else                 -> showTodoDeleteDialog()
+            }
+        }
+
+        binding.startDateTv.setOnClickListener {
+            if (binding.timePickerStartContainer.isVisible || binding.timePickerEndContainer.isVisible) {
+                binding.timePickerStartContainer.isVisible = false
+                binding.timePickerEndContainer.isVisible = false
+                currentTargetTextView = null
+                activeTimePicker = ActiveTimePicker.NONE
+            }
+            isStartDateSelected = true
+            toggleCalendarVisibility(show = true)
+        }
+
+        binding.endDateTv.setOnClickListener {
+            if (binding.timePickerStartContainer.isVisible || binding.timePickerEndContainer.isVisible) {
+                binding.timePickerStartContainer.isVisible = false
+                binding.timePickerEndContainer.isVisible = false
+                currentTargetTextView = null
+                activeTimePicker = ActiveTimePicker.NONE
+            }
+            isStartDateSelected = false
+            toggleCalendarVisibility(show = true)
+        }
+    }
+
+    private fun setupStartCalendar() {
+        val currentMonth = YearMonth.from(selectedStartDate)
+        val startMonth = currentMonth.minusYears(50)
+        val endMonth = currentMonth.plusYears(50)
+        val firstDayOfWeek = firstDayOfWeekFromLocale()
+
+        visibleStartMonth = currentMonth
+
+        binding.calendarView01.setup(startMonth, endMonth, firstDayOfWeek)
+        binding.calendarView01.scrollToMonth(currentMonth)
+
+        binding.calendarView01.monthScrollListener = { month ->
+            visibleStartMonth = month.yearMonth
+            updateMonthHeader01()
+        }
+
+        binding.calendarView01.dayBinder = object : MonthDayBinder<DayViewContainer> {
+            override fun create(view: View): DayViewContainer = DayViewContainer(view)
+
+            override fun bind(container: DayViewContainer, day: CalendarDay) {
+                val tv = container.textView
+                tv.text = day.date.dayOfMonth.toString()
+                tv.typeface = Typeface.DEFAULT
+                tv.background = null
+
+                val isThisMonth = day.position == DayPosition.MonthDate
+                tv.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        if (isThisMonth) R.color.text_primary else R.color.teumteum_deactive
+                    )
+                )
+
+                if (day.date == today && isThisMonth) {
+                    tv.background = circleFill(ContextCompat.getColor(requireContext(), R.color.teumteum_gray))
+                }
+
+                if (day.date == selectedStartDate && isThisMonth) {
+                    tv.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.white))
+                    tv.background = circleFill(ContextCompat.getColor(requireContext(), R.color.main_1))
+                }
+
+                container.view.setOnClickListener {
+                    if (!isThisMonth) return@setOnClickListener
+
+                    val old = selectedStartDate
+                    selectedStartDate = day.date
+
+                    visibleStartMonth = YearMonth.from(selectedStartDate)
+
+                    binding.calendarView01.notifyDateChanged(old)
+                    binding.calendarView01.notifyDateChanged(selectedStartDate)
+
+                    binding.startDateTv.text = selectedStartDate.format(headerFormatter)
+                    toggleCalendarVisibility(show = false)
+                }
+            }
+        }
+    }
+
+    private fun setupEndCalendar() {
+        val currentMonth = YearMonth.from(selectedEndDate)
+        val startMonth = currentMonth.minusYears(50)
+        val endMonth = currentMonth.plusYears(50)
+        val firstDayOfWeek = firstDayOfWeekFromLocale()
+
+        visibleEndMonth = currentMonth
+
+        binding.calendarView02.setup(startMonth, endMonth, firstDayOfWeek)
+        binding.calendarView02.scrollToMonth(currentMonth)
+
+        binding.calendarView02.monthScrollListener = { month ->
+            visibleEndMonth = month.yearMonth
+            updateMonthHeader02()
+        }
+
+        binding.calendarView02.dayBinder = object : MonthDayBinder<DayViewContainer> {
+            override fun create(view: View): DayViewContainer = DayViewContainer(view)
+
+            override fun bind(container: DayViewContainer, day: CalendarDay) {
+                val tv = container.textView
+                tv.text = day.date.dayOfMonth.toString()
+                tv.typeface = Typeface.DEFAULT
+                tv.background = null
+
+                val isThisMonth = day.position == DayPosition.MonthDate
+                tv.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        if (isThisMonth) R.color.text_primary else R.color.teumteum_deactive
+                    )
+                )
+
+                if (day.date == today && isThisMonth) {
+                    tv.background = circleFill(ContextCompat.getColor(requireContext(), R.color.teumteum_gray))
+                }
+
+                if (day.date == selectedEndDate && isThisMonth) {
+                    tv.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.white))
+                    tv.background = circleFill(ContextCompat.getColor(requireContext(), R.color.main_1))
+                }
+
+                container.view.setOnClickListener {
+                    if (!isThisMonth) return@setOnClickListener
+
+                    val old = selectedEndDate
+                    selectedEndDate = day.date
+
+                    visibleEndMonth = YearMonth.from(selectedEndDate)
+
+                    binding.calendarView02.notifyDateChanged(old)
+                    binding.calendarView02.notifyDateChanged(selectedEndDate)
+
+                    binding.endDateTv.text = selectedEndDate.format(headerFormatter)
+                    toggleCalendarVisibility(show = false)
+                }
+            }
+        }
+    }
+
+    private fun setupWeekdayLabels() {
+        val container1 = binding.calendarWeekdaysRow01
+        container1.removeAllViews()
+        val container2 = binding.calendarWeekdaysRow02
+        container2.removeAllViews()
+
+        val firstDayOfWeek = firstDayOfWeekFromLocale()
+        val days = (0..6).map { firstDayOfWeek.plus(it.toLong()) }
+        days.forEach { dow ->
+            val tv1 = TextView(requireContext()).apply {
+                layoutParams = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
+                gravity = Gravity.CENTER
+                setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
+                text = weekdayShortKorean(dow)
+                setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
+            }
+            container1.addView(tv1)
+
+            val tv2 = TextView(requireContext()).apply {
+                layoutParams = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
+                gravity = Gravity.CENTER
+                setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
+                text = weekdayShortKorean(dow)
+                setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
+            }
+            container2.addView(tv2)
+        }
+    }
+
+    private fun toggleCalendarVisibility(show: Boolean) {
+        if (show) {
+            binding.calendarHeaderLayout01.isVisible = isStartDateSelected
+            binding.calendarHeaderLayout02.isVisible = !isStartDateSelected
+            binding.timePickerStartContainer.isVisible = false
+            binding.timePickerEndContainer.isVisible = false
+            isCalendarVisible = true
+        } else {
+            binding.calendarHeaderLayout01.isVisible = false
+            binding.calendarHeaderLayout02.isVisible = false
+            isCalendarVisible = false
+        }
+    }
+
+    private fun getTodoRequest(): EditTodoRequest {
+        val title = binding.todoTitleEt.text.toString()
+        val startTime = combineDateTime(binding.startDateTv, binding.startTimeTv)
+        val endTime = combineDateTime(binding.endDateTv, binding.endTimeTv)
+
+        val description = binding.detailTextEt.text.toString()
+        val isPublic = binding.publicToggle01Iv.isChecked
+        val includeTeum = binding.includeToggle01Iv.isChecked
+        val remindAlarm = getSelectedRemindAlarms()
+
+        return EditTodoRequest(
+            title = title,
+            startTime = startTime,
+            endTime = endTime,
+            description = description,
+            isPublic = isPublic,
+            includeTeum = includeTeum,
+            remindAlarm = remindAlarm
+        )
+    }
+
+    private fun edit() {
+        val title = binding.todoTitleEt.text.toString()
+        val startTimeText = binding.startTimeTv.text.toString()
+        val endTimeText = binding.endTimeTv.text.toString()
+
+        if (title.isEmpty()) {
+            Toast.makeText(requireContext(), "제목을 입력해주세요.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (startTimeText == "시작 시간" || endTimeText == "종료 시간") {
+            Toast.makeText(requireContext(), "시작/종료 시간을 설정해주세요.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val request = getTodoRequest()
+        viewModel.editTodo(todoId, request)
+    }
+
+    private fun getSelectedRemindAlarms(): List<ReminderAlarm>? {
+        val result = mutableListOf<ReminderAlarm>()
+        for (i in 0 until binding.alarmLayoutContainer.childCount) {
+            val child = binding.alarmLayoutContainer.getChildAt(i)
+            val toggle = child.findViewById<SwitchCompat>(R.id.alarm_toggle_tv)
+            val label  = child.findViewById<TextView>(R.id.alarm_set_tv).text.toString()
+            val minute = alarmLabelToMinutes[label] ?: continue
+
+            result.add(
+                ReminderAlarm(
+                    alarm = minute,
+                    status = if (toggle.isChecked) AlarmStatus.ACTIVE else AlarmStatus.INACTIVE
+                )
+            )
+        }
+        return if (result.isEmpty()) null else result
+    }
+
+    // 리마인드 알림 비교 (변경 감지 전용)
+    private fun getRemindAlarmsForCompare(): List<ReminderAlarm> {
+        val list = mutableListOf<ReminderAlarm>()
+
+        for (i in 0 until binding.alarmLayoutContainer.childCount) {
+            val child = binding.alarmLayoutContainer.getChildAt(i)
+            val toggle = child.findViewById<SwitchCompat>(R.id.alarm_toggle_tv)
+            val label = child.findViewById<TextView>(R.id.alarm_set_tv).text.toString()
+            val minute = alarmLabelToMinutes[label] ?: continue
+
+            list.add(
+                ReminderAlarm(
+                    alarm = minute,
+                    status = if (toggle.isChecked) AlarmStatus.ACTIVE else AlarmStatus.INACTIVE
+                )
+            )
+        }
+
+        return list.sortedBy { it.alarm }
+    }
+
+    // 시간 파싱 후 통일 (변경 감지 전용)
+    private fun normalizeToMinuteIso(raw: String): String {
+        return try {
+            val dt = parseApiDateTime(raw)
+            dt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"))
+        } catch (e: Exception) {
+            raw.take(16)
+        }
+    }
+
+    private fun isModified(): Boolean {
+        val currentTitle = binding.todoTitleEt.text.toString().trim()
+
+        val currentStartTime = combineDateTime(binding.startDateTv, binding.startTimeTv)
+        val currentEndTime = combineDateTime(binding.endDateTv, binding.endTimeTv)
+
+        val currentDescription = binding.detailTextEt.text.toString().trim()
+        val currentIsPublic = binding.publicToggle01Iv.isChecked
+        val currentIncludeTeum = binding.includeToggle01Iv.isChecked
+        val currentRemindAlarm = getRemindAlarmsForCompare()
+
+        return currentTitle != originalTitle ||
+                currentStartTime != originalStartTime ||
+                currentEndTime != originalEndTime ||
+                currentDescription != originalDescription ||
+                currentIsPublic != originalIsPublic ||
+                currentIncludeTeum != originalIncludeTeum ||
+                currentRemindAlarm != originalRemindAlarm
+    }
+
+    private fun applyTextStyleToNumberPicker(picker: NumberPicker, context: Context) {
+        try {
+            val count = picker.childCount
+            for (i in 0 until count) {
+                val child = picker.getChildAt(i)
+                if (child is EditText) {
+                    child.setTextColor(ContextCompat.getColor(context, R.color.text_primary))
+                    child.textSize = 15f
+                    child.typeface = ResourcesCompat.getFont(context, R.font.noto_sans_kr_regular)
+                    child.includeFontPadding = false
+
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun setupPickers() {
+        binding.ampmPicker01Np.apply {
+            minValue = 0
+            maxValue = 1
+            displayedValues = arrayOf("오전", "오후")
+            wrapSelectorWheel = true
+            post { applyTextStyleToNumberPicker(this, context) }
+            enableTapToNext(wrap = true)
+        }
+        binding.hourPicker01Np.apply {
+            minValue = 1
+            maxValue = 12
+            wrapSelectorWheel = true
+            post { applyTextStyleToNumberPicker(this, context) }
+            enableTapToNext(wrap = true)
+        }
+        binding.minutePicker01Np.apply {
+            minValue = 0
+            maxValue = 5
+            displayedValues = arrayOf("00", "10", "20", "30", "40", "50")
+            wrapSelectorWheel = true
+            post { applyTextStyleToNumberPicker(this, context) }
+            enableTapToNext(wrap = true)
+        }
+
+        binding.ampmPicker02Np.apply {
+            minValue = 0
+            maxValue = 1
+            displayedValues = arrayOf("오전", "오후")
+            wrapSelectorWheel = true
+            post { applyTextStyleToNumberPicker(this, context) }
+            enableTapToNext(wrap = true)
+        }
+        binding.hourPicker02Np.apply {
+            minValue = 1
+            maxValue = 12
+            wrapSelectorWheel = true
+            post { applyTextStyleToNumberPicker(this, context) }
+            enableTapToNext(wrap = true)
+        }
+        binding.minutePicker02Np.apply {
+            minValue = 0
+            maxValue = 5
+            displayedValues = arrayOf("00", "10", "20", "30", "40", "50")
+            wrapSelectorWheel = true
+            post { applyTextStyleToNumberPicker(this, context) }
+            enableTapToNext(wrap = true)
+        }
+    }
+
+    private fun applySelectedTime(isStart: Boolean) {
+        val ampmPicker = if (isStart) binding.ampmPicker01Np else binding.ampmPicker02Np
+        val hourPicker = if (isStart) binding.hourPicker01Np else binding.hourPicker02Np
+        val minutePicker = if (isStart) binding.minutePicker01Np else binding.minutePicker02Np
+
+        val ampm = ampmPicker.value
+        val hour = hourPicker.value
+        val minute = arrayOf("00", "10", "20", "30", "40", "50")[minutePicker.value]
+        val timeText = "${if (ampm == 0) "오전" else "오후"} $hour:$minute"
+
+        if (isStart) {
+            binding.startTimeTv.text = timeText
+            binding.timePickerStartContainer.isVisible = false
+        } else {
+            binding.endTimeTv.text = timeText
+            binding.timePickerEndContainer.isVisible = false
+        }
+    }
+
+    private fun showAlarmPopupWindow(anchor: View) {
+        if (popupWindow?.isShowing == true) {
+            popupWindow?.dismiss()
+            return
+        }
+
+        val popupView = LinearLayout(requireContext()).apply {
+            orientation = LinearLayout.VERTICAL
+            setBackgroundResource(R.drawable.bg_dropdown)
+            setPadding(4, 4, 4, 4)
+            elevation = 16f
+        }
+
+        // 항목 추가
+        alarmOptions.forEachIndexed { index, label ->
+            val itemView = layoutInflater.inflate(R.layout.alarm_dropdown, popupView, false)
+            val labelText = itemView.findViewById<TextView>(R.id.alarm_label_tv)
+            val checkIcon = itemView.findViewById<ImageView>(R.id.check_icon)
+
+            labelText.text = label
+            checkIcon.visibility = if (selectedItems.contains(label)) View.VISIBLE else View.GONE
+
+            itemView.setOnClickListener {
+                if (selectedItems.contains(label)) {
+                    selectedItems.remove(label)
+                    checkIcon.visibility = View.GONE
+                    removeAlarmItem(label)
+                } else {
+                    selectedItems.add(label)
+                    checkIcon.visibility = View.VISIBLE
+                    addAlarmItem(label)
+                }
+
+                popupWindow?.dismiss()
+            }
+
+            popupView.addView(itemView)
+
+            if (index < alarmOptions.size - 1) {
+                val divider = View(requireContext()).apply {
+                    layoutParams = LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        1
+                    )
+                    setBackgroundColor(resources.getColor(R.color.teumteum_line, null))
+                }
+                popupView.addView(divider)
+            }
+        }
+
+        val screenW = resources.displayMetrics.widthPixels
+        val popupWidth = (screenW * 0.6f).toInt()
+
+        // 팝업 설정
+        popupWindow = PopupWindow(
+            popupView,
+            popupWidth,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            true
+        ).apply {
+            isOutsideTouchable = true
+            elevation = 16f
+            setBackgroundDrawable(null)
+
+            val moveRightPx = anchor.dpToPx(10)
+            showAsDropDown(
+                anchor,
+                (-popupWidth + anchor.width) + moveRightPx,
+                anchor.dpToPx(8)
+            )
+        }
+    }
+
+    private fun addAlarmItem(label: String) {
+        val layout = layoutInflater.inflate(R.layout.item_alarm, binding.alarmLayoutContainer, false)
+        val labelText = layout.findViewById<TextView>(R.id.alarm_set_tv)
+        labelText.text = label
+        layout.tag = label
+        binding.alarmLayoutContainer.addView(layout)
+
+        // 내림차순 정렬
+        val sortedChildren = (0 until binding.alarmLayoutContainer.childCount).map { i ->
+            val child = binding.alarmLayoutContainer.getChildAt(i)
+            val childLabel = child.tag as? String
+                ?: child.findViewById<TextView>(R.id.alarm_set_tv).text.toString()
+            val minute = alarmLabelToMinutes[childLabel] ?: Int.MIN_VALUE
+            minute to child
+        }.sortedByDescending { it.first }
+
+        binding.alarmLayoutContainer.removeAllViews()
+        sortedChildren.forEach { (_, child) -> binding.alarmLayoutContainer.addView(child) }
+    }
+
+    private fun removeAlarmItem(label: String) {
+        for (i in 0 until binding.alarmLayoutContainer.childCount) {
+            val child = binding.alarmLayoutContainer.getChildAt(i)
+            if (child.tag == label) {
+                val toggle = child.findViewById<SwitchCompat>(R.id.alarm_toggle_tv)
+                toggle.isChecked = false
+                binding.alarmLayoutContainer.removeView(child)
+                break
+            }
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        val dialog = dialog as? BottomSheetDialog ?: return
+        val bottomSheet =
+            dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet) ?: return
+
+        val screenH = resources.displayMetrics.heightPixels
+        val fixedH = (screenH * 0.81f).toInt()
+
+        fun setHeight(imeBottom: Int) {
+            val targetH = minOf(fixedH, screenH - imeBottom) // 키보드 올라오면 그만큼 줄임
+            bottomSheet.layoutParams.height = targetH
+            bottomSheet.requestLayout()
+
+            BottomSheetBehavior.from(bottomSheet).apply {
+                peekHeight = targetH
+                state = BottomSheetBehavior.STATE_EXPANDED
+            }
+        }
+
+        setHeight(0)
+
+        ViewCompat.setOnApplyWindowInsetsListener(bottomSheet) { _, insets ->
+            val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            setHeight(imeBottom)
+            insets
+        }
+    }
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
+
+        dialog.setOnShowListener { dialogInterface ->
+            val bottomSheet = (dialogInterface as BottomSheetDialog)
+                .findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+            bottomSheet?.setBackgroundResource(R.drawable.calendar_background)
+        }
+
+        dialog.setOnKeyListener { _, keyCode, event ->
+            if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP) {
+                if (isModified()) {
+                    showTodoCancelEditDialog()
+                } else {
+                    dismiss() // 수정 없으면 바로 닫기
+                }
+                true
+            } else {
+                false
+            }
+        }
+
+        return dialog
+    }
+
+    private fun resetAlarmUI() {
+        binding.alarmLayoutContainer.removeAllViews()
+        selectedItems.clear()
+    }
+
+    private fun showTodoDeleteDialog() {
+        val dialogBinding = DialogConfirmTodoDeleteBinding.inflate(layoutInflater)
+        val dialog = AlertDialog.Builder(requireContext(), R.style.RoundedAlertDialog)
+            .setView(dialogBinding.root)
+            .create()
+
+        dialogBinding.todoConfirmTv.setOnClickListener {
+            dialogBinding.todoConfirmTv.isEnabled = false
+            dialog.dismiss()
+            viewModel.deleteTodo(todoId)
+        }
+        dialogBinding.todoCancelTv.setOnClickListener { dialog.dismiss() }
+
+        applyDialogWindow(dialog)
+        dialog.show()
+    }
+
+    private fun showTeumDeleteDialog() {
+        val dialogBinding = DialogConfirmTeumDeleteBinding.inflate(layoutInflater)
+        val dialog = AlertDialog.Builder(requireContext(), R.style.RoundedAlertDialog)
+            .setView(dialogBinding.root)
+            .create()
+
+        dialogBinding.todoConfirmTv.setOnClickListener {
+            dialogBinding.todoConfirmTv.isEnabled = false
+            dialog.dismiss()
+            friendViewModel.cancelTeumSchedule(todoId.toInt())
+        }
+        dialogBinding.todoCancelTv.setOnClickListener { dialog.dismiss() }
+
+        applyDialogWindow(dialog)
+        dialog.show()
+    }
+
+    private fun showAiDeleteDialog() {
+        val dialogBinding = DialogConfirmAiContentDeleteBinding.inflate(layoutInflater)
+        val dialog = AlertDialog.Builder(requireContext(), R.style.RoundedAlertDialog)
+            .setView(dialogBinding.root)
+            .create()
+
+        dialogBinding.todoConfirmTv.setOnClickListener {
+            dialogBinding.todoConfirmTv.isEnabled = false
+            dialog.dismiss()
+            viewModel.deleteTodo(todoId)
+        }
+        dialogBinding.todoCancelTv.setOnClickListener { dialog.dismiss() }
+
+        applyDialogWindow(dialog)
+        dialog.show()
+    }
+
+    private fun showWishDeleteDialog() {
+        val dialogBinding = DialogConfirmWishDeleteBinding.inflate(layoutInflater)
+        val dialog = AlertDialog.Builder(requireContext(), R.style.RoundedAlertDialog)
+            .setView(dialogBinding.root)
+            .create()
+
+        dialogBinding.wishConfirmTv.setOnClickListener {
+            dialogBinding.wishConfirmTv.isEnabled = false
+            dialog.dismiss()
+            viewModel.deleteTodo(todoId)
+        }
+        dialogBinding.wishCancelTv.setOnClickListener { dialog.dismiss() }
+
+        applyDialogWindow(dialog)
+        dialog.show()
+    }
+
+    private fun applyDialogWindow(dialog: AlertDialog) {
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.setOnShowListener {
+            dialog.window?.let { window ->
+                val layoutParams = window.attributes
+                layoutParams.width  = (resources.displayMetrics.widthPixels * 0.85).toInt()
+                layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
+                layoutParams.gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
+                layoutParams.y = (resources.displayMetrics.heightPixels * 0.37).toInt()
+                layoutParams.dimAmount = 0.5f
+                window.attributes = layoutParams
+                window.setDimAmount(0.5f)
+                window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+            }
+        }
+    }
+
+    private fun showTodoCancelEditDialog() {
+        val dialogBinding = DialogConfirmTodoEditBinding.inflate(layoutInflater)
+
+        val dialog = AlertDialog.Builder(requireContext(), R.style.RoundedAlertDialog)
+            .setView(dialogBinding.root)
+            .create()
+
+        dialogBinding.todoConfirmTv.setOnClickListener {
+            dialog.dismiss()
+            dismiss()
+        }
+
+        dialogBinding.todoCancelTv.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        dialog.setOnShowListener {
+            dialog.window?.let { window ->
+                val layoutParams = window.attributes
+                layoutParams.width = (resources.displayMetrics.widthPixels * 0.85).toInt()
+                layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
+                layoutParams.gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
+                layoutParams.y = (resources.displayMetrics.heightPixels * 0.37).toInt()
+                layoutParams.dimAmount = 0.5f
+                window.attributes = layoutParams
+
+                window.setDimAmount(0.5f)
+                window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+            }
+        }
+
+        dialog.show()
+    }
+
+    companion object {
+        fun newInstance(todoId: Long): BottomSheetTodoEditFragment {
+            return BottomSheetTodoEditFragment().apply {
+                arguments = Bundle().apply {
+                    putLong("todo_id", todoId)
+                }
+            }
+        }
+    }
+
+    private fun applyReminders(reminds: List<ReminderAlarm>) {
+        resetAlarmUI()
+        reminds
+            .sortedByDescending { it.alarm }
+            .forEach { ra ->
+                val label = minutesToLabel[ra.alarm] ?: return@forEach
+
+                addAlarmItem(label)
+
+                // 추가된 뷰 찾아 토글 상태 반영
+                val child = (0 until binding.alarmLayoutContainer.childCount)
+                    .asSequence()
+                    .map { binding.alarmLayoutContainer.getChildAt(it) }
+                    .firstOrNull { (it.tag as? String) == label }
+
+                child?.findViewById<SwitchCompat>(R.id.alarm_toggle_tv)?.isChecked =
+                    (ra.status == AlarmStatus.ACTIVE)
+
+                selectedItems.add(label)
+            }
+    }
+
+    private fun setupObservers() {
+        viewModel.todo.observe(viewLifecycleOwner) { todo ->
+            if (todo == null) return@observe
+
+            // 기본 색 저장
+            if (_normalTextColor == null) {
+                _normalTextColor = binding.todoTitleEt.currentTextColor
+                _normalHintColor = binding.detailTextEt.currentHintTextColor
+            }
+
+            run {
+                listOf(
+                    binding.todoTitleEt, binding.startDateTv, binding.startTimeTv,
+                    binding.endDateTv, binding.endTimeTv, binding.detailTextEt
+                ).forEach { v ->
+                    v.isEnabled = true
+                    v.alpha = 1f
+                }
+
+                // 텍스트/힌트 색 저장
+                val nt = _normalTextColor ?: binding.todoTitleEt.currentTextColor
+                val nh = _normalHintColor ?: binding.detailTextEt.currentHintTextColor
+
+                binding.timerIconIv.clearColorFilter()
+                binding.publicIconIv.clearColorFilter()
+                binding.includeIconIv.clearColorFilter()
+                binding.detailTextIv.clearColorFilter()
+
+                binding.todoTitleEt.setTextColor(nt)
+                binding.startDateTv.setTextColor(nt)
+                binding.startTimeTv.setTextColor(nt)
+                binding.endDateTv.setTextColor(nt)
+                binding.endTimeTv.setTextColor(nt)
+                binding.publicSettingTv.setTextColor(nt)
+                binding.includeReportTv.setTextColor(nt)
+                binding.detailTextEt.setTextColor(nt)
+                binding.detailTextEt.setHintTextColor(nh)
+
+                // 토글 저장
+                listOf(
+                    binding.publicToggle01Iv, binding.includeToggle01Iv
+                ).forEach { t ->
+                    t.isEnabled = true
+                    t.trackDrawable = ContextCompat.getDrawable(t.context, R.drawable.style_toggle_btn)?.mutate()
+                    t.thumbDrawable = ContextCompat.getDrawable(t.context, R.drawable.style_toggle_thumb)?.mutate()
+                }
+
+                resetAlarmUI()
+                applyReminders(todo.remindAlarm ?: emptyList())
+            }
+
+            binding.todoTitleEt.setText(todo.title)
+
+            val startDateTime = parseApiDateTime(todo.startTime)
+            val endDateTime = parseApiDateTime(todo.endTime)
+
+            // 캘린더 선택 날짜를 투두 날짜로 갱신
+            val oldStart = selectedStartDate
+            val oldEnd = selectedEndDate
+
+            selectedStartDate = startDateTime.toLocalDate()
+            selectedEndDate = endDateTime.toLocalDate()
+
+            // 커서 동기화
+            visibleStartMonth = YearMonth.from(selectedStartDate)
+            visibleEndMonth = YearMonth.from(selectedEndDate)
+
+            // 캘린더 선택 표시 갱신
+            binding.calendarView01.notifyDateChanged(oldStart)
+            binding.calendarView01.notifyDateChanged(selectedStartDate)
+            binding.calendarView01.scrollToMonth(YearMonth.from(selectedStartDate))
+
+            binding.calendarView02.notifyDateChanged(oldEnd)
+            binding.calendarView02.notifyDateChanged(selectedEndDate)
+            binding.calendarView02.scrollToMonth(YearMonth.from(selectedEndDate))
+
+            val timeFormatter = DateTimeFormatter.ofPattern("a h:mm", Locale.KOREAN)
+
+            binding.startDateTv.text = startDateTime.toLocalDate().format(headerFormatter)
+            binding.endDateTv.text = endDateTime.toLocalDate().format(headerFormatter)
+            binding.startTimeTv.text = startDateTime.toLocalTime().format(timeFormatter)
+            binding.endTimeTv.text = endDateTime.toLocalTime().format(timeFormatter)
+
+            binding.detailTextEt.setText(todo.description)
+            binding.publicToggle01Iv.isChecked = todo.isPublic
+            binding.includeToggle01Iv.isChecked = todo.includeTeum
+
+            val urls: List<String> = todo.profileUrl ?: emptyList()
+            profileAdapter.submitList(urls)
+            binding.profileImageRc.isVisible = urls.isNotEmpty()
+
+            // 선택 여부 확인용 원본 저장
+            originalTitle = todo.title
+            originalStartTime = normalizeToMinuteIso(todo.startTime)
+            originalEndTime = normalizeToMinuteIso(todo.endTime)
+
+            originalDescription = todo.description
+            originalIsPublic = todo.isPublic
+            originalIncludeTeum = todo.includeTeum
+            originalRemindAlarm = (todo.remindAlarm ?: emptyList()).sortedBy { it.alarm }
+
+            // 반복일정은 알림 편집만 가능
+            if (todo.type == ScheduleType.ROUTINE) {
+                disableRoutineEditing()
+            }
+
+            // 약속된 틈은 일부 수정 가능 (알림 편집, 공개 설정, 빈틈시간 기록 포함, 상세 내용)
+            if (todo.type == ScheduleType.TEUM) {
+                disableTeumEditing()
+            }
+
+            parentFragmentManager.setFragmentResult("todo_get", Bundle())
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                // 수정 성공
+                launch {
+                    viewModel.editSuccess.collect {
+                        Log.d("TODO_EDIT_FRAGMENT", "투두가 성공적으로 수정되었습니다.")
+                        val result = Bundle().apply {
+                            putString("date", selectedStartDate.toString()) // "yyyy-MM-dd"
+                        }
+                        parentFragmentManager.setFragmentResult("todo_edit_home", result)
+                        dismissAllSheets()
+                    }
+                }
+
+                // 삭제 성공
+                launch {
+                    viewModel.deleteSuccess.collect {
+                        Log.d("TODO_EDIT_FRAGMENT", "투두가 성공적으로 삭제되었습니다.")
+                        val result = Bundle().apply {
+                            putString("date", selectedStartDate.toString()) // "yyyy-MM-dd"
+                        }
+                        parentFragmentManager.setFragmentResult("todo_delete_home", result)
+                        dismissAllSheets()
+                    }
+                }
+            }
+        }
+
+        viewModel.errorMessage.observe(viewLifecycleOwner) { errorMsg ->
+            Log.e("TODO_EDIT_FRAGMENT", errorMsg.toString())
+        }
+
+        // 수면패턴 or 틈요청 충돌 + 시간 유효성 검사
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.registerError.collect { err ->
+                    when (err.code) {
+                        "CONFLICT4094", "CONFLICT4092", "HOME4001" ->
+                            Toast.makeText(requireContext(), err.message, Toast.LENGTH_SHORT).show()
+                        else -> err.message.let {
+                            Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun parseApiDateTime(raw: String): LocalDateTime {
+        return try {
+            LocalDateTime.parse(raw) // 정상(0~23시)인 경우
+        } catch (e: DateTimeParseException) {
+            // 24:MM[:SS] 대응 (예: 2025-08-14T24:00 또는 2025-08-14T24:00:00)
+            val m = Regex("""^(\d{4}-\d{2}-\d{2})T(\d{2}):(\d{2})(?::(\d{2}))?$""").matchEntire(raw)
+                ?: throw e
+            val date = LocalDate.parse(m.groupValues[1])
+            val hour = m.groupValues[2].toInt()
+            val minute = m.groupValues[3].toInt()
+            val second = m.groupValues.getOrNull(4)?.takeIf { it.isNotEmpty() }?.toInt() ?: 0
+            if (hour == 24) date.plusDays(1).atTime(0, minute, second) else throw e
+        }
+    }
+
+    // 채운 동그라미 배경
+    private fun circleFill(fillColor: Int): GradientDrawable {
+        return GradientDrawable().apply {
+            shape = GradientDrawable.OVAL
+            setColor(fillColor)
+        }
+    }
+
+    // DayView의 뷰 홀더
+    private inner class DayViewContainer(view: View) : ViewContainer(view) {
+        val textView: TextView = view.findViewById(R.id.calendar_day_tv)
+    }
+
+    private fun dismissAllSheets() {
+        (requireActivity().supportFragmentManager.fragments).forEach { fragment ->
+            if (fragment is BottomSheetDialogFragment) {
+                fragment.dismissAllowingStateLoss()
+            }
+        }
+    }
+
+    private fun disableRoutineEditing() {
+        val deactiveColor = ContextCompat.getColor(requireContext(), R.color.teumteum_deactive)
+
+        binding.todoTitleEt.setTextColor(deactiveColor)
+        binding.timerIconIv.setColorFilter(deactiveColor)
+        binding.startDateTv.setTextColor(deactiveColor)
+        binding.startTimeTv.setTextColor(deactiveColor)
+        binding.endDateTv.setTextColor(deactiveColor)
+        binding.endTimeTv.setTextColor(deactiveColor)
+        binding.publicIconIv.setColorFilter(deactiveColor)
+        binding.publicSettingTv.setTextColor(deactiveColor)
+        binding.includeIconIv.setColorFilter(deactiveColor)
+        binding.includeReportTv.setTextColor(deactiveColor)
+        binding.detailTextIv.setColorFilter(deactiveColor)
+        binding.detailTextEt.setTextColor(deactiveColor)
+        binding.detailTextEt.setHintTextColor(deactiveColor)
+
+        // 입력/선택 비활성화
+        setViewsEnabled(
+            enabled = false,
+            binding.todoTitleEt,
+            binding.startDateTv, binding.startTimeTv,
+            binding.endDateTv, binding.endTimeTv,
+            binding.detailTextEt,
+        )
+
+        // 토글 비활성화
+        setTogglesEnabled(
+            enabled = false,
+            binding.publicToggle01Iv,
+            binding.includeToggle01Iv
+        )
+    }
+
+    private fun disableTeumEditing() {
+        val deactiveColor = ContextCompat.getColor(requireContext(), R.color.teumteum_deactive)
+
+        binding.todoTitleEt.setTextColor(deactiveColor)
+        binding.timerIconIv.setColorFilter(deactiveColor)
+        binding.startDateTv.setTextColor(deactiveColor)
+        binding.startTimeTv.setTextColor(deactiveColor)
+        binding.endDateTv.setTextColor(deactiveColor)
+        binding.endTimeTv.setTextColor(deactiveColor)
+
+        // 입력/선택 비활성화
+        setViewsEnabled(
+            enabled = false,
+            binding.todoTitleEt,
+            binding.startDateTv, binding.startTimeTv,
+            binding.endDateTv, binding.endTimeTv,
+        )
+    }
+
+    private fun setViewsEnabled(enabled: Boolean, vararg views: View) {
+        views.forEach { v ->
+            v.isEnabled = enabled
+            v.alpha = if (enabled) 1f else 1f
+        }
+    }
+
+    private fun setTogglesEnabled(enabled: Boolean, vararg toggles: SwitchCompat) {
+        toggles.forEach { t ->
+            t.isEnabled = enabled
+            t.trackDrawable = ContextCompat.getDrawable(
+                t.context,
+                if (enabled) R.drawable.style_toggle_btn else R.drawable.style_toggle_disabled_btn
+            )?.mutate()
+            t.thumbDrawable = ContextCompat.getDrawable(
+                t.context,
+                if (enabled) R.drawable.style_toggle_thumb else R.drawable.style_toggle_disabled_thumb
+            )?.mutate()
+        }
+    }
+
+    private fun updateMonthHeader01() {
+        val headerDate = visibleStartMonth.atDay(1)
+        binding.startDateTv.text = headerDate.format(headerFormatter)
+    }
+
+    private fun updateMonthHeader02() {
+        val headerDate = visibleEndMonth.atDay(1)
+        binding.endDateTv.text = headerDate.format(headerFormatter)
+    }
+
+    private fun setupCalendarMonthNavigation() {
+
+        binding.calendarPreviousDate01Iv.setOnClickListener {
+            visibleStartMonth = moveCalendarMonth(
+                monthStateRef = visibleStartMonth,
+                delta = -1,
+                calendarView = binding.calendarView01
+            )
+            updateMonthHeader01()
+        }
+
+        binding.calendarNextDate01Iv.setOnClickListener {
+            visibleStartMonth = moveCalendarMonth(
+                monthStateRef = visibleStartMonth,
+                delta = 1,
+                calendarView = binding.calendarView01
+            )
+            updateMonthHeader01()
+        }
+
+        binding.calendarPreviousDate02Iv.setOnClickListener {
+            visibleEndMonth = moveCalendarMonth(
+                monthStateRef = visibleEndMonth,
+                delta = -1,
+                calendarView = binding.calendarView02
+            )
+            updateMonthHeader02()
+        }
+
+        binding.calendarNextDate02Iv.setOnClickListener {
+            visibleEndMonth = moveCalendarMonth(
+                monthStateRef = visibleEndMonth,
+                delta = 1,
+                calendarView = binding.calendarView02
+            )
+            updateMonthHeader02()
+        }
+    }
+
+    private fun setupTitleImeDone() {
+        val et = binding.todoTitleEt
+
+        // 1. 키보드 Done 액션 처리
+        et.setOnEditorActionListener { v, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                v.clearFocus()
+                hideKeyboard(v)
+                true
+            } else false
+        }
+
+        // 2. 멀티라인에서 Enter가 줄바꿈으로 들어오는 케이스도 "완료"로 강제
+        et.setOnKeyListener { v, keyCode, event ->
+            if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN) {
+                v.clearFocus()
+                hideKeyboard(v)
+                true
+            } else false
+        }
+    }
+
+    private fun hideKeyboard(view: View) {
+        val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
+    }
+
+    private fun setupTapOutsideToApplyTime() {
+        val touchTargets = listOf(binding.root, binding.editScroll)
+
+        fun isTouchInside(view: View, event: MotionEvent): Boolean {
+            val loc = IntArray(2)
+            view.getLocationOnScreen(loc)
+            val x = event.rawX
+            val y = event.rawY
+            return x >= loc[0] && x <= loc[0] + view.width && y >= loc[1] && y <= loc[1] + view.height
+        }
+
+        touchTargets.forEach { target ->
+            target.setOnTouchListener { v, event ->
+                when (event.action) {
+                    MotionEvent.ACTION_UP -> {
+                        // 타임피커 안 열려있으면 패스
+                        if (activeTimePicker == ActiveTimePicker.NONE) return@setOnTouchListener false
+
+                        val isOnTarget = currentTargetTextView?.let { isTouchInside(it, event) } ?: false
+
+                        // 바깥 탭이면 적용 + 닫기
+                        when (activeTimePicker) {
+                            ActiveTimePicker.START -> applySelectedTime(isStart = true)
+                            ActiveTimePicker.END -> applySelectedTime(isStart = false)
+                            else -> {}
+                        }
+                        activeTimePicker = ActiveTimePicker.NONE
+                        currentTargetTextView = null
+
+                        v.performClick() // 접근성용 클릭 이벤트
+
+                        // 타임 텍스트 탭은 소비(재오픈 방지), 그 외는 이벤트 전달
+                        return@setOnTouchListener isOnTarget
+                    }
+
+                    // 다운은 소비하지 않음
+                    MotionEvent.ACTION_DOWN -> false
+                    else -> false
+                }
+            }
+
+            target.isClickable = true
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        popupWindow?.dismiss()
+        popupWindow = null
+        _binding = null
+    }
+}

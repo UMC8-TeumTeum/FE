@@ -1,0 +1,1091 @@
+package com.umc.teumteum.ui.friend.viewModel
+
+import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.umc.teumteum.data.AppUserManager
+import com.umc.teumteum.data.remote.friend.model.FollowerResult
+import com.umc.teumteum.data.remote.friend.model.FollowingResult
+import com.umc.teumteum.data.remote.friend.model.FriendProfileResult
+import com.umc.teumteum.data.remote.friend.model.FriendSearchResult
+import com.umc.teumteum.data.remote.friend.model.MutualFriendItem
+import com.umc.teumteum.data.remote.friend.model.PossibleTimeRequest
+import com.umc.teumteum.data.remote.friend.model.PublicTodoResult
+import com.umc.teumteum.data.remote.friend.model.ReportRequest
+import com.umc.teumteum.data.remote.friend.model.ResendTeumRequest
+import com.umc.teumteum.data.remote.friend.model.SharedTeumItem
+import com.umc.teumteum.data.remote.friend.model.TeumConflictResponse
+import com.umc.teumteum.data.remote.friend.model.TeumReceivedItem
+import com.umc.teumteum.data.remote.friend.model.TeumRequest
+import com.umc.teumteum.data.remote.friend.model.TeumRequestDateResult
+import com.umc.teumteum.data.remote.friend.model.TeumScheduleDetailResult
+import com.umc.teumteum.data.remote.friend.model.TeumScheduledResult
+import com.umc.teumteum.data.remote.friend.model.TeumStatusResult
+import com.umc.teumteum.data.remote.friend.model.TeumTimeResult
+import com.umc.teumteum.data.remote.friend.model.TodoConflictResponse
+import com.umc.teumteum.data.remote.friend.repository.FriendRepository
+import com.umc.teumteum.data.remote.mypage.model.MyInfoResponse
+import com.umc.teumteum.data.remote.mypage.repository.MyPageRepository
+import com.umc.teumteum.ui.friend.data.SelectedTime
+import com.umc.teumteum.ui.friend.data.TimeCardItem
+import com.umc.teumteum.utils.Event
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.text.Collator
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
+import javax.inject.Inject
+
+@HiltViewModel
+class FriendViewModel @Inject constructor(
+    private val repository: FriendRepository,
+    private val myPageRepository: MyPageRepository
+) : ViewModel() {
+
+    private var searchJob: Job? = null
+    private var lastKeyword: String? = null
+
+    // 공통 메시지
+    private val _successMessage = MutableLiveData<Event<String>>()
+    val successMessage: LiveData<Event<String>> get() = _successMessage
+
+    private val _errorMessage = MutableLiveData<Event<String>>()
+    val errorMessage: LiveData<Event<String>> get() = _errorMessage
+
+    // 페이징 상태 관련 필드
+    private var followingPage = 1
+    private var followerPage = 1
+    private val pageSize = 10
+
+    private var isLoadingFollowing = false
+    private var isLoadingFollower = false
+
+    private val _followingHasNext = MutableLiveData(true)
+    val followingHasNext: LiveData<Boolean> = _followingHasNext
+
+    private val _followersHasNext = MutableLiveData(true)
+    val followersHasNext: LiveData<Boolean> = _followersHasNext
+
+    // 닉네임 검색어 입력 시
+    val currentSearchKeyword = MutableLiveData<String>()
+
+
+    //    상단 프로필의 star_btn 과 리스트 아이템의 starIv 가 함께 관찰하는 공통 상태
+    private val _favoriteMap = MutableLiveData<Map<Int, Boolean>>(emptyMap())
+    val favoriteMap: LiveData<Map<Int, Boolean>> get() = _favoriteMap
+
+    private val _myNickname = MutableLiveData<String>()
+    val myNickname: LiveData<String> get() = _myNickname
+
+    private val _myProfileUrl = MutableLiveData<String>()
+    val myProfileUrl: LiveData<String> get() = _myProfileUrl
+
+    private val _teumTimeText = MutableLiveData<String>()
+    val teumTimeText: LiveData<String> get() = _teumTimeText
+
+    // 선택된 친구 목록 저장용
+    private val _selectedFriends =
+        MutableLiveData<MutableList<FriendProfileResult>>(mutableListOf())
+    val selectedFriends: LiveData<MutableList<FriendProfileResult>> get() = _selectedFriends
+
+    // 선택된 친구 추가
+    fun addSelectedFriend(friend: FriendProfileResult) {
+        val currentList = _selectedFriends.value ?: mutableListOf()
+        // 중복 방지
+        if (currentList.none { it.userId == friend.userId }) {
+            currentList.add(friend)
+            _selectedFriends.value = currentList
+        }
+    }
+
+
+    fun fetchMyInfo() {
+        viewModelScope.launch {
+            myPageRepository.getMyInfo()
+                .onSuccess { info: MyInfoResponse ->
+                    _myNickname.value = info.nickname
+                    _myProfileUrl.value = info.profileImageUrl
+
+                    AppUserManager.userId = info.userId.toInt()
+
+                    Log.d("MY_INFO", "내 userId 세팅됨: ${AppUserManager.userId}")
+                }
+                .onFailure { e ->
+                    Log.e("MY_INFO", "내 정보 조회 실패: ${e.message}", e)
+                }
+        }
+    }
+
+
+    // 1. 사용자 검색
+    private val _searchResults = MutableLiveData<List<FriendSearchResult>>()
+    val searchResults: LiveData<List<FriendSearchResult>> get() = _searchResults
+
+    private val _recentKeywords = MutableLiveData<List<String>>(emptyList())
+    val recentKeywords: LiveData<List<String>> get() = _recentKeywords
+
+    fun searchUser(keyword: String) {
+        if (keyword == lastKeyword) return
+        lastKeyword = keyword
+
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            delay(250) // 디바운스
+            repository.searchUser(keyword)
+                .onSuccess { result ->
+                    val myId = AppUserManager.userId
+                    val filtered = result.filter { it.userId != myId }
+
+                    if (filtered.isEmpty()) {
+                        _searchResults.value = emptyList()
+                        _errorMessage.value = Event("존재하지 않는 사용자입니다.")
+                    } else {
+                        _searchResults.value = filtered
+//                        _successMessage.value = Event("사용자 조회 성공")  // 확인용 토스트
+//                        Log.d("VIEWMODEL", "성공 메시지 emit됨") // 확인용 로그
+                    }
+                }
+                .onFailure { e ->
+                    _searchResults.value = emptyList()
+                    _errorMessage.value = Event("사용자 검색 실패 (${e.message})")
+                }
+        }
+    }
+
+
+    fun addRecentKeyword(keyword: String) {
+        val currentList = _recentKeywords.value.orEmpty().toMutableList()
+
+        // 이미 있으면 삭제
+        currentList.remove(keyword)
+
+        // 맨 앞에 추가
+        currentList.add(0, keyword)
+
+        _recentKeywords.value = currentList
+    }
+
+    fun removeLastKeyword() {
+        val current = _recentKeywords.value.orEmpty()
+        _recentKeywords.value = current.dropLast(1)
+    }
+
+    // 2. 틈 요청 조회(받은 목록)
+    private val _receivedTeums = MutableLiveData<List<TeumReceivedItem>>()
+    val receivedTeums: LiveData<List<TeumReceivedItem>> get() = _receivedTeums
+
+    fun getTeumRequests() {
+        viewModelScope.launch {
+            repository.getReceivedTeums()
+                .onSuccess { result ->
+                    _receivedTeums.value = result
+                }
+                .onFailure { e ->
+                    val msg = when {
+                        e.message?.contains("TEUM4030") == true -> "요청 또는 응답에 대한 권한이 없습니다."
+                        else -> "틈 요청 조회 실패 (${e.message})"
+                    }
+                    _errorMessage.value = Event(msg)
+                }
+        }
+    }
+
+    // 2-1. 틈 리스트에서 선택한 틈
+    private val _selectedTeum = MutableLiveData<TeumReceivedItem?>()
+    val selectedTeum: LiveData<TeumReceivedItem?> get() = _selectedTeum
+
+    fun selectTeum(item: TeumReceivedItem?) {
+        _selectedTeum.value = item
+    }
+    fun clearSelectedTeum() { _selectedTeum.value = null }
+
+    // 3. 친구 프로필
+    private val _friendProfile = MutableLiveData<FriendProfileResult>()
+    val friendProfile: LiveData<FriendProfileResult> get() = _friendProfile
+
+    fun getFriendProfile(
+        userId: Int,
+        onResult: (FriendProfileResult) -> Unit = {}
+    ) {
+        viewModelScope.launch {
+            repository.getFriendProfile(userId)
+                .onSuccess { profile ->
+                    _friendProfile.value = profile
+                    onResult(profile)
+                }
+                .onFailure { e ->
+                    val msg = "친구 프로필 조회 실패 (${e.message})"
+                    _errorMessage.value = Event(msg)
+                }
+        }
+    }
+
+
+    private val _teumRequestTitle = MutableLiveData<String>("")
+    val teumRequestTitle: LiveData<String> get() = _teumRequestTitle
+
+    private val _teumRequestDescription = MutableLiveData<String>("")
+    val teumRequestDescription: LiveData<String> get() = _teumRequestDescription
+
+    private val _teumRequestSelectedDate = MutableLiveData<String>()
+    val teumRequestSelectedDate: LiveData<String> get() = _teumRequestSelectedDate
+
+    private val _teumRequestSelectedTime = MutableLiveData<SelectedTime?>()
+    val teumRequestSelectedTime: LiveData<SelectedTime?> get() = _teumRequestSelectedTime
+
+    private val _teumRequestGraphicId = MutableLiveData<Int?>()
+    val teumRequestGraphicId: LiveData<Int?> get() = _teumRequestGraphicId
+
+    private val _teumRequestReceiverUserIds = MutableLiveData<List<Int>>(emptyList())
+    val teumRequestReceiverUserIds: LiveData<List<Int>> get() = _teumRequestReceiverUserIds
+
+    private val _teumRequestMainTargetUserId = MutableLiveData<Int>()
+    val teumRequestMainTargetUserId: LiveData<Int> get() = _teumRequestMainTargetUserId
+
+    private val _teumRequestMainTargetUserName = MutableLiveData<String>()
+    val teumRequestMainTargetUserName: LiveData<String> get() = _teumRequestMainTargetUserName
+
+    private val _teumRequestMainTargetProfileImage = MutableLiveData<String>()
+    val teumRequestMainTargetProfileImage: LiveData<String> get() = _teumRequestMainTargetProfileImage
+
+    //Setter
+    fun setTeumRequestTitle(v: String)            { _teumRequestTitle.value = v }
+    fun setTeumRequestDescription(v: String)      { _teumRequestDescription.value = v }
+    fun setTeumRequestSelectedDate(v: String)   { _teumRequestSelectedDate.value = v }
+    fun setTeumRequestSelectedTime(v: SelectedTime?) { _teumRequestSelectedTime.value = v }
+    fun setTeumRequestGraphicId(v: Int?)          { _teumRequestGraphicId.value = v }
+    fun setTeumRequestReceiverUserIds(v: List<Int>) { _teumRequestReceiverUserIds.value = v }
+    fun setTeumRequestMainTargetUserId(v: Int) { _teumRequestMainTargetUserId.value = v }
+    fun setTeumRequestMainTargetUserName(v: String)   { _teumRequestMainTargetUserName.value = v }
+    fun setTeumRequestMainTargetProfileImage(v: String) { _teumRequestMainTargetProfileImage.value = v }
+
+    fun clearTeumConflict() { _teumConflict.value = null }
+
+
+    //요청 생성 메소드
+    fun buildTeumRequest(): TeumRequest? {
+        val title = _teumRequestTitle.value?.takeIf { it.isNotBlank() } ?: return null
+        val desc  = _teumRequestDescription.value ?: ""
+        val date  = _teumRequestSelectedDate.value ?: return null
+        val time  = _teumRequestSelectedTime.value ?: return null
+        val gid   = _teumRequestGraphicId.value ?: return null
+        val main  = _teumRequestMainTargetUserId.value ?: return null
+
+//        단일 수신자 아닐 때
+//        val receiversRaw = _teumRequestReceiverUserIds.value.orEmpty()
+//
+//        val receivers = listOf(main) + receiversRaw
+//        val finalReceivers = receivers.distinct()
+
+        return TeumRequest(
+            title = title,
+            description = desc,
+            date = date,
+            startTime = time.startTime,
+            endTime = time.endTime,
+            graphicId = gid,
+            receiverUserId = main
+        )
+    }
+
+    // 4. 틈 요청 보내기
+    fun sendTeumRequest(request: TeumRequest,
+                        onSuccess: () -> Unit,
+                        onError: (String) -> Unit) {
+        viewModelScope.launch {
+            Log.d("SEND_TEUM_REQUEST", request.toString())
+            repository.sendTeumRequest(request)
+                .onSuccess { teumId ->
+//                    _successMessage.value = Event("틈 요청이 성공적으로 생성되었습니다. (id: $teumId)")
+                    Log.d("SEND_TEUM_REQUEST", "teumId $teumId")
+                    onSuccess()
+                }
+                .onFailure { e -> onError(e.message ?: "재요청 실패") }
+        }
+    }
+
+    // 5. 틈 응답 상태 변경
+    fun respondToTeum(responseId: Int, status: String) {
+        viewModelScope.launch {
+            repository.respondToTeum(responseId, status)
+                .onSuccess { result: TeumStatusResult ->
+                    _successMessage.value = when (result.status) {
+                        "ACCEPTED" -> Event("틈 요청을 수락했어요!")
+                        "REJECTED" -> Event("틈 요청을 거절했어요.")
+                        else -> Event("응답 상태가 처리되었습니다.")
+                    }
+                }
+                .onFailure { e ->
+                    val msg = when {
+                        e.message?.contains("TEUM4002") == true -> "이미 마감된 요청입니다."
+                        e.message?.contains("TEUM4030") == true -> "요청 또는 응답에 대한 권한이 없습니다."
+                        e.message?.contains("TEUM4041") == true -> "존재하지 않는 틈 응답입니다."
+                        e.message?.contains("TEUM4006") == true -> "응답 status 값은 accepted 또는 rejected 이어야 합니다."
+                        else -> "틈 응답 실패 (${e.message})"
+                    }
+                    _errorMessage.value = Event(msg)
+                }
+        }
+    }
+
+    // 6. 약속된 틈 날짜 리스트 (달력 점)
+    private val _scheduledDotDates = MutableLiveData<List<LocalDate>>()
+    val scheduledDotDates: LiveData<List<LocalDate>> get() = _scheduledDotDates
+
+    fun fetchScheduledTeumDates(month: String) {
+        viewModelScope.launch {
+            repository.getScheduledTeumCalendar(month)
+                .onSuccess { resultList ->
+                    _scheduledDotDates.value = resultList.mapNotNull {
+                        runCatching { LocalDate.parse(it) }.getOrNull()
+                    }
+                    Log.d("CALENDAR_INFO", "약속된 틈 달력 정보 조회 성공")
+                }
+                .onFailure { e ->
+                    Log.e("CALENDAR_INFO", "약속된 틈 달력 조회 실패: ${e.message}")
+                }
+        }
+    }
+
+    // 7. 특정 날짜의 약속된 틈 리스트
+    private val _scheduledTeumList = MutableLiveData<List<TeumScheduledResult>>()
+    val scheduledTeumList: LiveData<List<TeumScheduledResult>> get() = _scheduledTeumList
+
+    fun fetchScheduledTeumList(date: String) {
+        viewModelScope.launch {
+            repository.getScheduledTeums(date)
+                .onSuccess { result ->
+                    _scheduledTeumList.value = result
+                    _successMessage.value = Event("$date 약속된 틈 조회 성공 (총 ${result.size}개)")
+                    Log.d("CALENDAR_SCHEDULED", "약속된 틈 $date 조회 결과: $result")
+                }
+                .onFailure { e ->
+                    val msg = when {
+                        e.message?.contains("TEUM4042") == true -> "약속된 틈이 존재하지 않습니다."
+                        else -> "약속된 틈 조회 실패 (${e.message})"
+                    }
+                    _scheduledTeumList.value = emptyList()
+                    _errorMessage.value = Event(msg)
+                    Log.e("CALENDAR_SCHEDULED", "$date 조회 실패: ${e.message}", e)
+                }
+        }
+    }
+
+    // 8. 약속된 틈 상세 / 과거 여부
+    private val _teumScheduleDetail = MutableLiveData<TeumScheduleDetailResult?>()
+    val teumScheduleDetail: LiveData<TeumScheduleDetailResult?> get() = _teumScheduleDetail
+
+    private val _isPastSchedule = MutableLiveData<Boolean?>()
+    val isPastSchedule: LiveData<Boolean?> get() = _isPastSchedule
+
+    fun fetchTeumScheduleDetail(teumId: Int) {
+        viewModelScope.launch {
+            repository.getTeumScheduleDetail(teumId)
+                .onSuccess { result ->
+                    _teumScheduleDetail.value = result
+                    _successMessage.value = Event("약속된 틈 상세 정보가 조회되었습니다.")
+
+                    val now = LocalDateTime.now()
+                    val dateTimeStr = "${result.date}T${result.startTime}" // yyyy-MM-dd'T'HH:mm
+                    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")
+                    val scheduleDateTime = runCatching {
+                        LocalDateTime.parse(dateTimeStr, formatter)
+                    }.getOrNull()
+
+                    _isPastSchedule.value = scheduleDateTime?.isBefore(now) == true
+                }
+                .onFailure { e ->
+                    val msg = when {
+                        e.message?.contains("TEUM4042") == true -> "약속된 틈이 존재하지 않습니다."
+                        e.message?.contains("TEUM4030") == true -> "권한이 없습니다."
+                        else -> "약속된 틈 상세 조회 실패 (${e.message})"
+                    }
+                    _errorMessage.value = Event(msg)
+                    _teumScheduleDetail.value = null
+                    _isPastSchedule.value = null
+                    Log.e("TEUM_DETAIL", "상세 조회 실패: ${e.message}")
+                }
+        }
+    }
+
+    // 9. 약속된 틈 취소
+    private val _cancelScheduleSuccess = MutableLiveData<Event<Int>>()
+    val cancelScheduleSuccess: LiveData<Event<Int>> = _cancelScheduleSuccess
+
+    fun cancelTeumSchedule(teumId: Int) {
+        viewModelScope.launch {
+            repository.cancelTeumSchedule(teumId)
+                .onSuccess { result ->
+                    _successMessage.value = Event("약속된 틈이 성공적으로 취소되었습니다.")
+                    _cancelScheduleSuccess.value = Event(teumId)
+                    Log.d("SCHEDULED_CANCEL", "취소된 유저 ID: ${result.cancelledUserIds}")
+                }
+                .onFailure { e ->
+                    val msg = when {
+                        e.message?.contains("TEUM4030") == true -> "정보에 대한 권한이 없습니다."
+                        e.message?.contains("TEUM4042") == true -> "약속된 틈이 존재하지 않습니다."
+                        else -> "약속된 틈 취소 실패 (${e.message})"
+                    }
+                    _errorMessage.value = Event(msg)
+                    Log.e("SCHEDULED_CANCEL", "취소 실패: ${e.message}", e)
+                }
+        }
+    }
+
+    // 10. 특정 유저 팔로우
+    private val _followMessage = MutableLiveData<Event<String>>()
+    val followMessage: LiveData<Event<String>> get() = _followMessage
+
+    fun followUser(userId: Int) {
+        viewModelScope.launch {
+            repository.followUser(userId)
+                .onSuccess { response ->
+                    Log.d("FOLLOW_FRAGMENT", "${response.code} | ${response.message}")
+                    val msg = if (response.isSuccess) {
+                        response.message
+                    } else {
+                        when (response.code) {
+                            "FRIEND4002" -> "자기 자신은 팔로우할 수 없습니다."
+                            "FRIEND4040" -> "존재하지 않는 유저입니다."
+                            "FRIEND4001" -> "이미 팔로우한 유저입니다."
+                            else -> "팔로우 실패: ${response.message}"
+                        }
+                    }
+                    _followMessage.value = Event(msg)
+                }
+                .onFailure { e ->
+                    val msg = "팔로우 요청 실패 (${e.message})"
+                    Log.e("FOLLOW_FRAGMENT", msg)
+                    _followMessage.value = Event(msg)
+                }
+        }
+    }
+
+    // 11. 팔로잉 목록 조회(즐겨찾기 우선 + 닉네임 가나다 정렬)
+    private val _followingUsers = MutableLiveData<List<FollowingResult>>()
+    val followingUsers: LiveData<List<FollowingResult>> get() = _followingUsers
+
+    fun resetFollowingPaging() {
+        followingPage = 1
+        _followingHasNext.value = true
+        _followingUsers.value = emptyList()
+    }
+
+    fun loadNextFollowings() {
+        if (isLoadingFollowing || _followingHasNext.value == false) return
+        isLoadingFollowing = true
+        viewModelScope.launch {
+            repository.getFollowingsPage(followingPage, pageSize)
+                .onSuccess { page ->
+                    // 서버 정렬 그대로 + 사용자가 토글한 즐겨찾기는 오버라이드만 반영
+                    val favMap = favoriteMap.value.orEmpty()
+                    val merged = page.content.map { it.copy(isFavorite = favMap[it.userId] ?: it.isFavorite) }
+                    _followingUsers.value = _followingUsers.value.orEmpty() + merged
+
+                    _followingHasNext.value = page.hasNext
+                    if (page.hasNext) followingPage += 1
+                }
+                .onFailure { e -> _errorMessage.value = Event("팔로잉 목록 조회 실패 (${e.message})") }
+            isLoadingFollowing = false
+        }
+    }
+
+    // 12. 특정 유저 언팔로우
+    private val _unfollowMessage = MutableLiveData<Event<String>>()
+    val unfollowMessage: LiveData<Event<String>> get() = _unfollowMessage
+
+    fun unfollowUser(userId: Int) {
+        viewModelScope.launch {
+            repository.unfollowUser(userId)
+                .onSuccess { response ->
+                    if (response.isSuccess && response.code == "FRIEND2001") {
+                        // 1) 언팔로우 메시지
+                        _unfollowMessage.value = Event(response.message)
+
+                        // 2) 팔로잉 목록에서 해당 유저 제거
+                        _followingUsers.value = _followingUsers.value
+                            ?.filter { it.userId != userId }
+
+                        // 3) 즐겨찾기 상태도 해제(또는 제거)
+                        _favoriteMap.value = _favoriteMap.value.orEmpty()
+                            .toMutableMap().apply {
+                                // put(userId, false) 로 해제하거나,
+                                // remove(userId) 로 키 자체를 없애도 됨. 여기선 해제로 유지.
+                                put(userId, false)
+                            }
+
+                        Log.d("UNFOLLOW_FRAGMENT", "언팔로우 성공")
+                    } else {
+                        val msg = when (response.code) {
+                            "FRIEND4002" -> "자기 자신에 대한 요청은 처리할 수 없습니다."
+                            "FRIEND4040" -> "존재하지 않는 유저입니다."
+                            "FRIEND4005" -> "팔로우하지 않은 유저입니다."
+                            else -> "언팔로우 실패: ${response.message}"
+                        }
+                        _unfollowMessage.value = Event(msg)
+                        Log.e("UNFOLLOW_FRAGMENT", msg)
+                    }
+                }
+                .onFailure { e ->
+                    val msg = "언팔로우 요청 실패 (${e.message})"
+                    Log.e("UNFOLLOW_FRAGMENT", msg, e)
+                    _unfollowMessage.value = Event(msg)
+                }
+        }
+    }
+
+    // 13. 특정 유저 즐겨찾기 설정/해제
+    private val _favoriteMessage = MutableLiveData<String>()
+    val favoriteMessage: LiveData<String> get() = _favoriteMessage
+
+    fun toggleFavorite(userId: Int) {
+        // 1) 지금 화면에 보이는 값을 기준으로 before 산정
+        val current = _followingUsers.value
+            ?.firstOrNull { it.userId == userId }
+            ?.isFavorite ?: false
+        val after = !current
+
+        // 2) 낙관적 UI 업데이트 (리스트 갱신 + 정렬)
+        val collator = Collator.getInstance(Locale.KOREAN).apply { strength = Collator.PRIMARY }
+        _followingUsers.value = _followingUsers.value
+            ?.map { if (it.userId == userId) it.copy(isFavorite = after) else it }
+            ?.sortedWith(Comparator { a, b ->
+                if (a.isFavorite != b.isFavorite) {
+                    if (a.isFavorite) -1 else 1
+                } else {
+                    collator.compare(a.nickname, b.nickname)
+                }
+            })
+
+        // 3) 오버라이드 맵 갱신: "사용자가 바꾼 값만" 저장
+        _favoriteMap.value = _favoriteMap.value.orEmpty().toMutableMap().apply {
+            put(userId, after)
+        }
+
+        // 4) 서버 반영
+        viewModelScope.launch {
+            repository.setFavorite(userId, after)
+                .onSuccess { resp ->
+                    val ok = resp.userId == userId && resp.isFavorite == after
+                    if (ok) {
+                        _favoriteMessage.value = if (after) "즐겨찾기에 추가했습니다." else "즐겨찾기를 해제했습니다."
+                    } else {
+                        rollbackFavorite(userId, current)   // 실패 시 복구
+                        _favoriteMessage.value = "즐겨찾기 변경 실패"
+                    }
+                }
+                .onFailure { e ->
+                    rollbackFavorite(userId, current)
+                    _favoriteMessage.value = "즐겨찾기 변경 실패 (${e.message})"
+                }
+        }
+    }
+
+    private fun rollbackFavorite(userId: Int, oldValue: Boolean) {
+        // 리스트 되돌리기
+        val collator = Collator.getInstance(Locale.KOREAN).apply { strength = Collator.PRIMARY }
+        _followingUsers.value = _followingUsers.value
+            ?.map { if (it.userId == userId) it.copy(isFavorite = oldValue) else it }
+            ?.sortedWith(Comparator { a, b ->
+                if (a.isFavorite != b.isFavorite) {
+                    if (a.isFavorite) -1 else 1
+                } else {
+                    collator.compare(a.nickname, b.nickname)
+                }
+            })
+
+        // 오버라이드 맵도 되돌리기
+        _favoriteMap.value = _favoriteMap.value.orEmpty().toMutableMap().apply {
+            put(userId, oldValue)
+        }
+    }
+
+    private val _followerUsers = MutableLiveData<List<FollowerResult>>()
+    val followerUsers: LiveData<List<FollowerResult>> get() = _followerUsers
+
+    fun resetFollowerPaging() {
+        followerPage = 1
+        _followersHasNext.value = true
+        _followerUsers.value = emptyList()
+    }
+
+    fun loadNextFollowers() {
+        if (isLoadingFollower || _followersHasNext.value == false) return
+        isLoadingFollower = true
+        viewModelScope.launch {
+            repository.getFollowersPage(followerPage, pageSize)
+                .onSuccess { page ->
+                    _followerUsers.value = _followerUsers.value.orEmpty() + page.content
+                    _followersHasNext.value = page.hasNext
+                    if (page.hasNext) followerPage += 1
+                }
+                .onFailure { e -> _errorMessage.value = Event("팔로워 목록 조회 실패 (${e.message ?: "알 수 없는 오류"})") }
+            isLoadingFollower = false
+        }
+    }
+
+    // 틈 읽기
+    fun readTeumRequest(responseId: Int) {
+        viewModelScope.launch {
+            repository.readTeumRequest(responseId)
+                .onSuccess { result ->
+                    _receivedTeums.value = _receivedTeums.value?.map { item ->
+                        if (item.responseId == responseId) {
+                            item.copy(read = true)
+                        } else {
+                            item
+                        }
+                    }
+//                    _successMessage.value = Event("틈 요청 읽음 처리 성공")
+                }
+                .onFailure { e ->
+//                    _errorMessage.value = Event("틈 요청 읽음 처리 실패 (${e.message})")
+                    Log.d("ReadTeumRequest", _errorMessage.value.toString())
+                }
+        }
+    }
+
+    // 15. 맞팔로우 목록
+    private val _mutualFriends = MutableLiveData<List<MutualFriendItem>>()
+    val mutualFriends: LiveData<List<MutualFriendItem>> get() = _mutualFriends
+
+    fun getMutualFriends(excludeUserId: Int? = null) {
+        viewModelScope.launch {
+            val myUserId = AppUserManager.userId
+
+            // 자기 자신 제외 방지
+            if (excludeUserId != null && excludeUserId == myUserId) {
+                _errorMessage.value = Event("자기 자신은 제외할 수 없습니다.")
+                return@launch
+            }
+
+            repository.getMutualFriends(
+                if (excludeUserId == null || excludeUserId == -1) null else excludeUserId
+            )
+                .onSuccess { list ->
+                    _mutualFriends.value = list
+                    _successMessage.value = Event("친구 목록 조회에 성공하였습니다.")
+                    Log.d("MUTUAL_FRAGMENT", "친구 목록 조회 성공")
+                }
+                .onFailure { e ->
+                    val msg = when {
+                        e.message?.contains("FRIEND4002") == true -> "자기 자신에 대한 요청은 처리할 수 없습니다."
+                        e.message?.contains("FRIEND4040") == true -> "존재하지 않는 유저입니다."
+                        else -> "맞팔로우 목록 조회 실패 (${e.message})"
+                    }
+                    _errorMessage.value = Event(msg)
+                    Log.e("MUTUAL_FRAGMENT", msg, e)
+                }
+        }
+    }
+
+    private val _possibleTimeList = MutableLiveData<List<TimeCardItem?>>()
+    val possibleTimeList: LiveData<List<TimeCardItem?>> get() = _possibleTimeList
+
+    private val _excludedUserIds = MutableLiveData<MutableSet<Int>>(mutableSetOf()) // [ADDED]
+    val excludedUserIds: LiveData<MutableSet<Int>> get() = _excludedUserIds         // [ADDED]
+
+    // 고정 날짜 세팅
+    private var fixedDate: String? = null // [ADDED]
+
+    fun setFixedDate(date: String) {
+        fixedDate = date
+        refreshPossibleTimeIfPossible()
+    }
+
+    // 가능한 시간대 조회
+    fun getPossibleTimeWithFriend(request: PossibleTimeRequest) {
+        viewModelScope.launch {
+            repository.getPossibleTime(request)
+                .onSuccess { result ->
+                    val mapped = result.availableTime.map { TimeCardItem(it.startTime, it.endTime) }
+                    _possibleTimeList.value = mapped
+                }
+                .onFailure {
+                    _possibleTimeList.value = emptyList()
+                }
+        }
+    }
+
+    // 버튼 눌러 제외/포함 토글
+    fun toggleExclude(userId: Int) {
+        val set = _excludedUserIds.value ?: mutableSetOf()
+        if (set.contains(userId)) set.remove(userId) else set.add(userId)
+        _excludedUserIds.value = set
+
+        // 날짜는 고정값 사용
+        refreshPossibleTimeIfPossible()
+    }
+
+    // 현재 고정 날짜 + (선택 - 제외)로 재조회
+    private fun refreshPossibleTimeIfPossible() {
+        val date = fixedDate ?: return
+        val selected = _selectedFriends.value?.map { it.userId } ?: emptyList()
+        val excluded = _excludedUserIds.value ?: mutableSetOf()
+        val included = selected.filterNot { excluded.contains(it) }
+
+        if (included.isEmpty()) {
+            _possibleTimeList.value = emptyList()
+            return
+        }
+
+        val body = PossibleTimeRequest(userIds = included, date = date)
+        getPossibleTimeWithFriend(body)
+    }
+
+    // 제외 상태 초기화
+    fun clearExclusions() {
+        _excludedUserIds.value = mutableSetOf()
+    }
+
+    // 선택 친구 목록 초기화
+    fun clearSelectedFriends() {
+        _selectedFriends.value = mutableListOf()
+    }
+
+    //틈 재요청
+    fun resendTeumRequest(
+        requestId: Int,
+        body: ResendTeumRequest,
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit
+    ) {
+        viewModelScope.launch {
+            repository.resendTeumRequest(requestId, body)
+                .onSuccess { onSuccess() }
+                .onFailure { e -> onError(e.message ?: "재요청 실패") }
+        }
+    }
+
+    // 친구의 빈틈 시간 조회
+    fun loadFriendTeumTime(userId: Int) {
+        viewModelScope.launch {
+            repository.getFriendTeumTime(userId)
+                .onSuccess { result ->
+                    _teumTimeText.value = result.toKoreanDuration()
+                    Log.d("TEUM_TIME_FRAGMENT", "친구 빈틈 시간 조회에 성공하였습니다.")
+                }
+                .onFailure { e ->
+                    _teumTimeText.value = "-"
+                    Log.e("TEUM_TIME_FRAGMENT", "빈틈 시간 조회 실패: ${e.message}")
+                }
+        }
+    }
+
+    private fun TeumTimeResult.toKoreanDuration(): String {
+        return "${days}일 ${hours}시간 ${minutes}분"
+    }
+
+    // 서로의 빈틈(함께한) 시간 텍스트 → nickname_tv에 바인딩 용
+    private val _sharedTeumTimeText = MutableLiveData<String>()
+    val sharedTeumTimeText: LiveData<String> get() = _sharedTeumTimeText
+
+    // 서로의 빈틈을 함께한 시간 조회 (나 + 친구)
+    fun loadSharedTeumTime(targetUserId: Int) {
+        viewModelScope.launch {
+            val myId = AppUserManager.userId
+            if (targetUserId == myId) {
+                _errorMessage.value = Event("자기 자신은 조회할 수 없습니다.")
+                _sharedTeumTimeText.value = "0일 0시간 0분" // 현재 포맷과 일관 유지
+                return@launch
+            }
+
+            repository.getSharedTeumTime(targetUserId)
+                .onSuccess { result ->
+                    _sharedTeumTimeText.value = result.toKoreanDuration()
+                    Log.d("TEUM_TIME_SHARED", "함께한 빈틈 시간 정보가 조회되었습니다.")
+                }
+                .onFailure { e ->
+                    _sharedTeumTimeText.value = "0일 0시간 0분" // 실패 시 기본값
+                    _errorMessage.value = Event(e.message ?: "함께한 빈틈 시간 조회 실패")
+                    Log.e("TEUM_TIME_SHARED", "조회 실패: ${e.message}")
+                }
+        }
+    }
+
+    // 함께한 틈 목록
+    private val _sharedTeumList = MutableLiveData<List<SharedTeumItem>>()
+    val sharedTeumList: LiveData<List<SharedTeumItem>> get() = _sharedTeumList
+
+    fun loadSharedTeumList(userId: Int, page: Int = 1, size: Int = 10) {
+        viewModelScope.launch {
+            repository.getSharedTeumList(userId, page, size)
+                .onSuccess { list ->
+                    _sharedTeumList.value = list
+                    Log.d(
+                        "SHARED_TEUM_LIST",
+                        "isSuccess=true, code=TEUM2013, message=함께한 틈 목록이 조회되었습니다. size=${list.size}"
+                    )
+                }
+                .onFailure { e ->
+                    Log.e("SHARED_TEUM_LIST", "목록 조회 실패: ${e.message}")
+                    _errorMessage.value = Event(e.message ?: "함께한 틈 목록 조회 실패")
+                    _sharedTeumList.value = emptyList()
+                }
+        }
+    }
+
+    // 최근 공개 투두 조회
+    private val _recentTodos = MutableLiveData<List<PublicTodoResult>>()
+    val recentTodos: LiveData<List<PublicTodoResult>> get() = _recentTodos
+
+    fun fetchRecentPublicTodos(userId: Int) {
+        viewModelScope.launch {
+            repository.getRecentPublicTodos(userId)
+                .onSuccess { list ->
+                    // 0개면 UI에서 카드 컨테이너 숨기도록 empty 리스트 그대로 전달
+                    _recentTodos.value = list
+                }
+                .onFailure { e ->
+                    // 에러 메시지는 기존 공통 에러 Event로만 알림 (로그는 Repository에서만)
+                    _recentTodos.value = emptyList()
+                    _errorMessage.value = Event(e.message ?: "최근 공개 투두 조회 실패")
+                }
+        }
+    }
+
+    // 공개 투두 날짜 리스트 조회
+    private val _publicTodoDotDates = MutableLiveData<List<LocalDate>>(emptyList())
+    val publicTodoDotDates: LiveData<List<LocalDate>> get() = _publicTodoDotDates
+
+    fun fetchFriendPublicTodoDates(userId: Int, month: String) {
+        viewModelScope.launch {
+            repository.getFriendPublicTodoDates(userId, month)
+                .onSuccess { dates ->
+                    // "YYYY-MM-DD" -> LocalDate 로 변환해서 보관
+                    _publicTodoDotDates.value = dates.mapNotNull {
+                        runCatching { LocalDate.parse(it) }.getOrNull()
+                    }
+                }
+                .onFailure { e ->
+                    _publicTodoDotDates.value = emptyList()
+                    _errorMessage.value = Event(e.message ?: "공개 투두 달력 조회 실패")
+                }
+        }
+    }
+
+    // 특정 날짜의 공개 투두 조회
+    private val _publicTodosByDate = MutableLiveData<List<PublicTodoResult>>(emptyList())
+    val publicTodosByDate: LiveData<List<PublicTodoResult>> get() = _publicTodosByDate
+
+    fun fetchFriendPublicTodosByDate(userId: Int, date: String) {
+        viewModelScope.launch {
+            repository.getFriendPublicTodosByDate(userId, date)
+                .onSuccess { _publicTodosByDate.value = it }
+                .onFailure {
+                    _publicTodosByDate.value = emptyList()
+                    _errorMessage.value = Event(it.message ?: "공개 투두 조회 실패")
+                }
+        }
+    }
+
+    // 틈 요청 날짜 리스트 조회
+    private val _requestDotDates = MutableLiveData<List<LocalDate>>(emptyList())
+    val requestDotDates: LiveData<List<LocalDate>> get() = _requestDotDates
+
+    fun fetchRequestTeumDates(month: String) {
+        viewModelScope.launch {
+            repository.getTeumRequestCalendar(month)
+                .onSuccess { result ->
+                    // "YYYY-MM-DD" -> LocalDate 변환
+                    val dates =
+                        result.mapNotNull { runCatching { LocalDate.parse(it) }.getOrNull() }
+                    _requestDotDates.value = dates
+                    Log.d(
+                        "FRIEND_REQUEST_DATES",
+                        "요청 달력 조회 성공: month=$month, count=${dates.size}"
+                    )
+                }
+                .onFailure { e ->
+                    _requestDotDates.value = emptyList()
+                    _errorMessage.value = Event("요청 달력 조회 실패 (${e.message})")
+                    Log.e("FRIEND_REQUEST_DATES", "요청 달력 조회 실패: ${e.message}", e)
+                }
+        }
+    }
+
+    // 특정 날짜의 약속된 틈 조회
+    private val _teumRequestsByDate = MutableLiveData<List<TeumRequestDateResult>>()
+    val teumRequestsByDate: LiveData<List<TeumRequestDateResult>> get() = _teumRequestsByDate
+
+    fun loadTeumRequestsByDate(date: String) {
+        viewModelScope.launch {
+            repository.getTeumRequestsByDate(date)
+                .onSuccess { list ->
+                    Log.d("TEUM2006", "지정한 날짜의 틈 요청 목록이 조회되었습니다.")
+                    Log.d("TEUM2006", "조회 날짜: $date, 총 ${list.size}건")
+
+                    // 서버 응답 그대로 사용 (resend 풀어서 추가하지 않음)
+                    _teumRequestsByDate.value = list
+                }
+                .onFailure { e ->
+                    Log.e("TEUM2006", "날짜별 틈 요청 조회 실패: ${e.message}")
+                    _errorMessage.value = Event("날짜별 틈 요청 조회 실패")
+                }
+        }
+    }
+
+    // 차단 성공 여부를 알리는 LiveData (Event Wrapper 사용 권장)
+    private val _blockComplete = MutableLiveData<Event<Boolean>>()
+    val blockComplete: LiveData<Event<Boolean>> get() = _blockComplete
+
+    // 유저 차단 함수
+    fun blockUser(userId: Int) {
+        viewModelScope.launch {
+            repository.blockUser(userId)
+                .onSuccess {
+                    Log.d("FRIEND_BLOCK", "유저 차단 성공: $userId")
+                    // 성공 이벤트 발생 -> UI에서 감지 후 화면 종료 처리
+                    _blockComplete.value = Event(true)
+                }
+                .onFailure { e ->
+                    Log.e("FRIEND_BLOCK", "유저 차단 실패: ${e.message}")
+                    _errorMessage.value = Event(e.message ?: "차단에 실패했습니다.")
+                }
+        }
+    }
+    // 틈 요청 시 겹치는 틈 요청 조회
+    private val _teumConflict = MutableLiveData<TeumConflictResponse?>()
+    val teumConflict: LiveData<TeumConflictResponse?> get() = _teumConflict
+
+    fun checkTeumConflict(
+        date: String,
+        startTime: String,
+        endTime: String
+    ) {
+        Log.d(
+            "TEUM2016",
+            "checkTeumConflict 호출 → date=$date, start=$startTime, end=$endTime"
+        )
+
+        viewModelScope.launch {
+            repository.checkTeumConflict(date, startTime, endTime)
+                .onSuccess { response ->
+                    Log.d(
+                        "TEUM2016",
+                        "API 성공 → hasConflict=${response.hasConflict}, " +
+                                "listSize=${response.conflictingRequests.size}"
+                    )
+
+                    _teumConflict.value = response
+                }
+                .onFailure { e ->
+                    Log.e(
+                        "TEUM4001",
+                        "API 실패 → ${e.message}",
+                        e
+                    )
+                }
+        }
+    }
+
+    // 틈 요청 시 겹치는 투두 요청 조회
+    private val _todoConflict = MutableLiveData<TodoConflictResponse?>()
+    val todoConflict: LiveData<TodoConflictResponse?> get() = _todoConflict
+
+    fun checkTodoConflict(
+        date: String,
+        startTime: String,
+        endTime: String
+    ) {
+        viewModelScope.launch {
+            repository.checkTodoConflict(date, startTime, endTime)
+                .onSuccess { response ->
+                    Log.d(
+                        "TEUM2016",
+                        "API 성공 → hasConflict=${response.hasConflict}, " +
+                                "listSize=${response.conflictingSchedules.size}"
+                    )
+
+                    _todoConflict.value = response
+                }
+                .onFailure { e ->
+                    Log.e(
+                        "TEUM4001",
+                        "API 실패 → ${e.message}",
+                        e
+                    )
+                }
+        }
+    }
+
+    // 틈 요청 취소
+    private val _cancelComplete = MutableLiveData<Event<Boolean>>()
+    val cancelComplete: LiveData<Event<Boolean>> get() = _cancelComplete
+
+    fun cancelTeumRequest(requestId: Long) {
+        viewModelScope.launch {
+            repository.cancelTeumRequest(requestId)
+                .onSuccess {
+                    Log.d("TEUM_CANCEL", "틈 요청 취소 성공: requestId=$requestId")
+                    // 성공 이벤트 발생 -> UI에서 감지 후 리스트 갱신/화면 처리
+                    _cancelComplete.value = Event(true)
+
+                    // (선택) 공통 성공 메시지도 같이 쓰고 싶으면
+                    _successMessage.value = Event("요청이 취소되었습니다.")
+                }
+                .onFailure { e ->
+                    Log.e("TEUM_CANCEL", "틈 요청 취소 실패: ${e.message}")
+
+                    val msg = e.message ?: "요청 취소에 실패했습니다."
+
+                    val uiMsg = when {
+                        msg.contains("TEUM4030") -> "본인이 보낸 요청만 취소할 수 있어요."
+                        msg.contains("TEUM4002") -> "이미 마감되었거나 취소된 요청이에요."
+                        else -> msg
+                    }
+
+                    _errorMessage.value = Event(uiMsg)
+                }
+        }
+    }
+
+    // 신고 생성
+    fun createReport(
+        targetType: String,   // "USER" | "TEUM_REQUEST"
+        targetId: Long,
+        reasonId: Int,        // 8~14
+        otherReason: String? // reasonId=14 일 때 필수
+    ) {
+        Log.d(
+            "REPORT_API",
+            "createReport 호출 → targetType=$targetType, targetId=$targetId, reasonId=$reasonId, otherReasonText=$otherReason"
+        )
+
+        viewModelScope.launch {
+            repository.createReport(
+                ReportRequest(
+                    targetType = targetType,
+                    targetId = targetId,
+                    reasonId = reasonId,
+                    otherReason = otherReason
+                )
+            ).onSuccess { response ->
+                Log.d(
+                    "REPORT201",
+                    "신고 성공 → code=${response.code}, message=${response.message}"
+                )
+
+                _successMessage.value = Event(response.message)
+
+            }.onFailure { throwable ->
+
+                Log.e(
+                    "REPORT_API",
+                    "신고 실패 → ${throwable.message}",
+                    throwable
+                )
+
+                _errorMessage.value =
+                    Event(throwable.message ?: "신고에 실패했습니다.")
+            }
+        }
+    }
+
+}
