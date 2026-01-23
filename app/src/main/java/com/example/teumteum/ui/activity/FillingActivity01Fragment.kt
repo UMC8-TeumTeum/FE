@@ -46,6 +46,13 @@ class FillingActivity01Fragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        val isFreshEntry = arguments?.getBoolean("isFreshEntry", false) == true
+        if (isFreshEntry) {
+            viewModel.clearFillingFormState()
+            viewModel.clearActivityResults()
+            arguments?.remove("isFreshEntry") // 재호출 방지
+        }
+
         val selectedStroke = ContextCompat.getColor(requireContext(), R.color.main_1)
         val defaultStroke = ContextCompat.getColor(requireContext(), R.color.teumteum_bg)
 

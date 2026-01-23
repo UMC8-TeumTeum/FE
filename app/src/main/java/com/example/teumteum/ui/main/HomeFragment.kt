@@ -173,7 +173,9 @@ class HomeFragment : Fragment() {
 
         binding.bannerCard.setOnClickListener {
             parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, FillingActivity01Fragment())
+                .replace(R.id.main_frm, FillingActivity01Fragment().apply {
+                    arguments = Bundle().apply { putBoolean("isFreshEntry", true) }
+                })
                 .addToBackStack(null)
                 .commit()
         }
