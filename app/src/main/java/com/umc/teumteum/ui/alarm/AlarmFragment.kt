@@ -46,13 +46,10 @@ class AlarmFragment : Fragment() {
             if (navigating) return@AlarmRVAdapter
             navigating = true
 
-            // 읽음 처리
             viewModel.readNotification(notification.id.toLong())
 
-            // ✅ 타입별 이동 처리
             val fragment: Fragment = when (notification.type) {
 
-                // 기존 FOLLOW 유지
                 NotificationType.FOLLOW -> {
                     FriendProfileFollowFragment().apply {
                         arguments = Bundle().apply {
@@ -61,24 +58,25 @@ class AlarmFragment : Fragment() {
                     }
                 }
 
-                // ✅ 추가: TEUM_REQUEST면 Friend02RequestFragment로 이동
                 NotificationType.TEUM_REQUEST -> {
                     Friend02RequestFragment().apply {
                         arguments = Bundle().apply {
-                            // relatedId로 요청 식별해서 해당 카드로 포커싱
                             putInt("selectedRequestId", notification.relatedId)
                         }
                     }
                 }
 
-                // 그 외는 기존 네비게이터 사용
                 else -> AlarmNavigator.createFragmentFor(this, notification)
             }
 
-            parentFragmentManager.beginTransaction()
+            val tx = parentFragmentManager.beginTransaction()
                 .replace(R.id.main_frm, fragment)
-                .addToBackStack(null)
-                .commit()
+
+            if (notification.type != NotificationType.FOLLOW) {
+                tx.addToBackStack(null)
+            }
+
+            tx.commit()
         }
 
         val lm = LinearLayoutManager(requireContext())
