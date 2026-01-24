@@ -1,0 +1,369 @@
+package com.umc.teumteum.ui.wish
+
+import android.app.Dialog
+import android.content.Context
+import android.content.res.ColorStateList
+import android.os.Bundle
+import android.util.Log
+import android.view.KeyEvent
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
+import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import com.umc.teumteum.R
+import com.umc.teumteum.data.remote.wish.model.RegisterWishRequest
+import com.umc.teumteum.databinding.BottomSheetWishRegisterBinding
+import com.umc.teumteum.ui.todo.BottomSheetTodoRegisterFragment
+import com.umc.teumteum.ui.wish.viewModel.WishViewModel
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.button.MaterialButton
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import kotlin.math.max
+
+@AndroidEntryPoint
+class BottomSheetWishRegisterFragment : BottomSheetDialogFragment() {
+
+    private var _binding: BottomSheetWishRegisterBinding? = null
+    private val binding get() = _binding!!
+
+    private var selectedTimeButton: View? = null
+    private val selectedCategoryButtons = mutableListOf<MaterialButton>()
+
+    private var isWishSelected = true
+    private var isFromWish: Boolean = false
+
+    private val viewModel: WishViewModel by activityViewModels()
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = BottomSheetWishRegisterBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        isFromWish = arguments?.getBoolean("isFromWish") ?: false
+
+        setupUI()
+        setupObservers()
+        setupTitleImeDone()
+    }
+
+    private fun setupUI() {
+        binding.btnTodo.visibility = if (isFromWish) View.GONE else View.VISIBLE
+
+        binding.btnTodo.setOnClickListener {
+            if (isWishSelected) {
+                clearWishSheet()
+
+                binding.btnWish.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.teumteum_bg))
+                binding.btnWish.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
+
+                binding.btnTodo.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
+                binding.btnTodo.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+
+                isWishSelected = false
+
+                // 컨테이너 잔여 뷰 제거 + 즉시 커밋으로 겹침 방지
+                (requireView().findViewById<ViewGroup>(R.id.register_fragment_container)).removeAllViews()
+
+                val tx = childFragmentManager.beginTransaction()
+                    .setReorderingAllowed(true)
+                    .disallowAddToBackStack()
+                    .replace(R.id.register_fragment_container, BottomSheetTodoRegisterFragment(), "TodoRegister")
+
+                // 겹침/플리커 방지를 위해 즉시 커밋
+                tx.commitNowAllowingStateLoss()
+            }
+        }
+
+        // 원래 스크롤뷰 패딩 저장
+        val originalBottomPadding = binding.registerScroll.paddingBottom
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
+            val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            val sysBottom = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom
+
+            // 추가 확보 공간
+            val extra = max(0, imeBottom - sysBottom)
+
+            binding.registerScroll.updatePadding(
+                bottom = originalBottomPadding + extra
+            )
+
+            // 키보드 올라오면 하단 버튼 숨김
+            binding.btnWishRegister.isVisible = imeBottom == 0
+
+            insets
+        }
+
+        binding.btnWishRegister.setOnClickListener {
+            if (validateInputs()) {
+                viewModel.registerWish(getWishRequest())
+            }
+        }
+
+        setupTimeButtons()
+        setupCategoryButtons()
+    }
+
+    private fun clearWishSheet() {
+        binding.wishTitleEt.setText("")
+        binding.detailTextEt.setText("")
+
+        val timeButtons = listOf(
+            binding.btnWishTime01,
+            binding.btnWishTime02,
+            binding.btnWishTime03,
+            binding.btnWishTime04
+        )
+        timeButtons.forEach { btn ->
+            (btn as? MaterialButton)?.apply {
+                backgroundTintList = ColorStateList.valueOf(
+                    resources.getColor(R.color.main_2, null)
+                )
+                setTextColor(resources.getColor(R.color.text_primary, null))
+            }
+        }
+        selectedTimeButton = null
+
+        val categoryButtons = listOf(
+            binding.btnWishCategory01,
+            binding.btnWishCategory02,
+            binding.btnWishCategory03,
+            binding.btnWishCategory04,
+            binding.btnWishCategory05,
+            binding.btnWishCategory06
+        )
+        categoryButtons.forEach { btn ->
+            (btn as? MaterialButton)?.apply {
+                backgroundTintList = ColorStateList.valueOf(
+                    resources.getColor(R.color.main_2, null)
+                )
+                setTextColor(resources.getColor(R.color.text_primary, null))
+            }
+        }
+        selectedCategoryButtons.clear()
+
+        try {
+            requireActivity().currentFocus?.clearFocus()
+            val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE)
+                    as android.view.inputmethod.InputMethodManager
+            imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
+        } catch (_: Exception) { }
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        val dialog = dialog as? BottomSheetDialog ?: return
+        val bottomSheet =
+            dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet) ?: return
+
+        val screenH = resources.displayMetrics.heightPixels
+        val fixedH = (screenH * 0.81f).toInt()
+
+        fun setHeight(imeBottom: Int) {
+            val targetH = minOf(fixedH, screenH - imeBottom) // 키보드 올라오면 그만큼 줄임
+            bottomSheet.layoutParams.height = targetH
+            bottomSheet.requestLayout()
+
+            BottomSheetBehavior.from(bottomSheet).apply {
+                peekHeight = targetH
+                state = BottomSheetBehavior.STATE_EXPANDED
+            }
+        }
+
+        setHeight(0)
+
+        ViewCompat.setOnApplyWindowInsetsListener(bottomSheet) { _, insets ->
+            val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            setHeight(imeBottom)
+            insets
+        }
+    }
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
+
+        dialog.setOnShowListener { dialogInterface ->
+            val bottomSheet = (dialogInterface as BottomSheetDialog)
+                .findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+            bottomSheet?.setBackgroundResource(R.drawable.calendar_background)
+        }
+
+        return dialog
+    }
+
+    private fun setupTimeButtons() {
+        val timeButtons = listOf(
+            binding.btnWishTime01,
+            binding.btnWishTime02,
+            binding.btnWishTime03,
+            binding.btnWishTime04
+        )
+
+        val timeTags = listOf("10m", "20m", "30m", "1h")
+        timeButtons.forEachIndexed { index, button ->
+            button.tag = timeTags[index]  // tag 지정
+
+            button.setOnClickListener {
+                (selectedTimeButton as? MaterialButton)?.apply {
+                    backgroundTintList = ColorStateList.valueOf(
+                        resources.getColor(R.color.main_2, null)
+                    )
+                    setTextColor(resources.getColor(R.color.text_primary, null))
+                }
+
+                (button as? MaterialButton)?.apply {
+                    backgroundTintList = ColorStateList.valueOf(
+                        resources.getColor(R.color.main_1, null)
+                    )
+                    setTextColor(resources.getColor(R.color.white, null))
+                }
+
+                selectedTimeButton = button
+            }
+        }
+    }
+
+    private fun setupCategoryButtons() {
+        val categoryButtons = listOf(
+            binding.btnWishCategory01,
+            binding.btnWishCategory02,
+            binding.btnWishCategory03,
+            binding.btnWishCategory04,
+            binding.btnWishCategory05,
+            binding.btnWishCategory06
+        )
+
+        val categoryIds = listOf(1L, 2L, 3L, 4L, 5L, 6L)
+        categoryButtons.forEachIndexed { index, button ->
+            button.tag = categoryIds[index]
+
+            button.setOnClickListener {
+
+                if (selectedCategoryButtons.contains(button)) {
+                    // 이미 선택된 경우 → 선택 해제
+                    selectedCategoryButtons.remove(button)
+                    button.backgroundTintList = ColorStateList.valueOf(
+                        resources.getColor(R.color.main_2, null)
+                    )
+                    button.setTextColor(resources.getColor(R.color.text_primary, null))
+                } else {
+                    // 선택 안 된 경우 → 추가
+                    selectedCategoryButtons.add(button)
+                    button.backgroundTintList = ColorStateList.valueOf(
+                        resources.getColor(R.color.main_1, null)
+                    )
+                    button.setTextColor(resources.getColor(R.color.white, null))
+                }
+            }
+        }
+    }
+
+    private fun setupObservers() {
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.registerSuccess.collect {
+                    Log.d("WISH_REGISTER_FRAGMENT","위시가 성공적으로 등록되었습니다.")
+                    parentFragmentManager.setFragmentResult("wish_register", Bundle())
+
+                    // 모든 바텀시트 닫기
+                    (requireActivity().supportFragmentManager.fragments).forEach { fragment ->
+                        if (fragment is BottomSheetDialogFragment) {
+                            fragment.dismissAllowingStateLoss()
+                        }
+                    }
+                }
+            }
+        }
+
+        viewModel.errorMessage.observe(viewLifecycleOwner) { errorMsg ->
+            Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun validateInputs(): Boolean {
+        if (binding.wishTitleEt.text.toString().isEmpty()) {
+            Toast.makeText(requireContext(), "제목을 입력해주세요.", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        if (selectedTimeButton == null) {
+            Toast.makeText(requireContext(), "시간을 선택해주세요.", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        if (selectedCategoryButtons.isEmpty()) {
+            Toast.makeText(requireContext(), "카테고리를 1개 이상 선택해주세요.", Toast.LENGTH_SHORT).show()
+            return false
+        }
+        return true
+    }
+
+    private fun getWishRequest(): RegisterWishRequest {
+        val title = binding.wishTitleEt.text.toString()
+        val content = binding.detailTextEt.text.toString()
+        val estimatedDuration = (selectedTimeButton as MaterialButton).tag.toString()
+        val categories = selectedCategoryButtons.mapNotNull { it.tag as? Long }
+
+        return RegisterWishRequest(
+            title = title,
+            content = content,
+            estimatedDuration = estimatedDuration,
+            categories = categories
+        )
+    }
+
+    private fun setupTitleImeDone() {
+        val et = binding.wishTitleEt
+
+        // 1. 키보드 Done 액션 처리
+        et.setOnEditorActionListener { v, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                v.clearFocus()
+                hideKeyboard(v)
+                true
+            } else false
+        }
+
+        // 2. 멀티라인에서 Enter가 줄바꿈으로 들어오는 케이스도 "완료"로 강제
+        et.setOnKeyListener { v, keyCode, event ->
+            if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN) {
+                v.clearFocus()
+                hideKeyboard(v)
+                true
+            } else false
+        }
+    }
+
+    private fun hideKeyboard(view: View) {
+        val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+}
