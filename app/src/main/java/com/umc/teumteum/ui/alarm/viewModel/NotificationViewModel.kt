@@ -1,6 +1,5 @@
 package com.umc.teumteum.ui.alarm.viewModel
 
-
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -64,6 +63,27 @@ class NotificationViewModel @Inject constructor(
                     _error.value = e.message
                 }
             isLoading = false
+        }
+    }
+
+    // 알림 읽음 처리
+    fun readNotification(notificationId: Long) {
+        viewModelScope.launch {
+            repo.readNotification(notificationId)
+                .onSuccess { result ->
+                    val id = result.notificationId
+
+                    val current = _items.value.orEmpty()
+                    val updated = current.map { n ->
+                        if (n.id.toLong() == id) {
+                            if (n.isRead) n else n.copy(isRead = true)
+                        } else n
+                    }
+                    _items.value = updated
+                }
+                .onFailure { e ->
+                    _error.value = e.message ?: "읽음 처리에 실패했어요."
+                }
         }
     }
 }

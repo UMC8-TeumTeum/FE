@@ -1,6 +1,7 @@
 package com.umc.teumteum.ui.alarm
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,6 +39,8 @@ class AlarmFragment : Fragment() {
 
         // 어댑터 생성 시 콜백에서 네비게이터 + 트랜젝션 방식 적용
         adapter = AlarmRVAdapter(mutableListOf()) { notification ->
+            viewModel.readNotification(notification.id.toLong())
+
             val fragment = AlarmNavigator.createFragmentFor(this, notification)
             parentFragmentManager.beginTransaction()
                 .replace(R.id.main_frm, fragment)

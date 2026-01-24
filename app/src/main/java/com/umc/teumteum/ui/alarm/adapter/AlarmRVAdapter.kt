@@ -64,16 +64,11 @@ class AlarmRVAdapter(
             b.profileIv.imageAlpha = 255
         }
 
-        // 클릭 시(읽음처럼 보이기)
         b.root.setOnClickListener {
-            if (!item.isRead) {
-                val gray = ContextCompat.getColor(b.root.context, R.color.teumteum_gray)
-                b.alarmNameTv.setTextColor(gray)
-                b.alarmContentTv.setTextColor(gray)
-                b.alarmTimeTv.setTextColor(gray)
-                b.profileIv.imageAlpha = 100
-            }
-            onItemClick(item)
+            val adapterPos = holder.bindingAdapterPosition
+            if (adapterPos == RecyclerView.NO_POSITION) return@setOnClickListener
+
+            onItemClick(items[adapterPos]) // 최신 데이터 전달
         }
     }
 
