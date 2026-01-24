@@ -1,7 +1,6 @@
 package com.umc.teumteum.ui.alarm
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,6 +25,8 @@ class AlarmFragment : Fragment() {
     private val viewModel: NotificationViewModel by viewModels()
     private lateinit var adapter: AlarmRVAdapter
 
+    private var navigating = false
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -39,6 +40,9 @@ class AlarmFragment : Fragment() {
 
         // 어댑터 생성 시 콜백에서 네비게이터 + 트랜젝션 방식 적용
         adapter = AlarmRVAdapter(mutableListOf()) { notification ->
+            if (navigating) return@AlarmRVAdapter
+            navigating = true
+
             viewModel.readNotification(notification.id.toLong())
 
             val fragment = AlarmNavigator.createFragmentFor(this, notification)
@@ -103,6 +107,11 @@ class AlarmFragment : Fragment() {
         viewModel.error.observe(viewLifecycleOwner) { msg ->
             msg?.let { Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show() }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        navigating = false
     }
 
     override fun onDestroyView() {
