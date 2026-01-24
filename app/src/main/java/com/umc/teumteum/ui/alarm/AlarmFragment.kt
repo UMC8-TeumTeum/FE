@@ -15,6 +15,7 @@ import com.umc.teumteum.data.remote.alarm.dto.enums.NotificationType
 import com.umc.teumteum.databinding.FragmentHomeAlarmBinding
 import com.umc.teumteum.ui.alarm.adapter.AlarmRVAdapter
 import com.umc.teumteum.ui.alarm.viewModel.NotificationViewModel
+import com.umc.teumteum.ui.friend.Friend02RequestFragment
 import com.umc.teumteum.ui.friend.FriendProfileFollowFragment
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -45,16 +46,33 @@ class AlarmFragment : Fragment() {
             if (navigating) return@AlarmRVAdapter
             navigating = true
 
+            // 읽음 처리
             viewModel.readNotification(notification.id.toLong())
 
-            val fragment = if (notification.type == NotificationType.FOLLOW) {
-                FriendProfileFollowFragment().apply {
-                    arguments = Bundle().apply {
-                        putInt("userId", notification.friendId)
+            // ✅ 타입별 이동 처리
+            val fragment: Fragment = when (notification.type) {
+
+                // 기존 FOLLOW 유지
+                NotificationType.FOLLOW -> {
+                    FriendProfileFollowFragment().apply {
+                        arguments = Bundle().apply {
+                            putInt("userId", notification.friendId)
+                        }
                     }
                 }
-            } else {
-                AlarmNavigator.createFragmentFor(this, notification)
+
+                // ✅ 추가: TEUM_REQUEST면 Friend02RequestFragment로 이동
+                NotificationType.TEUM_REQUEST -> {
+                    Friend02RequestFragment().apply {
+                        arguments = Bundle().apply {
+                            // relatedId로 요청 식별해서 해당 카드로 포커싱
+                            putInt("selectedRequestId", notification.relatedId)
+                        }
+                    }
+                }
+
+                // 그 외는 기존 네비게이터 사용
+                else -> AlarmNavigator.createFragmentFor(this, notification)
             }
 
             parentFragmentManager.beginTransaction()
