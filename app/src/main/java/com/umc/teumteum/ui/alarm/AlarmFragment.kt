@@ -58,23 +58,26 @@ class AlarmFragment : Fragment() {
                     }
                 }
 
-                NotificationType.TEUM_REQUEST -> {
-                    Friend02RequestFragment().apply {
-                        arguments = Bundle().apply {
-                            putInt("selectedRequestId", notification.relatedId)
-                        }
-                    }
-                }
-
                 else -> AlarmNavigator.createFragmentFor(this, notification)
+            }
+
+            // 이동 대상 판단
+            val isFriendTabDestination = notification.type == NotificationType.TEUM_REQUEST ||
+                    notification.type == NotificationType.TEUM_REQUEST_REREQUEST
+
+            activity?.findViewById<BottomNavigationView>(R.id.main_bnv)?.apply {
+                if (isFriendTabDestination) {
+                    visibility = View.VISIBLE
+
+                    menu.findItem(R.id.fragment_friend).isChecked = true
+                } else {
+                    visibility = View.GONE
+                }
             }
 
             val tx = parentFragmentManager.beginTransaction()
                 .replace(R.id.main_frm, fragment)
-
-            if (notification.type != NotificationType.FOLLOW) {
-                tx.addToBackStack(null)
-            }
+                .addToBackStack(ALARM_FLOW) // 뒤로가기 시 알림 화면으로 돌아오도록 유지
 
             tx.commit()
         }
@@ -139,6 +142,10 @@ class AlarmFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         navigating = false
+    }
+
+    private companion object {
+        const val ALARM_FLOW = "ALARM_FLOW"
     }
 
     override fun onDestroyView() {
