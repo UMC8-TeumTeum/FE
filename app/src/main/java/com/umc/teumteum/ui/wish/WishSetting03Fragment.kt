@@ -10,6 +10,7 @@ import android.widget.NumberPicker
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -262,9 +263,14 @@ class WishSetting03Fragment : Fragment() {
                     }
                     parentFragmentManager.setFragmentResult("assign_home", result)
 
+                    // 백스택 전부 제거
+                    parentFragmentManager.popBackStack(
+                        null,
+                        FragmentManager.POP_BACK_STACK_INCLUSIVE
+                    )
+
                     parentFragmentManager.beginTransaction()
                         .replace(R.id.main_frm, HomeFragment())
-                        .addToBackStack(null)
                         .commit()
                 }
             }
