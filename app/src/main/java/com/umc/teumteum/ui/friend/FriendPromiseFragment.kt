@@ -9,6 +9,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.umc.teumteum.R
 import com.umc.teumteum.data.remote.friend.model.TeumScheduleDetailResult
@@ -37,7 +38,7 @@ class FriendPromiseFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: FriendViewModel by viewModels()
-    private val myHomeViewModel: MyHomeViewModel by viewModels()
+    private val myHomeViewModel: MyHomeViewModel by activityViewModels()
 
     private val today = LocalDate.now()
     private var selectedDate: LocalDate = LocalDate.now()

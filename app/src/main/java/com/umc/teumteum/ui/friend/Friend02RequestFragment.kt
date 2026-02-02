@@ -50,10 +50,6 @@ class Friend02RequestFragment : Fragment() {
 
         (activity as? MainActivity)?.hideBottomBar()
 
-        // 알림 화면에서 진입
-        val selectedRequestIdFromAlarm =
-            arguments?.getInt("selectedRequestId", -1) ?: -1
-
         // 네비게이션 바
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             val bottomInset = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom
@@ -72,13 +68,6 @@ class Friend02RequestFragment : Fragment() {
         // 3. 정렬
         val sortedList = sortTeumList(originalRequests)
 
-        if (selectedRequestIdFromAlarm != -1) {
-            val target = sortedList.firstOrNull { it.requestId == selectedRequestIdFromAlarm }
-            if (target != null) {
-                viewModel.selectTeum(target)
-            }
-        }
-
         val selected = viewModel.selectedTeum.value
 
         // 4. 선택된 요청을 맨 앞으로
@@ -92,11 +81,6 @@ class Friend02RequestFragment : Fragment() {
         adapter = FriendRequestCardAdapter(teumList)
         binding.requestViewPager.adapter = adapter
 
-        if (teumList.isNotEmpty()) {
-            binding.requestViewPager.setCurrentItem(0, false)
-            viewModel.selectTeum(teumList[0])
-        }
-
         binding.requestViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
@@ -104,6 +88,7 @@ class Friend02RequestFragment : Fragment() {
                 viewModel.selectTeum(current)
             }
         })
+
 
         // 6. 인디케이터
         binding.dotsIndicator.setViewPager2(binding.requestViewPager)
