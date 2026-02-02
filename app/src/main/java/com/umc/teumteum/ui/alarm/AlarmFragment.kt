@@ -48,27 +48,16 @@ class AlarmFragment : Fragment() {
 
             viewModel.readNotification(notification.id.toLong())
 
-            val fragment: Fragment = when (notification.type) {
-
-                NotificationType.FOLLOW -> {
-                    FriendProfileFollowFragment().apply {
-                        arguments = Bundle().apply {
-                            putInt("userId", notification.friendId)
-                        }
-                    }
-                }
-
-                else -> AlarmNavigator.createFragmentFor(this, notification)
-            }
+            val fragment = AlarmNavigator.createFragmentFor(this, notification)
 
             // 이동 대상 판단
             val isFriendTabDestination = notification.type == NotificationType.TEUM_REQUEST ||
-                    notification.type == NotificationType.TEUM_REQUEST_REREQUEST
+                    notification.type == NotificationType.TEUM_REQUEST_REREQUEST ||
+                    notification.type == NotificationType.FOLLOW
 
             activity?.findViewById<BottomNavigationView>(R.id.main_bnv)?.apply {
                 if (isFriendTabDestination) {
                     visibility = View.VISIBLE
-
                     menu.findItem(R.id.fragment_friend).isChecked = true
                 } else {
                     visibility = View.GONE

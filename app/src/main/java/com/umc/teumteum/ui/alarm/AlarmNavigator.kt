@@ -20,7 +20,7 @@ object AlarmNavigator {
         val cl = host.requireContext().classLoader
 
         val className = when (n.type) {
-            NotificationType.FOLLOW -> FriendProfileFollowFragment::class.java.name
+            NotificationType.FOLLOW -> FriendFragment::class.java.name
             NotificationType.TEUM_REQUEST -> FriendFragment::class.java.name
             NotificationType.TEUM_ACCEPTED -> FriendPromiseFragment::class.java.name
             NotificationType.TEUM_DECLINED -> FriendTeumRequestFragment::class.java.name
