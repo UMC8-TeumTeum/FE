@@ -3,7 +3,6 @@ package com.umc.teumteum.ui.friend
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
-import android.util.Log
 import android.util.TypedValue
 import android.view.*
 import android.widget.LinearLayout
@@ -23,7 +22,6 @@ import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
 import com.kizitonwose.calendar.view.CalendarView
 import com.kizitonwose.calendar.view.MonthDayBinder
 import com.kizitonwose.calendar.view.ViewContainer
-import com.umc.teumteum.ui.alarm.AlarmNavigator
 import com.umc.teumteum.ui.myhome.viewModel.MyHomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.DayOfWeek
@@ -78,24 +76,6 @@ class FriendPromiseFragment : Fragment() {
             binding.tvName.text = "${myNick ?: "닉네임"}님의"
         }
 
-        // 아직 조회 안 했으면 조회
-        if (!myHomeViewModel.isLoaded) {
-            myHomeViewModel.getMyInfo()
-        }
-
-        // 2) 알림에서 전달된 date로 초기 날짜 세팅
-        val argDateStr = arguments?.getString(AlarmNavigator.ARG_TARGET_DATE)
-        val initialDate = runCatching {
-            argDateStr?.takeIf { it.isNotBlank() }?.let { LocalDate.parse(it) }
-        }.getOrNull()
-
-        Log.d("FriendPromiseFragment", "ARG_TARGET_DATE=$argDateStr, initialDate=$initialDate")
-
-        if (initialDate != null) {
-            selectedDate = initialDate
-            visibleMonth = YearMonth.from(initialDate)
-        }
-
         calendarView = binding.calendarView
         calendarView.visibility = View.VISIBLE
 
@@ -106,27 +86,10 @@ class FriendPromiseFragment : Fragment() {
         setupCalendarNavigation()
 
         // 최초 가시 월 기준으로 한 번 조회
+        visibleMonth = YearMonth.now()
         lastRequestedMonth = null
         // arguments에서 friendUserId 읽은 뒤에 호출
         fetchDotDates()
-
-        // 알림 화면에서 진입: 틈 날짜 자동 선택
-        initialDate?.let { target ->
-            val oldSelected = today
-            val targetMonth = YearMonth.from(target)
-
-            selectedDate = target
-            visibleMonth = targetMonth
-
-            calendarView.scrollToMonth(targetMonth)
-
-            // 달 바인딩
-            calendarView.notifyMonthChanged(targetMonth)
-            calendarView.notifyDateChanged(oldSelected)
-            calendarView.notifyDateChanged(selectedDate)
-
-            updateHeader()
-        }
 
         binding.btnBack.setOnClickListener {
             requireActivity().onBackPressed()
@@ -160,7 +123,7 @@ class FriendPromiseFragment : Fragment() {
 
     private fun setupCalendar() {
         // 해당 라이브러리는 캘린더 범위를 무제한으로 설정할 수 없어 일단은 +-50년으로 설정...
-        val currentMonth = YearMonth.from(selectedDate)
+        val currentMonth = YearMonth.now()
         val startMonth = currentMonth.minusYears(50) // 50년 전
         val endMonth = currentMonth.plusYears(50)  // 50년 후
         val firstDayOfWeek = firstDayOfWeekFromLocale()
