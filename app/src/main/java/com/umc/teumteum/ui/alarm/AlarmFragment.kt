@@ -15,8 +15,6 @@ import com.umc.teumteum.data.remote.alarm.dto.enums.NotificationType
 import com.umc.teumteum.databinding.FragmentHomeAlarmBinding
 import com.umc.teumteum.ui.alarm.adapter.AlarmRVAdapter
 import com.umc.teumteum.ui.alarm.viewModel.NotificationViewModel
-import com.umc.teumteum.ui.friend.Friend02RequestFragment
-import com.umc.teumteum.ui.friend.FriendProfileFollowFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

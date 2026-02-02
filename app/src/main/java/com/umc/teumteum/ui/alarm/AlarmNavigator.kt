@@ -6,7 +6,6 @@ import androidx.fragment.app.Fragment
 import com.umc.teumteum.data.remote.alarm.dto.NotificationResponse
 import com.umc.teumteum.data.remote.alarm.dto.enums.NotificationType
 import com.umc.teumteum.ui.friend.FriendFragment
-import com.umc.teumteum.ui.friend.FriendProfileFollowFragment
 import com.umc.teumteum.ui.friend.FriendPromiseFragment
 import com.umc.teumteum.ui.friend.FriendTeumRequestFragment
 
