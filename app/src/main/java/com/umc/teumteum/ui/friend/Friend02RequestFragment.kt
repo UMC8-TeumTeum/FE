@@ -58,7 +58,6 @@ class Friend02RequestFragment : Fragment() {
         }
 
         val receivedList = viewModel.receivedTeums.value.orEmpty()
-        val selected = viewModel.selectedTeum.value
 
         // 1. 유효한 요청만 필터링 (시간 지난 것 제거)
         val validList = filterValidTeumRequests(receivedList)
@@ -68,6 +67,8 @@ class Friend02RequestFragment : Fragment() {
 
         // 3. 정렬
         val sortedList = sortTeumList(originalRequests)
+
+        val selected = viewModel.selectedTeum.value
 
         // 4. 선택된 요청을 맨 앞으로
         teumList = if (selected != null) {
@@ -79,7 +80,6 @@ class Friend02RequestFragment : Fragment() {
         // 5. 어댑터 연결
         adapter = FriendRequestCardAdapter(teumList)
         binding.requestViewPager.adapter = adapter
-
 
         binding.requestViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {

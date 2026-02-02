@@ -9,6 +9,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.umc.teumteum.R
 import com.umc.teumteum.data.remote.friend.model.TeumScheduleDetailResult
@@ -22,6 +23,7 @@ import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
 import com.kizitonwose.calendar.view.CalendarView
 import com.kizitonwose.calendar.view.MonthDayBinder
 import com.kizitonwose.calendar.view.ViewContainer
+import com.umc.teumteum.ui.myhome.viewModel.MyHomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -36,6 +38,7 @@ class FriendPromiseFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: FriendViewModel by viewModels()
+    private val myHomeViewModel: MyHomeViewModel by activityViewModels()
 
     private val today = LocalDate.now()
     private var selectedDate: LocalDate = LocalDate.now()
@@ -70,8 +73,9 @@ class FriendPromiseFragment : Fragment() {
         (activity as? MainActivity)?.hideBottomBar()
 
         // 1) 번들로 전달받은 내 닉네임/프로필 표시
-        val nickname = arguments?.getString("nickname")
-        binding.tvName.text = ((nickname ?: "닉네임") + "님의")
+        myHomeViewModel.nickname.observe(viewLifecycleOwner) { myNick ->
+            binding.tvName.text = "${myNick ?: "닉네임"}님의"
+        }
 
         calendarView = binding.calendarView
         calendarView.visibility = View.VISIBLE
@@ -127,6 +131,8 @@ class FriendPromiseFragment : Fragment() {
 
         calendarView.setup(startMonth, endMonth, firstDayOfWeek)
         calendarView.scrollToMonth(currentMonth)
+
+        visibleMonth = currentMonth
 
         calendarView.monthScrollListener = { month ->
             visibleMonth = month.yearMonth

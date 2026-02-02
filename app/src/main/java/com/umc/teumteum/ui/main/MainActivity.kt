@@ -21,6 +21,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.FragmentManager
 import com.umc.teumteum.ui.friend.FriendFragment
 import com.umc.teumteum.ui.myhome.MyHomeFragment
 import com.umc.teumteum.R
@@ -110,6 +111,18 @@ class MainActivity : AppCompatActivity() {
             .commitAllowingStateLoss()
 
         binding.mainBnv.setOnItemSelectedListener { item ->
+
+            // 알림에서 시작된 백스택 제거
+            supportFragmentManager.popBackStack(
+                "ALARM_FLOW",
+                FragmentManager.POP_BACK_STACK_INCLUSIVE
+            )
+
+            supportFragmentManager.popBackStack(
+                null,
+                FragmentManager.POP_BACK_STACK_INCLUSIVE
+            )
+
             when (item.itemId) {
 
                 R.id.fragment_home -> {

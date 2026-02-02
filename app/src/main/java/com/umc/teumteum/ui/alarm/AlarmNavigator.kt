@@ -17,15 +17,15 @@ object AlarmNavigator {
 
         val className = when (n.type) {
             NotificationType.FOLLOW -> FriendFragment::class.java.name
-            NotificationType.TEUM_REQUEST -> FriendTeumRequestFragment::class.java.name
+            NotificationType.TEUM_REQUEST -> FriendFragment::class.java.name
             NotificationType.TEUM_ACCEPTED -> FriendPromiseFragment::class.java.name
             NotificationType.TEUM_DECLINED -> FriendTeumRequestFragment::class.java.name
-            NotificationType.TEUM_REQUEST_REREQUEST -> FriendTeumRequestFragment::class.java.name
+            NotificationType.TEUM_REQUEST_REREQUEST -> FriendFragment::class.java.name
             NotificationType.TEUM_CANCELED -> FriendTeumRequestFragment::class.java.name
         }
 
         return factory.instantiate(cl, className).apply {
-            arguments = (arguments ?: Bundle()) // 우선 현재는 인자를 넘기지 않을 거라 비워둠
+            arguments = (arguments ?: Bundle())
         }
     }
 }

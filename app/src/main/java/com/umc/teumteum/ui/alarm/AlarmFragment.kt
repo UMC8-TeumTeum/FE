@@ -9,11 +9,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.umc.teumteum.R
+import com.umc.teumteum.data.remote.alarm.dto.enums.NotificationType
 import com.umc.teumteum.databinding.FragmentHomeAlarmBinding
 import com.umc.teumteum.ui.alarm.adapter.AlarmRVAdapter
 import com.umc.teumteum.ui.alarm.viewModel.NotificationViewModel
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -46,10 +47,26 @@ class AlarmFragment : Fragment() {
             viewModel.readNotification(notification.id.toLong())
 
             val fragment = AlarmNavigator.createFragmentFor(this, notification)
-            parentFragmentManager.beginTransaction()
+
+            // 이동 대상 판단
+            val isFriendTabDestination = notification.type == NotificationType.TEUM_REQUEST ||
+                    notification.type == NotificationType.TEUM_REQUEST_REREQUEST ||
+                    notification.type == NotificationType.FOLLOW
+
+            activity?.findViewById<BottomNavigationView>(R.id.main_bnv)?.apply {
+                if (isFriendTabDestination) {
+                    visibility = View.VISIBLE
+                    menu.findItem(R.id.fragment_friend).isChecked = true
+                } else {
+                    visibility = View.GONE
+                }
+            }
+
+            val tx = parentFragmentManager.beginTransaction()
                 .replace(R.id.main_frm, fragment)
-                .addToBackStack(null)
-                .commit()
+                .addToBackStack(ALARM_FLOW) // 뒤로가기 시 알림 화면으로 돌아오도록 유지
+
+            tx.commit()
         }
 
         val lm = LinearLayoutManager(requireContext())
@@ -112,6 +129,10 @@ class AlarmFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         navigating = false
+    }
+
+    private companion object {
+        const val ALARM_FLOW = "ALARM_FLOW"
     }
 
     override fun onDestroyView() {
