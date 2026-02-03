@@ -62,7 +62,17 @@ class BlockedAccountFragment : Fragment() {
 
     private fun observeBlockedAccounts() {
         viewModel.blockedAccountList.observe(viewLifecycleOwner) { list ->
-            adapter.submitList(list)
+
+            if (list.isNullOrEmpty()) {
+                // 비어있으면 empty 화면 보여주기
+                binding.blockedAccountRv.visibility = View.GONE
+                binding.recentSearchNotExistsCl.visibility = View.VISIBLE
+            } else {
+                // 있으면 리스트 보여주기
+                binding.recentSearchNotExistsCl.visibility = View.GONE
+                binding.blockedAccountRv.visibility = View.VISIBLE
+                adapter.submitList(list)
+            }
         }
     }
 
