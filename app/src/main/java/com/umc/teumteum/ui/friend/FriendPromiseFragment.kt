@@ -44,18 +44,14 @@ class FriendPromiseFragment : Fragment() {
     private var selectedDate: LocalDate = LocalDate.now()
     private var visibleMonth: YearMonth = YearMonth.now()
 
-    // 헤더는 "yyyy년 M월"
     private val headerFormatter = DateTimeFormatter.ofPattern(DATE_PATTERN)
-    // 서버 요청은 "yyyy-MM-dd"
     private val serverFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
-    // 일정 있는 날짜들 캐시
     private val eventDates = hashSetOf<LocalDate>()
-    // 중복 조회 방지용
     private var lastRequestedMonth: YearMonth? = null
 
     private lateinit var eventAdapter: TeumEventAdapter
-    private var lastClickedScheduleId: Int = -1 //  클릭한 스케줄 ID 저장
+    private var lastClickedScheduleId: Int = -1
 
     private lateinit var calendarView: CalendarView
 
@@ -72,7 +68,6 @@ class FriendPromiseFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         (activity as? MainActivity)?.hideBottomBar()
 
-        // 1) 번들로 전달받은 내 닉네임/프로필 표시
         myHomeViewModel.nickname.observe(viewLifecycleOwner) { myNick ->
             binding.tvName.text = "${myNick ?: "닉네임"}님의"
         }
@@ -80,41 +75,40 @@ class FriendPromiseFragment : Fragment() {
         calendarView = binding.calendarView
         calendarView.visibility = View.VISIBLE
 
+        setupRecyclerView()
         setupCalendar()
         setupHeader()
         setupWeekdayLabels()
-        setupRecyclerView()
         setupCalendarNavigation()
 
-        // 최초 가시 월 기준으로 한 번 조회
         visibleMonth = YearMonth.now()
         lastRequestedMonth = null
-        // arguments에서 friendUserId 읽은 뒤에 호출
         fetchDotDates()
 
         binding.btnBack.setOnClickListener {
             requireActivity().onBackPressed()
         }
 
-        viewModel.scheduledDotDates.observe(viewLifecycleOwner) { dates: List<LocalDate> ->
+        viewModel.scheduledDotDates.observe(viewLifecycleOwner) { dates ->
             eventDates.clear()
             eventDates.addAll(dates)
-
-            // 현재 보이는 달만 부분 리바인딩 (불필요한 전체 갱신 방지)
             calendarView.notifyMonthChanged(visibleMonth)
         }
 
+        // 리스트 데이터 관찰: 비면 숨기고, 있으면 보이기
         viewModel.scheduledTeumList.observe(viewLifecycleOwner) { list ->
             eventAdapter.updateData(list)
+            binding.rvEventList.visibility = if (list.isNullOrEmpty()) View.GONE else View.VISIBLE
         }
 
         viewModel.teumScheduleDetail.observe(viewLifecycleOwner) { detail ->
             detail?.let {
                 val isPast = viewModel.isPastSchedule.value ?: false
-                showPromiseDetailBottomSheet(it, lastClickedScheduleId, isPast) //  스케줄 ID 함께 전달
+                showPromiseDetailBottomSheet(it, lastClickedScheduleId, isPast)
             }
         }
 
+        // 진입 시 오늘 데이터 로드(원래 로직 유지)
         onDateSelected(selectedDate)
     }
 
@@ -123,10 +117,9 @@ class FriendPromiseFragment : Fragment() {
     }
 
     private fun setupCalendar() {
-        // 해당 라이브러리는 캘린더 범위를 무제한으로 설정할 수 없어 일단은 +-50년으로 설정...
         val currentMonth = YearMonth.now()
-        val startMonth = currentMonth.minusYears(50) // 50년 전
-        val endMonth = currentMonth.plusYears(50)  // 50년 후
+        val startMonth = currentMonth.minusYears(50)
+        val endMonth = currentMonth.plusYears(50)
         val firstDayOfWeek = firstDayOfWeekFromLocale()
 
         calendarView.setup(startMonth, endMonth, firstDayOfWeek)
@@ -138,7 +131,10 @@ class FriendPromiseFragment : Fragment() {
             visibleMonth = month.yearMonth
             setupHeader()
 
-            // 같은 달로의 반복 호출 방지
+            binding.rvEventList.visibility = View.GONE
+            eventAdapter.updateData(emptyList())
+
+            // dot 날짜 조회
             if (lastRequestedMonth != visibleMonth) {
                 lastRequestedMonth = visibleMonth
                 fetchDotDates()
@@ -152,21 +148,17 @@ class FriendPromiseFragment : Fragment() {
                 val tv = container.textView
                 val dot = container.dotView
 
-                // dot 간격 설정
                 (dot.layoutParams as? ViewGroup.MarginLayoutParams)?.let { params ->
                     params.topMargin = dpToPx(3)
                     dot.layoutParams = params
                 }
 
-                // 기본 스타일 초기화
                 tv.text = day.date.dayOfMonth.toString()
                 tv.typeface = Typeface.DEFAULT
                 tv.background = null
 
-                // 이번 달 셀만 활성화, out-date는 비활성화/회색
                 val isThisMonth = day.position == DayPosition.MonthDate
 
-                // 회색 텍스트 적용
                 tv.setTextColor(
                     ContextCompat.getColor(
                         requireContext(),
@@ -174,34 +166,34 @@ class FriendPromiseFragment : Fragment() {
                     )
                 )
 
-                // 일정 점 표시
-                dot.visibility = if (eventDates.contains(day.date) && isThisMonth) View.VISIBLE else View.GONE
+                dot.visibility =
+                    if (eventDates.contains(day.date) && isThisMonth) View.VISIBLE else View.GONE
 
-                // 오늘 표시
                 if (day.date == today) {
                     tv.background = circleFill(
                         fillColor = ContextCompat.getColor(requireContext(), R.color.teumteum_gray)
                     )
                 }
 
-                // 날짜 선택
                 if (day.date == selectedDate && isThisMonth) {
                     tv.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.white))
-                    tv.background = circleFill(ContextCompat.getColor(requireContext(), R.color.main_1))
+                    tv.background =
+                        circleFill(ContextCompat.getColor(requireContext(), R.color.main_1))
                 }
 
-                // 클릭으로 선택 처리
                 container.view.setOnClickListener {
-                    if (!isThisMonth) return@setOnClickListener  // 전환/선택 방지
+                    if (!isThisMonth) return@setOnClickListener
 
                     val old = selectedDate
                     selectedDate = day.date
 
-                    // 월 갱신
                     calendarView.notifyDateChanged(old)
                     calendarView.notifyDateChanged(selectedDate)
 
                     updateHeader()
+
+                    // 날짜 선택하면 리스트 다시 보이게 (데이터는 observe에서 세팅됨)
+                    binding.rvEventList.visibility = View.VISIBLE
                     onDateSelected(selectedDate)
                 }
             }
@@ -213,7 +205,6 @@ class FriendPromiseFragment : Fragment() {
         binding.selectedDateTv.text = ym.format(headerFormatter)
     }
 
-    // 요일 텍스트 설정 (일~토)
     private fun setupWeekdayLabels() {
         val container = binding.calendarWeekdaysRow
         container.removeAllViews()
@@ -244,10 +235,12 @@ class FriendPromiseFragment : Fragment() {
 
     private fun setupRecyclerView() {
         eventAdapter = TeumEventAdapter(emptyList()) { scheduleId ->
-            lastClickedScheduleId = scheduleId //  클릭한 ID 저장
+            lastClickedScheduleId = scheduleId
             viewModel.fetchTeumScheduleDetail(scheduleId)
         }
         binding.rvEventList.adapter = eventAdapter
+
+        binding.rvEventList.isNestedScrollingEnabled = false
     }
 
     private fun setupCalendarNavigation() {
@@ -270,7 +263,6 @@ class FriendPromiseFragment : Fragment() {
         viewModel.fetchScheduledTeumDates(monthStr)
     }
 
-    //  바텀시트에 detail + scheduleId 넘기기
     private fun showPromiseDetailBottomSheet(
         detail: TeumScheduleDetailResult,
         scheduleId: Int,
@@ -284,7 +276,6 @@ class FriendPromiseFragment : Fragment() {
         bottomSheet.show(childFragmentManager, bottomSheet.tag)
     }
 
-    // 채운 동그라미 배경
     private fun circleFill(fillColor: Int): GradientDrawable {
         return GradientDrawable().apply {
             shape = GradientDrawable.OVAL
@@ -292,11 +283,9 @@ class FriendPromiseFragment : Fragment() {
         }
     }
 
-    private fun dpToPx(dp: Int): Int {
-        return (dp * resources.displayMetrics.density).toInt()
-    }
+    private fun dpToPx(dp: Int): Int =
+        (dp * resources.displayMetrics.density).toInt()
 
-    // DayView의 뷰 홀더
     private inner class DayViewContainer(view: View) : ViewContainer(view) {
         val textView: TextView = view.findViewById(R.id.calendar_day_tv)
         val dotView: View = view.findViewById(R.id.dot_view)
@@ -306,7 +295,6 @@ class FriendPromiseFragment : Fragment() {
         private const val DATE_PATTERN = "yyyy년 M월"
     }
 
-    // LocalDate -> 서버 전송용 yyyy-MM-dd 문자열
     private fun formatDateForApi(date: LocalDate): String =
         date.format(serverFormatter)
 
