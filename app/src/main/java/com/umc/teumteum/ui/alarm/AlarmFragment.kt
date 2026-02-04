@@ -15,6 +15,9 @@ import com.umc.teumteum.data.remote.alarm.dto.enums.NotificationType
 import com.umc.teumteum.databinding.FragmentHomeAlarmBinding
 import com.umc.teumteum.ui.alarm.adapter.AlarmRVAdapter
 import com.umc.teumteum.ui.alarm.viewModel.NotificationViewModel
+import com.umc.teumteum.ui.friend.FriendProfileFollowFragment
+import com.umc.teumteum.ui.friend.FriendProfileFollowingFragment
+import com.umc.teumteum.ui.friend.viewModel.FriendViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -24,6 +27,8 @@ class AlarmFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: NotificationViewModel by viewModels()
+    private val friendViewModel: FriendViewModel by viewModels()
+
     private lateinit var adapter: AlarmRVAdapter
 
     private var navigating = false
@@ -37,7 +42,7 @@ class AlarmFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        activity?.findViewById<BottomNavigationView>(R.id.main_bnv)?.visibility = View.GONE
+        hideBottomNav()
 
         // 어댑터 생성 시 콜백에서 네비게이터 + 트랜젝션 방식 적용
         adapter = AlarmRVAdapter(mutableListOf()) { notification ->
@@ -46,12 +51,43 @@ class AlarmFragment : Fragment() {
 
             viewModel.readNotification(notification.id.toLong())
 
+            // 팔로잉 여부에 따른 분기 처리
+            if (notification.type == NotificationType.FOLLOW) {
+                val targetUserId = notification.friendId
+
+                friendViewModel.getFriendProfile(targetUserId) { profile ->
+
+                    // 프레그먼트가 유효한 상태인지 확인
+                    if (!isAdded || view == null) {
+                        navigating = false
+                        return@getFriendProfile
+                    }
+
+                val args = Bundle().apply {
+                    putInt("userId", profile.userId)
+                    putString("name", profile.name)
+                    putString("field", profile.field)
+                    putString("imageUrl", profile.profileImageUrl)
+                }
+                val fragment: Fragment = if (profile.following) {
+                    FriendProfileFollowingFragment().apply { arguments = args }
+                } else {
+                    FriendProfileFollowFragment().apply { arguments = args }
+                }
+                    parentFragmentManager.beginTransaction()
+                        .hide(this@AlarmFragment)
+                        .add(R.id.main_frm, fragment)
+                        .addToBackStack(ALARM_FLOW)
+                        .commit()
+                }
+                return@AlarmRVAdapter
+            }
+
             val fragment = AlarmNavigator.createFragmentFor(this, notification)
 
             // 이동 대상 판단
             val isFriendTabDestination = notification.type == NotificationType.TEUM_REQUEST ||
-                    notification.type == NotificationType.TEUM_REQUEST_REREQUEST ||
-                    notification.type == NotificationType.FOLLOW
+                    notification.type == NotificationType.TEUM_REQUEST_REREQUEST
 
             activity?.findViewById<BottomNavigationView>(R.id.main_bnv)?.apply {
                 if (isFriendTabDestination) {
@@ -63,8 +99,9 @@ class AlarmFragment : Fragment() {
             }
 
             val tx = parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, fragment)
-                .addToBackStack(ALARM_FLOW) // 뒤로가기 시 알림 화면으로 돌아오도록 유지
+                .hide(this@AlarmFragment)
+                .add(R.id.main_frm, fragment) // 뒤로가기 시 알림 화면으로 돌아오도록 유지
+                .addToBackStack(ALARM_FLOW)
 
             tx.commit()
         }
@@ -133,6 +170,18 @@ class AlarmFragment : Fragment() {
 
     private companion object {
         const val ALARM_FLOW = "ALARM_FLOW"
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden) {
+            navigating = false
+            hideBottomNav()
+        }
+    }
+
+    private fun hideBottomNav() {
+        activity?.findViewById<BottomNavigationView>(R.id.main_bnv)?.visibility = View.GONE
     }
 
     override fun onDestroyView() {
