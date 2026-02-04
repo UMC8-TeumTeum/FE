@@ -15,6 +15,9 @@ import com.umc.teumteum.data.remote.alarm.dto.enums.NotificationType
 import com.umc.teumteum.databinding.FragmentHomeAlarmBinding
 import com.umc.teumteum.ui.alarm.adapter.AlarmRVAdapter
 import com.umc.teumteum.ui.alarm.viewModel.NotificationViewModel
+import com.umc.teumteum.ui.friend.FriendProfileFollowFragment
+import com.umc.teumteum.ui.friend.FriendProfileFollowingFragment
+import com.umc.teumteum.ui.friend.viewModel.FriendViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -24,6 +27,8 @@ class AlarmFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: NotificationViewModel by viewModels()
+    private val friendViewModel: FriendViewModel by viewModels()
+
     private lateinit var adapter: AlarmRVAdapter
 
     private var navigating = false
@@ -46,12 +51,50 @@ class AlarmFragment : Fragment() {
 
             viewModel.readNotification(notification.id.toLong())
 
+            // 팔로잉 여부에 따른 분기 처리
+            if (notification.type == NotificationType.FOLLOW) {
+
+                val targetUserId = notification.friendId
+
+                friendViewModel.getFriendProfile(targetUserId) { profile ->
+
+                    val fragment: Fragment =
+                        if (profile.following) {
+                            FriendProfileFollowingFragment().apply {
+                                arguments = Bundle().apply {
+                                    putInt("userId", profile.userId)
+                                    putString("name", profile.name)
+                                    putString("field", profile.field)
+                                    putString("imageUrl", profile.profileImageUrl)
+                                }
+                            }
+                        } else {
+                            FriendProfileFollowFragment().apply {
+                                arguments = Bundle().apply {
+                                    putInt("userId", profile.userId)
+                                    putString("name", profile.name)
+                                    putString("field", profile.field)
+                                    putString("imageUrl", profile.profileImageUrl)
+                                }
+                            }
+                        }
+
+                    parentFragmentManager.beginTransaction()
+                        .hide(this@AlarmFragment)
+                        .add(R.id.main_frm, fragment)
+                        .addToBackStack(ALARM_FLOW)
+                        .commit()
+
+                }
+
+                return@AlarmRVAdapter
+            }
+
             val fragment = AlarmNavigator.createFragmentFor(this, notification)
 
             // 이동 대상 판단
             val isFriendTabDestination = notification.type == NotificationType.TEUM_REQUEST ||
-                    notification.type == NotificationType.TEUM_REQUEST_REREQUEST ||
-                    notification.type == NotificationType.FOLLOW
+                    notification.type == NotificationType.TEUM_REQUEST_REREQUEST
 
             activity?.findViewById<BottomNavigationView>(R.id.main_bnv)?.apply {
                 if (isFriendTabDestination) {
@@ -133,6 +176,13 @@ class AlarmFragment : Fragment() {
 
     private companion object {
         const val ALARM_FLOW = "ALARM_FLOW"
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden) {
+            navigating = false
+        }
     }
 
     override fun onDestroyView() {
