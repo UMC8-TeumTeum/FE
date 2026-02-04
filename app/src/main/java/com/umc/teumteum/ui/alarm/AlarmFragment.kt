@@ -42,7 +42,7 @@ class AlarmFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        activity?.findViewById<BottomNavigationView>(R.id.main_bnv)?.visibility = View.GONE
+        hideBottomNav()
 
         // 어댑터 생성 시 콜백에서 네비게이터 + 트랜젝션 방식 적용
         adapter = AlarmRVAdapter(mutableListOf()) { notification ->
@@ -53,40 +53,33 @@ class AlarmFragment : Fragment() {
 
             // 팔로잉 여부에 따른 분기 처리
             if (notification.type == NotificationType.FOLLOW) {
-
                 val targetUserId = notification.friendId
 
                 friendViewModel.getFriendProfile(targetUserId) { profile ->
 
-                    val fragment: Fragment =
-                        if (profile.following) {
-                            FriendProfileFollowingFragment().apply {
-                                arguments = Bundle().apply {
-                                    putInt("userId", profile.userId)
-                                    putString("name", profile.name)
-                                    putString("field", profile.field)
-                                    putString("imageUrl", profile.profileImageUrl)
-                                }
-                            }
-                        } else {
-                            FriendProfileFollowFragment().apply {
-                                arguments = Bundle().apply {
-                                    putInt("userId", profile.userId)
-                                    putString("name", profile.name)
-                                    putString("field", profile.field)
-                                    putString("imageUrl", profile.profileImageUrl)
-                                }
-                            }
-                        }
+                    // 프레그먼트가 유효한 상태인지 확인
+                    if (!isAdded || view == null) {
+                        navigating = false
+                        return@getFriendProfile
+                    }
 
+                val args = Bundle().apply {
+                    putInt("userId", profile.userId)
+                    putString("name", profile.name)
+                    putString("field", profile.field)
+                    putString("imageUrl", profile.profileImageUrl)
+                }
+                val fragment: Fragment = if (profile.following) {
+                    FriendProfileFollowingFragment().apply { arguments = args }
+                } else {
+                    FriendProfileFollowFragment().apply { arguments = args }
+                }
                     parentFragmentManager.beginTransaction()
                         .hide(this@AlarmFragment)
                         .add(R.id.main_frm, fragment)
                         .addToBackStack(ALARM_FLOW)
                         .commit()
-
                 }
-
                 return@AlarmRVAdapter
             }
 
@@ -106,8 +99,9 @@ class AlarmFragment : Fragment() {
             }
 
             val tx = parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, fragment)
-                .addToBackStack(ALARM_FLOW) // 뒤로가기 시 알림 화면으로 돌아오도록 유지
+                .hide(this@AlarmFragment)
+                .add(R.id.main_frm, fragment) // 뒤로가기 시 알림 화면으로 돌아오도록 유지
+                .addToBackStack(ALARM_FLOW)
 
             tx.commit()
         }
@@ -182,7 +176,12 @@ class AlarmFragment : Fragment() {
         super.onHiddenChanged(hidden)
         if (!hidden) {
             navigating = false
+            hideBottomNav()
         }
+    }
+
+    private fun hideBottomNav() {
+        activity?.findViewById<BottomNavigationView>(R.id.main_bnv)?.visibility = View.GONE
     }
 
     override fun onDestroyView() {
