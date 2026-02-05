@@ -1,12 +1,14 @@
 package com.umc.teumteum.ui.onboarding
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -80,6 +82,18 @@ class OnBoardingScheduleFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         observeViewModel()
+
+        val initialMarginBottom =
+            (binding.nextBtn.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.nextBtn) { v, insets ->
+            val bottomInset = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom
+
+            v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                bottomMargin = initialMarginBottom + bottomInset
+            }
+            insets
+        }
 
         dayTextViews = listOf(
             binding.sunTv, binding.monTv, binding.tueTv,
@@ -176,10 +190,7 @@ class OnBoardingScheduleFragment : Fragment() {
                 }
 
                 is OnBoardingUiState.Error -> {
-                    if (state.code == "ONBOARDING4001") {
-                        Log.d("ScheduleFragment", "ONBOARDING4001 - 강제 이동")
-                        navigateToNext()
-                    }
+
                 }
 
                 else -> Unit

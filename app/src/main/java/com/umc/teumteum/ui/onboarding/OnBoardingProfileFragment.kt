@@ -4,17 +4,19 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.umc.teumteum.databinding.FragmentOnBoardingProfileBinding
+import com.umc.teumteum.ui.auth.SignUpActivity
 import com.umc.teumteum.ui.onboarding.viewModel.OnBoardingUiState
 import com.umc.teumteum.ui.onboarding.viewModel.OnBoardingViewModel
-import com.umc.teumteum.ui.auth.SignUpActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -57,6 +59,19 @@ class OnBoardingProfileFragment : Fragment() {
             binding.cameraBtn.visibility = View.GONE
         }
 
+
+        val initialMarginBottom =
+            (binding.nextBtn.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.nextBtn) { v, insets ->
+            val bottomInset = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom
+
+            v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                bottomMargin = initialMarginBottom + bottomInset
+            }
+            insets
+        }
+
         observeViewModel()
 
         val pickImageIntent = Intent(Intent.ACTION_PICK).apply { type = "image/*" }
@@ -82,11 +97,6 @@ class OnBoardingProfileFragment : Fragment() {
 
                 is OnBoardingUiState.Error -> {
                     binding.nextBtn.isEnabled = true
-
-                    if (state.code.contains("ONBOARDING4001")) {
-                        Log.d("ProfileFragment", "ONBOARDING4001 - 강제 이동")
-                        navigateToNext()
-                    }
                 }
 
                 else -> Unit
