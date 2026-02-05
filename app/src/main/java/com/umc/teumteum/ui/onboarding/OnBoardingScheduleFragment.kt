@@ -1,7 +1,10 @@
 package com.umc.teumteum.ui.onboarding
 
+import android.graphics.Rect
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MotionEvent
+import android.view.TouchDelegate
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -99,6 +102,9 @@ class OnBoardingScheduleFragment : Fragment() {
             binding.sunTv, binding.monTv, binding.tueTv,
             binding.wedTv, binding.thuTv, binding.friTv, binding.satTv
         )
+
+        expandTouchAreas(dayTextViews, extraDp = 18)
+
         setupDaySelection()
         updateDayHighlight(selectedDayIndex)
         viewModel.updateCurrentDaySchedule(selectedDayIndex)
@@ -107,8 +113,6 @@ class OnBoardingScheduleFragment : Fragment() {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = scheduleAdapter
             scheduleAdapter.onItemClick = { clicked ->
-                val existing = viewModel.scheduleMap[selectedDayIndex]?.toList() ?: emptyList()
-
                 BottomSheetScheduleEditFragment(
                     selectedDayIndex = selectedDayIndex,
                     target = clicked,
@@ -214,6 +218,39 @@ class OnBoardingScheduleFragment : Fragment() {
         // SignUpActivity의 메서드를 통해 다음 단계로 이동
         (activity as? SignUpActivity)?.proceedToNextOnboardingStep(this)
         viewModel.resetState()
+    }
+
+    private class MultiTouchDelegate(parent: View) : TouchDelegate(Rect(), parent) {
+        private val delegates = mutableListOf<TouchDelegate>()
+
+        fun add(delegate: TouchDelegate) {
+            delegates.add(delegate)
+        }
+
+        override fun onTouchEvent(event: MotionEvent): Boolean {
+            return delegates.any { it.onTouchEvent(event) }
+        }
+    }
+
+    private fun expandTouchAreas(views: List<View>, extraDp: Int = 16) {
+        if (views.isEmpty()) return
+        val parent = views.first().parent as? View ?: return
+
+        parent.post {
+            val density = parent.resources.displayMetrics.density
+            val extraPx = (extraDp * density).toInt()
+
+            val multi = MultiTouchDelegate(parent)
+
+            views.forEach { v ->
+                val rect = Rect()
+                v.getHitRect(rect)
+                rect.inset(-extraPx, -extraPx)
+                multi.add(TouchDelegate(rect, v))
+            }
+
+            parent.touchDelegate = multi
+        }
     }
 
 }
