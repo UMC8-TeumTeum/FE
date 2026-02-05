@@ -106,6 +106,14 @@ class OnBoardingScheduleFragment : Fragment() {
         binding.scheduleRv.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = scheduleAdapter
+            scheduleAdapter.onItemClick = { clicked ->
+                val existing = viewModel.scheduleMap[selectedDayIndex]?.toList() ?: emptyList()
+
+                BottomSheetScheduleEditFragment(
+                    selectedDayIndex = selectedDayIndex,
+                    target = clicked,
+                ).show(parentFragmentManager, "BottomSheetScheduleEditFragment")
+            }
         }
 
         binding.fabAddIv.setOnClickListener {

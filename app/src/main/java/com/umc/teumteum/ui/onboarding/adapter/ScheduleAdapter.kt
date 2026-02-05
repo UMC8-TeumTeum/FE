@@ -10,6 +10,8 @@ import com.umc.teumteum.ui.onboarding.data.Schedule
 
 class ScheduleAdapter : ListAdapter<Schedule, ScheduleAdapter.ScheduleViewHolder>(DIFF_CALLBACK) {
 
+    var onItemClick: ((Schedule) -> Unit)? = null
+
     inner class ScheduleViewHolder(private val binding: ItemScheduleBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -20,6 +22,8 @@ class ScheduleAdapter : ListAdapter<Schedule, ScheduleAdapter.ScheduleViewHolder
             binding.timeStartTv.text = startTime.toString()
             binding.timeEndTv.text = endTime.toString()
             binding.titleTv.text = item.title
+
+            binding.root.setOnClickListener { onItemClick?.invoke(item) }
         }
     }
 
@@ -34,8 +38,11 @@ class ScheduleAdapter : ListAdapter<Schedule, ScheduleAdapter.ScheduleViewHolder
 
     companion object {
         val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Schedule>() {
-            override fun areItemsTheSame(oldItem: Schedule, newItem: Schedule) = oldItem === newItem
-            override fun areContentsTheSame(oldItem: Schedule, newItem: Schedule) = oldItem == newItem
+            override fun areItemsTheSame(oldItem: Schedule, newItem: Schedule) =
+                oldItem.id == newItem.id
+
+            override fun areContentsTheSame(oldItem: Schedule, newItem: Schedule) =
+                oldItem == newItem
         }
     }
 }
