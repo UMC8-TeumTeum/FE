@@ -11,6 +11,9 @@ import android.widget.Button
 import android.widget.NumberPicker
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -23,6 +26,7 @@ import com.umc.teumteum.ui.main.viewModel.HomeViewModel
 import com.umc.teumteum.ui.myhome.viewModel.SettingViewModel
 import com.umc.teumteum.utils.enableTapToNext
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.umc.teumteum.ui.myhome.viewModel.UiState
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -49,7 +53,21 @@ class MySleepPatternSettingFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         (activity as? MainActivity)?.hideBottomBar()
 
+        val initialMarginBottom =
+            (binding.confirmBtn.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.confirmBtn) { v, insets ->
+            val bottomInset = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom
+
+            v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                bottomMargin = initialMarginBottom + bottomInset
+            }
+            insets
+        }
+
         initSleepPattern()
+        observeViewModel()
+
         binding.deleteTv.paintFlags = binding.deleteTv.paintFlags or Paint.UNDERLINE_TEXT_FLAG
 
         binding.backButton.setOnClickListener {
@@ -234,4 +252,35 @@ class MySleepPatternSettingFragment : Fragment() {
             }
         }
     }
+
+    private fun observeViewModel() {
+        viewModel.state.observe(viewLifecycleOwner) { state ->
+            when (state) {
+                is UiState.Loading -> binding.confirmBtn.isEnabled = false
+
+                is UiState.Success -> {
+                    binding.confirmBtn.isEnabled = true
+                    navigateToHome()
+                    viewModel.resetState()
+                }
+
+                is UiState.Error -> {
+                    binding.confirmBtn.isEnabled = true
+                }
+
+                else -> Unit
+            }
+        }
+    }
+
+    private fun navigateToHome() {
+        parentFragmentManager.popBackStack(
+            null,
+            androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
+        )
+
+        val bottomNav = requireActivity().findViewById<com.google.android.material.bottomnavigation.BottomNavigationView>(R.id.main_bnv)
+        bottomNav.selectedItemId = R.id.fragment_home
+    }
+
 }

@@ -13,10 +13,20 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+sealed class UiState {
+    data object Idle : UiState()
+    data object Loading : UiState()
+    data object Success : UiState()
+    data class Error(val message: String) : UiState()
+}
+
 @HiltViewModel
 class SettingViewModel @Inject constructor(
     private val repository: SettingRepository
 ) : ViewModel() {
+
+    private val _state = MutableLiveData<UiState>(UiState.Idle)
+    val state: LiveData<UiState> = _state
 
     private val _error = MutableLiveData<String?>()
     val error: LiveData<String?> = _error
@@ -26,6 +36,10 @@ class SettingViewModel @Inject constructor(
 
     private val _saving = MutableLiveData(false)
     val saving: LiveData<Boolean> = _saving
+
+    fun resetState() {
+        _state.value = UiState.Idle
+    }
 
     fun getRemindAlarms() {
         viewModelScope.launch {
@@ -70,20 +84,35 @@ class SettingViewModel @Inject constructor(
 
     fun updateSleepPattern(request: SleepPatternRequest) {
         viewModelScope.launch {
+            _saving.value = true
+            _state.value = UiState.Loading
+
             repository.updateSleepPattern(request)
-                .onFailure {
-                    _error.value = "수면패턴 설정 저장 실패: ${it.message}"
-                    Log.d("Setting", _error.value.toString())
+                .onSuccess {
+                    _state.value = UiState.Success
                 }
+                .onFailure {
+                    val msg = "수면패턴 설정 저장 실패: ${it.message}"
+                    _error.value = msg
+                    _state.value = UiState.Error(msg)
+                    Log.d("Setting", msg)
+                }
+
+            _saving.value = false
         }
     }
 
     fun deleteSleepPattern() {
         viewModelScope.launch {
             repository.deleteSleepPattern()
+                .onSuccess {
+                    _state.value = UiState.Success
+                }
                 .onFailure {
-                    _error.value = "수면패턴 설정 저장 실패: ${it.message}"
-                    Log.d("Setting", _error.value.toString())
+                    val msg = "수면패턴 설정 저장 실패: ${it.message}"
+                    _error.value = msg
+                    _state.value = UiState.Error(msg)
+                    Log.d("Setting", msg)
                 }
         }
     }
