@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.umc.teumteum.data.remote.mypage.model.AlarmSettingResponse
 import com.umc.teumteum.data.remote.mypage.model.PushAlarmRequest
 import com.umc.teumteum.data.remote.mypage.model.RemindAlarmRequest
 import com.umc.teumteum.data.remote.mypage.repository.SettingRepository
@@ -27,6 +28,9 @@ class SettingViewModel @Inject constructor(
     private val _saving = MutableLiveData(false)
     val saving: LiveData<Boolean> = _saving
 
+    private val _alarmSetting = MutableLiveData<AlarmSettingResponse>()
+    val alarmSetting: LiveData<AlarmSettingResponse> = _alarmSetting
+
     fun getRemindAlarms() {
         viewModelScope.launch {
             repository.getRemindAlarms()
@@ -39,6 +43,20 @@ class SettingViewModel @Inject constructor(
                 }
         }
     }
+
+    fun getAlarmSettings() {
+        viewModelScope.launch {
+            repository.getAlarmSettings()
+                .onSuccess { result ->
+                    _alarmSetting.value = result
+                }
+                .onFailure {
+                    _error.value = "알림 설정 조회 실패: ${it.message}"
+                    Log.d("Setting", _error.value.toString())
+                }
+        }
+    }
+
 
     fun updateRemindAlarms(minutes: List<Int>) {
         viewModelScope.launch {

@@ -1,6 +1,7 @@
 package com.umc.teumteum.data.remote.mypage.repository
 
 import android.util.Log
+import com.umc.teumteum.data.remote.mypage.model.AlarmSettingResponse
 import com.umc.teumteum.data.remote.mypage.model.PushAlarmRequest
 import com.umc.teumteum.data.remote.mypage.model.RemindAlarmRequest
 import com.umc.teumteum.data.remote.mypage.model.RemindAlarmResponse
@@ -48,5 +49,12 @@ class SettingRepository @Inject constructor(
         val response = settingService.deleteSleepPattern()
         Log.d("Setting", "response = ${response.body()}")
         handleApiResponseUnit(response)
+    }
+
+    //알림 설정 조회
+    suspend fun getAlarmSettings(): Result<AlarmSettingResponse> = runCatching {
+        val response = settingService.getAlarmSettings()
+        Log.d("Setting", "response = ${response.body()}")
+        handleApiResponse(response)
     }
 }

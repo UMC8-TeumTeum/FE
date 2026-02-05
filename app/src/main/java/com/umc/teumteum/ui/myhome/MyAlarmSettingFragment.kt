@@ -35,6 +35,9 @@ class MyAlarmSettingFragment : Fragment() {
         (activity as? MainActivity)?.hideBottomBar()
 
         setupSwitchListeners()
+        observeViewModel()
+
+        viewModel.getAlarmSettings()
 
         binding.backArrowIv.setOnClickListener {
             parentFragmentManager.popBackStack()
@@ -56,11 +59,9 @@ class MyAlarmSettingFragment : Fragment() {
         val normalListener = CompoundButton.OnCheckedChangeListener { _, _ ->
             if (internalUpdate) return@OnCheckedChangeListener
 
-            if (binding.pushAlarmPauseSwitch.isChecked) {
-                internalUpdate = true
-                setAllDetailSwitches(false)
-                internalUpdate = false
-            }
+            internalUpdate = true
+            syncPauseSwitchFromDetails()
+            internalUpdate = false
 
             sendCurrentSetting()
         }
@@ -89,6 +90,35 @@ class MyAlarmSettingFragment : Fragment() {
         )
 
         viewModel.updatePushAlarmSetting(request)
+    }
+
+    private fun observeViewModel() {
+        viewModel.alarmSetting.observe(viewLifecycleOwner) { setting ->
+            internalUpdate = true
+
+            binding.todayTodoSwitch.isChecked = setting.todayTodo
+            binding.remindSettingSwitch.isChecked = setting.remindAlarm
+            binding.newFollowerSwitch.isChecked = setting.follow
+            binding.teumRequestSwitch.isChecked = setting.teum
+
+            syncPauseSwitchFromDetails()
+
+            internalUpdate = false
+        }
+
+        viewModel.error.observe(viewLifecycleOwner) { msg ->
+            if (msg.isNullOrBlank()) return@observe
+        }
+    }
+
+    private fun syncPauseSwitchFromDetails() {
+        val allOff =
+            !binding.todayTodoSwitch.isChecked &&
+                    !binding.remindSettingSwitch.isChecked &&
+                    !binding.newFollowerSwitch.isChecked &&
+                    !binding.teumRequestSwitch.isChecked
+
+        binding.pushAlarmPauseSwitch.isChecked = allOff
     }
 
 }
