@@ -124,10 +124,27 @@ class OnBoardingNicknameFragment : Fragment() {
                 is OnBoardingUiState.Success -> navigateToNext()
                 is OnBoardingUiState.Error -> {
                     binding.nextBtn.isEnabled = true
+
+                    binding.nicknameErrorTv.visibility = View.GONE
+
                     val code = state.code
+                    val msg = state.message ?: ""
+
+                    // 1) 닉네임 중복(기존 로직)
                     if (code.contains("ONBOARDING4091")) {
                         binding.nicknameErrorTv.visibility = View.VISIBLE
+                        binding.nicknameErrorTv.text = "중복된 닉네임입니다."
+                        return@observe
                     }
+
+                    // 2) 닉네임 형식 오류 (서버가 COMMON400으로 주는 케이스)
+                    if (code.contains("COMMON400") || msg.contains("닉네임은")) {
+                        binding.nicknameErrorTv.visibility = View.VISIBLE
+                        binding.nicknameErrorTv.text =
+                            if (msg.contains("닉네임은")) msg else "닉네임은 영어와 한글만 가능합니다."
+                        return@observe
+                    }
+
                 }
                 else -> Unit
             }
