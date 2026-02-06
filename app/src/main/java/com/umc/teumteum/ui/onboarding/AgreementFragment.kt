@@ -4,12 +4,15 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.umc.teumteum.R
 import com.umc.teumteum.data.remote.onboarding.model.AgreementRequest
@@ -41,6 +44,18 @@ class AgreementFragment : Fragment() {
         (activity as? SignUpActivity)?.apply {
             setProgressBarVisible(true)
             setProgressBar(50)
+        }
+
+        val initialMarginBottom =
+            (binding.nextBtn.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.nextBtn) { v, insets ->
+            val bottomInset = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom
+
+            v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                bottomMargin = initialMarginBottom + bottomInset
+            }
+            insets
         }
 
         setupUI()

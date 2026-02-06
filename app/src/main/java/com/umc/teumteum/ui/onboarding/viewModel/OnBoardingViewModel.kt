@@ -7,7 +7,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.umc.teumteum.data.remote.onboarding.model.AgreementRequest
-import com.umc.teumteum.ui.onboarding.data.Schedule
 import com.umc.teumteum.data.remote.onboarding.model.NicknameJobRequest
 import com.umc.teumteum.data.remote.onboarding.model.PresignedRequest
 import com.umc.teumteum.data.remote.onboarding.model.ProfileImageRequest
@@ -15,6 +14,7 @@ import com.umc.teumteum.data.remote.onboarding.model.RemindRequest
 import com.umc.teumteum.data.remote.onboarding.model.ScheduleRequest
 import com.umc.teumteum.data.remote.onboarding.model.SleepPatternRequest
 import com.umc.teumteum.data.remote.onboarding.repository.OnBoardingRepository
+import com.umc.teumteum.ui.onboarding.data.Schedule
 import com.umc.teumteum.utils.ApiException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -268,6 +268,24 @@ class OnBoardingViewModel @Inject constructor(
             current.remove(minute)
         }
         _remindList.value = current.sorted()
+    }
+
+    fun updateSchedule(dayIndex: Int, scheduleId: String, new: com.umc.teumteum.ui.onboarding.data.Schedule) {
+        val list = scheduleMap[dayIndex] ?: return
+        val idx = list.indexOfFirst { it.id == scheduleId }
+        if (idx == -1) return
+
+        list[idx] = new.copy(id = scheduleId)
+
+        _currentDayScheduleList.value = list.toList()
+    }
+
+    fun deleteSchedule(dayIndex: Int, scheduleId: String) {
+        val list = scheduleMap[dayIndex] ?: return
+        val removed = list.removeIf { it.id == scheduleId }
+        if (!removed) return
+
+        _currentDayScheduleList.value = list.toList()
     }
 }
 

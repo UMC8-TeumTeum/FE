@@ -10,6 +10,9 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.NumberPicker
 import android.widget.TextView
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.activityViewModels
 import com.umc.teumteum.R
 import com.umc.teumteum.data.remote.onboarding.model.SleepPatternRequest
@@ -47,6 +50,18 @@ class OnBoardingSleepPatternFragment : Fragment() {
         selectedEndTime = viewModel.sleepEndTime.value
 
         observeViewModel()
+
+        val initialMarginBottom =
+            (binding.nextBtn.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.nextBtn) { v, insets ->
+            val bottomInset = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom
+
+            v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                bottomMargin = initialMarginBottom + bottomInset
+            }
+            insets
+        }
 
         viewModel.sleepStartTime.value?.let {
             binding.startChoiceTv.text = it.format(DateTimeFormatter.ofPattern("HH:mm"))
@@ -112,10 +127,6 @@ class OnBoardingSleepPatternFragment : Fragment() {
 
                 is OnBoardingUiState.Error -> {
                     binding.nextBtn.isEnabled = true
-                    if (state.code.contains("ONBOARDING4001")) {
-                        Log.d("SleepPatternFragment", "ONBOARDING4001 - 강제 이동")
-                        navigateToNext()
-                    }
                 }
 
                 else -> Unit

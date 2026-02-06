@@ -4,17 +4,19 @@ import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.umc.teumteum.R
 import com.umc.teumteum.databinding.FragmentOnBoardingNicknameBinding
+import com.umc.teumteum.ui.auth.SignUpActivity
 import com.umc.teumteum.ui.onboarding.viewModel.OnBoardingUiState
 import com.umc.teumteum.ui.onboarding.viewModel.OnBoardingViewModel
-import com.umc.teumteum.ui.auth.SignUpActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -34,8 +36,22 @@ class OnBoardingNicknameFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val initialMarginBottom =
+            (binding.nextBtn.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.nextBtn) { v, insets ->
+            val bottomInset = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom
+
+            v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                bottomMargin = initialMarginBottom + bottomInset
+            }
+            insets
+        }
+
         observeViewModel()
         setupUI()
+
     }
 
     private fun setupUI() {
@@ -108,13 +124,27 @@ class OnBoardingNicknameFragment : Fragment() {
                 is OnBoardingUiState.Success -> navigateToNext()
                 is OnBoardingUiState.Error -> {
                     binding.nextBtn.isEnabled = true
+
+                    binding.nicknameErrorTv.visibility = View.GONE
+
                     val code = state.code
+                    val msg = state.message ?: ""
+
+                    // 1) 닉네임 중복(기존 로직)
                     if (code.contains("ONBOARDING4091")) {
                         binding.nicknameErrorTv.visibility = View.VISIBLE
-                    } else if (code.contains("ONBOARDING4001")) {
-                        Log.d("NicknameFragment", "ONBOARDING4001 - 강제 이동")
-                        navigateToNext()
+                        binding.nicknameErrorTv.text = "중복된 닉네임입니다."
+                        return@observe
                     }
+
+                    // 2) 닉네임 형식 오류 (서버가 COMMON400으로 주는 케이스)
+                    if (code.contains("COMMON400") || msg.contains("닉네임은")) {
+                        binding.nicknameErrorTv.visibility = View.VISIBLE
+                        binding.nicknameErrorTv.text =
+                            if (msg.contains("닉네임은")) msg else "닉네임은 영어와 한글만 가능합니다."
+                        return@observe
+                    }
+
                 }
                 else -> Unit
             }

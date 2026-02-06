@@ -4,17 +4,18 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.umc.teumteum.R
 import com.umc.teumteum.databinding.ActivitySignUpBinding
+import com.umc.teumteum.ui.main.MainActivity
+import com.umc.teumteum.ui.onboarding.AgreementFragment
 import com.umc.teumteum.ui.onboarding.OnBoardingNicknameFragment
 import com.umc.teumteum.ui.onboarding.OnBoardingProfileFragment
 import com.umc.teumteum.ui.onboarding.OnBoardingRemindFragment
 import com.umc.teumteum.ui.onboarding.OnBoardingScheduleFragment
 import com.umc.teumteum.ui.onboarding.OnBoardingSleepPatternFragment
-import com.umc.teumteum.ui.onboarding.AgreementFragment
-import com.umc.teumteum.ui.main.MainActivity
 import com.umc.teumteum.utils.FlowPrefs
 import com.umc.teumteum.utils.NextStep
 import dagger.hilt.android.AndroidEntryPoint
@@ -38,6 +39,17 @@ class SignUpActivity : AppCompatActivity() {
         binding = ActivitySignUpBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        onBackPressedDispatcher.addCallback(this) {
+            val fm = supportFragmentManager
+            if (fm.backStackEntryCount > 0) {
+                fm.popBackStack()
+                fm.executePendingTransactions()
+                updateProgressByCurrentFragment()
+            } else {
+                finish()
+            }
+        }
+
         initializeSignUpFlow()
     }
 
@@ -52,21 +64,26 @@ class SignUpActivity : AppCompatActivity() {
             NextStep.ONBOARDING -> {
                 setProgressBarVisible(true)
                 setProgressBar(20)
-                loadFragment(OnBoardingNicknameFragment())
+                loadFragment(OnBoardingNicknameFragment(), addToBackStack = false)
             }
             NextStep.MAIN -> navigateToMain()
             NextStep.AGREEMENT, null -> {
                 setProgressBarVisible(false)
-                loadFragment(AgreementFragment())
+                loadFragment(AgreementFragment(), addToBackStack = false)
             }
         }
     }
 
-    private fun loadFragment(fragment: Fragment) {
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, fragment)
-            .commit()
+    private fun loadFragment(fragment: Fragment, addToBackStack: Boolean = false) {
+        supportFragmentManager.beginTransaction().apply {
+            replace(R.id.fragment_container, fragment)
+            if (addToBackStack) {
+                addToBackStack(fragment::class.java.simpleName)
+            }
+            commit()
+        }
     }
+
 
     // 상단 프로그레스바 제어
     fun setProgressBar(progress: Int) {
@@ -78,6 +95,37 @@ class SignUpActivity : AppCompatActivity() {
         binding.progressBar.visibility = if (visible) View.VISIBLE else View.GONE
     }
 
+    private fun updateProgressByCurrentFragment() {
+        val current = supportFragmentManager.findFragmentById(R.id.fragment_container)
+
+        when (current) {
+            is OnBoardingNicknameFragment -> {
+                setProgressBarVisible(true)
+                setProgressBar(20)
+            }
+            is OnBoardingProfileFragment -> {
+                setProgressBarVisible(true)
+                setProgressBar(40)
+            }
+            is OnBoardingSleepPatternFragment -> {
+                setProgressBarVisible(true)
+                setProgressBar(60)
+            }
+            is OnBoardingScheduleFragment -> {
+                setProgressBarVisible(true)
+                setProgressBar(80)
+            }
+            is OnBoardingRemindFragment -> {
+                setProgressBarVisible(true)
+                setProgressBar(100)
+            }
+            is AgreementFragment -> {
+                setProgressBarVisible(false)
+            }
+            else -> Unit
+        }
+    }
+
     // 온보딩 단계
     fun proceedToNextOnboardingStep(currentFragment: Fragment) {
         // 온보딩 도중에는 항상 ONBOARDING 유지
@@ -86,20 +134,24 @@ class SignUpActivity : AppCompatActivity() {
         when (currentFragment) {
             is OnBoardingNicknameFragment -> {
                 setProgressBar(40)
-                loadFragment(OnBoardingProfileFragment())
+                loadFragment(OnBoardingProfileFragment(), addToBackStack = true)
             }
+
             is OnBoardingProfileFragment -> {
                 setProgressBar(60)
-                loadFragment(OnBoardingSleepPatternFragment())
+                loadFragment(OnBoardingSleepPatternFragment(), addToBackStack = true)
             }
+
             is OnBoardingSleepPatternFragment -> {
                 setProgressBar(80)
-                loadFragment(OnBoardingScheduleFragment())
+                loadFragment(OnBoardingScheduleFragment(), addToBackStack = true)
             }
+
             is OnBoardingScheduleFragment -> {
                 setProgressBar(100)
-                loadFragment(OnBoardingRemindFragment())
+                loadFragment(OnBoardingRemindFragment(), addToBackStack = true)
             }
+
             is OnBoardingRemindFragment -> {
                 completeOnboarding()
             }
