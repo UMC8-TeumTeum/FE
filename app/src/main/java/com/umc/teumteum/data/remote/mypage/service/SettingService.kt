@@ -1,5 +1,6 @@
 package com.umc.teumteum.data.remote.mypage.service
 
+import com.umc.teumteum.data.remote.mypage.model.AlarmSettingResponse
 import com.umc.teumteum.data.remote.mypage.model.PushAlarmRequest
 import com.umc.teumteum.data.remote.mypage.model.RemindAlarmRequest
 import com.umc.teumteum.data.remote.mypage.model.RemindAlarmResponse
@@ -26,4 +27,8 @@ interface SettingService {
 
     @DELETE("/api/users/mypage/sleep-pattern")
     suspend fun deleteSleepPattern(): Response<ApiResponse<Unit>>
+
+    @GET("/api/users/mypage/alarm")
+    suspend fun getAlarmSettings(): Response<ApiResponse<AlarmSettingResponse>>
+
 }

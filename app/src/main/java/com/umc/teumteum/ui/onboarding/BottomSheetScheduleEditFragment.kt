@@ -16,7 +16,7 @@ import androidx.fragment.app.activityViewModels
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.umc.teumteum.R
-import com.umc.teumteum.databinding.BottomSheetScheduleBinding
+import com.umc.teumteum.databinding.BottomSheetScheduleEditBinding
 import com.umc.teumteum.ui.onboarding.data.Schedule
 import com.umc.teumteum.ui.onboarding.viewModel.OnBoardingViewModel
 import com.umc.teumteum.utils.enableTapToNext
@@ -24,12 +24,12 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-class BottomSheetScheduleFragment(
+class BottomSheetScheduleEditFragment(
     private val selectedDayIndex: Int,
-    private val existingSchedules: List<Schedule>,
+    private val target: Schedule
 ) : BottomSheetDialogFragment() {
 
-    private lateinit var binding: BottomSheetScheduleBinding
+    private lateinit var binding: BottomSheetScheduleEditBinding
     private val dayNames = listOf("일", "월", "화", "수", "목", "금", "토")
 
     private var startTime: LocalTime? = null
@@ -41,7 +41,7 @@ class BottomSheetScheduleFragment(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = BottomSheetScheduleBinding.inflate(inflater, container, false)
+        binding = BottomSheetScheduleEditBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -50,10 +50,16 @@ class BottomSheetScheduleFragment(
         binding.startDateTv.text = dayText
         binding.endDateTv.text = dayText
 
+        binding.scheduleTitleEt.setText(target.title)
+        binding.descriptionTextEt.setText(target.description)
+
+        startTime = target.startTime
+        endTime = target.endTime
+
         setupPickers()
 
-        binding.startTimeTv.text = startTime?.toString() ?: "시작 시간"
-        binding.endTimeTv.text = endTime?.toString() ?: "종료 시간"
+        binding.startTimeTv.text = formatTime(startTime!!)
+        binding.endTimeTv.text = formatTime(endTime!!)
 
         binding.startTimeTv.setOnClickListener {
             val visible = binding.timePickerStartContainer.isVisible
@@ -69,7 +75,12 @@ class BottomSheetScheduleFragment(
             binding.timePickerStartContainer.isVisible = false
         }
 
-        binding.registerBtn.setOnClickListener {
+        binding.deleteBtn.setOnClickListener {
+            viewModel.deleteSchedule(selectedDayIndex, target.id)
+            dismiss()
+        }
+
+        binding.saveBtn.setOnClickListener {
             val title = binding.scheduleTitleEt.text.toString().trim()
             val description = binding.descriptionTextEt.text.toString().trim()
 
@@ -78,7 +89,6 @@ class BottomSheetScheduleFragment(
                 return@setOnClickListener
             }
 
-            // 시간 선택 확인
             if (startTime == null || endTime == null) {
                 Toast.makeText(requireContext(), "시작/종료 시간을 모두 선택하세요", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -93,26 +103,19 @@ class BottomSheetScheduleFragment(
             // 시작과 종료가 같을 경우 00:00만 허용
             if (startTime == endTime) {
                 if (!(startTime == LocalTime.MIDNIGHT && endTime == LocalTime.MIDNIGHT)) {
-                    Toast.makeText(requireContext(), "시작과 종료 시간이 같을 수 없습니다 (00:00만 가능)", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "시작과 종료 시간이 같을 수 없습니다", Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
                 }
             }
 
-            // 같은 요일에서 다른 일정과 겹치는 지 검증
-//            if (isTimeOverlap(startTime!!, endTime!!)) {
-//                Toast.makeText(requireContext(), "같은 요일의 다른 일정과 시간이 겹칩니다", Toast.LENGTH_SHORT).show()
-//                return@setOnClickListener
-//            }
-
-            val schedule = Schedule(
+            val edited = target.copy(
                 title = title,
-                day = dayNames[selectedDayIndex],
+                description = description,
                 startTime = startTime!!,
-                endTime = endTime!!,
-                description = description
+                endTime = endTime!!
             )
 
-            viewModel.addSchedule(selectedDayIndex, schedule)
+            viewModel.updateSchedule(selectedDayIndex, target.id, edited)
             dismiss()
         }
     }
@@ -163,25 +166,24 @@ class BottomSheetScheduleFragment(
         val minute = minuteValues[minutePicker.value].toInt()
         val selectedTime = LocalTime.of(hour, minute)
 
-        val displayText = selectedTime.format(
-            DateTimeFormatter.ofPattern("a h:mm", Locale("ko", "KR"))
-        )
-
         if (isStart) {
             startTime = selectedTime
-            binding.startTimeTv.text = displayText
+            binding.startTimeTv.text = formatTime(selectedTime)
             binding.timePickerStartContainer.isVisible = false
         } else {
             endTime = selectedTime
-            binding.endTimeTv.text = displayText
+            binding.endTimeTv.text = formatTime(selectedTime)
             binding.timePickerEndContainer.isVisible = false
         }
     }
 
+    private fun formatTime(time: LocalTime): String {
+        return time.format(DateTimeFormatter.ofPattern("a h:mm", Locale("ko", "KR")))
+    }
+
     private fun applyTextStyleToNumberPicker(picker: NumberPicker, context: Context) {
         try {
-            val count = picker.childCount
-            for (i in 0 until count) {
+            for (i in 0 until picker.childCount) {
                 val child = picker.getChildAt(i)
                 if (child is EditText) {
                     child.setTextColor(ContextCompat.getColor(context, R.color.text_primary))
@@ -195,23 +197,13 @@ class BottomSheetScheduleFragment(
         }
     }
 
-    private fun isTimeOverlap(newStart: LocalTime, newEnd: LocalTime): Boolean {
-        return existingSchedules.any { schedule ->
-            val existingStart = schedule.startTime
-            val existingEnd = schedule.endTime
-            (newStart < existingEnd && newEnd > existingStart)
-        }
-    }
-
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
-
         dialog.setOnShowListener { dialogInterface ->
             val bottomSheet = (dialogInterface as BottomSheetDialog)
                 .findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
             bottomSheet?.setBackgroundResource(R.drawable.calendar_background)
         }
-
         return dialog
     }
 }

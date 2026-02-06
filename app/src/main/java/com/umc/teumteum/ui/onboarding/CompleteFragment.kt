@@ -1,10 +1,13 @@
 package com.umc.teumteum.ui.onboarding
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
+import androidx.fragment.app.Fragment
 import com.umc.teumteum.R
 import com.umc.teumteum.databinding.FragmentCompleteBinding
 import com.umc.teumteum.ui.auth.SignUpActivity
@@ -38,6 +41,18 @@ class CompleteFragment : Fragment() {
 
         // step을 ONBORDING으로 설정
         flowPrefs.setLastStep(NextStep.ONBOARDING)
+
+        val initialMarginBottom =
+            (binding.completeBtn.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.completeBtn) { v, insets ->
+            val bottomInset = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom
+
+            v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                bottomMargin = initialMarginBottom + bottomInset
+            }
+            insets
+        }
 
         binding.completeBtn.setOnClickListener {
             parentFragmentManager.beginTransaction()
