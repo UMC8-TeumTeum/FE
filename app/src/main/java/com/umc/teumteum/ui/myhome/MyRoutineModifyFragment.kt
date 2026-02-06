@@ -1,11 +1,17 @@
 package com.umc.teumteum.ui.myhome
 
+import android.graphics.Rect
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MotionEvent
+import android.view.TouchDelegate
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -69,6 +75,31 @@ class MyRoutineModifyFragment : Fragment() {
 
         observeViewModel()
 
+        val initialMarginBottom =
+            (binding.nextBtn.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.nextBtn) { v, insets ->
+            val bottomInset = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom
+
+            v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                bottomMargin = initialMarginBottom + bottomInset
+            }
+            insets
+        }
+
+        binding.nextBtn.setOnClickListener {
+            parentFragmentManager.popBackStack(
+                null,
+                androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
+            )
+
+
+            val bottomNav = requireActivity()
+                .findViewById<com.google.android.material.bottomnavigation.BottomNavigationView>(R.id.main_bnv)
+
+            bottomNav.selectedItemId = R.id.fragment_home
+        }
+
         binding.backButton.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
@@ -77,6 +108,7 @@ class MyRoutineModifyFragment : Fragment() {
             binding.sunTv, binding.monTv, binding.tueTv,
             binding.wedTv, binding.thuTv, binding.friTv, binding.satTv
         )
+        expandTouchAreas(dayTextViews, extraDp = 18)
 
         binding.scheduleRv.apply {
             layoutManager = LinearLayoutManager(requireContext())
@@ -161,4 +193,38 @@ class MyRoutineModifyFragment : Fragment() {
             scheduleAdapter.submitList(list)
         }
     }
+
+    private class MultiTouchDelegate(parent: View) : TouchDelegate(Rect(), parent) {
+        private val delegates = mutableListOf<TouchDelegate>()
+
+        fun add(delegate: TouchDelegate) {
+            delegates.add(delegate)
+        }
+
+        override fun onTouchEvent(event: MotionEvent): Boolean {
+            return delegates.any { it.onTouchEvent(event) }
+        }
+    }
+
+    private fun expandTouchAreas(views: List<View>, extraDp: Int = 18) {
+        if (views.isEmpty()) return
+        val parent = views.first().parent as? View ?: return
+
+        parent.post {
+            val density = parent.resources.displayMetrics.density
+            val extraPx = (extraDp * density).toInt()
+
+            val multi = MultiTouchDelegate(parent)
+
+            views.forEach { v ->
+                val rect = Rect()
+                v.getHitRect(rect)
+                rect.inset(-extraPx, -extraPx)
+                multi.add(TouchDelegate(rect, v))
+            }
+
+            parent.touchDelegate = multi
+        }
+    }
+
 }
