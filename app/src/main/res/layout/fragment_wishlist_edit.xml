@@ -125,7 +125,8 @@
         android:layout_width="0dp"
         android:layout_height="94dp"
         android:orientation="horizontal"
-        android:padding="14dp"
+        android:layout_marginBottom="20dp"
+        android:paddingTop="10dp"
         android:weightSum="2"
         android:background="@color/white"
         app:layout_constraintStart_toStartOf="parent"
@@ -135,23 +136,31 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_wish_cancel"
             android:layout_width="0dp"
-            android:layout_height="65dp"
+            android:layout_height="56dp"
             android:layout_weight="1"
+            android:layout_marginStart="19dp"
             android:layout_marginEnd="8dp"
+            android:padding="0dp"
             android:text="선택 취소"
             android:textColor="@color/text_primary"
             app:backgroundTint="@color/teumteum_bg"
+            android:fontFamily="@font/noto_sans_kr_medium"
+            android:textSize="16sp"
             app:cornerRadius="12dp"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_wish_delete"
             android:layout_width="0dp"
-            android:layout_height="65dp"
+            android:layout_height="56dp"
             android:layout_weight="1"
             android:layout_marginStart="8dp"
+            android:layout_marginEnd="19dp"
+            android:padding="0dp"
             android:text="삭제"
             android:textColor="@color/white"
             app:backgroundTint="@color/text_primary"
+            android:fontFamily="@font/noto_sans_kr_medium"
+            android:textSize="16sp"
             app:cornerRadius="12dp"/>
     </LinearLayout>
 
