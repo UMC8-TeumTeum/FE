@@ -1,8 +1,6 @@
 package com.umc.teumteum.ui.main
 
 import android.Manifest
-import android.content.Intent
-import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.graphics.Typeface
 import android.os.Build
@@ -25,7 +23,6 @@ import androidx.fragment.app.FragmentManager
 import com.umc.teumteum.ui.friend.FriendFragment
 import com.umc.teumteum.ui.myhome.MyHomeFragment
 import com.umc.teumteum.R
-import com.umc.teumteum.receiver.ScreenOnReceiver
 import com.umc.teumteum.databinding.ActivityMainBinding
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
@@ -35,8 +32,6 @@ class MainActivity : AppCompatActivity() {
 
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
-
-    private lateinit var screenOnReceiver: ScreenOnReceiver
 
     // Android 13+(API 33) 알림 권한 요청 런처
     private val requestPostNotiPermission =
@@ -54,11 +49,6 @@ class MainActivity : AppCompatActivity() {
         ensurePostNotificationsPermission()
 
         initBottomNavigation()
-
-        // 화면 켜짐 감지 리시버 등록
-        screenOnReceiver = ScreenOnReceiver()
-        val filter = IntentFilter(Intent.ACTION_SCREEN_ON)
-        registerReceiver(screenOnReceiver, filter)
 
         enableEdgeToEdge()
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
@@ -78,17 +68,6 @@ class MainActivity : AppCompatActivity() {
             .addOnFailureListener { e ->
                 Log.e("FCM", "Failed to fetch FCM token", e)
             }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        // 리시버 해제(중복 해제 예외 보호)
-        try {
-            unregisterReceiver(screenOnReceiver)
-        } catch (e: IllegalArgumentException) {
-            Log.w("Receiver", "ScreenOnReceiver already unregistered", e)
-        }
-        _binding = null
     }
 
     private fun ensurePostNotificationsPermission() {
@@ -194,5 +173,10 @@ class MainActivity : AppCompatActivity() {
             )
         }
         text = spannable
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 }
