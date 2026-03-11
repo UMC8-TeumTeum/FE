@@ -1,4 +1,3 @@
-<!-- res/drawable/bg_edittext_gray.xml -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
     <solid android:color="#F6F6F6" />

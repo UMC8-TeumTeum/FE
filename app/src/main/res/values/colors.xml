@@ -36,9 +36,6 @@
     <color name="clock_todo">#847EFF</color>
     <color name="clock_overlap">#7069F4</color>
 
-    <color name="skeleton_card">#F6F6F6</color>
-    <color name="skeleton_block">#EAEAEA</color>
-
     <color name="overlay_scrim">#CC0E1220</color> <!-- 진한 남색계열 반투명 -->
 
 </resources>

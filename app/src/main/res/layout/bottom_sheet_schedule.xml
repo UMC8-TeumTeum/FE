@@ -25,7 +25,7 @@
                 android:hint="일정 이름을 작성해주세요"
                 android:minHeight="28dp"
                 android:textSize="20sp"
-                android:background="@android:color/transparent"
+                android:background="@color/transparent"
                 android:inputType="textMultiLine"
                 android:maxLines="5"
                 android:gravity="top|start" />
@@ -42,7 +42,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@android:color/white"
+                android:background="@color/white"
                 android:layout_marginTop="15dp"
                 android:padding="8dp">
 
@@ -227,7 +227,7 @@
                     android:textColorHint="@color/text_primary"
                     android:minHeight="28dp"
                     android:textSize="15sp"
-                    android:background="@android:color/transparent"
+                    android:background="@color/transparent"
                     android:inputType="textMultiLine"
                     android:maxLines="5"
                     android:gravity="top|start" />
@@ -249,7 +249,5 @@
                 />
 
         </LinearLayout>
-
     </ScrollView>
-
 </LinearLayout>

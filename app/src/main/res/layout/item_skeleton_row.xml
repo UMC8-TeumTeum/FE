@@ -8,7 +8,7 @@
     app:cardCornerRadius="10dp"
     app:cardElevation="0dp"
     app:strokeWidth="0dp"
-    app:cardBackgroundColor="@color/skeleton_card">
+    app:cardBackgroundColor="@color/teumteum_bg">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -20,7 +20,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:background="@drawable/bg_skeleton_circle"
-            android:backgroundTint="@color/skeleton_block"
+            android:backgroundTint="@color/teumteum_line"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -30,7 +30,7 @@
             android:layout_width="0dp"
             android:layout_height="24dp"
             android:background="@drawable/bg_skeleton_rect"
-            android:backgroundTint="@color/skeleton_block"
+            android:backgroundTint="@color/teumteum_line"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -53,7 +53,7 @@
                 android:layout_width="0dp"
                 android:layout_height="24dp"
                 android:background="@drawable/bg_skeleton_rect"
-                android:backgroundTint="@color/skeleton_block"
+                android:backgroundTint="@color/teumteum_line"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintWidth_default="percent"

@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:background="@android:color/white">
+    android:background="@color/white">
 
     <LinearLayout
         android:id="@+id/searchBarLayout"
@@ -22,7 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:background="@android:color/transparent"
+            android:background="@color/transparent"
             android:src="@drawable/ic_arrow_back"
             android:scaleType="centerInside" />
 
@@ -80,7 +80,7 @@
             android:textColor="#788084"
             android:textSize="14sp"
             android:fontFamily="@font/noto_sans_kr_regular"
-            android:background="@android:color/transparent"
+            android:background="@color/transparent"
             android:gravity="center_vertical"
             android:clickable="true"
             android:focusable="true" />

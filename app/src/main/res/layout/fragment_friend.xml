@@ -6,12 +6,12 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:background="@android:color/white">
+    android:background="@color/white">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="450dp"
-        android:background="#7770FE">
+        android:background="@color/main_1">
 
         <ImageView
             android:id="@+id/home_background_iv"
@@ -42,7 +42,7 @@
             android:layout_alignParentEnd="true"
             android:layout_marginTop="0dp"
             android:layout_marginEnd="59dp"
-            android:background="@android:color/transparent"
+            android:background="@color/transparent"
             android:src="@drawable/ic_top_alarm"
             app:layout_constraintBaseline_toBaselineOf="@id/home_logo_iv" />
 
@@ -54,10 +54,10 @@
             android:layout_alignParentEnd="true"
             android:layout_marginTop="0dp"
             android:layout_marginEnd="19dp"
-            android:background="@android:color/transparent"
+            android:background="@color/transparent"
             android:src="@drawable/ic_search"
             app:layout_constraintBaseline_toBaselineOf="@id/home_logo_iv"
-            app:tint="#FFFFFF" />
+            app:tint="@color/white" />
 
         <TextView
             android:id="@+id/textName"
@@ -70,7 +70,7 @@
             android:includeFontPadding="false"
             android:lineSpacingExtra="0dp"
             android:text="나와 하루의 빈틈이 맞는\n친구를 찾아볼까요?"
-            android:textColor="@android:color/white"
+            android:textColor="@color/white"
             android:textSize="20sp" />
 
         <androidx.cardview.widget.CardView
@@ -107,7 +107,7 @@
                     android:text="새로운 틈 요청이 없어요"
                     android:includeFontPadding="false"
                     android:textSize="15sp"
-                    android:textColor="#0F0F0F"
+                    android:textColor="@color/text_primary"
                     android:layout_marginTop="6dp"
                     android:layout_marginBottom="31dp"
                     android:fontFamily="@font/noto_sans_kr_medium"
@@ -143,9 +143,9 @@
             android:insetRight="0dp"
             android:insetBottom="0dp"
             android:text="약속된 틈 보러가기"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/white"
             android:textSize="16sp"
-            app:backgroundTint="#0F0F0F"
+            app:backgroundTint="@color/text_primary"
             app:cornerRadius="12dp" />
 
     </RelativeLayout>
@@ -165,7 +165,7 @@
             android:text="팔로잉"
             android:fontFamily="@font/noto_sans_kr_medium"
             android:textStyle="bold"
-            android:textColor="#0F0F0F"
+            android:textColor="@color/text_primary"
             android:layout_marginEnd="16dp" />
 
         <TextView
