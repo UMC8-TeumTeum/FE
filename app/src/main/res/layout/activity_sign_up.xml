@@ -19,7 +19,6 @@
         android:name="com.umc.teumteum.ui.onboarding.AgreementFragment"
         />
 
-    <!-- 상단 진행바 -->
     <ProgressBar
         android:id="@+id/progress_bar"
         style="@android:style/Widget.ProgressBar.Horizontal"

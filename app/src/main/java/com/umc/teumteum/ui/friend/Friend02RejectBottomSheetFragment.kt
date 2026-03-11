@@ -19,6 +19,7 @@ import com.umc.teumteum.ui.friend.viewModel.FriendViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
+import androidx.core.graphics.toColorInt
 
 @AndroidEntryPoint
 class Friend02RejectBottomSheetFragment : BottomSheetDialogFragment() {
@@ -55,7 +56,7 @@ class Friend02RejectBottomSheetFragment : BottomSheetDialogFragment() {
 
         val item = viewModel.selectedTeum.value
         if (item == null) {
-            dismiss() // 방어: 선택값 없으면 닫기
+            dismiss() // 선택값 없으면 닫기
             return
         }
 
@@ -81,7 +82,7 @@ class Friend02RejectBottomSheetFragment : BottomSheetDialogFragment() {
                 val parentFragment = parentFragmentManager.fragments.firstOrNull { it is Friend02RequestFragment } as? Friend02RequestFragment
                 val teumList = parentFragment?.teumList ?: emptyList()
 
-                //  시간 제안 화면 이동
+                // 시간 제안 화면 이동
                 parentFragmentManager.beginTransaction()
                     .replace(
                         R.id.main_frm,
@@ -93,20 +94,17 @@ class Friend02RejectBottomSheetFragment : BottomSheetDialogFragment() {
             } else {
                 val status = "rejected"
 
-                //  로그 & 토스트
                 Log.d("REJECT_BOTTOM_SHEET", "responseId: $responseId, status: $status")
                 Toast.makeText(requireContext(), "삭제되었습니다", Toast.LENGTH_SHORT).show()
 
-                //  응답 처리
+                // 응답 처리
                 viewModel.respondToTeum(responseId, status)
 
-                //  응답 완료 후 reject 전송 완료 화면으로 이동
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.main_frm, FriendRejectSendFragment())
                     .addToBackStack(null)
                     .commit()
 
-                //  바텀시트 닫기
                 dismiss()
             }
         }
@@ -117,7 +115,7 @@ class Friend02RejectBottomSheetFragment : BottomSheetDialogFragment() {
 
         if (option == SelectedOption.REJECT) {
             binding.btnRejectMent.text = getColoredText("이때는 시간이 안돼요", " 멘트 보내기")
-            binding.btnRejectMent.strokeColor = ColorStateList.valueOf(Color.parseColor("#7770FE"))
+            binding.btnRejectMent.strokeColor = ColorStateList.valueOf("#7770FE".toColorInt())
             binding.btnRejectMent.strokeWidth = 2
 
             binding.btnSuggestTime.text = getGrayText("가능한 다른 시간대 제안하기")
@@ -125,7 +123,7 @@ class Friend02RejectBottomSheetFragment : BottomSheetDialogFragment() {
             binding.btnSuggestTime.strokeWidth = 0
         } else {
             binding.btnSuggestTime.text = getColoredText("가능한 다른 시간대", " 제안하기")
-            binding.btnSuggestTime.strokeColor = ColorStateList.valueOf(Color.parseColor("#7770FE"))
+            binding.btnSuggestTime.strokeColor = ColorStateList.valueOf("#7770FE".toColorInt())
             binding.btnSuggestTime.strokeWidth = 2
 
             binding.btnRejectMent.text = getGrayText("이때는 시간이 안돼요 멘트 보내기")
@@ -137,14 +135,14 @@ class Friend02RejectBottomSheetFragment : BottomSheetDialogFragment() {
     private fun getColoredText(purplePart: String, blackPart: String): SpannableString {
         val fullText = purplePart + blackPart
         return SpannableString(fullText).apply {
-            setSpan(ForegroundColorSpan(Color.parseColor("#7770FE")), 0, purplePart.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-            setSpan(ForegroundColorSpan(Color.parseColor("#0F0F0F")), purplePart.length, fullText.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            setSpan(ForegroundColorSpan("#7770FE".toColorInt()), 0, purplePart.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            setSpan(ForegroundColorSpan("#0F0F0F".toColorInt()), purplePart.length, fullText.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         }
     }
 
     private fun getGrayText(fullText: String): SpannableString {
         return SpannableString(fullText).apply {
-            setSpan(ForegroundColorSpan(Color.parseColor("#D3D3D3")), 0, fullText.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            setSpan(ForegroundColorSpan("#D3D3D3".toColorInt()), 0, fullText.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         }
     }
 

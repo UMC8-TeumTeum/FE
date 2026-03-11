@@ -8,12 +8,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.activityViewModels
 import androidx.viewpager2.widget.ViewPager2
 import com.umc.teumteum.R
 import com.umc.teumteum.data.remote.friend.model.TeumConflictItem
 import com.umc.teumteum.databinding.BottomSheetFriendSendRequestBinding
-import com.umc.teumteum.ui.friend.viewModel.FriendViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
@@ -21,18 +19,6 @@ class FriendSendRequestBottomSheet : BottomSheetDialogFragment() {
 
     private var _binding: BottomSheetFriendSendRequestBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: FriendViewModel by activityViewModels()
-
-    // 수락 버튼 리스너
-    interface OnRequestSendListener {
-        fun onAcceptClicked()
-    }
-
-    private var listener: OnRequestSendListener? = null
-
-    fun setOnRequestSendListener(listener: OnRequestSendListener) {
-        this.listener = listener
-    }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
@@ -98,16 +84,9 @@ class FriendSendRequestBottomSheet : BottomSheetDialogFragment() {
             dialog.show(parentFragmentManager, FriendMatchingPreviewDialog.TAG)
             dismiss()
         }
-
-
-
-
     }
 
-    // =========================
-    // Indicator 관련 함수
-    // =========================
-
+    // 인디케이터 설정
     private fun setupIndicator(count: Int) {
         binding.clockIndicatorLl.removeAllViews()
 

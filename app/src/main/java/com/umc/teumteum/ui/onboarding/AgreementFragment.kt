@@ -1,7 +1,6 @@
 package com.umc.teumteum.ui.onboarding
 
 import android.content.res.ColorStateList
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -21,6 +20,7 @@ import com.umc.teumteum.ui.auth.SignUpActivity
 import com.umc.teumteum.ui.onboarding.viewModel.OnBoardingUiState
 import com.umc.teumteum.ui.onboarding.viewModel.OnBoardingViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import androidx.core.graphics.toColorInt
 
 @AndroidEntryPoint
 class AgreementFragment : Fragment() {
@@ -111,7 +111,7 @@ class AgreementFragment : Fragment() {
         val enabled = binding.term1Checkbox.isChecked && binding.term2Checkbox.isChecked
         binding.nextBtn.isEnabled = enabled
         binding.nextBtn.setBackgroundColor(
-            if (enabled) requireContext().getColor(R.color.black) else Color.parseColor("#F6F6F6")
+            if (enabled) requireContext().getColor(R.color.black) else "#F6F6F6".toColorInt()
         )
         binding.nextBtn.setTextColor(
             if (enabled) requireContext().getColor(R.color.white) else requireContext().getColor(R.color.black)

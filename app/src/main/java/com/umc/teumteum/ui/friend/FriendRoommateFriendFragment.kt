@@ -115,8 +115,6 @@ class FriendRoommateFriendFragment : Fragment() {
             .circleCrop()
             .into(binding.profileIv2)
 
-
-
         // 친구 추가 버튼 클릭 시 프래그먼트 이동
         binding.addFriendBtn.setOnClickListener {
             val preselectedIds = ArrayList(addedFriends.map { it.userId })
@@ -135,13 +133,12 @@ class FriendRoommateFriendFragment : Fragment() {
                 .commit()
         }
 
-
         parentFragmentManager.setFragmentResultListener("selectedFriends", viewLifecycleOwner) { _, bundle ->
             val selectedFriends = bundle.getParcelableArrayList<FriendProfileResult>("friends") ?: emptyList()
 
             addedFriends = selectedFriends
 
-            // FriendProfileResult → AddedFriend 변환 (필드명은 실제 모델에 맞춰 수정)
+            // FriendProfileResult → AddedFriend 변환
             addedFriendsData = selectedFriends.map {
                 AddedFriend(profileImage = it.profileImageUrl, name = it.name)
             }
@@ -149,7 +146,6 @@ class FriendRoommateFriendFragment : Fragment() {
             val merged = baseFriends + addedFriendsData
             addedFriendAdapter.submitList(merged)
         }
-
 
         //FriendRoommateTimeFragment 로 이동
         binding.matchBtn.setOnClickListener {
@@ -170,8 +166,6 @@ class FriendRoommateFriendFragment : Fragment() {
                 .commit()
         }
 
-
-        // 뒤로가기 버튼 처리
         binding.btnBack.setOnClickListener {
             resetAddedFriendsState()
             parentFragmentManager.popBackStack()
@@ -198,5 +192,4 @@ class FriendRoommateFriendFragment : Fragment() {
 
         viewModel.setTeumRequestReceiverUserIds(emptyList())
     }
-
 }

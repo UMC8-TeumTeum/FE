@@ -2,10 +2,9 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="@color/white"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <!-- 뒤로가기 버튼 -->
     <ImageButton
         android:id="@+id/btnBack"
         android:layout_width="wrap_content"
@@ -27,7 +26,7 @@
         android:fontFamily="@font/noto_sans_kr_medium"
         android:includeFontPadding="false"
         android:text="함께 할 틈을 선택해주세요"
-        android:textColor="#0F0F0F"
+        android:textColor="@color/text_primary"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnBack" />
@@ -41,7 +40,7 @@
         android:fontFamily="@font/noto_sans_kr_regular"
         android:includeFontPadding="false"
         android:text="하나만 선택 가능해요"
-        android:textColor="#0F0F0F"
+        android:textColor="@color/text_primary"
         android:textSize="14sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
@@ -68,12 +67,11 @@
         android:fontFamily="@font/noto_sans_kr_medium"
         android:includeFontPadding="false"
         android:text="틈 요청 제목을 작성해주세요*"
-        android:textColor="#0F0F0F"
-        android:textSize="20dp"
+        android:textColor="@color/text_primary"
+        android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/possibleTimeRc" />
 
-    <!-- 제목 입력 필드 (EditText + X 버튼 포함) -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/editTitleContainer"
         android:layout_width="match_parent"
@@ -93,18 +91,20 @@
             android:maxLength="10"
             android:background="@drawable/bg_edittext_gray"
             android:padding="10dp"
-            android:textColor="#0F0F0F"
+            android:textColor="@color/text_primary"
             android:textColorHint="#B1B2B3"
             android:textSize="12sp"
             android:imeOptions="actionDone"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
         <ImageButton
             android:id="@+id/clearTitleBtn"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:background="@android:color/transparent"
+            android:background="@color/transparent"
             android:layout_marginEnd="15.5dp"
             android:src="@drawable/delet_btn"
             android:contentDescription="입력 삭제"
@@ -113,7 +113,6 @@
             app:layout_constraintBottom_toBottomOf="@id/editTextTitle" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- 상세 멘트 제목 TextView -->
     <TextView
         android:id="@+id/textViewDetailMent"
         android:layout_width="wrap_content"
@@ -123,12 +122,11 @@
         android:fontFamily="@font/noto_sans_kr_medium"
         android:includeFontPadding="false"
         android:text="자세한 멘트를 작성할까요?"
-        android:textColor="#0F0F0F"
+        android:textColor="@color/text_primary"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTitleContainer" />
 
-    <!-- 상세 멘트 서브텍스트 -->
     <TextView
         android:id="@+id/textViewSubDetail"
         android:layout_width="wrap_content"
@@ -139,11 +137,10 @@
         android:textSize="14sp"
         android:fontFamily="@font/noto_sans_kr_regular"
         android:includeFontPadding="false"
-        android:textColor="#0F0F0F"
+        android:textColor="@color/text_primary"
         app:layout_constraintTop_toBottomOf="@id/textViewDetailMent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <!-- 상세 멘트 입력 필드 (EditText + X 버튼 포함) -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/editDetailContainer"
         android:layout_width="match_parent"
@@ -163,7 +160,7 @@
             android:hint="같이 빈틈을 채워봐요. (최대 40자)"
             android:maxLength="40"
             android:padding="10dp"
-            android:textColor="#0F0F0F"
+            android:textColor="@color/text_primary"
             android:textColorHint="#B1B2B3"
             android:textSize="12sp"
             android:imeOptions="actionDone"
@@ -176,7 +173,7 @@
             android:id="@+id/clearDetailBtn"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:background="@android:color/transparent"
+            android:background="@color/transparent"
             android:layout_marginEnd="15.5dp"
             android:src="@drawable/delet_btn"
             android:contentDescription="입력 삭제"
@@ -184,7 +181,6 @@
             app:layout_constraintTop_toTopOf="@id/editTextDetail"
             app:layout_constraintBottom_toBottomOf="@id/editTextDetail" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/send_btn"
@@ -194,10 +190,10 @@
         android:layout_marginStart="19dp"
         android:layout_marginEnd="19dp"
         android:layout_marginTop="115dp"
-        android:backgroundTint="#F6F6F6"
+        android:backgroundTint="@color/teumteum_bg"
         android:enabled="false"
         android:text="전송할게요"
-        android:textColor="#0F0F0F"
+        android:textColor="@color/text_primary"
         app:cornerRadius="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

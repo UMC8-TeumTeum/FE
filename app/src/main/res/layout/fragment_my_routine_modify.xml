@@ -5,14 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- 뒤로가기 버튼 -->
     <ImageButton
         android:id="@+id/backButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="70dp"
         android:layout_marginStart="16dp"
-        android:background="@android:color/transparent"
+        android:background="@color/transparent"
         android:scaleType="centerInside"
         android:src="@drawable/ic_arrow_back"
         app:layout_constraintStart_toStartOf="parent"
@@ -128,14 +127,13 @@
         android:id="@+id/calendar_underline"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#EAEAEA"
+        android:background="@color/teumteum_line"
         app:layout_constraintTop_toBottomOf="@+id/calendar_container"
         android:layout_marginTop="30dp"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         />
 
-    <!-- TODO: 일정 리스트 추가 -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/schedule_rv"
         android:layout_width="0dp"
@@ -147,7 +145,6 @@
         android:layout_marginTop="30dp"
         android:layout_marginBottom="30dp"
         />
-
 
     <ImageView
         android:id="@+id/fab_add_iv"
@@ -162,7 +159,6 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:layout_marginBottom="29dp"
         />
-
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/next_btn"
@@ -179,8 +175,4 @@
         android:layout_marginEnd="19dp"
         android:layout_marginBottom="19dp"
         />
-
-
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

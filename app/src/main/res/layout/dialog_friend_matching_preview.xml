@@ -6,7 +6,6 @@
     android:layout_height="wrap_content"
     android:background="@android:color/transparent">
 
-    <!-- 상단 카드 부분 -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/teum_time_card"
         android:layout_width="350dp"
@@ -16,7 +15,7 @@
         app:cardBackgroundColor="#7770FE"
         app:cardCornerRadius="10dp"
         app:cardElevation="2dp"
-        app:strokeColor="@android:color/transparent"
+        app:strokeColor="@color/transparent"
         app:strokeWidth="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -53,7 +52,7 @@
                     android:layout_marginEnd="18dp"
                     android:layout_weight="1"
                     android:fontFamily="@font/noto_sans_kr_medium"
-                    android:text="이름"
+                    tools:text="이름"
                     android:textColor="#FFFFFF"
                     android:textSize="16sp" />
 
@@ -63,7 +62,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8.52dp"
                     android:fontFamily="@font/noto_sans_kr_regular"
-                    android:text="25.05.02     |"
+                    tools:text="25.05.02     |"
                     android:textColor="#FFFFFF"
                     android:textSize="11sp" />
 
@@ -80,14 +79,13 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="21dp"
                     android:fontFamily="@font/noto_sans_kr_regular"
-                    android:text="15:20 ~ 16:10"
+                    tools:text="15:20 ~ 16:10"
                     android:textColor="#FFFFFF"
                     android:textSize="11sp" />
             </LinearLayout>
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- 하단 카드 -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardBottom"
         android:layout_width="350dp"
@@ -116,7 +114,7 @@
                 android:layout_marginTop="21dp"
                 android:fontFamily="@font/noto_sans_kr_medium"
                 android:includeFontPadding="false"
-                android:text="학교 앞 샤브월데이 가자"
+                tools:text="학교 앞 샤브월데이 가자"
                 android:textColor="#0F0F0F"
                 android:textSize="15sp" />
 
@@ -129,7 +127,7 @@
                 android:layout_marginEnd="93.69dp"
                 android:fontFamily="@font/noto_sans_kr_regular"
                 android:includeFontPadding="false"
-                android:text="샤브월데이 할인한대! 가서 샤브샤브랑 초코 요구르트 과일쌈 해먹고 삼얼음 맥주 마시자"
+                tools:text="샤브월데이 할인한대! 가서 샤브샤브랑 초코 요거트 과일쌈 해먹고 살얼음 맥주 마시자"
                 android:textColor="#788084"
                 android:textSize="12sp" />
 

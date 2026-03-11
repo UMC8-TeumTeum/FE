@@ -2,7 +2,6 @@ package com.umc.teumteum.ui.myhome
 
 import android.app.Dialog
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -18,6 +17,7 @@ import com.umc.teumteum.ui.myhome.adapter.BlockedAccountAdapter
 import com.umc.teumteum.ui.myhome.data.BlockedAccount
 import com.umc.teumteum.ui.myhome.viewModel.BlockedAccountViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import androidx.core.graphics.drawable.toDrawable
 
 @AndroidEntryPoint
 class BlockedAccountFragment : Fragment() {
@@ -43,7 +43,7 @@ class BlockedAccountFragment : Fragment() {
         observeBlockedAccounts()
         observeError()
 
-        //  차단된 계정 목록 조회
+        // 차단된 계정 목록 조회
         viewModel.getBlockedAccounts()
 
         binding.backArrowIv.setOnClickListener {
@@ -91,14 +91,12 @@ class BlockedAccountFragment : Fragment() {
         val dialog = Dialog(requireContext())
         dialog.setContentView(dialogView.root)
         dialog.window?.apply {
-            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
             setGravity(Gravity.CENTER)
         }
 
         dialogView.yesBtn.setOnClickListener {
-            // 차단 해제 API 호출
             viewModel.unblockUser(account.userId)
-
             dialog.dismiss()
         }
 

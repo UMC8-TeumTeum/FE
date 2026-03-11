@@ -4,15 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="#FFFFFF">
+    android:background="@color/white">
 
-    <!-- 상단 텍스트 -->
     <TextView
         android:id="@+id/textTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="함께 할 친구를 추가해주세요"
-        android:textColor="#0F0F0F"
+        android:textColor="@color/text_primary"
         android:textSize="20sp"
         android:fontFamily="@font/noto_sans_kr_medium"
         android:layout_marginTop="80dp"
@@ -21,7 +20,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <!-- 뒤로가기 -->
     <ImageButton
         android:id="@+id/backButton"
         android:layout_width="wrap_content"
@@ -29,12 +27,11 @@
         android:layout_marginTop="80dp"
         android:layout_marginEnd="12dp"
         android:src="@drawable/ic_undo"
-        android:background="@android:color/transparent"
+        android:background="@color/transparent"
         android:contentDescription="뒤로가기 버튼"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- 친구 리스트 -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/friendRecyclerView"
         android:layout_width="match_parent"

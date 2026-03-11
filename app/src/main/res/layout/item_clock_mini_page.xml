@@ -18,7 +18,7 @@
         android:layout_width="179.49dp"
         android:layout_height="179.49dp"
         android:layout_gravity="center"
-        android:background="@android:color/transparent" />
+        android:background="@color/transparent" />
 
     <ImageView
         android:id="@+id/clock_center_iv"
@@ -26,6 +26,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:src="@drawable/clock_mini_center_sv"
-        android:background="@android:color/transparent" />
+        android:background="@color/transparent" />
 
 </FrameLayout>

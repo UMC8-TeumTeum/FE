@@ -20,14 +20,10 @@ class TermsDetailFragment : Fragment() {
 
     private lateinit var binding: FragmentTermsDetailBinding
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentTermsDetailBinding.inflate(inflater, container, false)
         return binding.root
     }

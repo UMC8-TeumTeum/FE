@@ -31,14 +31,14 @@ class MyHomeViewModel @Inject constructor(
     private val _socialType = MutableLiveData<String?>()
     val socialType: LiveData<String?> = _socialType
 
-    //내 정보가 이미 조회되었는지 확인
+    // 내 정보가 이미 조회되었는지 확인
     var isLoaded = false
         private set
 
     private val _error = MutableLiveData<String?>()
     val error: LiveData<String?> = _error
 
-    /** 내 정보 조회 */
+    // 내 정보 조회
     fun getMyInfo() {
         viewModelScope.launch {
             repository.getMyInfo()
@@ -88,9 +88,9 @@ class MyHomeViewModel @Inject constructor(
     }
 
     sealed class DeleteUserState {
-        object Idle : DeleteUserState()
-        object Loading : DeleteUserState()
-        object Success : DeleteUserState()
+        data object Idle : DeleteUserState()
+        data object Loading : DeleteUserState()
+        data object Success : DeleteUserState()
         data class Error(val message: String) : DeleteUserState()
     }
 
@@ -115,9 +115,8 @@ class MyHomeViewModel @Inject constructor(
         }
     }
 
-    // (옵션) 화면에서 한번 처리한 뒤 상태 초기화용
+    // 화면에서 한번 처리한 뒤 상태 초기화
     fun resetDeleteUserState() {
         _deleteUserState.value = DeleteUserState.Idle
     }
-
 }

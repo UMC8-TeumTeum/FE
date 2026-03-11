@@ -180,7 +180,6 @@ class MySleepPatternSettingFragment : Fragment() {
         dialog.show()
     }
 
-
     private fun changeHour(targetTextView: TextView, increase: Boolean, isStart: Boolean) {
         val currentText = targetTextView.text.toString()
         if (currentText.isNotBlank()) {
@@ -282,5 +281,4 @@ class MySleepPatternSettingFragment : Fragment() {
         val bottomNav = requireActivity().findViewById<com.google.android.material.bottomnavigation.BottomNavigationView>(R.id.main_bnv)
         bottomNav.selectedItemId = R.id.fragment_home
     }
-
 }

@@ -19,7 +19,7 @@ class TimeConflictCardAdapter(
         current: String
     ) -> Unit,
 
-    //  시작 + 종료 모두 선택 완료 시 호출 (서버 전송용)
+    // 시작 + 종료 모두 선택 완료 시 호출 (서버 전송용)
     private val onTimeCompleted: (
         startTime: String,
         endTime: String
@@ -43,9 +43,7 @@ class TimeConflictCardAdapter(
         notifyDataSetChanged()
     }
 
-    /**
-     * 시간 선택 후 UI 갱신 + 원본 시간 저장
-     */
+    // 시간 선택 후 UI 갱신 + 원본 시간 저장
     fun updateTime(position: Int, isStart: Boolean, pickedTime: String) {
         if (position !in items.indices) return
 

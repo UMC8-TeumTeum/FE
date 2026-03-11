@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -65,7 +66,7 @@
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
-                        android:text="매주 수요일"
+                        tools:text="매주 수요일"
                         android:textColor="@color/text_primary"
                         android:textSize="15sp" />
 
@@ -75,7 +76,7 @@
                         android:layout_height="wrap_content"
                         android:clickable="true"
                         android:focusable="true"
-                        android:text="오전 9:00"
+                        tools:text="오전 9:00"
                         android:textColor="@color/text_primary"
                         android:textSize="14sp" />
                 </LinearLayout>
@@ -140,7 +141,7 @@
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
-                        android:text="매주 수요일"
+                        tools:text="매주 수요일"
                         android:textColor="@color/text_primary"
                         android:textSize="15sp" />
 
@@ -148,7 +149,7 @@
                         android:id="@+id/end_time_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="오후 12:00"
+                        tools:text="오후 12:00"
                         android:textColor="@color/text_primary"
                         android:textSize="14sp" />
                 </LinearLayout>
@@ -263,10 +264,6 @@
                     app:cornerRadius="8dp" />
 
             </LinearLayout>
-
-
         </LinearLayout>
-
     </ScrollView>
-
 </LinearLayout>

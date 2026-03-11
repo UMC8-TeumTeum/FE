@@ -25,6 +25,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+import androidx.core.graphics.toColorInt
 
 @AndroidEntryPoint
 class OnBoardingSleepPatternFragment : Fragment() {
@@ -214,15 +215,15 @@ class OnBoardingSleepPatternFragment : Fragment() {
         binding.nextBtn.isEnabled = shouldEnable
         binding.nextBtn.setBackgroundColor(
             if (shouldEnable)
-                requireContext().getColor(R.color.black)
+                requireContext().getColor(R.color.text_primary)
             else
-                Color.parseColor("#F6F6F6")
+                "#F6F6F6".toColorInt()
         )
         binding.nextBtn.setTextColor(
             if (shouldEnable)
                 requireContext().getColor(R.color.white)
             else
-                requireContext().getColor(R.color.black)
+                requireContext().getColor(R.color.text_primary)
         )
     }
 }

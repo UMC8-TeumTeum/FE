@@ -1,6 +1,6 @@
 package com.umc.teumteum.data.remote.alarm.service
 
-import com.umc.teumteum.data.remote.alarm.dto.FcmToken
+import com.umc.teumteum.data.remote.alarm.model.FcmToken
 import com.umc.teumteum.utils.ApiResponse
 import retrofit2.Response
 import retrofit2.http.Body

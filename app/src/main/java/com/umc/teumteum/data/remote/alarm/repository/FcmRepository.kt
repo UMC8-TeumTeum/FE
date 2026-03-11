@@ -3,7 +3,7 @@ package com.umc.teumteum.data.remote.alarm.repository
 import android.util.Log
 import com.umc.teumteum.data.remote.alarm.service.FcmService
 import com.umc.teumteum.data.remote.alarm.FcmTokenStore
-import com.umc.teumteum.data.remote.alarm.dto.FcmToken
+import com.umc.teumteum.data.remote.alarm.model.FcmToken
 import com.umc.teumteum.utils.handleApiResponseUnit
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -22,7 +22,7 @@ class FcmRepository @Inject constructor(
     suspend fun deactivateCurrentDeviceToken(): Result<Unit> = runCatching {
         val token = fcmTokenStore.load().orEmpty()
         if (token.isBlank()) {
-            return@runCatching Unit
+            return@runCatching
         }
 
         val response = fcmService.deactivateToken(FcmToken(token))

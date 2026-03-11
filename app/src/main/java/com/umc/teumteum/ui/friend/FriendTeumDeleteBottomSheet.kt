@@ -1,6 +1,5 @@
 package com.umc.teumteum.ui.friend
 
-import android.graphics.Color
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.Spanned
@@ -13,6 +12,7 @@ import androidx.fragment.app.activityViewModels
 import com.umc.teumteum.databinding.BottomSheetFriendTeumDeleteBinding
 import com.umc.teumteum.ui.friend.viewModel.FriendViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import androidx.core.graphics.toColorInt
 
 class FriendTeumDeleteBottomSheet : BottomSheetDialogFragment() {
 
@@ -44,26 +44,25 @@ class FriendTeumDeleteBottomSheet : BottomSheetDialogFragment() {
         val spannable = SpannableString(text)
         val start = text.indexOf("취소")
         spannable.setSpan(
-            ForegroundColorSpan(Color.parseColor("#7770FE")),
+            ForegroundColorSpan("#7770FE".toColorInt()),
             start,
             start + 2,
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
         )
         binding.tvTitle.text = spannable
 
-        /** 아니오 */
         binding.btnNo.setOnClickListener {
             dismiss()
         }
 
-        /** 네 → 취소 API */
+        // 취소 api 호출
         binding.btnYes.setOnClickListener {
             binding.btnYes.isEnabled = false
             viewModel.cancelTeumSchedule(scheduleId)
             Log.d("CANCEL_DEBUG", "취소 요청 scheduleId=$scheduleId")
         }
 
-        /** 취소 성공 이벤트로만 닫기 */
+        // 취소 성공 이벤트로만 닫기
         viewModel.cancelScheduleSuccess.observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let { canceledId ->
                 if (canceledId == scheduleId) {
@@ -76,7 +75,6 @@ class FriendTeumDeleteBottomSheet : BottomSheetDialogFragment() {
             }
         }
 
-        /** 실패 처리 */
         viewModel.errorMessage.observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let {
                 Log.e("DELETE_CONFIRM", it)
@@ -93,7 +91,6 @@ class FriendTeumDeleteBottomSheet : BottomSheetDialogFragment() {
     companion object {
         private const val ARG_SCHEDULE_ID = "ARG_SCHEDULE_ID"
 
-        // 정석 생성 방식
         fun newInstance(scheduleId: Int) =
             FriendTeumDeleteBottomSheet().apply {
                 arguments = Bundle().apply {

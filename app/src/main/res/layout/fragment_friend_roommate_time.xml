@@ -3,10 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="@color/white"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <!-- 뒤로가기 버튼 -->
     <ImageButton
         android:id="@+id/btnBack"
         android:layout_width="wrap_content"
@@ -27,8 +26,8 @@
         android:layout_marginTop="20.5dp"
         android:fontFamily="@font/noto_sans_kr_medium"
         android:includeFontPadding="false"
-        android:text="25.06.11(수)"
-        android:textColor="#0F0F0F"
+        tools:text="25.06.11(수)"
+        android:textColor="@color/text_primary"
         android:textSize="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnBack" />
@@ -49,14 +48,13 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:background="@android:color/transparent"
+        android:background="@color/transparent"
         app:layout_constraintTop_toBottomOf="@id/clock_pager"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="13dp"
         >
 
-        <!-- 왼쪽 -->
         <View
             android:id="@+id/leftView"
             android:layout_width="28dp"
@@ -67,7 +65,6 @@
             android:layout_width="4dp"
             android:layout_height="0dp"/>
 
-        <!-- 오른쪽 -->
         <View
             android:id="@+id/rightView"
             android:layout_width="4dp"
@@ -97,7 +94,7 @@
         android:fontFamily="@font/noto_sans_kr_medium"
         android:includeFontPadding="false"
         android:text="가능한 빈틈이 있어요"
-        android:textColor="#0F0F0F"
+        android:textColor="@color/text_primary"
         android:textSize="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -117,18 +114,17 @@
         app:layout_constraintBottom_toTopOf="@+id/next_btn"
         tools:listitem="@layout/item_friend_profile_card" />
 
-
     <com.google.android.material.button.MaterialButton
         android:id="@+id/next_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="19dp"
         android:layout_marginEnd="19dp"
-        android:backgroundTint="#0F0F0F"
+        android:backgroundTint="@color/text_primary"
         android:enabled="true"
         android:fontFamily="@font/noto_sans_kr_medium"
         android:text="다음으로"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/white"
         android:textSize="16sp"
         app:cornerRadius="12dp"
         app:layout_constraintBottom_toBottomOf="parent"

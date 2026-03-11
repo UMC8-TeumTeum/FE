@@ -1,8 +1,8 @@
 package com.umc.teumteum.data.remote.alarm.service
 
 
-import com.umc.teumteum.data.remote.alarm.dto.NotificationsPage
-import com.umc.teumteum.data.remote.alarm.dto.ReadNotificationResult
+import com.umc.teumteum.data.remote.alarm.model.NotificationsPage
+import com.umc.teumteum.data.remote.alarm.model.ReadNotificationResult
 import com.umc.teumteum.utils.ApiResponse
 import retrofit2.Response
 import retrofit2.http.GET

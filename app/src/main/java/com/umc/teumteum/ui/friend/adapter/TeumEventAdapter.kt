@@ -8,7 +8,7 @@ import com.umc.teumteum.databinding.ItemTeumEventCardBinding
 
 class TeumEventAdapter(
     private var events: List<TeumScheduledResult>,
-    private val onItemClick: (teumId: Int) -> Unit  //  클릭 리스너 추가
+    private val onItemClick: (teumId: Int) -> Unit
 ) : RecyclerView.Adapter<TeumEventAdapter.TeumViewHolder>() {
 
     inner class TeumViewHolder(val binding: ItemTeumEventCardBinding) :

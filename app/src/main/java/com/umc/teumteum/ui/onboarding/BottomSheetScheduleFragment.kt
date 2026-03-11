@@ -84,7 +84,7 @@ class BottomSheetScheduleFragment(
                 return@setOnClickListener
             }
 
-            // 요일 넘어가지 않게 검증(자정 넘김 불가)
+            // 요일 넘어가지 않도록 검증 (자정 넘김 불가)
             if (endTime!!.isBefore(startTime)) {
                 Toast.makeText(requireContext(), "일정은 자정을 넘길 수 없습니다", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -97,12 +97,6 @@ class BottomSheetScheduleFragment(
                     return@setOnClickListener
                 }
             }
-
-            // 같은 요일에서 다른 일정과 겹치는 지 검증
-//            if (isTimeOverlap(startTime!!, endTime!!)) {
-//                Toast.makeText(requireContext(), "같은 요일의 다른 일정과 시간이 겹칩니다", Toast.LENGTH_SHORT).show()
-//                return@setOnClickListener
-//            }
 
             val schedule = Schedule(
                 title = title,
@@ -192,14 +186,6 @@ class BottomSheetScheduleFragment(
             }
         } catch (e: Exception) {
             e.printStackTrace()
-        }
-    }
-
-    private fun isTimeOverlap(newStart: LocalTime, newEnd: LocalTime): Boolean {
-        return existingSchedules.any { schedule ->
-            val existingStart = schedule.startTime
-            val existingEnd = schedule.endTime
-            (newStart < existingEnd && newEnd > existingStart)
         }
     }
 

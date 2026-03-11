@@ -1,5 +1,5 @@
 package com.umc.teumteum.data
 
-object AppUserManager {  // 또는 MyUserManager, GlobalUser 등
+object AppUserManager {
     var userId: Int = -1
 }

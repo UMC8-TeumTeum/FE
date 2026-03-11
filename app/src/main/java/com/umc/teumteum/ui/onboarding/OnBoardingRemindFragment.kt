@@ -22,10 +22,6 @@ class OnBoardingRemindFragment : Fragment() {
     private lateinit var binding: FragmentOnBoardingRemindBinding
     private val viewModel: OnBoardingViewModel by activityViewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

@@ -120,5 +120,4 @@ class MyAlarmSettingFragment : Fragment() {
 
         binding.pushAlarmPauseSwitch.isChecked = allOff
     }
-
 }

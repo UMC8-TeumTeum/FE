@@ -6,36 +6,33 @@
     android:layout_height="match_parent"
     app:cardCornerRadius="10dp"
     app:cardElevation="0dp"
-    app:cardBackgroundColor="@android:color/white">
+    app:cardBackgroundColor="@color/white">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!-- 약속 상태 표시용 TextView -->
         <TextView
             android:id="@+id/tvStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="약속이 취소되었어요"
             android:textSize="20sp"
-            android:textColor="#0F0F0F"
+            android:textColor="@color/text_primary"
             android:fontFamily="@font/noto_sans_kr_medium"
             android:visibility="gone" />
 
-        <!-- 재요청 카드 상단 안내 -->
         <TextView
             android:id="@+id/tvResendNotice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="재요청 기록이 있어요"
             android:textSize="20sp"
-            android:textColor="#0F0F0F"
+            android:textColor="@color/text_primary"
             android:fontFamily="@font/noto_sans_kr_medium"
             android:visibility="gone" />
 
-        <!-- 원본 구분선 -->
         <View
             android:id="@+id/originalDivider"
             android:layout_width="match_parent"
@@ -44,13 +41,11 @@
             android:background="#E0E0E0"
             android:visibility="gone" />
 
-        <!-- 기존 카드 본문 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- 상단: 보낸 사람, 날짜, 시간 -->
             <LinearLayout
                 android:id="@+id/topContainer"
                 android:layout_width="match_parent"
@@ -85,8 +80,8 @@
                         android:layout_marginEnd="5dp"
                         android:layout_weight="1"
                         android:fontFamily="@font/noto_sans_kr_medium"
-                        android:text="이름"
-                        android:textColor="#FFFFFF"
+                        tools:text="이름"
+                        android:textColor="@color/white"
                         android:textSize="15sp" />
 
                     <TextView
@@ -96,7 +91,7 @@
                         android:layout_marginEnd="7dp"
                         android:fontFamily="@font/noto_sans_kr_regular"
                         android:text="|"
-                        android:textColor="#FFFFFF"
+                        android:textColor="@color/white"
                         android:textSize="11sp" />
 
                     <ImageView
@@ -112,8 +107,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="118dp"
                         android:fontFamily="@font/noto_sans_kr_regular"
-                        android:text="15:20 ~ 16:10"
-                        android:textColor="#FFFFFF"
+                        tools:text="15:20 ~ 16:10"
+                        android:textColor="@color/white"
                         android:textSize="11sp" />
                 </LinearLayout>
             </LinearLayout>
@@ -125,20 +120,18 @@
                 android:orientation="vertical"
                 android:background="@drawable/bg_bottom_rounded">
 
-                <!-- 제목 -->
                 <TextView
                     android:id="@+id/title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
                     android:layout_marginTop="14dp"
-                    android:text="종강 기념 한강 피크닉"
+                    tools:text="종강 기념 한강 피크닉"
                     android:includeFontPadding="false"
-                    android:textColor="#0F0F0F"
+                    android:textColor="@color/text_primary"
                     android:textSize="15sp"
                     android:fontFamily="@font/noto_sans_kr_medium" />
 
-                <!-- 설명 -->
                 <TextView
                     android:id="@+id/description"
                     android:layout_width="wrap_content"
@@ -148,8 +141,8 @@
                     android:layout_marginEnd="93.69dp"
                     android:layout_marginBottom="16dp"
                     android:includeFontPadding="false"
-                    android:text="종강 기념 한강 피크닉 가자! 돗자리는 내가 챙길\n게~ 다들 몸만 오세요"
-                    android:textColor="#788084"
+                    tools:text="종강 기념 한강 피크닉 가자! 돗자리는 내가 챙길\n게~ 다들 몸만 오세요"
+                    android:textColor="@color/text_tertiary"
                     android:textSize="12sp"
                     android:fontFamily="@font/noto_sans_kr_regular" />
             </LinearLayout>

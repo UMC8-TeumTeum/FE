@@ -8,7 +8,6 @@
     tools:context=".ui.onboarding.CompleteFragment"
     >
 
-    <!-- 제목 -->
     <TextView
         android:id="@+id/title_tv"
         android:layout_width="wrap_content"

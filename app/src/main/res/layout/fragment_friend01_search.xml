@@ -6,7 +6,6 @@
     android:orientation="vertical"
     android:background="@android:color/white">
 
-    <!-- 상단 뒤로가기 + 검색창 -->
     <LinearLayout
         android:id="@+id/searchBarLayout"
         android:layout_width="match_parent"
@@ -46,10 +45,8 @@
             android:singleLine="true"
             android:imeOptions="actionDone" />
 
-        <!-- EditText 안의 돋보기는 drawable로 배경에 포함 -->
     </LinearLayout>
 
-    <!-- 최근 검색어 -->
     <LinearLayout
         android:id="@+id/recentSearchLayout"
         android:layout_width="match_parent"
@@ -90,7 +87,6 @@
 
     </LinearLayout>
 
-    <!-- 🔽 여기에 추가 -->
     <View
         android:id="@+id/dividerView"
         android:layout_width="match_parent"
@@ -103,7 +99,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- 최근 검색어 리스트 -->
     <LinearLayout
         android:id="@+id/recentSearchList"
         android:layout_width="match_parent"

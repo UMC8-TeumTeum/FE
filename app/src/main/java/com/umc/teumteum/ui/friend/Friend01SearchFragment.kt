@@ -1,7 +1,6 @@
 package com.umc.teumteum.ui.friend
 
 import android.content.Context
-import android.graphics.Color
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.LayoutInflater
@@ -14,12 +13,12 @@ import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import com.umc.teumteum.R
 import com.umc.teumteum.databinding.FragmentFriend01SearchBinding
 import com.umc.teumteum.ui.friend.viewModel.FriendViewModel
 import com.umc.teumteum.ui.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
+import androidx.core.graphics.toColorInt
 
 @AndroidEntryPoint
 class Friend01SearchFragment : Fragment() {
@@ -45,12 +44,12 @@ class Friend01SearchFragment : Fragment() {
 
         (activity as? MainActivity)?.hideBottomBar()
 
-        //  최근 검색어 목록 관찰
-        viewModel.recentKeywords.observe(viewLifecycleOwner, Observer { keywords ->
+        // 최근 검색어 목록 관찰
+        viewModel.recentKeywords.observe(viewLifecycleOwner) { keywords ->
             updateSearchList(keywords)
-        })
+        }
 
-        //  뒤로가기
+        // 뒤로가기
         binding.backButton.setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.main_frm, FriendFragment())
@@ -58,12 +57,12 @@ class Friend01SearchFragment : Fragment() {
                 .commit()
         }
 
-        //  최근 검색어 하나 삭제
+        // 최근 검색어 하나 삭제
         binding.btnDeleteRecent.setOnClickListener {
             viewModel.removeLastKeyword()
         }
 
-        //  검색 엔터 입력 시
+        // 검색 엔터 입력 시
         binding.searchEditText.setOnEditorActionListener { v, actionId, event ->
             val isSearchAction =
                 actionId == EditorInfo.IME_ACTION_SEARCH ||
@@ -87,7 +86,6 @@ class Friend01SearchFragment : Fragment() {
                 binding.searchEditText.setSelection(keyword.length)
             }
         }
-
     }
 
     private fun handleSearchAction() {
@@ -127,7 +125,7 @@ class Friend01SearchFragment : Fragment() {
                 text = keyword
                 textSize = 16f
                 setPadding(0, 2, 0, 2)
-                setTextColor(Color.parseColor("#0F0F0F"))
+                setTextColor("#0F0F0F".toColorInt())
                 typeface = ResourcesCompat.getFont(requireContext(), R.font.noto_sans_kr_medium)
                 layoutParams = LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
@@ -145,7 +143,7 @@ class Friend01SearchFragment : Fragment() {
                 ).apply {
                     topMargin = (0.5f * resources.displayMetrics.density).toInt()
                 }
-                setBackgroundColor(Color.parseColor("#EAEAEA"))
+                setBackgroundColor("#EAEAEA".toColorInt())
             }
             binding.recentSearchList.addView(divider)
         }

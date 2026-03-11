@@ -17,7 +17,6 @@
         android:scaleType="centerCrop"
         app:shapeAppearanceOverlay="@style/CircleImage" />
 
-    <!-- 이름 + 직업 -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -43,7 +42,7 @@
             android:layout_height="wrap_content"
             android:text=" · UX디자이너"
             android:textSize="16sp"
-            android:textColor="#D3D3D3"
+            android:textColor="@color/teumteum_gray"
             android:layout_marginStart="8dp"
             android:fontFamily="@font/noto_sans_kr_medium" />
     </LinearLayout>

@@ -29,10 +29,10 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import kotlin.getValue
+import androidx.core.graphics.toColorInt
 
 @AndroidEntryPoint
 class FriendRoommateMatchingDetailFragment : Fragment() {
@@ -76,7 +76,7 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
 
         if (starIndex != -1) {
             spannable.setSpan(
-                android.text.style.ForegroundColorSpan(android.graphics.Color.parseColor("#7770FE")),
+                android.text.style.ForegroundColorSpan("#7770FE".toColorInt()),
                 starIndex,
                 starIndex + 1,
                 android.text.Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -100,7 +100,7 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
             updateNextButtonState()
         }
 
-        // 전송할게요 버튼 클릭 시 dialogFragment 화면 띄우기
+        // 전송 버튼 클릭 시 dialogFragment 화면 띄우기
         binding.sendBtn.setOnClickListener {
             setViewModelData()
 
@@ -108,7 +108,6 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
             dialog.show(parentFragmentManager, "PreviewDialog")
         }
 
-        // 뒤로가기 버튼 처리
         binding.btnBack.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
@@ -117,7 +116,7 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
         observeViewModel()
         timeConflictCardAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
             override fun onItemRangeChanged(positionStart: Int, itemCount: Int) {
-                // notify 이후 다음 프레임에 상태 읽기 (선택 반영 보장)
+                // notify 이후 다음 프레임에 상태 읽기
                 binding.possibleTimeRc.post { updateNextButtonState() }
             }
             override fun onChanged() = onItemRangeChanged(0, timeConflictCardAdapter.itemCount)
@@ -125,7 +124,7 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
 
         // 초기 버튼 상태 설정
         binding.sendBtn.isEnabled = false
-        binding.sendBtn.setBackgroundColor(android.graphics.Color.parseColor("#F6F6F6"))
+        binding.sendBtn.setBackgroundColor("#F6F6F6".toColorInt())
     }
 
     private fun updateNextButtonState() {
@@ -179,7 +178,6 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
         imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
-
     private fun setupTimeCardRecyclerView() {
         timeConflictCardAdapter = TimeConflictCardAdapter(
             onTimeClick = { position, isStart, _, _, current ->
@@ -201,15 +199,6 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = timeConflictCardAdapter
         }
-    }
-
-    // 정해진 시간 범위의 시간으로 선택했는지 확인
-    private fun isWithinRange(picked: String, min: String, max: String): Boolean {
-        val normMax = if (max == "24:00") "23:59" else max
-        val t = LocalTime.parse(picked)
-        val tMin = LocalTime.parse(min)
-        val tMax = LocalTime.parse(normMax)
-        return !t.isBefore(tMin) && !t.isAfter(tMax)
     }
 
     private fun showCustomTimePicker(
@@ -290,7 +279,7 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
                             null
                         }
                         // startTime과 endTime 사이에 현재 시각이 있으면 조정된 현재 시각을 startTime으로 설정
-                        startMinutes <= currentMinutes && endMinutes > currentMinutes -> {
+                        currentMinutes in startMinutes..<endMinutes -> {
                             val adjustedStartTime = minutesToTime(adjustedCurrentMinutes)
                             // 조정된 시작 시간이 종료 시간보다 크거나 같으면 제외
                             if (adjustedCurrentMinutes >= endMinutes) {
@@ -324,19 +313,6 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
                 viewModel.clearTeumConflict()
             }
         }
-
-    }
-
-    // 선택 시간이 (선택 날짜가 오늘인 경우) 현재 시각 이후인지 확인
-    private fun isAfterCurrentTime(selectedTime: String): Boolean {
-        val dateFormatted = convertDateFormat(selectedDate)
-        val today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-        if (dateFormatted != today) return true // 오늘이 아니면 통과
-
-        val now = LocalDateTime.now()
-        val currentMinutes = now.hour * 60 + now.minute
-        val selectedMinutes = timeToMinutes(selectedTime)
-        return selectedMinutes > currentMinutes
     }
 
     // 날짜 형식 변환 ("yy.MM.dd(E)" -> "yyyy-MM-dd"). 이미 yyyy-MM-dd면 그대로 반환

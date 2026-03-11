@@ -28,8 +28,8 @@ import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
 import com.kizitonwose.calendar.view.CalendarView
 import com.kizitonwose.calendar.view.MonthDayBinder
 import com.kizitonwose.calendar.view.ViewContainer
+import com.umc.teumteum.utils.weekdayShortKorean
 import dagger.hilt.android.AndroidEntryPoint
-import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
@@ -86,6 +86,7 @@ class FriendTeumRequestFragment : Fragment() {
         // 최초 가시 월 기준으로 한 번 조회
         visibleMonth = YearMonth.now()
         lastRequestedMonth = null
+
         // arguments에서 friendUserId 읽은 뒤에 호출
         fetchDotDates()
 
@@ -94,7 +95,7 @@ class FriendTeumRequestFragment : Fragment() {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
 
-        //  점 LiveData 관찰 → 달력 다시 그림
+        // 점 LiveData 관찰 → 달력 다시 그림
         viewModel.requestDotDates.observe(viewLifecycleOwner) { dates: List<LocalDate> ->
             eventDates.clear()
             eventDates.addAll(dates)
@@ -116,10 +117,10 @@ class FriendTeumRequestFragment : Fragment() {
         viewModel.cancelComplete.observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let { success ->
                 if (success) {
-                    // 1) 현재 날짜 리스트 다시 조회
+                    // 1) 현재 날짜 리스트 재조회
                     viewModel.loadTeumRequestsByDate(formatDateForApi(selectedDate))
 
-                    // 2) 달력 점도 다시 조회
+                    // 2) 달력 점 다시 재조회
                     fetchDotDates()
                 }
             }
@@ -247,16 +248,6 @@ class FriendTeumRequestFragment : Fragment() {
         }
     }
 
-    private fun weekdayShortKorean(dow: DayOfWeek): String = when (dow) {
-        DayOfWeek.SUNDAY -> "일"
-        DayOfWeek.MONDAY -> "월"
-        DayOfWeek.TUESDAY -> "화"
-        DayOfWeek.WEDNESDAY -> "수"
-        DayOfWeek.THURSDAY -> "목"
-        DayOfWeek.FRIDAY -> "금"
-        DayOfWeek.SATURDAY -> "토"
-    }
-
     private fun setupCalendarNavigation() {
         binding.calendarPreviousDateIv.setOnClickListener {
             calendarView.smoothScrollToMonth(visibleMonth.minusMonths(1))
@@ -283,7 +274,7 @@ class FriendTeumRequestFragment : Fragment() {
         binding.requestHistoryRecyclerView.adapter = adapter
     }
 
-    //  현재 표시 월에 대해 ‘틈 요청 날짜 리스트’ API 호출
+    // 현재 표시 월에 대해 ‘틈 요청 날짜 리스트’ API 호출
     private fun fetchDotDates() {
         val monthStr = visibleMonth.format(DateTimeFormatter.ofPattern("yyyy-MM", Locale.KOREA))
         viewModel.fetchRequestTeumDates(monthStr)

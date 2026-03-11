@@ -1,7 +1,6 @@
 package com.umc.teumteum.ui.friend
 
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -21,6 +20,7 @@ import com.umc.teumteum.ui.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import androidx.core.graphics.drawable.toDrawable
 
 @AndroidEntryPoint
 class Friend02RequestFragment : Fragment() {
@@ -89,7 +89,6 @@ class Friend02RequestFragment : Fragment() {
             }
         })
 
-
         // 6. 인디케이터
         binding.dotsIndicator.setViewPager2(binding.requestViewPager)
 
@@ -110,7 +109,6 @@ class Friend02RequestFragment : Fragment() {
                 bottomSheet.show(parentFragmentManager, bottomSheet.tag)
             }
         }
-
 
         // 7. 버튼 이벤트
         binding.btnAccept.setOnClickListener {
@@ -133,7 +131,6 @@ class Friend02RequestFragment : Fragment() {
             val bottomSheet = Friend02RejectBottomSheetFragment.newInstance(responseId)
             bottomSheet.show(parentFragmentManager, bottomSheet.tag)
         }
-
 
         // 8. 뒤로가기
         binding.backButton.setOnClickListener {
@@ -167,9 +164,8 @@ class Friend02RequestFragment : Fragment() {
         popupWindow.isOutsideTouchable = true
         popupWindow.isFocusable = true
 
-        popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        popupWindow.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
         popupWindow.elevation = 0f
-
 
         // anchorView 기준으로 위치 계산
         popupWindow.showAsDropDown(
@@ -190,9 +186,6 @@ class Friend02RequestFragment : Fragment() {
                 arguments = Bundle().apply {
                     // 요청 보낸 사람 id
                     putInt("userId", current.senderUser.userId)
-
-                    // (선택) 초기 표시용
-//                    putString("name", current.senderUser.nickname)
                     putString("imageUrl", current.senderUser.profileImageUrl)
                 }
             }
@@ -216,10 +209,9 @@ class Friend02RequestFragment : Fragment() {
                 .newInstance(targetType, targetId)
                 .show(parentFragmentManager, "FriendReportChoiceBottomSheet")
         }
-
     }
 
-    //  미확인 → 최신순 정렬
+    // 미확인 → 최신순 정렬
     private fun sortTeumList(teumList: List<TeumReceivedItem>): List<TeumReceivedItem> {
         return teumList.sortedWith(
             compareBy<TeumReceivedItem> { it.read }      // false(미확인) 먼저
@@ -227,7 +219,7 @@ class Friend02RequestFragment : Fragment() {
         )
     }
 
-    //  선택된 요청을 가장 앞으로
+    // 선택된 요청을 가장 앞으로
     private fun reorderWithSelectedFirstById(
         sortedList: List<TeumReceivedItem>,
         selectedRequestId: Int
@@ -237,7 +229,7 @@ class Friend02RequestFragment : Fragment() {
         return listOf(selected) + sortedList.filter { it.requestId != selectedRequestId }
     }
 
-    //  시간이 지나지 않은 요청 필터링
+    // 시간이 지나지 않은 요청 필터링
     private fun filterValidTeumRequests(list: List<TeumReceivedItem>): List<TeumReceivedItem> {
         val now = LocalDateTime.now()
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")

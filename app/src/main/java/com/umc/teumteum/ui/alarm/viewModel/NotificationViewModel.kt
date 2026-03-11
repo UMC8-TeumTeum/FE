@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.umc.teumteum.data.remote.alarm.dto.NotificationResponse
+import com.umc.teumteum.data.remote.alarm.model.NotificationResponse
 import com.umc.teumteum.data.remote.alarm.repository.NotificationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job

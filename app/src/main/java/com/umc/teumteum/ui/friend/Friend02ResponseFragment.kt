@@ -16,6 +16,7 @@ import com.umc.teumteum.databinding.FragmentFriend02ResponseBinding
 import com.umc.teumteum.ui.friend.adapter.FriendResponseCardAdapter
 import com.umc.teumteum.ui.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
+import androidx.core.graphics.drawable.toDrawable
 
 @AndroidEntryPoint
 class Friend02ResponseFragment  : Fragment() {
@@ -111,7 +112,7 @@ class Friend02ResponseFragment  : Fragment() {
         popupWindow.isOutsideTouchable = true
         popupWindow.isFocusable = true
 
-        popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        popupWindow.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
         popupWindow.elevation = 0f
 
 
@@ -134,9 +135,6 @@ class Friend02ResponseFragment  : Fragment() {
                 arguments = Bundle().apply {
                     // 요청 보낸 사람 id
                     putInt("userId", current.senderUser.userId)
-
-                    // (선택) 초기 표시용
-//                    putString("name", current.senderUser.nickname)
                     putString("imageUrl", current.senderUser.profileImageUrl)
                 }
             }

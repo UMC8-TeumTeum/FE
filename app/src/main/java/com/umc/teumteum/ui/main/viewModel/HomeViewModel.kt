@@ -59,10 +59,9 @@ class HomeViewModel @Inject constructor(
     fun getTodayScheduleIfNeeded() {
         val currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 
-        if (date == currentDate) return //이미 호출한 날짜면 패스
+        if (date == currentDate) return // 이미 호출한 날짜면 패스
 
         date = currentDate
-//        getTodaySchedule(currentDate)
         getTimetable(currentDate)
     }
 
@@ -79,7 +78,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    /** 스케줄 가져오기 */
+    // 스케줄 가져오기
     fun getScheduleForDate(date: String) {
         viewModelScope.launch {
             repository.getScheduleForDate(date)
@@ -130,7 +129,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    /** 지금까지 채운 빈틈 */
+    // 지금까지 채운 빈틈
     fun getTeumTime(){
         viewModelScope.launch {
             repository.getTeumTime()
@@ -153,12 +152,11 @@ class HomeViewModel @Inject constructor(
         return hour * 60 + minute
     }
 
-    //스케줄이 변경되었을 때 업데이트
+    // 스케줄이 변경되었을 때 업데이트
     fun refreshTodaySchedule() {
         Log.d("asdf", "viewmodel")
         val currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
         date = currentDate
-//        getTodaySchedule(currentDate)
         getTimetable(currentDate)
     }
 

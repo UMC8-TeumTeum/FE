@@ -11,7 +11,7 @@
     <ImageView
         android:id="@+id/logo_iv"
         android:src="@drawable/ic_teumteum"
-        app:tint="@android:color/white"
+        app:tint="@color/white"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"

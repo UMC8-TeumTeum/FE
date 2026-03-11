@@ -7,7 +7,6 @@
     android:layout_height="wrap_content"
     android:background="@drawable/friend_bg_bottom_sheet">
 
-    <!-- drag handle -->
     <View
         android:id="@+id/handle"
         android:layout_width="54dp"
@@ -61,6 +60,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_title" />
+
     <TextView
         android:id="@+id/tv_char_count"
         android:layout_width="wrap_content"

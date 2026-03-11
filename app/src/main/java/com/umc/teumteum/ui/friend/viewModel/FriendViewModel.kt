@@ -76,7 +76,7 @@ class FriendViewModel @Inject constructor(
     val currentSearchKeyword = MutableLiveData<String>()
 
 
-    //    상단 프로필의 star_btn 과 리스트 아이템의 starIv 가 함께 관찰하는 공통 상태
+    // 상단 프로필의 star_btn 과 리스트 아이템의 starIv 가 함께 관찰하는 공통 상태
     private val _favoriteMap = MutableLiveData<Map<Int, Boolean>>(emptyMap())
     val favoriteMap: LiveData<Map<Int, Boolean>> get() = _favoriteMap
 
@@ -104,7 +104,6 @@ class FriendViewModel @Inject constructor(
         }
     }
 
-
     fun fetchMyInfo() {
         viewModelScope.launch {
             myPageRepository.getMyInfo()
@@ -113,7 +112,6 @@ class FriendViewModel @Inject constructor(
                     _myProfileUrl.value = info.profileImageUrl
 
                     AppUserManager.userId = info.userId.toInt()
-
                     Log.d("MY_INFO", "내 userId 세팅됨: ${AppUserManager.userId}")
                 }
                 .onFailure { e ->
@@ -121,7 +119,6 @@ class FriendViewModel @Inject constructor(
                 }
         }
     }
-
 
     // 1. 사용자 검색
     private val _searchResults = MutableLiveData<List<FriendSearchResult>>()
@@ -157,7 +154,6 @@ class FriendViewModel @Inject constructor(
                 }
         }
     }
-
 
     fun addRecentKeyword(keyword: String) {
         val currentList = _recentKeywords.value.orEmpty().toMutableList()
@@ -203,7 +199,6 @@ class FriendViewModel @Inject constructor(
     fun selectTeum(item: TeumReceivedItem?) {
         _selectedTeum.value = item
     }
-    fun clearSelectedTeum() { _selectedTeum.value = null }
 
     // 3. 친구 프로필
     private val _friendProfile = MutableLiveData<FriendProfileResult>()
@@ -276,12 +271,6 @@ class FriendViewModel @Inject constructor(
         val time  = _teumRequestSelectedTime.value ?: return null
         val gid   = _teumRequestGraphicId.value ?: return null
         val main  = _teumRequestMainTargetUserId.value ?: return null
-
-//        단일 수신자 아닐 때
-//        val receiversRaw = _teumRequestReceiverUserIds.value.orEmpty()
-//
-//        val receivers = listOf(main) + receiversRaw
-//        val finalReceivers = receivers.distinct()
 
         return TeumRequest(
             title = title,
@@ -467,7 +456,7 @@ class FriendViewModel @Inject constructor(
         }
     }
 
-    // 11. 팔로잉 목록 조회(즐겨찾기 우선 + 닉네임 가나다 정렬)
+    // 11. 팔로잉 목록 조회(즐겨찾기 우선 + 닉네임 오름차순 정렬)
     private val _followingUsers = MutableLiveData<List<FollowingResult>>()
     val followingUsers: LiveData<List<FollowingResult>> get() = _followingUsers
 
@@ -515,8 +504,6 @@ class FriendViewModel @Inject constructor(
                         // 3) 즐겨찾기 상태도 해제(또는 제거)
                         _favoriteMap.value = _favoriteMap.value.orEmpty()
                             .toMutableMap().apply {
-                                // put(userId, false) 로 해제하거나,
-                                // remove(userId) 로 키 자체를 없애도 됨. 여기선 해제로 유지.
                                 put(userId, false)
                             }
 
@@ -555,13 +542,13 @@ class FriendViewModel @Inject constructor(
         val collator = Collator.getInstance(Locale.KOREAN).apply { strength = Collator.PRIMARY }
         _followingUsers.value = _followingUsers.value
             ?.map { if (it.userId == userId) it.copy(isFavorite = after) else it }
-            ?.sortedWith(Comparator { a, b ->
+            ?.sortedWith { a, b ->
                 if (a.isFavorite != b.isFavorite) {
                     if (a.isFavorite) -1 else 1
                 } else {
                     collator.compare(a.nickname, b.nickname)
                 }
-            })
+            }
 
         // 3) 오버라이드 맵 갱신: "사용자가 바꾼 값만" 저장
         _favoriteMap.value = _favoriteMap.value.orEmpty().toMutableMap().apply {
@@ -592,13 +579,13 @@ class FriendViewModel @Inject constructor(
         val collator = Collator.getInstance(Locale.KOREAN).apply { strength = Collator.PRIMARY }
         _followingUsers.value = _followingUsers.value
             ?.map { if (it.userId == userId) it.copy(isFavorite = oldValue) else it }
-            ?.sortedWith(Comparator { a, b ->
+            ?.sortedWith { a, b ->
                 if (a.isFavorite != b.isFavorite) {
                     if (a.isFavorite) -1 else 1
                 } else {
                     collator.compare(a.nickname, b.nickname)
                 }
-            })
+            }
 
         // 오버라이드 맵도 되돌리기
         _favoriteMap.value = _favoriteMap.value.orEmpty().toMutableMap().apply {
@@ -646,7 +633,7 @@ class FriendViewModel @Inject constructor(
                 }
                 .onFailure { e ->
 //                    _errorMessage.value = Event("틈 요청 읽음 처리 실패 (${e.message})")
-                    Log.d("ReadTeumRequest", _errorMessage.value.toString())
+                    _errorMessage.value?.let { Log.d("ReadTeumRequest", it.toString()) }
                 }
         }
     }
@@ -688,11 +675,11 @@ class FriendViewModel @Inject constructor(
     private val _possibleTimeList = MutableLiveData<List<TimeCardItem?>>()
     val possibleTimeList: LiveData<List<TimeCardItem?>> get() = _possibleTimeList
 
-    private val _excludedUserIds = MutableLiveData<MutableSet<Int>>(mutableSetOf()) // [ADDED]
-    val excludedUserIds: LiveData<MutableSet<Int>> get() = _excludedUserIds         // [ADDED]
+    private val _excludedUserIds = MutableLiveData<MutableSet<Int>>(mutableSetOf())
+    val excludedUserIds: LiveData<MutableSet<Int>> get() = _excludedUserIds
 
     // 고정 날짜 세팅
-    private var fixedDate: String? = null // [ADDED]
+    private var fixedDate: String? = null
 
     fun setFixedDate(date: String) {
         fixedDate = date
@@ -843,7 +830,7 @@ class FriendViewModel @Inject constructor(
                     _recentTodos.value = list
                 }
                 .onFailure { e ->
-                    // 에러 메시지는 기존 공통 에러 Event로만 알림 (로그는 Repository에서만)
+                    // 에러 메시지는 기존 공통 에러 Event로만 알림
                     _recentTodos.value = emptyList()
                     _errorMessage.value = Event(e.message ?: "최근 공개 투두 조회 실패")
                 }
@@ -931,7 +918,7 @@ class FriendViewModel @Inject constructor(
         }
     }
 
-    // 차단 성공 여부를 알리는 LiveData (Event Wrapper 사용 권장)
+    // 차단 성공 여부를 알리는 LiveData
     private val _blockComplete = MutableLiveData<Event<Boolean>>()
     val blockComplete: LiveData<Event<Boolean>> get() = _blockComplete
 
@@ -1027,7 +1014,7 @@ class FriendViewModel @Inject constructor(
                     // 성공 이벤트 발생 -> UI에서 감지 후 리스트 갱신/화면 처리
                     _cancelComplete.value = Event(true)
 
-                    // (선택) 공통 성공 메시지도 같이 쓰고 싶으면
+                    // 성공 메시지
                     _successMessage.value = Event("요청이 취소되었습니다.")
                 }
                 .onFailure { e ->
@@ -1087,5 +1074,4 @@ class FriendViewModel @Inject constructor(
             }
         }
     }
-
 }

@@ -7,16 +7,14 @@
     android:paddingHorizontal="10dp"
     android:gravity="center_vertical">
 
-    <!-- 별 아이콘 -->
     <ImageButton
         android:id="@+id/starIv"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:src="@drawable/friend01_star"
-        android:background="@android:color/transparent"
+        android:background="@color/transparent"
         android:layout_marginEnd="12dp" />
 
-    <!-- 프로필 사진 (ImageButton으로 변경) -->
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/profile_iv"
         android:layout_width="50dp"
@@ -26,7 +24,6 @@
         android:scaleType="centerCrop"
         app:shapeAppearanceOverlay="@style/CircleImage" />
 
-    <!-- 이름 + 직업 -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -41,7 +38,7 @@
             android:text="이름"
             android:layout_marginStart="8dp"
             android:textSize="16sp"
-            android:textColor="#0F0F0F"
+            android:textColor="@color/text_primary"
             android:fontFamily="@font/noto_sans_kr_medium" />
 
         <TextView
@@ -50,18 +47,17 @@
             android:layout_height="wrap_content"
             android:text=" · UX디자이너"
             android:textSize="16sp"
-            android:textColor="#D3D3D3"
+            android:textColor="@color/teumteum_gray"
             android:layout_marginStart="8dp"
             android:fontFamily="@font/noto_sans_kr_medium" />
     </LinearLayout>
 
-    <!-- 비행기 아이콘 -->
     <ImageButton
         android:id="@+id/sendBtn"
         android:layout_width="45dp"
         android:layout_height="45dp"
         android:src="@drawable/friend01_following_send"
-        android:background="@android:color/transparent"
+        android:background="@color/transparent"
         android:scaleType="centerInside" />
 
 </LinearLayout>

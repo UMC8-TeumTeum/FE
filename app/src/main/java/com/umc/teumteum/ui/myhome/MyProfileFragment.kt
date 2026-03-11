@@ -110,7 +110,7 @@ class MyProfileFragment : Fragment() {
         binding.profileTimerTv.text = "${days}일 ${hours}시간 ${minutes}분"
     }
 
-    //  화면 내에 추가
+    // 화면 내에 추가
     private fun bindTodos(list: List<PublicTodoResponse>) {
         val l = list.take(2)
 

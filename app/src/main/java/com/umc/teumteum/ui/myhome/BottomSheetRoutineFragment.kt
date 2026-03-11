@@ -90,13 +90,13 @@ class BottomSheetRoutineFragment(
                 return@setOnClickListener
             }
 
-            //시간 선택 확인
+            // 시간 선택 확인
             if (startTime == null || endTime == null) {
                 Toast.makeText(requireContext(), "시작/종료 시간을 모두 선택하세요", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            //요일 넘어가지 않게 검증
+            // 요일 넘어가지 않도록 검증
             if (endTime!!.isBefore(startTime)) {
                 Toast.makeText(requireContext(), "일정은 자정을 넘길 수 없습니다", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -110,13 +110,13 @@ class BottomSheetRoutineFragment(
                 }
             }
 
-            //같은 요일에서 다른 일정과 겹치는 지 검증
+            // 같은 요일에서 다른 일정과 겹치는지 검증
             if (isTimeOverlap(startTime!!, endTime!!)) {
                 Toast.makeText(requireContext(), "같은 요일의 다른 일정과 시간이 겹칩니다", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            //설정한 수면 시간과 겹치는 지 검증
+            // 설정한 수면 시간과 겹치는지 검증
             if (sleepStart != null && sleepEnd != null) {
                 if (isTimeOverlapWithSleep(startTime!!, endTime!!, sleepStart!!, sleepEnd!!)) {
                     Toast.makeText(requireContext(), "수면 시간과 일정이 겹칩니다", Toast.LENGTH_SHORT).show()
@@ -232,10 +232,10 @@ class BottomSheetRoutineFragment(
     ): Boolean {
 
         return if (sleepStart < sleepEnd) {
-            //자정을 안 넘기는 수면패턴
+            // 자정을 넘기지 않는 수면패턴
             newStart < sleepEnd && newEnd > sleepStart
         } else {
-            //자정을 넘기는 수면패턴
+            // 자정을 넘기는 수면패턴
             val overlapsAtNight = newStart >= sleepStart || newEnd > sleepStart
             val overlapsAtMorning = newStart < sleepEnd || newEnd <= sleepEnd
             overlapsAtNight || overlapsAtMorning
@@ -253,5 +253,4 @@ class BottomSheetRoutineFragment(
 
         return dialog
     }
-
 }

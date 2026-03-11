@@ -225,7 +225,7 @@ class Friend02SuggestFragment : Fragment() {
         }
     }
 
-    //정해진 시간 범위의 시간으로 선택했는지 확인
+    // 정해진 시간 범위의 시간으로 선택했는지 확인
     private fun isWithinRange(picked: String, min: String, max: String): Boolean {
         val normMax = if (max == "24:00") "23:59" else max
         val t = LocalTime.parse(picked)
@@ -234,7 +234,7 @@ class Friend02SuggestFragment : Fragment() {
         return !t.isBefore(tMin) && !t.isAfter(tMax)
     }
 
-    //24:00 -> 00:00 변환
+    // 24:00 -> 00:00 변환
     private fun convert24To00(timeStr: String): String {
         return if (timeStr == "24:00") "00:00" else timeStr
     }

@@ -37,7 +37,7 @@ class BlockedAccountRepository @Inject constructor(
         val users: List<BlockedUser> = body.result?.content ?: emptyList()
         return users.map { user ->
             BlockedAccount(
-                userId = user.userId.toLong(), // Int -> Long 변환
+                userId = user.userId.toLong(),
                 nickName = user.nickname,
                 job = user.job ?: "",
                 profileImageUrl = user.profileImageUrl

@@ -20,7 +20,7 @@ class FriendAddAdapter(
     fun updateList(newItems: List<MutualFriendItem>, preselected: Set<Int> = emptySet()) {
         friends = newItems
         selectedIds.clear()
-        // 목록에 존재하는 아이디만 반영 (안전)
+        // 목록에 존재하는 아이디만 반영
         val idSet = newItems.map { it.userId }.toSet()
         selectedIds.addAll(preselected.intersect(idSet))
         notifyDataSetChanged()
@@ -77,15 +77,6 @@ class FriendAddAdapter(
     }
 
     override fun getItemCount(): Int = friends.size
-
-//    fun updateList(newList: List<MutualFriendItem>) {
-//        friends = newList
-//        val idSet = newList.map { it.userId }.toSet()
-//        selectedIds.retainAll(idSet) // 기존 선택 중 사라진 건 제거
-//        notifyDataSetChanged()
-//    }
-
-    fun getSelectedUserIds(): List<Int> = selectedIds.toList()
 
     fun getSelectedUserIdsWithInfo(): List<FriendProfileResult> {
         return friends.filter { selectedIds.contains(it.userId) }

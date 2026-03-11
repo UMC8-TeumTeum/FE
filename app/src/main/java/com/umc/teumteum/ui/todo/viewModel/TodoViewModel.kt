@@ -148,7 +148,8 @@ class TodoViewModel @Inject constructor(
             result.onSuccess { dto ->
                 _onBoardingReminders.value = dto.reminders ?: emptyList()
             }.onFailure { e ->
-                _errorMessage.value = e.message ?: "온보딩 리마인드 알림 조회에 실패했습니다."            }
+                _errorMessage.value = e.message ?: "온보딩 리마인드 알림 조회에 실패했습니다."
+            }
         }
     }
 

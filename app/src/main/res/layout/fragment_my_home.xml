@@ -8,7 +8,6 @@
     android:orientation="vertical"
     android:background="@color/white">
 
-    <!-- 상단 패널 -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/top_panel"
         android:background="@drawable/bg_gradient"
@@ -128,7 +127,6 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- 반복 일정 편집 메뉴 -->
     <LinearLayout
         android:id="@+id/routine_mod_ll"
         android:layout_width="match_parent"
@@ -152,6 +150,4 @@
             />
 
     </LinearLayout>
-
-
 </LinearLayout>

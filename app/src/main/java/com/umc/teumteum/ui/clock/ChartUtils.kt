@@ -55,7 +55,6 @@ object ChartUtils {
 
                 // 겹침 처리
                 if (block.startTime < last.endTime) {
-                    val overlapStart = block.startTime
                     val overlapEnd = maxOf(last.endTime, block.endTime)
 
                     val priorityType = when {
@@ -81,7 +80,7 @@ object ChartUtils {
         return result.filter { it.startTime < it.endTime }
     }
 
-    fun detectOverlapBlocks(blocks: List<TimeBlock>): List<TimeBlock> {
+    private fun detectOverlapBlocks(blocks: List<TimeBlock>): List<TimeBlock> {
         val result = mutableListOf<TimeBlock>()
 
         for (i in blocks.indices) {
@@ -107,7 +106,7 @@ object ChartUtils {
         return result
     }
 
-    fun mergeWithOverlap(
+    private fun mergeWithOverlap(
         baseBlocks: List<TimeBlock>,
         overlapBlocks: List<TimeBlock>
     ): List<TimeBlock> {

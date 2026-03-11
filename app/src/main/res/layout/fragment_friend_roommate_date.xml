@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:background="@color/white">
 
-    <!-- 뒤로가기 버튼 -->
     <ImageButton
         android:id="@+id/btnBack"
         android:layout_width="wrap_content"
@@ -30,7 +30,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- 날짜 선택 텍스트 -->
         <TextView
             android:id="@+id/textView"
             android:layout_width="wrap_content"
@@ -38,18 +37,16 @@
             android:fontFamily="@font/noto_sans_kr_medium"
             android:text="날짜를 선택해주세요"
             android:includeFontPadding="false"
-            android:textColor="#0F0F0F"
+            android:textColor="@color/text_primary"
             android:textSize="16sp"
             android:layout_marginBottom="18dp" />
 
-        <!-- 프로필 두 명 수평 정렬 -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical">
 
-            <!-- 왼쪽 유저 -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -72,12 +69,11 @@
                     android:layout_marginTop="12dp"
                     android:fontFamily="@font/noto_sans_kr_medium"
                     android:includeFontPadding="false"
-                    android:text="문혜원"
-                    android:textColor="#0F0F0F"
+                    tools:text="문혜원"
+                    android:textColor="@color/text_primary"
                     android:textSize="16sp" />
             </LinearLayout>
 
-            <!-- 가운데 점 4개 -->
             <LinearLayout
                 android:id="@+id/dot_connector"
                 android:layout_width="wrap_content"
@@ -88,7 +84,6 @@
                 android:orientation="horizontal"
                 android:gravity="center">
 
-                <!-- 점 4개, 간격 8dp -->
                 <View
                     android:layout_width="4dp"
                     android:layout_height="4dp"
@@ -113,7 +108,6 @@
                     android:background="@drawable/dot_circle_gray" />
             </LinearLayout>
 
-            <!-- 오른쪽 유저 -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -137,13 +131,12 @@
                     android:fontFamily="@font/noto_sans_kr_medium"
                     android:includeFontPadding="false"
                     android:text="나"
-                    android:textColor="#0F0F0F"
+                    android:textColor="@color/text_primary"
                     android:textSize="16sp" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 
-    <!-- 캘린더 헤더 -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/calendarHeaderLayout"
         android:layout_width="match_parent"
@@ -158,7 +151,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="38dp"
             android:layout_marginStart="20dp"
-            android:text="2025년 6월"
+            tools:text="2025년 6월"
             android:fontFamily="@font/pretendard_medium"
             android:textColor="@color/text_primary"
             android:textSize="20sp"
@@ -221,13 +214,12 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="19dp"
         android:layout_marginEnd="19dp"
-        android:backgroundTint="#F6F6F6"
+        android:backgroundTint="@color/teumteum_bg"
         android:text="다음"
-        android:textColor="#0F0F0F"
+        android:textColor="@color/text_primary"
         app:cornerRadius="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

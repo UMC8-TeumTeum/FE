@@ -6,9 +6,7 @@
     android:id="@+id/fragment_my_profile_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white">
-
-    <!-- 프로필 부분 -->
+    android:background="@color/white">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/top_panel"
@@ -17,7 +15,6 @@
         android:background="@drawable/bg_gradient"
         android:paddingBottom="158dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -116,7 +113,6 @@
             app:layout_constraintTop_toBottomOf="@id/description_tv"
             app:tint="@color/white" />
 
-        <!-- 일정 카드 박스 -->
         <LinearLayout
             android:id="@+id/schedule_card_container"
             android:layout_width="0dp"
@@ -133,7 +129,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/arrow_iv">
 
-            <!-- 일정 항목 1 -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/schedule1_cl"
                 android:layout_width="match_parent"
@@ -196,7 +191,6 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <!-- 일정 항목 2 -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/schedule2_cl"
                 android:layout_width="match_parent"
@@ -259,7 +253,6 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <!-- 더보기 -->
             <TextView
                 android:id="@+id/see_more_tv"
                 android:layout_width="wrap_content"
@@ -334,10 +327,10 @@
         android:text="팔로잉"
         android:textColor="#0F0F0F"
         style="@style/Md16"
-        android:backgroundTint="#F6F6F6"
+        android:backgroundTint="@color/teumteum_bg"
         app:cornerRadius="12dp"
         app:strokeWidth="1dp"
-        app:strokeColor="#D3D3D3"
+        app:strokeColor="@color/teumteum_gray"
         android:layout_marginStart="19dp"
         android:layout_marginEnd="19dp"
         app:layout_constraintStart_toStartOf="parent"

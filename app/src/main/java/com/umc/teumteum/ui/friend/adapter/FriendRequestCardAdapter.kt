@@ -34,7 +34,6 @@ class FriendRequestCardAdapter(private val teumList: List<TeumReceivedItem>) :
             }
             binding.tvName.text = displayName
 
-//            binding.tvName.text = item.senderUser.nickname
             binding.tvDate.text = "${formatDate(item.date)}     |"
             binding.tvTime.text = "${item.timeSlot.start} ~ ${item.timeSlot.end}"
             binding.tvTitle.text = item.title

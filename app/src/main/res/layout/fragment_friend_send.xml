@@ -4,21 +4,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF">
+    android:background="@color/white">
 
-    <!-- 뒤로가기 버튼 -->
     <ImageButton
         android:id="@+id/backButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="70dp"
         android:layout_marginStart="16dp"
-        android:background="@android:color/transparent"
+        android:background="@color/transparent"
         android:src="@drawable/ic_arrow_back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- 캐릭터 이미지 -->
     <ImageView
         android:id="@+id/imageCharacter"
         android:layout_width="wrap_content"
@@ -29,7 +27,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- 큰 텍스트 -->
     <TextView
         android:id="@+id/textTitle"
         android:layout_width="wrap_content"
@@ -38,14 +35,13 @@
         android:lineSpacingExtra="0dp"
         android:includeFontPadding="false"
         android:textSize="18sp"
-        android:textColor="#0F0F0F"
+        android:textColor="@color/text_primary"
         android:fontFamily="@font/noto_sans_kr_medium"
         android:layout_marginTop="16dp"
         app:layout_constraintTop_toBottomOf="@id/imageCharacter"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- 설명 텍스트 -->
     <TextView
         android:id="@+id/textDesc"
         android:layout_width="wrap_content"
@@ -55,14 +51,12 @@
         android:includeFontPadding="false"
         android:lineSpacingExtra="0dp"
         android:text="수락 여부는 홈 알림에서 확인할 수 있어요"
-        android:textColor="#5C6569"
+        android:textColor="@color/text_secondary"
         android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textTitle" />
 
-
-    <!-- 하단 버튼 -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnGoHome"
         android:layout_width="0dp"
@@ -71,9 +65,9 @@
         android:layout_marginEnd="19dp"
         android:fontFamily="@font/noto_sans_kr_medium"
         android:text="친구 화면으로 돌아가기"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/white"
         android:textSize="16sp"
-        app:backgroundTint="#0F0F0F"
+        app:backgroundTint="@color/text_primary"
         app:cornerRadius="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

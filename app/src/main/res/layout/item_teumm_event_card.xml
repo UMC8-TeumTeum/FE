@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_marginBottom="12dp"
-    android:backgroundTint="#FFFFFF"
+    android:backgroundTint="@color/white"
     app:cardCornerRadius="5dp"
     app:cardElevation="0dp">
 
@@ -27,21 +29,21 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="2dp"
-                android:text="17:30"
+                tools:text="17:30"
                 android:includeFontPadding="false"
                 android:fontFamily="@font/noto_sans_kr_regular"
                 android:textSize="12sp"
-                android:textColor="#0F0F0F"/>
+                android:textColor="@color/text_primary"/>
 
             <TextView
                 android:id="@+id/tvEndTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="18:30"
+                tools:text="18:30"
                 android:includeFontPadding="false"
                 android:fontFamily="@font/noto_sans_kr_regular"
                 android:textSize="12sp"
-                android:textColor="#B1B2B3"/>
+                android:textColor="@color/teumteum_deactive"/>
         </LinearLayout>
 
         <View
@@ -50,17 +52,17 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:layout_marginEnd="17dp"
-            android:background="#EAEAEA" />
+            android:background="@color/teumteum_line" />
 
         <TextView
             android:id="@+id/tvEventDesc"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="홍대 소품샵 투어"
+            tools:text="홍대 소품샵 투어"
             android:includeFontPadding="false"
             android:fontFamily="@font/noto_sans_kr_regular"
             android:textSize="15sp"
-            android:textColor="#0F0F0F" />
+            android:textColor="@color/text_primary" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

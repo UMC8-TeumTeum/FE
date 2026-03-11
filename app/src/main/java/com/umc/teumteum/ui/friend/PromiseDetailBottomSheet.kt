@@ -91,28 +91,25 @@ class PromiseDetailBottomSheet(
         binding.btnCancelPromise.visibility =
             if (isPastLocal) View.GONE else View.VISIBLE
 
-        //  클릭 시 취소 요청만 호출
+        // 클릭 시 취소 요청만 호출
         binding.btnCancelPromise.setOnClickListener {
             FriendTeumDeleteBottomSheet
                 .newInstance(scheduleId)
                 .show(parentFragmentManager, "FriendTeumDeleteBottomSheet")
         }
 
-        //  성공 메시지
         viewModel.successMessage.observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let { message ->
-                Log.d("PROMISE_DETAIL_BOTTOM_SHEET", message.toString())
+                Log.d("PROMISE_DETAIL_BOTTOM_SHEET", message)
                 dismiss()
             }
         }
 
-        // 에러 메시지
         viewModel.errorMessage.observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let { err ->
-                Log.e("PROMISE_DETAIL_BOTTOM_SHEET", err.toString())
+                Log.e("PROMISE_DETAIL_BOTTOM_SHEET", err)
             }
         }
-
     }
 
     private fun showParticipantProfiles(detail: TeumScheduleDetailResult) {
@@ -168,7 +165,6 @@ class PromiseDetailBottomSheet(
             time
         }
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

@@ -31,17 +31,15 @@
             android:lineSpacingExtra="0dp"
             android:text="시작"
             android:textSize="12sp"
-            android:textColor="#5C6569"
+            android:textColor="@color/text_secondary"
             android:fontFamily="@font/noto_sans_kr_regular" />
 
-        <!-- 시간 + 화살표 묶는 가로 LinearLayout -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical">
 
-            <!-- 시간 -->
             <TextView
                 android:id="@+id/startTime"
                 android:layout_width="wrap_content"
@@ -54,7 +52,6 @@
                 android:fontFamily="@font/noto_sans_kr_semibold"
                 android:layout_marginEnd="6dp" />
 
-            <!-- 위아래 화살표 -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -76,7 +73,6 @@
         </LinearLayout>
     </LinearLayout>
 
-
     <LinearLayout
         android:id="@+id/endTimeLl"
         android:layout_width="0dp"
@@ -92,17 +88,15 @@
             android:includeFontPadding="false"
             android:lineSpacingExtra="0dp"
             android:textSize="12sp"
-            android:textColor="#5C6569"
+            android:textColor="@color/text_secondary"
             android:fontFamily="@font/noto_sans_kr_regular" />
 
-        <!-- 시간 + 화살표 묶는 가로 LinearLayout -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical">
 
-            <!-- 시간 -->
             <TextView
                 android:id="@+id/endTime"
                 android:layout_width="wrap_content"
@@ -111,11 +105,10 @@
                 android:lineSpacingExtra="0dp"
                 android:text="00:00"
                 android:textSize="22sp"
-                android:textColor="#0F0F0F"
+                android:textColor="@color/text_primary"
                 android:fontFamily="@font/noto_sans_kr_semibold"
                 android:layout_marginEnd="6dp" />
 
-            <!-- 위아래 화살표 -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -135,7 +128,5 @@
                     android:src="@drawable/friend_down" />
             </LinearLayout>
         </LinearLayout>
-
     </LinearLayout>
-
 </LinearLayout>

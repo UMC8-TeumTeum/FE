@@ -10,17 +10,16 @@
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:cardBackgroundColor="@android:color/transparent"
+        app:cardBackgroundColor="@color/transparent"
         app:cardCornerRadius="15dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:strokeColor="@android:color/transparent">
+        app:strokeColor="@color/transparent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <!-- 프로필 이미지 -->
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/profile_iv"
                 android:layout_width="57dp"
@@ -33,7 +32,6 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:shapeAppearanceOverlay="@style/CircleImage" />
 
-            <!-- 이름 -->
             <TextView
                 android:id="@+id/tvName"
                 android:layout_width="wrap_content"
@@ -42,26 +40,24 @@
                 android:fontFamily="@font/noto_sans_kr_medium"
                 android:includeFontPadding="false"
                 android:lineSpacingExtra="0dp"
-                android:text="이름"
-                android:textColor="#0F0F0F"
+                tools:text="이름"
+                android:textColor="@color/text_primary"
                 android:textSize="15sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/profile_iv" />
 
-            <!-- 경계선 -->
             <View
                 android:id="@+id/border"
                 android:layout_width="0dp"
                 android:layout_height="1dp"
                 android:layout_marginTop="7dp"
-                android:background="#7770FE"
+                android:background="@color/main_1"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tvName" />
 
-            <!-- 하단 텍스트 -->
             <TextView
                 android:id="@+id/tvDesc"
                 android:layout_width="wrap_content"
@@ -70,8 +66,7 @@
                 android:fontFamily="@font/noto_sans_kr_regular"
                 android:includeFontPadding="false"
                 android:lineSpacingExtra="0dp"
-                android:text="사용자가 작성한 제목"
-                android:textColor="#0F0F0F"
+                tools:text="사용자가 작성한 제목"
                 android:textSize="12sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

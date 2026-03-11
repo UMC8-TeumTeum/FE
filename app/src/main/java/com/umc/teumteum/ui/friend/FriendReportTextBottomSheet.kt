@@ -155,7 +155,6 @@ class FriendReportTextBottomSheet : BottomSheetDialogFragment() {
         imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

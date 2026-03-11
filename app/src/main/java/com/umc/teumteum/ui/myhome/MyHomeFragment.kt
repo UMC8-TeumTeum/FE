@@ -36,7 +36,7 @@ class MyHomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // 내 정보 요청
-        if(!viewModel.isLoaded){
+        if (!viewModel.isLoaded){
             viewModel.getMyInfo()
         }
 
@@ -116,5 +116,4 @@ class MyHomeFragment : Fragment() {
         val minutes = homeViewModel.teumTimeMinutes.value ?: 0
         binding.timeTv.text = "${days}일 ${hours}시간 ${minutes}분"
     }
-
 }

@@ -1,6 +1,5 @@
 package com.umc.teumteum.ui.friend
 
-import android.graphics.Color
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.Spanned
@@ -15,6 +14,7 @@ import androidx.fragment.app.FragmentManager
 import com.umc.teumteum.R
 import com.umc.teumteum.databinding.FragmentFriendSendBinding
 import dagger.hilt.android.AndroidEntryPoint
+import androidx.core.graphics.toColorInt
 
 @AndroidEntryPoint
 class FriendSendFragment : Fragment() {
@@ -45,13 +45,12 @@ class FriendSendFragment : Fragment() {
         val start = text.indexOf("전송")
         val end = start + 2
         spannable.setSpan(
-            ForegroundColorSpan(Color.parseColor("#7770FE")),
+            ForegroundColorSpan("#7770FE".toColorInt()),
             start, end,
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
         )
         binding.textTitle.text = spannable
 
-        // 버튼 클릭 시 FriendFragment로 이동
         binding.btnGoHome.setOnClickListener {
             parentFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
             parentFragmentManager.beginTransaction()

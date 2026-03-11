@@ -315,7 +315,7 @@ class FriendRepository @Inject constructor(
         // 결과 2개로 제한
         val trimmed = body.result?.take(2) ?: emptyList()
 
-        // 성공/실패 분기 (로그 한 줄만)
+        // 성공/실패 분기
         if (body.isSuccess && body.code == "FRIEND2005") {
             Log.d("RECENT_PUBLIC_TODO", body.message)
             trimmed
@@ -414,15 +414,8 @@ class FriendRepository @Inject constructor(
     // 23) 유저 차단
     suspend fun blockUser(userId: Int): Result<Int> = runCatching {
         val response = api.blockUser(userId)
-
-        // 방법 A: 유틸 함수 사용 (sendTeumRequest와 동일한 방식)
-        // handleApiResponse(response)
-
-        // 방법 B: 직접 처리 (안전한 방식)
-        // 서버 JSON에 'result' 필드가 없을 경우 null 안전성을 위해 직접 처리
         val body = response.body()
         if (response.isSuccessful && body?.isSuccess == true) {
-            // API 명세엔 <Int>지만, 실제 JSON에 값이 없으면 0으로 리턴하여 성공 처리
             body.result ?: 0
         } else {
             throw Exception("${body?.code ?: "HTTP ${response.code()}"} - ${body?.message ?: response.message()}")

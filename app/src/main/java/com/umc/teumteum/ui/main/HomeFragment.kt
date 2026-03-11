@@ -57,6 +57,7 @@ import com.kizitonwose.calendar.core.Week
 import com.kizitonwose.calendar.core.WeekDay
 import com.kizitonwose.calendar.view.WeekCalendarView
 import com.kizitonwose.calendar.view.WeekDayBinder
+import com.umc.teumteum.utils.weekdayShortKorean
 
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.DayOfWeek
@@ -98,8 +99,6 @@ class HomeFragment : Fragment() {
     private val todoViewModel: TodoViewModel by activityViewModels()
     private val myHomeViewModel: MyHomeViewModel by activityViewModels()
     private val activityViewModel: ActivityViewModel by activityViewModels()
-
-    private var isAM: Boolean = true
 
     private val TODO_SHEET_TAG = "TodoRegisterSheet"
 
@@ -151,12 +150,8 @@ class HomeFragment : Fragment() {
                 sheet.dismissAllowingStateLoss()
             }
 
-//            val scheduleList = viewModel.scheduleList.value ?: emptyList()
-//            val sleepBlocks = scheduleList.filter { it.type == TimeType.SLEEP }
-
             BottomSheetTodoRegisterFragment().apply {
                 arguments = Bundle().apply {
-//                    putParcelableArrayList("sleepBlocks", ArrayList(sleepBlocks))
                     putString("defaultDate", selectedDate.toString())
                 }
             }.show(parentFragmentManager, TODO_SHEET_TAG)
@@ -268,8 +263,6 @@ class HomeFragment : Fragment() {
 
                 // 이번 달 셀만 활성화, out-date는 비활성화/회색
                 val isThisMonth = day.position == DayPosition.MonthDate
-//                container.view.isEnabled = isThisMonth
-//                container.view.isClickable = isThisMonth
 
                 // 회색 텍스트 적용
                 tv.setTextColor(
@@ -448,7 +441,6 @@ class HomeFragment : Fragment() {
             refreshClockPager()
         }
 
-
         // 누적 시간 표시
         viewModel.teumTimeDays.observe(viewLifecycleOwner) { updateTeumTime() }
         viewModel.teumTimeHours.observe(viewLifecycleOwner) { updateTeumTime() }
@@ -527,7 +519,7 @@ class HomeFragment : Fragment() {
         return d.minusDays(sun0.toLong())
     }
 
-    //주 시작 (일요일)
+    // 주 시작 (일요일)
     private fun weekStart(d: LocalDate): LocalDate = d.minusDays((d.dayOfWeek.value % 7).toLong())
 
     // 주 끝 (토요일)
@@ -572,16 +564,6 @@ class HomeFragment : Fragment() {
             }
             container.addView(tv)
         }
-    }
-
-    private fun weekdayShortKorean(dow: DayOfWeek): String = when (dow) {
-        DayOfWeek.SUNDAY -> "일"
-        DayOfWeek.MONDAY -> "월"
-        DayOfWeek.TUESDAY -> "화"
-        DayOfWeek.WEDNESDAY -> "수"
-        DayOfWeek.THURSDAY -> "목"
-        DayOfWeek.FRIDAY -> "금"
-        DayOfWeek.SATURDAY -> "토"
     }
 
     // 월 범위 요청 함수 (캘린더 조회용)
@@ -652,22 +634,18 @@ class HomeFragment : Fragment() {
                 // 1) 기본 PieChart 설정
                 ChartUtils.setupPieChart(chart)
 
-                // 2) 아이콘 렌더러 적용 (옵션)
-//                val sleepBitmap = ChartUtils.getBitmapFromVector(requireContext(), R.drawable.ic_sleep_sv)
-//                chart.renderer = IconPieChartRenderer(chart, chart.animator, chart.viewPortHandler, sleepBitmap)
-
-                // 3) ViewModel의 LiveData 읽기
+                // 2) ViewModel의 LiveData 읽기
                 val sleepBlocks = viewModel.sleepTimeList.value.orEmpty()
                 val todoBlocks  = viewModel.todoTimeList.value.orEmpty()
 
-                // 4) Sleep + Todo 기반으로 AM/PM 블록 생성
+                // 3) Sleep + Todo 기반으로 AM/PM 블록 생성
                 val halfBlocks = ChartUtils.buildBlocksFromSleepTodo(
                     sleepBlocks = sleepBlocks,
                     todoBlocks = todoBlocks,
                     isAM = (half == ClockHalf.AM)
                 )
 
-                // 5) 실제 차트에 데이터 넣기
+                // 4) 실제 차트에 데이터 넣기
                 ChartUtils.setTimePieChartData(requireContext(), chart, halfBlocks)
             }
         )
@@ -813,11 +791,6 @@ class HomeFragment : Fragment() {
         private const val DATE_PATTERN = "yyyy년 M월"
     }
 
-    private fun refreshTodolist() {
-        val dateStr = selectedDate.format(serverFormatter)
-        todoViewModel.getTodoList(dateStr)
-    }
-
     private fun setupObservers() {
         viewModel.calendarData.observe(viewLifecycleOwner) { items ->
             eventDates.clear()
@@ -856,17 +829,6 @@ class HomeFragment : Fragment() {
     private inner class DayViewContainer(view: View) : ViewContainer(view) {
         val textView: TextView = view.findViewById(R.id.calendar_day_tv)
         val dotView: View = view.findViewById(R.id.dot_view)
-    }
-
-    // 캘린더 갱신
-    private fun refreshCalendarDots() {
-        lastRequestedRange = null
-
-        if (isWeeklyMode) {
-            weekCalendar.findFirstVisibleWeek()?.let { requestForWeek(it) }
-        } else {
-            monthCalendar.findFirstVisibleMonth()?.let { requestForMonth(it) }
-        }
     }
 
     private fun refreshClockPager() {

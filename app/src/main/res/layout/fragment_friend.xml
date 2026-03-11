@@ -8,8 +8,6 @@
     android:orientation="vertical"
     android:background="@android:color/white">
 
-    <!-- 팔로잉 / 팔로워 탭 -->
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="450dp"
@@ -26,7 +24,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- 메뉴 로고 -->
         <ImageView
             android:id="@+id/home_logo_iv"
             android:layout_width="wrap_content"
@@ -37,7 +34,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- 알림 버튼 -->
         <ImageButton
             android:id="@+id/btn_alarm"
             android:layout_width="wrap_content"
@@ -50,7 +46,6 @@
             android:src="@drawable/ic_top_alarm"
             app:layout_constraintBaseline_toBaselineOf="@id/home_logo_iv" />
 
-        <!-- 검색 버튼 -->
         <ImageButton
             android:id="@+id/btn_search"
             android:layout_width="wrap_content"
@@ -64,8 +59,6 @@
             app:layout_constraintBaseline_toBaselineOf="@id/home_logo_iv"
             app:tint="#FFFFFF" />
 
-
-        <!-- 추천 프로필 카드 (가로 스크롤) -->
         <TextView
             android:id="@+id/textName"
             android:layout_width="wrap_content"
@@ -80,13 +73,7 @@
             android:textColor="@android:color/white"
             android:textSize="20sp" />
 
-
-
-        <!-- 틈 요청 없을 때 뷰 -->
-
         <androidx.cardview.widget.CardView
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/emptyTeumRequestLayout"
             android:layout_width="match_parent"
             android:layout_height="163dp"
@@ -103,7 +90,6 @@
                 android:gravity="center"
                 android:orientation="vertical">
 
-                <!-- 캐릭터 이미지 -->
                 <ImageView
                     android:id="@+id/iv_teum_icon"
                     android:layout_width="130dp"
@@ -114,7 +100,6 @@
                     android:src="@drawable/purple_teum"
                     android:contentDescription="틈 없음 아이콘" />
 
-                <!-- 텍스트 -->
                 <TextView
                     android:id="@+id/tv_teum_message"
                     android:layout_width="wrap_content"
@@ -131,8 +116,6 @@
 
         </androidx.cardview.widget.CardView>
 
-
-        <!-- 틈 요청 있을 때 뷰 -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recommendRecyclerView"
             android:layout_width="match_parent"
@@ -146,8 +129,6 @@
             tools:listitem="@layout/friend01_item_recommend_card"
             tools:orientation="horizontal" />
 
-
-        <!-- 약속된 톰 보러가기 버튼 -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/viewPromiseBtn"
             android:layout_width="match_parent"
@@ -166,7 +147,6 @@
             android:textSize="16sp"
             app:backgroundTint="#0F0F0F"
             app:cornerRadius="12dp" />
-
 
     </RelativeLayout>
 
@@ -197,7 +177,6 @@
             android:textColor="#B1B2B3" />
     </LinearLayout>
 
-    <!-- 팔로잉 리스트 (세로 스크롤 RecyclerView) -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/followingRecyclerView"
         android:layout_width="match_parent"
@@ -208,7 +187,6 @@
         android:padding="12dp"
         tools:listitem="@layout/friend01_item_following" />
 
-    <!-- 팔로워 리스트 (처음에는 안 보이게) -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/followerRecyclerView"
         android:layout_width="match_parent"

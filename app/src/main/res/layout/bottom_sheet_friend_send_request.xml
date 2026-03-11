@@ -8,7 +8,6 @@
     android:background="@drawable/friend_bg_bottom_sheet"
     android:gravity="center_horizontal">
 
-    <!-- 드래그 핸들 -->
     <View
         android:layout_width="54dp"
         android:layout_height="4dp"
@@ -17,7 +16,6 @@
         android:layout_marginEnd="164dp"
         android:background="@drawable/friend_bottom_sheet_handle" />
 
-    <!-- 제목 -->
     <TextView
         android:id="@+id/titleText"
         android:layout_width="wrap_content"
@@ -31,7 +29,6 @@
         android:fontFamily="@font/noto_sans_kr_medium"
         android:includeFontPadding="false" />
 
-    <!-- 설명 -->
     <TextView
         android:id="@+id/subText"
         android:layout_width="wrap_content"

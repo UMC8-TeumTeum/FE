@@ -29,7 +29,7 @@ class RecommendAdapter(
             val receiverCount = item.receiverCount
 
             val displayName = if (item.resend) {
-                "나 > $nickname"   // 🔹 재요청이면 "나 > 상대방 이름"
+                "나 > $nickname"   // 재요청이면 "나 > 상대방 이름"
             } else {
                 if (receiverCount <= 1) nickname else "$nickname 외 ${receiverCount - 1}명"
             }
@@ -66,7 +66,7 @@ class RecommendAdapter(
             val receiverCount = item.receiverCount
 
             val displayName = if (item.resend) {
-                "나 > $nickname"   // 🔹 재요청이면 "나 > 상대방 이름"
+                "나 > $nickname"   // 재요청이면 "나 > 상대방 이름"
             } else {
                 if (receiverCount <= 1) nickname else "$nickname 외 ${receiverCount - 1}명"
             }
@@ -95,11 +95,6 @@ class RecommendAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-//        val inflater = LayoutInflater.from(parent.context)
-//        val binding = Friend01ItemRecommendCardBinding.inflate(inflater, parent, false)
-//
-//        (binding.root as? MaterialCardView)?.clipToOutline = false
-//        return RecommendViewHolder(binding)
 
         val inflater = LayoutInflater.from(parent.context)
         return when (viewType) {

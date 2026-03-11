@@ -7,7 +7,6 @@
     android:maxHeight="360dp"
     android:background="@drawable/friend_bg_bottom_sheet">
 
-    <!-- 드래그 핸들 -->
     <View
         android:id="@+id/handle"
         android:layout_width="54dp"
@@ -20,7 +19,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- 제목 -->
     <TextView
         android:id="@+id/rejectTitle"
         android:layout_width="wrap_content"
@@ -39,7 +37,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- 선택된 메시지 -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnRejectMent"
         android:layout_width="0dp"
@@ -66,7 +63,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- 비활성화 메시지 -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnSuggestTime"
         android:layout_width="0dp"
@@ -92,7 +88,6 @@
         app:strokeColor="#7770FE"
         app:strokeWidth="0dp" />
 
-    <!-- 취소 버튼 -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnCancel"
         android:layout_width="0dp"
@@ -117,7 +112,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btnSuggestTime" />
 
-    <!-- 전송 버튼 -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnSend"
         android:layout_width="0dp"

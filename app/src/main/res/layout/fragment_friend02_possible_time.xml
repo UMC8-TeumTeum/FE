@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:background="@android:color/white">
 
-    <!-- 뒤로가기 버튼 -->
     <ImageButton
         android:id="@+id/backButton"
         android:layout_width="wrap_content"
@@ -18,7 +17,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- 타이틀 & 서브타이틀 -->
     <LinearLayout
         android:id="@+id/titleSection"
         android:layout_width="wrap_content"
@@ -53,7 +51,6 @@
             android:textSize="12sp" />
     </LinearLayout>
 
-    <!-- 틈 요청 카드 ViewPager2 -->
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/requestViewPager"
         android:layout_width="0dp"
@@ -63,7 +60,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/titleSection" />
 
-    <!-- 찾기 버튼 -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnFind"
         android:layout_width="0dp"

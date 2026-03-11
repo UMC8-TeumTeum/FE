@@ -1,6 +1,5 @@
 package com.umc.teumteum.ui.friend
 
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -32,6 +31,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import kotlin.getValue
+import androidx.core.graphics.toColorInt
 
 @AndroidEntryPoint
 class FriendRoommateTimeFragment : Fragment() {
@@ -43,7 +43,7 @@ class FriendRoommateTimeFragment : Fragment() {
 
     private val viewModel: FriendViewModel by activityViewModels()
 
-    //차트에 들어갈 시간 데이터
+    // 차트에 들어갈 시간 데이터
     private var currentFullDayBlocks: List<TimeBlock> = emptyList()
 
     private lateinit var clockAdapter: ClockVPAdapter<ItemClockMiniPageBinding>
@@ -68,13 +68,13 @@ class FriendRoommateTimeFragment : Fragment() {
             insets
         }
 
-
         val receivedDate = arguments?.getString("selected_date") ?: ""
         val myNickname = arguments?.getString("myNickname") ?: "나"
         val myProfileUrl = arguments?.getString("myProfileUrl") ?: ""
         val targetNickname = arguments?.getString("targetNickname") ?: "상대"
         val targetProfileUrl = arguments?.getString("targetProfileUrl") ?: ""
-        //기존 타겟 유저 아이디
+
+        // 기존 타겟 유저 아이디
         val targetUserId = arguments?.getInt("targetUserId") ?: -1
 
         // 날짜 표시
@@ -115,7 +115,7 @@ class FriendRoommateTimeFragment : Fragment() {
         // 선택한 친구들 추가
         profileList.addAll(addedFriends)
 
-        // [ADDED] ViewModel의 "선택 친구" 목록에 대상들 등록 (내 자신 -1은 제외)
+        // ViewModel의 "선택 친구" 목록에 대상들 등록 (내 자신 -1은 제외)
         if (targetUserId > 0) {
             viewModel.addSelectedFriend(
                 FriendProfileResult(
@@ -161,12 +161,10 @@ class FriendRoommateTimeFragment : Fragment() {
             binding.clockPager.setCurrentItem(next, true)
         }
 
-        // 뒤로가기
         binding.btnBack.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
 
-        // 다음 버튼
         binding.nextBtn.setOnClickListener {
             val receivedDate = arguments?.getString("selected_date") ?: ""
             val detail = FriendRoommateMatchingDetailFragment().apply {
@@ -216,18 +214,17 @@ class FriendRoommateTimeFragment : Fragment() {
             val next = if (binding.clockPager.currentItem == amPos) pmPos else amPos
             binding.clockPager.setCurrentItem(next, true)
         }
-
     }
 
     private fun updateNextButton(hasEmpty: Boolean) {
         if (!hasEmpty) {
             binding.nextBtn.isEnabled = false
-            binding.nextBtn.setBackgroundColor(Color.parseColor("#F6F6F6"))
-            binding.nextBtn.setTextColor(Color.parseColor("#0F0F0F"))
+            binding.nextBtn.setBackgroundColor("#F6F6F6".toColorInt())
+            binding.nextBtn.setTextColor("#0F0F0F".toColorInt())
         } else {
             binding.nextBtn.isEnabled = true
-            binding.nextBtn.setBackgroundColor(Color.parseColor("#0F0F0F"))
-            binding.nextBtn.setTextColor(Color.parseColor("#FFFFFF"))
+            binding.nextBtn.setBackgroundColor("#0F0F0F".toColorInt())
+            binding.nextBtn.setTextColor("#FFFFFF".toColorInt())
         }
     }
 
@@ -236,7 +233,7 @@ class FriendRoommateTimeFragment : Fragment() {
         val rightView = binding.rightView
 
         if (isAM) {
-            //왼쪽이 막대, 오른쪽이 점
+            // 왼쪽이 막대, 오른쪽이 점
             leftView.layoutParams.width = dpToPx(28)
             leftView.layoutParams.height = dpToPx(4)
             leftView.background = ContextCompat.getDrawable(requireContext(), R.drawable.clock_indicator_bar_purple)
@@ -247,7 +244,7 @@ class FriendRoommateTimeFragment : Fragment() {
 
             binding.amPmTv.text="AM"
         } else {
-            //왼쪽이 점, 오른쪽이 막대
+            // 왼쪽이 점, 오른쪽이 막대
             leftView.layoutParams.width = dpToPx(4)
             leftView.layoutParams.height = dpToPx(4)
             leftView.background = ContextCompat.getDrawable(requireContext(), R.drawable.clock_indicator_dot)
@@ -262,7 +259,6 @@ class FriendRoommateTimeFragment : Fragment() {
         leftView.requestLayout()
         rightView.requestLayout()
     }
-
 
     private fun dpToPx(dp: Int): Int {
         return (dp * resources.displayMetrics.density).toInt()

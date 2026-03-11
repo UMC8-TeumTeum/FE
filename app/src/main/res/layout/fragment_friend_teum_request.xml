@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="@color/white"
     android:fillViewport="true"
     android:overScrollMode="never">
 
@@ -12,7 +12,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <!-- 뒤로가기 버튼 -->
         <ImageButton
             android:id="@+id/btnBack"
             android:layout_width="wrap_content"
@@ -34,12 +33,11 @@
             android:fontFamily="@font/noto_sans_kr_medium"
             android:includeFontPadding="false"
             android:text="틈 요청 기록"
-            android:textColor="#0F0F0F"
+            android:textColor="@color/text_primary"
             android:textSize="20sp"
             app:layout_constraintStart_toEndOf="@+id/btnBack"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- 캘린더 헤더 -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/calendarHeaderLayout"
             android:layout_width="0dp"
@@ -112,7 +110,6 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!-- 하단 구분선 -->
         <View
             android:id="@+id/divider2"
             android:layout_width="0dp"
@@ -120,12 +117,11 @@
             android:layout_marginTop="20dp"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
-            android:background="#EAEAEA"
+            android:background="@color/teumteum_line"
             app:layout_constraintTop_toBottomOf="@id/calendarHeaderLayout"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- RecyclerView: 틈 요청 기록 리스트 -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/requestHistoryRecyclerView"
             android:layout_width="0dp"
@@ -143,5 +139,4 @@
             tools:listitem="@layout/item_request_history" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </androidx.core.widget.NestedScrollView>
