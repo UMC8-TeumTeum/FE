@@ -37,7 +37,7 @@ class BlockedAccountAdapter(
         holder.name.text = item.nickName
         holder.job.text = " · ${item.job}"
 
-        //  Glide로 프로필 이미지 로드 (네가 쓰던 방식 그대로)
+        // Glide로 프로필 이미지 로드
         Glide.with(context)
             .load(item.profileImageUrl)
             .placeholder(R.drawable.gray_teum)

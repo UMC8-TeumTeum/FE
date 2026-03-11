@@ -57,10 +57,7 @@ class FriendBlockBottomSheet : BottomSheetDialogFragment() {
         binding.tvTitle.text = "${userName}님을 차단하시겠어요?"
 
         binding.btnBlockConfirm.setOnClickListener {
-            // 차단 API 호출
             viewModel.blockUser(userId)
-
-            // 바텀시트 닫기
             dismiss()
         }
     }

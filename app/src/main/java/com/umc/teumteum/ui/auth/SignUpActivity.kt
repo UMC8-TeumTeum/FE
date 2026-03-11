@@ -84,7 +84,6 @@ class SignUpActivity : AppCompatActivity() {
         }
     }
 
-
     // 상단 프로그레스바 제어
     fun setProgressBar(progress: Int) {
         binding.progressBar.progress = progress

@@ -98,5 +98,4 @@
             app:tint="@color/teumteum_deactive"/>
 
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

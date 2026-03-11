@@ -30,13 +30,13 @@ class MyProfileModifyFragment : Fragment() {
     private val viewModel: MyHomeViewModel by activityViewModels()
     private val homeViewModel: HomeViewModel by activityViewModels()
 
-    //수정 전용 ViewModel
+    // 수정 전용 ViewModel
     private val modifyViewModel: ProfileModifyViewModel by activityViewModels()
 
     private var nicknameInitialized = false
     private var fieldInitialized = false
 
-    //갤러리에서 이미지 선택
+    // 갤러리에서 이미지 선택
     private val galleryLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -84,16 +84,6 @@ class MyProfileModifyFragment : Fragment() {
             modifyViewModel.setTempNickname(binding.profileNicknameTv.text?.toString()?.trim())
             modifyViewModel.setTempField(binding.profileFieldTv.text?.toString()?.trim())
             modifyViewModel.commit(requireContext())
-
-//            val nickname = binding.profileNicknameTv.text?.toString()?.trim().orEmpty()
-//            val jobField = binding.profileFieldTv.text?.toString()?.trim().orEmpty()
-//
-//            modifyViewModel.submitProfileUpdate(
-//                nickname = nickname,
-//                jobField = jobField
-//            )
-
-//            parentFragmentManager.popBackStack()
         }
 
         viewModel.nickname.observe(viewLifecycleOwner) { nickname ->
@@ -112,7 +102,7 @@ class MyProfileModifyFragment : Fragment() {
             }
         }
 
-        //타이머
+        // 타이머
         homeViewModel.teumTimeDays.observe(viewLifecycleOwner) { updateTeumTime() }
         homeViewModel.teumTimeHours.observe(viewLifecycleOwner) { updateTeumTime() }
         homeViewModel.teumTimeMinutes.observe(viewLifecycleOwner) { updateTeumTime() }
@@ -190,7 +180,6 @@ class MyProfileModifyFragment : Fragment() {
             }
         }
     }
-
 
     private fun updateTeumTime() {
         val days = homeViewModel.teumTimeDays.value ?: 0

@@ -8,7 +8,6 @@
     android:background="@drawable/friend_bg_bottom_sheet"
     android:gravity="center_horizontal">
 
-    <!-- 드래그 핸들 -->
     <View
         android:layout_width="54dp"
         android:layout_height="4dp"
@@ -17,7 +16,6 @@
         android:layout_marginEnd="164dp"
         android:background="@drawable/friend_bottom_sheet_handle" />
 
-    <!-- 제목 -->
     <TextView
         android:id="@+id/titleText"
         android:layout_width="wrap_content"
@@ -31,7 +29,6 @@
         android:fontFamily="@font/noto_sans_kr_medium"
         android:includeFontPadding="false" />
 
-    <!-- 설명 -->
     <TextView
         android:id="@+id/subText"
         android:layout_width="wrap_content"
@@ -70,7 +67,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginHorizontal="55dp"
         android:text="기존 요청을 회수하고 싶을 경우, 요청 기록에서 취소하세요"
-        android:textColor="#B1B2B3"
+        android:textColor="@color/teumteum_deactive"
         android:fontFamily="@font/noto_sans_kr_regular"
         android:includeFontPadding="false"
         android:textSize="12sp" />
@@ -91,7 +88,7 @@
             android:textSize="16sp"
             android:textColor="@color/text_primary"
             android:fontFamily="@font/noto_sans_kr_medium"
-            app:backgroundTint="#F6F6F6"
+            app:backgroundTint="@color/teumteum_bg"
             app:cornerRadius="12dp"
             android:layout_marginEnd="8dp"/>
 
@@ -103,8 +100,8 @@
             android:text="수락"
             android:textSize="16sp"
             android:fontFamily="@font/noto_sans_kr_medium"
-            android:textColor="@android:color/white"
-            app:backgroundTint="#0f0f0f"
+            android:textColor="@color/white"
+            app:backgroundTint="@color/text_primary"
             app:cornerRadius="12dp" />
     </LinearLayout>
 </LinearLayout>

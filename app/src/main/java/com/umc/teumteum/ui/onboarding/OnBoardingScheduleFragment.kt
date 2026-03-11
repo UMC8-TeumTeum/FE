@@ -252,5 +252,4 @@ class OnBoardingScheduleFragment : Fragment() {
             parent.touchDelegate = multi
         }
     }
-
 }

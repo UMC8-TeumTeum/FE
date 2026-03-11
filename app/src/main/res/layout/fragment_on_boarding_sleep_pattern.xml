@@ -94,7 +94,6 @@
                     android:layout_marginTop="8dp"
                     />
 
-
                 <ImageView
                     android:id="@+id/start_down_arrow"
                     android:layout_width="wrap_content"

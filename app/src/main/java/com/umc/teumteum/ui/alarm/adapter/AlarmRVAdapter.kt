@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.umc.teumteum.R
-import com.umc.teumteum.data.remote.alarm.dto.NotificationResponse
+import com.umc.teumteum.data.remote.alarm.model.NotificationResponse
 import com.umc.teumteum.databinding.ItemHomeAlarmBinding
 import com.umc.teumteum.utils.TimeUtils
 

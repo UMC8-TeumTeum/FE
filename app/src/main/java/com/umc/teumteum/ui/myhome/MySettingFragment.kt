@@ -15,11 +15,6 @@ class MySettingFragment : Fragment() {
 
     private lateinit var binding: FragmentMySettingBinding
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -80,6 +75,5 @@ class MySettingFragment : Fragment() {
                 .addToBackStack(null)
                 .commit()
         }
-
     }
 }

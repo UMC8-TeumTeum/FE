@@ -60,5 +60,4 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/teumteum_logo_iv" />
 
-
 </androidx.constraintlayout.widget.ConstraintLayout>

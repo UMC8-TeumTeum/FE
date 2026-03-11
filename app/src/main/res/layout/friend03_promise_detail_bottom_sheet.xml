@@ -8,7 +8,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <!-- 드래그 핸들 -->
     <View
         android:id="@+id/handle"
         android:layout_width="65dp"
@@ -21,7 +20,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- 타이틀 -->
     <TextView
         android:id="@+id/tvTitle"
         android:layout_width="match_parent"
@@ -33,25 +31,23 @@
         android:lineSpacingExtra="0dp"
         android:textSize="20sp"
         android:fontFamily="@font/noto_sans_kr_medium"
-        android:textColor="#0F0F0F"
+        android:textColor="@color/text_primary"
         app:layout_constraintTop_toBottomOf="@id/handle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- 구분선 #1 -->
-    <View
+=    <View
         android:id="@+id/divider1"
         android:layout_width="0dp"
         android:layout_height="1dp"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         android:layout_marginTop="86dp"
-        android:background="#D3D3D3"
+        android:background="@color/teumteum_gray"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/handle" />
 
-    <!-- 1번째 줄: 아이콘 + 날짜 + 시간 -->
     <ImageView
         android:id="@+id/icTime1"
         android:layout_width="wrap_content"
@@ -71,8 +67,8 @@
         android:fontFamily="@font/noto_sans_kr_regular"
         android:includeFontPadding="false"
         android:lineSpacingExtra="0dp"
-        android:text="6월 4일 (수)"
-        android:textColor="#0F0F0F"
+        tools:text="6월 4일 (수)"
+        android:textColor="@color/text_primary"
         android:textSize="14sp"
         app:layout_constraintStart_toEndOf="@+id/icTime1"
         app:layout_constraintTop_toBottomOf="@+id/divider1" />
@@ -87,26 +83,24 @@
         android:fontFamily="@font/noto_sans_kr_regular"
         android:includeFontPadding="false"
         android:lineSpacingExtra="0dp"
-        android:text="오후 5:30"
-        android:textColor="#0F0F0F"
+        tools:text="오후 5:30"
+        android:textColor="@color/text_primary"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/tvDate1"
         app:layout_constraintTop_toBottomOf="@+id/divider1" />
 
-    <!-- 구분선 #2 -->
     <View
         android:id="@+id/divider2"
         android:layout_width="0dp"
         android:layout_height="1dp"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
-        android:background="#D3D3D3"
+        android:background="@color/teumteum_gray"
         android:layout_marginTop="101dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/divider1" />
-
 
     <TextView
         android:id="@+id/tvDate2"
@@ -117,8 +111,8 @@
         android:fontFamily="@font/noto_sans_kr_regular"
         android:includeFontPadding="false"
         android:lineSpacingExtra="0dp"
-        android:text="6월 4일 (수)"
-        android:textColor="#0F0F0F"
+        tools:text="6월 4일 (수)"
+        android:textColor="@color/text_primary"
         android:textSize="14sp"
         app:layout_constraintStart_toEndOf="@+id/icTime1"
         app:layout_constraintTop_toBottomOf="@+id/tvDate1" />
@@ -133,14 +127,13 @@
         android:fontFamily="@font/noto_sans_kr_regular"
         android:includeFontPadding="false"
         android:lineSpacingExtra="0dp"
-        android:text="오후 6:30"
-        android:textColor="#0F0F0F"
+        tools:text="오후 6:30"
+        android:textColor="@color/text_primary"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/tvDate2"
         app:layout_constraintTop_toBottomOf="@+id/tvTime1" />
 
-    <!-- 프로필 썸네일 리스트 -->
     <LinearLayout
         android:id="@+id/profileContainer"
         android:layout_width="wrap_content"
@@ -154,8 +147,6 @@
         app:layout_constraintBottom_toTopOf="@id/cancelButtonContainer">
     </LinearLayout>
 
-
-    <!-- 버튼: 약속된 틈 취소하기 -->
     <FrameLayout
         android:id="@+id/cancelButtonContainer"
         android:layout_width="match_parent"
@@ -170,11 +161,9 @@
             android:layout_height="match_parent"
             android:text="약속된 틈 취소하기"
             android:textSize="16sp"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/white"
             android:fontFamily="@font/noto_sans_kr_regular"
-            app:backgroundTint="#0F0F0F"
+            app:backgroundTint="@color/text_primary"
             app:cornerRadius="12dp"/>
     </FrameLayout>
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

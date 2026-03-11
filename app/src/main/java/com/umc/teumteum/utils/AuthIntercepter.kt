@@ -49,7 +49,7 @@ class AuthInterceptor @Inject constructor(
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest = chain.request()
 
-        // 이미 재발급 재시도를 했는지(tag) 확인
+        // 이미 재발급 재시도를 했는지 확인
         val hasRetried = originalRequest.tag(RetryOnceTag::class.java) != null
         if (isNoAuthRequired(originalRequest.url.encodedPath)) {
             return chain.proceed(originalRequest)
@@ -83,7 +83,7 @@ class AuthInterceptor @Inject constructor(
             }
         }
 
-        // 401이면 RT 만료/무효로 간주하고 즉시 로그아웃 (만료 코드 제외 + 강제 로그아웃 코드만)
+        // 401이면 RT 만료/무효로 간주하고 즉시 로그아웃
         if (response.code == HTTP_UNAUTHORIZED) {
             val code = extractErrorCode(response)
             if (code != null && code != JWT_EXPIRED_CODE && FORCE_LOGOUT_CODES.contains(code)) {
@@ -115,7 +115,7 @@ class AuthInterceptor @Inject constructor(
         }
     }
 
-    // 에러코드만 추출 (재발급 로직과 분리)
+    // 에러코드만 추출
     private fun extractErrorCode(response: Response): String? = try {
         val bodyString = readBodyString(response)
         if (bodyString.isNotEmpty()) parseApiErrorBody(bodyString)?.code else null
@@ -149,7 +149,7 @@ class AuthInterceptor @Inject constructor(
         }
     }
 
-    // 네트워크 호출만 담당 (싱글플라이트 블록 안에서 호출)
+    // 네트워크 호출만 담당
     private suspend fun reissueOnce(refreshToken: String): String? {
         return try {
             val retrofit = Retrofit.Builder()

@@ -8,7 +8,6 @@
     android:background="@color/white"
     tools:context=".ui.onboarding.AgreementFragment">
 
-    <!-- 제목 -->
     <TextView
         android:id="@+id/title_tv"
         android:layout_width="wrap_content"
@@ -24,7 +23,6 @@
         android:includeFontPadding="false"
         />
 
-    <!-- 체크박스1 -->
     <androidx.appcompat.widget.AppCompatCheckBox
         android:id="@+id/term1_checkbox"
         android:layout_width="wrap_content"
@@ -50,8 +48,6 @@
         android:layout_marginStart="12dp"
         />
 
-
-    <!-- 체크박스2 -->
     <androidx.appcompat.widget.AppCompatCheckBox
         android:id="@+id/term2_checkbox"
         android:layout_width="wrap_content"
@@ -76,7 +72,6 @@
         android:layout_marginStart="12dp"
         />
 
-    <!-- 체크박스3 -->
     <androidx.appcompat.widget.AppCompatCheckBox
         android:id="@+id/term3_checkbox"
         android:layout_width="wrap_content"
@@ -101,7 +96,6 @@
         android:layout_marginStart="12dp"
         />
 
-    <!-- 체크박스4 -->
     <androidx.appcompat.widget.AppCompatCheckBox
         android:id="@+id/term4_checkbox"
         android:layout_width="wrap_content"
@@ -137,7 +131,6 @@
         android:layout_marginEnd="19dp"
         />
 
-    <!-- 전체동의 -->
     <androidx.appcompat.widget.AppCompatCheckBox
         android:id="@+id/all_checkbox"
         android:layout_width="wrap_content"
@@ -163,7 +156,6 @@
         android:layout_marginStart="12dp"
         />
 
-    <!--다음으로 버튼-->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/next_btn"
         android:layout_width="match_parent"

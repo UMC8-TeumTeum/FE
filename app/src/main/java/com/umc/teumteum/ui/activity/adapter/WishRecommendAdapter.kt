@@ -62,9 +62,4 @@ class WishRecommendAdapter(private var wishList: List<ActivityWishResult>, priva
     }
 
     override fun getItemCount(): Int = minOf(wishList.size, 3)
-
-    fun updateList(newList: List<ActivityWishResult>) {
-        wishList = newList
-        notifyDataSetChanged()
-    }
 }

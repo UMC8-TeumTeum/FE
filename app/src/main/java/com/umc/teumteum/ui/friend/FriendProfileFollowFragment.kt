@@ -1,7 +1,6 @@
 package com.umc.teumteum.ui.friend
 
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -20,6 +19,7 @@ import com.umc.teumteum.databinding.FragmentFriendProfileFollowBinding
 import com.umc.teumteum.ui.friend.viewModel.FriendViewModel
 import com.umc.teumteum.ui.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
+import androidx.core.graphics.drawable.toDrawable
 
 @AndroidEntryPoint
 class FriendProfileFollowFragment : Fragment() {
@@ -52,7 +52,6 @@ class FriendProfileFollowFragment : Fragment() {
 
         targetUserId = arguments?.getInt("userId") ?: -1
         val userId = targetUserId
-
 
         // 프로필 정보 요청
         viewModel.getFriendProfile(userId) { profile ->
@@ -124,9 +123,8 @@ class FriendProfileFollowFragment : Fragment() {
         popupWindow.isOutsideTouchable = true
         popupWindow.isFocusable = true
 
-        popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        popupWindow.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
         popupWindow.elevation = 0f
-
 
         // anchorView 기준으로 위치 계산
         popupWindow.showAsDropDown(
@@ -182,7 +180,6 @@ class FriendProfileFollowFragment : Fragment() {
                 navigateToFollowing(result)
             }
         }
-
 
         // 팔로우 성공 메시지
         viewModel.followMessage.observe(viewLifecycleOwner) { event ->

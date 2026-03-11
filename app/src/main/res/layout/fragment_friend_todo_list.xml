@@ -4,9 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF">
+    android:background="@color/white">
 
-    <!-- 뒤로가기 버튼 -->
     <ImageButton
         android:id="@+id/btnBack"
         android:layout_width="wrap_content"
@@ -19,17 +18,16 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <!-- 사용자 이름 -->
     <TextView
         android:id="@+id/tvName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:layout_marginStart="20.5dp"
-        android:text="최아연님이"
+        tools:text="최아연님이"
         android:includeFontPadding="false"
         android:fontFamily="@font/noto_sans_kr_semibold"
-        android:textColor="#0F0F0F"
+        android:textColor="@color/text_primary"
         android:textSize="22sp"
         app:layout_constraintTop_toBottomOf="@id/btnBack"
         app:layout_constraintStart_toStartOf="parent" />
@@ -42,13 +40,12 @@
         android:includeFontPadding="false"
         android:fontFamily="@font/noto_sans_kr_medium"
         android:textSize="16sp"
-        android:textColor="#0F0F0F"
+        android:textColor="@color/text_primary"
         android:layout_marginTop="3dp"
         android:layout_marginStart="20dp"
         app:layout_constraintTop_toBottomOf="@id/tvName"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <!-- 구분선 -->
     <View
         android:id="@+id/divider1"
         android:layout_width="match_parent"
@@ -56,12 +53,11 @@
         android:layout_marginTop="37dp"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
-        android:background="#EAEAEA"
+        android:background="@color/teumteum_line"
         app:layout_constraintTop_toBottomOf="@id/tvSubtitle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- 캘린더 헤더 -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/calendarHeaderLayout"
         android:layout_width="match_parent"
@@ -76,7 +72,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="38dp"
             android:layout_marginStart="20dp"
-            android:text="2025년 6월"
+            tools:text="2025년 6월"
             android:fontFamily="@font/pretendard_medium"
             android:textColor="@color/text_primary"
             android:textSize="20sp"
@@ -131,7 +127,6 @@
             app:layout_constraintTop_toBottomOf="@id/calendar_weekdays_row" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- 하단 구분선 -->
     <View
         android:id="@+id/divider2"
         android:layout_width="match_parent"
@@ -139,12 +134,11 @@
         android:layout_marginTop="20dp"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
-        android:background="#EAEAEA"
+        android:background="@color/teumteum_line"
         app:layout_constraintTop_toBottomOf="@id/calendarHeaderLayout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- 틈 일정 리스트 -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvEventList"
         android:layout_width="0dp"

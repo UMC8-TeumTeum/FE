@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -25,7 +26,7 @@
                 android:hint="일정 이름을 작성해주세요"
                 android:minHeight="28dp"
                 android:textSize="20sp"
-                android:background="@android:color/transparent"
+                android:background="@color/transparent"
                 android:inputType="textMultiLine"
                 android:maxLines="5"
                 android:gravity="top|start" />
@@ -42,7 +43,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@android:color/white"
+                android:background="@color/white"
                 android:layout_marginTop="15dp"
                 android:padding="8dp">
 
@@ -65,7 +66,7 @@
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
-                        android:text="매주 수요일"
+                        tools:text="매주 수요일"
                         android:textColor="@color/text_primary"
                         android:textSize="15sp" />
 
@@ -75,7 +76,7 @@
                         android:layout_height="wrap_content"
                         android:clickable="true"
                         android:focusable="true"
-                        android:text="오전 9:00"
+                        tools:text="오전 9:00"
                         android:textColor="@color/text_primary"
                         android:textSize="14sp" />
                 </LinearLayout>
@@ -140,7 +141,7 @@
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
-                        android:text="매주 수요일"
+                        tools:text="매주 수요일"
                         android:textColor="@color/text_primary"
                         android:textSize="15sp" />
 
@@ -148,7 +149,7 @@
                         android:id="@+id/end_time_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="오후 12:00"
+                        tools:text="오후 12:00"
                         android:textColor="@color/text_primary"
                         android:textSize="14sp" />
                 </LinearLayout>
@@ -227,7 +228,7 @@
                     android:textColorHint="@color/text_primary"
                     android:minHeight="28dp"
                     android:textSize="15sp"
-                    android:background="@android:color/transparent"
+                    android:background="@color/transparent"
                     android:inputType="textMultiLine"
                     android:maxLines="5"
                     android:gravity="top|start" />
@@ -263,10 +264,6 @@
                     app:cornerRadius="8dp" />
 
             </LinearLayout>
-
-
         </LinearLayout>
-
     </ScrollView>
-
 </LinearLayout>

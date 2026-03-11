@@ -32,7 +32,6 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="문혜원" />
 
-    <!-- 날짜 · 시간 -->
     <TextView
         android:id="@+id/dateTv"
         android:layout_width="wrap_content"
@@ -52,14 +51,13 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8.52dp"
         android:text="|"
-        android:textSize="12dp"
+        android:textSize="12sp"
         android:fontFamily="@font/noto_sans_kr_medium"
-        android:textColor="#0F0F0F"
+        android:textColor="@color/text_primary"
         app:layout_constraintBottom_toBottomOf="@+id/dateTv"
         app:layout_constraintStart_toEndOf="@+id/dateTv"
         app:layout_constraintTop_toTopOf="@+id/dateTv" />
 
-    <!-- 말풍선 -->
     <ImageView
         android:id="@+id/clockIv"
         android:layout_width="wrap_content"
@@ -71,7 +69,7 @@
         app:layout_constraintTop_toTopOf="@id/dateTv"
         app:layout_constraintVertical_bias="1.0"
         app:srcCompat="@drawable/friend_timer_outline"
-        app:tint="#0F0F0F" />
+        app:tint="@color/text_primary" />
 
     <TextView
         android:id="@+id/timeRangeTv"
@@ -80,7 +78,7 @@
         android:layout_marginStart="2dp"
         android:fontFamily="@font/noto_sans_kr_regular"
         android:includeFontPadding="false"
-        android:textColor="#0F0F0F"
+        android:textColor="@color/text_primary"
         android:textSize="11sp"
         app:layout_constraintBottom_toBottomOf="@id/dateTv"
         app:layout_constraintStart_toEndOf="@id/clockIv"
@@ -103,18 +101,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/dateTv">
 
-        <!-- 제목 -->
         <TextView
             android:id="@+id/messageTitleTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/noto_sans_kr_medium"
             android:includeFontPadding="false"
-            android:textColor="#0F0F0F"
+            android:textColor="@color/text_primary"
             android:textSize="12sp"
             tools:text="10년만에 블루문" />
 
-        <!-- 구분 기호 -->
         <TextView
             android:id="@+id/separatorTv"
             android:layout_width="wrap_content"
@@ -123,10 +119,9 @@
             android:fontFamily="@font/noto_sans_kr_medium"
             android:includeFontPadding="false"
             android:text="|"
-            android:textColor="#0F0F0F"
+            android:textColor="@color/text_primary"
             android:textSize="12sp" />
 
-        <!-- 내용 -->
         <TextView
             android:id="@+id/messageContentTv"
             android:layout_width="0dp"
@@ -134,15 +129,9 @@
             android:layout_weight="1"
             android:fontFamily="@font/noto_sans_kr_medium"
             android:includeFontPadding="false"
-            android:textColor="#0F0F0F"
+            android:textColor="@color/text_primary"
             android:textSize="12sp"
             tools:text="모교 뒷편 야산에서 텐트 치고..." />
 
     </LinearLayout>
-
-
-
-
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

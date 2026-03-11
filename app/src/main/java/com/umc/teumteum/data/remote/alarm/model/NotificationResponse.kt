@@ -1,6 +1,6 @@
-package com.umc.teumteum.data.remote.alarm.dto
+package com.umc.teumteum.data.remote.alarm.model
 
-import com.umc.teumteum.data.remote.alarm.dto.enums.NotificationType
+import com.umc.teumteum.data.remote.alarm.model.enums.NotificationType
 import com.google.gson.annotations.SerializedName
 
 data class NotificationResponse(

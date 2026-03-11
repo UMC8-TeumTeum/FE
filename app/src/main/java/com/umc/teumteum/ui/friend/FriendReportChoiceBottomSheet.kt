@@ -2,7 +2,6 @@ package com.umc.teumteum.ui.friend
 
 import android.app.Dialog
 import android.content.res.ColorStateList
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -18,6 +17,7 @@ import com.umc.teumteum.ui.friend.viewModel.FriendViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import androidx.core.graphics.toColorInt
 
 class FriendReportChoiceBottomSheet : BottomSheetDialogFragment() {
 
@@ -95,10 +95,7 @@ class FriendReportChoiceBottomSheet : BottomSheetDialogFragment() {
         // 신고 버튼: 8~13만 여기서 신고됨
         binding.reportBtn.setOnClickListener {
 
-            val reasonId = selectedReasonId
-            if (reasonId == null) {
-                return@setOnClickListener
-            }
+            val reasonId = selectedReasonId ?: return@setOnClickListener
 
             val targetType = arguments?.getString(ARG_TARGET_TYPE)
             val targetId = arguments?.getLong(ARG_TARGET_ID, -1L) ?: -1L
@@ -144,12 +141,12 @@ class FriendReportChoiceBottomSheet : BottomSheetDialogFragment() {
     private fun applyCheckBoxTint() {
         val tint = ColorStateList(
             arrayOf(
-                intArrayOf(android.R.attr.state_checked), // checked
-                intArrayOf(-android.R.attr.state_checked) // unchecked
+                intArrayOf(android.R.attr.state_checked),
+                intArrayOf(-android.R.attr.state_checked)
             ),
             intArrayOf(
-                Color.parseColor("#0F0F0F"), // 체크됨
-                Color.parseColor("#788084")  // 체크 안됨
+                "#0F0F0F".toColorInt(), // 체크 o
+                "#788084".toColorInt()  // 체크 x
             )
         )
 
@@ -165,7 +162,7 @@ class FriendReportChoiceBottomSheet : BottomSheetDialogFragment() {
         }
     }
 
-    /** 전체 체크 해제 */
+    // 전체 체크 해제
     private fun clearAllChecks() {
         binding.optAbuseCb.isChecked = false
         binding.optSexualCb.isChecked = false

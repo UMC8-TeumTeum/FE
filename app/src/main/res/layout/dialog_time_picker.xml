@@ -6,7 +6,6 @@
     android:background="#FFFFFF"
     android:minHeight="270dp">
 
-    <!-- 버튼 영역 (위쪽) -->
     <LinearLayout
         android:id="@+id/buttonContainer"
         android:layout_width="wrap_content"
@@ -18,7 +17,6 @@
 
     </LinearLayout>
 
-    <!-- Picker 영역 (아래쪽) -->
     <LinearLayout
         android:id="@+id/pickerContainer"
         android:layout_width="wrap_content"
@@ -30,20 +28,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="50dp">
 
-        <!-- AM/PM -->
         <NumberPicker
             android:id="@+id/ampmPicker01Np"
             android:layout_width="80dp"
             android:layout_height="200dp"/>
 
-        <!-- Hour -->
         <NumberPicker
             android:id="@+id/hourPicker01Np"
             android:layout_width="80dp"
             android:layout_height="200dp"
             android:layout_marginStart="20dp"/>
 
-        <!-- : 기호 -->
         <TextView
             android:id="@+id/colonAmHour"
             android:layout_width="wrap_content"
@@ -55,14 +50,12 @@
             android:layout_marginEnd="8dp"
             android:gravity="center_vertical"/>
 
-        <!-- Minute -->
         <NumberPicker
             android:id="@+id/minutePicker01Np"
             android:layout_width="80dp"
             android:layout_height="200dp"/>
     </LinearLayout>
 
-    <!-- 취소 버튼 -->
     <Button
         android:id="@+id/btnCancel"
         android:layout_width="wrap_content"
@@ -73,12 +66,11 @@
         android:textSize="16sp"
         android:textColor="@color/text_primary"
         android:fontFamily="@font/noto_sans_kr_medium"
-        android:backgroundTint="@android:color/transparent"
+        android:backgroundTint="@color/transparent"
         android:background="@null"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- 완료 버튼 -->
     <Button
         android:id="@+id/btnOk"
         android:layout_width="wrap_content"
@@ -89,7 +81,7 @@
         android:textSize="16sp"
         android:textColor="@color/text_primary"
         android:fontFamily="@font/noto_sans_kr_medium"
-        android:backgroundTint="@android:color/transparent"
+        android:backgroundTint="@color/transparent"
         android:background="@null"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

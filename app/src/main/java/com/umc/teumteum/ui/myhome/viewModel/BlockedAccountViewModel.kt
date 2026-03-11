@@ -23,7 +23,7 @@ class BlockedAccountViewModel @Inject constructor(
     val error: LiveData<String> = _error
 
     // 차단 해제 결과 LiveData
-    private val _unblockResult = MutableLiveData<String>() // 메시지 전달
+    private val _unblockResult = MutableLiveData<String>()
     val unblockResult: LiveData<String> = _unblockResult
 
     fun getBlockedAccounts() {

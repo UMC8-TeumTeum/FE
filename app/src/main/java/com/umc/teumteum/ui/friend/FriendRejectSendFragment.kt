@@ -1,6 +1,5 @@
 package com.umc.teumteum.ui.friend
 
-import android.graphics.Color
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.Spanned
@@ -11,6 +10,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.umc.teumteum.R
 import com.umc.teumteum.databinding.FragmentFriendRejectSendBinding
+import androidx.core.graphics.toColorInt
 
 class FriendRejectSendFragment : Fragment() {
 
@@ -34,7 +34,7 @@ class FriendRejectSendFragment : Fragment() {
         val start = text.indexOf("전송")
         val end = start + 2
         spannable.setSpan(
-            ForegroundColorSpan(Color.parseColor("#7770FE")),
+            ForegroundColorSpan("#7770FE".toColorInt()),
             start, end,
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
         )
@@ -43,11 +43,10 @@ class FriendRejectSendFragment : Fragment() {
         binding.btnGoHome.setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.main_frm, FriendFragment()) // 메인에 FriendFragment 로드
-                .addToBackStack(null) // 뒤로 가기 가능하게 할지 여부
+                .addToBackStack(null)
                 .commit()
         }
 
-        // 뒤로가기 버튼 동작
         binding.backButton.setOnClickListener {
             parentFragmentManager.popBackStack()
         }

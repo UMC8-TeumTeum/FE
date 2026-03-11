@@ -41,7 +41,6 @@ object NotificationHelper {
         ensureChannel(context)
 
         if (!canPostNotifications(context)) {
-            // 필요하면 로그/토스트/내부 이벤트 기록
             return
         }
 
@@ -66,7 +65,6 @@ object NotificationHelper {
                 .notify(System.currentTimeMillis().toInt(), builder.build())
         } catch (se: SecurityException) {
             // 사용자가 권한을 거부했거나 정책상 막힌 경우
-            // 필요 시 로깅/가이드 처리
         }
     }
 }

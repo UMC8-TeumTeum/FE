@@ -15,6 +15,7 @@ import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.umc.teumteum.R
 import com.umc.teumteum.data.remote.onboarding.model.Week
 import com.umc.teumteum.databinding.FragmentMyRoutineModifyBinding
@@ -93,9 +94,8 @@ class MyRoutineModifyFragment : Fragment() {
                 androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
             )
 
-
             val bottomNav = requireActivity()
-                .findViewById<com.google.android.material.bottomnavigation.BottomNavigationView>(R.id.main_bnv)
+                .findViewById<BottomNavigationView>(R.id.main_bnv)
 
             bottomNav.selectedItemId = R.id.fragment_home
         }
@@ -226,5 +226,4 @@ class MyRoutineModifyFragment : Fragment() {
             parent.touchDelegate = multi
         }
     }
-
 }

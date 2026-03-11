@@ -70,7 +70,7 @@ class FriendRoommateFriendAddFragment : Fragment() {
         // 5) 뒤로가기
         binding.backButton.setOnClickListener {
             val selectedFriends = adapter.getSelectedUserIdsWithInfo() // FriendProfileResult 리스트
-            //뷰모델 저장
+            // 뷰모델 저장
             viewModel.setTeumRequestReceiverUserIds(selectedFriends.map {
                 it.userId
             })
@@ -81,7 +81,6 @@ class FriendRoommateFriendAddFragment : Fragment() {
             parentFragmentManager.setFragmentResult("selectedFriends", result)
             parentFragmentManager.popBackStack()
         }
-
     }
 
     override fun onDestroyView() {

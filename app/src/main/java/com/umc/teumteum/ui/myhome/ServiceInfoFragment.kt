@@ -1,7 +1,6 @@
 package com.umc.teumteum.ui.myhome
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +9,7 @@ import androidx.fragment.app.Fragment
 import com.umc.teumteum.R
 import com.umc.teumteum.databinding.FragmentServiceInfoBinding
 import dagger.hilt.android.AndroidEntryPoint
+import androidx.core.net.toUri
 
 @AndroidEntryPoint
 class ServiceInfoFragment : Fragment() {
@@ -41,7 +41,7 @@ class ServiceInfoFragment : Fragment() {
 
         binding.privacyPolicyLl.setOnClickListener {
             val url = getString(R.string.privacy_policy_url)
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+            val intent = Intent(Intent.ACTION_VIEW, url.toUri())
             if (intent.resolveActivity(requireContext().packageManager) != null) {
                 startActivity(intent)
             }
@@ -52,5 +52,4 @@ class ServiceInfoFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
 }

@@ -94,7 +94,7 @@ class BottomSheetScheduleEditFragment(
                 return@setOnClickListener
             }
 
-            // 요일 넘어가지 않게 검증(자정 넘김 불가)
+            // 요일 넘어가지 않도록 검증 (자정 넘김 불가)
             if (endTime!!.isBefore(startTime)) {
                 Toast.makeText(requireContext(), "일정은 자정을 넘길 수 없습니다", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener

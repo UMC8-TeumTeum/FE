@@ -2,8 +2,8 @@ package com.umc.teumteum.ui.alarm
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import com.umc.teumteum.data.remote.alarm.dto.NotificationResponse
-import com.umc.teumteum.data.remote.alarm.dto.enums.NotificationType
+import com.umc.teumteum.data.remote.alarm.model.NotificationResponse
+import com.umc.teumteum.data.remote.alarm.model.enums.NotificationType
 import com.umc.teumteum.ui.friend.FriendFragment
 import com.umc.teumteum.ui.friend.FriendPromiseFragment
 import com.umc.teumteum.ui.friend.FriendTeumRequestFragment

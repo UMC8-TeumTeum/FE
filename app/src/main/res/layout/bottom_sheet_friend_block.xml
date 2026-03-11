@@ -69,9 +69,8 @@
         android:layout_marginTop="76dp"
         android:fontFamily="@font/noto_sans_kr_medium"
         android:text="차단"
-        android:textColor="@android:color/white"
+        android:textColor="@color/white"
         android:textSize="16sp"
-
         app:backgroundTint="@color/main_1"
         app:cornerRadius="12dp"
         app:layout_constraintEnd_toEndOf="parent"

@@ -7,7 +7,6 @@
     android:layout_height="wrap_content"
     android:background="@drawable/friend_bg_bottom_sheet">
 
-    <!-- drag handle -->
     <View
         android:id="@+id/bottomSheetHandle"
         android:layout_width="54dp"
@@ -18,8 +17,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-
-    <!-- Title -->
     <TextView
         android:id="@+id/report_title_tv"
         android:layout_width="0dp"
@@ -35,7 +32,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Subtitle / 설명 -->
     <TextView
         android:id="@+id/report_subtitle_tv"
         android:layout_width="0dp"
@@ -51,7 +47,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Divider -->
     <View
         android:id="@+id/report_divider"
         android:layout_width="0dp"
@@ -64,7 +59,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Options container; 간단하게 LinearLayout으로 고정 항목들 구현 -->
     <LinearLayout
         android:id="@+id/options_container"
         android:layout_width="0dp"
@@ -75,7 +69,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- 항목들: 텍스트 + 오른쪽 체크박스 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -249,7 +242,6 @@
                 android:focusableInTouchMode="false" />
         </LinearLayout>
 
-        <!-- 마지막 항목: 화살표 아이콘 (관련 사유 없음) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="56dp"
@@ -271,7 +263,6 @@
                 android:layout_marginStart="27dp"
                 android:textSize="16sp" />
 
-            <!-- 화살표: drawable로 넣거나 Material icon 사용 -->
             <ImageView
                 android:id="@+id/opt_other_arrow"
                 android:layout_width="wrap_content"
@@ -283,7 +274,6 @@
 
     </LinearLayout>
 
-    <!-- 신고 버튼 (풀 너비) -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/report_btn"
         android:layout_width="0dp"

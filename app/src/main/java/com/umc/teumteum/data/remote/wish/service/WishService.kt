@@ -32,11 +32,7 @@ interface WishService {
     suspend fun editWish(@Path("wishId") wishId: Long, @Body request: EditWishRequest): Response<ApiResponse<Unit>>
 
     @HTTP(method = "DELETE", path = "/api/wishes", hasBody = true)
-
     suspend fun deleteWishes(@Body request: DeleteWishesRequest): Response<ApiResponse<Unit>>
-
-    @GET("/api/wishes/categories")
-    suspend fun getWishCategories(): Response<ApiResponse<List<WishCategories>>>
 
     @POST("/api/wishes/{wishId}/assign")
     suspend fun assignWish(@Path("wishId") wishId: Long, @Body request: AssignWishRequest): Response<ApiResponse<Unit>>

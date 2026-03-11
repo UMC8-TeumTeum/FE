@@ -62,9 +62,4 @@ class AiRecommendAdapter(private var aiList: List<ActivityAiResult>, private val
     }
 
     override fun getItemCount(): Int = minOf(aiList.size, 3)
-
-    fun updateList(newList: List<ActivityAiResult>) {
-        aiList = newList
-        notifyDataSetChanged()
-    }
 }

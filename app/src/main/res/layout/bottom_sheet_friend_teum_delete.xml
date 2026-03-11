@@ -19,7 +19,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-
     <TextView
         android:id="@+id/tv_title"
         android:layout_width="0dp"
@@ -75,7 +74,7 @@
         android:text="아니오"
         android:textColor="@color/text_primary"
         android:textSize="16sp"
-        app:backgroundTint="#F6F6F6"
+        app:backgroundTint="@color/teumteum_bg"
         app:cornerRadius="12dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -89,7 +88,7 @@
         android:layout_marginTop="14dp"
         android:fontFamily="@font/noto_sans_kr_medium"
         android:text="네"
-        android:textColor="@android:color/white"
+        android:textColor="@color/white"
         android:textSize="16sp"
         app:backgroundTint="@color/text_primary"
         app:cornerRadius="12dp"

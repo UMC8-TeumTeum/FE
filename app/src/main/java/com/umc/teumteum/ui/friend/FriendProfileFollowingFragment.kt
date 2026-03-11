@@ -19,6 +19,8 @@ import com.umc.teumteum.databinding.FragmentFriendProfileFollowingBinding
 import com.umc.teumteum.ui.friend.viewModel.FriendViewModel
 import com.umc.teumteum.ui.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
+import androidx.core.graphics.toColorInt
+import androidx.core.graphics.drawable.toDrawable
 
 @AndroidEntryPoint
 class FriendProfileFollowingFragment : Fragment() {
@@ -52,7 +54,6 @@ class FriendProfileFollowingFragment : Fragment() {
             insets
         }
 
-
         // 전달받은 프로필 정보
         val name = arguments?.getString("name") ?: ""
         val field = arguments?.getString("field") ?: ""
@@ -75,14 +76,14 @@ class FriendProfileFollowingFragment : Fragment() {
             viewModel.fetchRecentPublicTodos(targetUserId)
         }
 
-        //  빈틈 시간 옵저브
+        // 빈틈 시간 옵저브
         viewModel.teumTimeText.observe(viewLifecycleOwner) {
             binding.profileTimerTv.text = it
         }
 
         // 서로의 빈틈(함께한) 시간
         viewModel.sharedTeumTimeText.observe(viewLifecycleOwner) { text ->
-            binding.nicknameTv?.text = text
+            binding.nicknameTv.text = text
         }
 
         // 뒤로가기 버튼 클릭 시
@@ -129,7 +130,6 @@ class FriendProfileFollowingFragment : Fragment() {
                 .commit()
         }
 
-
         // sendBtn 클릭 시 친구 저장 + FriendRoommateDateFragment로 이동
         binding.sendBtn.setOnClickListener {
             if (targetUserId != -1) {
@@ -165,7 +165,6 @@ class FriendProfileFollowingFragment : Fragment() {
                 .commit()
         }
 
-
         observeViewModel()
     }
 
@@ -187,9 +186,8 @@ class FriendProfileFollowingFragment : Fragment() {
         popupWindow.isOutsideTouchable = true
         popupWindow.isFocusable = true
 
-        popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        popupWindow.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
         popupWindow.elevation = 0f
-
 
         // anchorView 기준으로 위치 계산
         popupWindow.showAsDropDown(
@@ -226,7 +224,6 @@ class FriendProfileFollowingFragment : Fragment() {
         }
     }
 
-
     private fun observeViewModel() {
         // 차단 성공 → 버튼 상태 변경
         viewModel.blockComplete.observe(viewLifecycleOwner) { event ->
@@ -237,7 +234,7 @@ class FriendProfileFollowingFragment : Fragment() {
                     binding.modifyProfileBtn.alpha = 0.5f
 
                     binding.modifyProfileBtn.setTextColor(
-                        Color.parseColor("#0F0F0F")
+                        "#0F0F0F".toColorInt()
                     )
 
                     binding.starBtn.isEnabled = false
@@ -285,13 +282,13 @@ class FriendProfileFollowingFragment : Fragment() {
 
         //  최근 공개 투두 관찰
         viewModel.recentTodos.observe(viewLifecycleOwner) { list ->
-            bindRecentTodos(list) // 아래 함수
+            bindRecentTodos(list)
         }
 
         // 에러 메시지
         viewModel.errorMessage.observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let { msg ->
-                Log.d("FRIEND_PROFILE_FOLLOWING_FRAGMENT", msg.toString())
+                Log.d("FRIEND_PROFILE_FOLLOWING_FRAGMENT", msg)
             }
         }
     }
@@ -312,7 +309,7 @@ class FriendProfileFollowingFragment : Fragment() {
         )
     }
 
-    //  화면 내에 추가
+    // 화면 내에 추가
     private fun bindRecentTodos(list: List<PublicTodoResult>) {
         val l = list.take(2)
 
@@ -338,7 +335,6 @@ class FriendProfileFollowingFragment : Fragment() {
             binding.schedule2Cl.visibility = View.GONE
         }
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

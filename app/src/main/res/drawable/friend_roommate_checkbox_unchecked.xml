@@ -3,9 +3,9 @@
     <size
         android:width="20dp"
         android:height="20dp" />
-    <solid android:color="@android:color/transparent" />
+    <solid android:color="@color/transparent" />
     <stroke
         android:width="1.5dp"
-        android:color="#B1B2B3" />
+        android:color="@color/teumteum_deactive" />
     <corners android:radius="1dp" />
 </shape>

@@ -112,7 +112,6 @@
                 app:track="@drawable/btn_remind_toggle_track"
                 />
 
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -153,7 +152,6 @@
                 android:thumb="@drawable/btn_remind_toggle_thumb"
                 app:track="@drawable/btn_remind_toggle_track"
                 />
-
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -196,7 +194,6 @@
                 app:track="@drawable/btn_remind_toggle_track"
                 />
 
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -238,7 +235,6 @@
                 app:track="@drawable/btn_remind_toggle_track"
                 />
 
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -279,7 +275,6 @@
                 android:thumb="@drawable/btn_remind_toggle_thumb"
                 app:track="@drawable/btn_remind_toggle_track"
                 />
-
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

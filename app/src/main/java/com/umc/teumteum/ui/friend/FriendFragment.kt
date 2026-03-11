@@ -1,6 +1,5 @@
 package com.umc.teumteum.ui.friend
 
-import android.graphics.Color
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -21,6 +20,7 @@ import com.umc.teumteum.ui.friend.adapter.RecommendAdapter
 import com.umc.teumteum.ui.friend.viewModel.FriendViewModel
 import com.umc.teumteum.ui.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
+import androidx.core.graphics.toColorInt
 
 @AndroidEntryPoint
 class FriendFragment : Fragment() {
@@ -47,7 +47,7 @@ class FriendFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //  내 정보(닉네임, 프로필) 가져오기
+        // 내 정보(닉네임, 프로필) 가져오기
         viewModel.fetchMyInfo()
 
         val defaultTab = arguments?.getString("defaultTab", "following")
@@ -64,14 +64,14 @@ class FriendFragment : Fragment() {
                 viewModel.readTeumRequest(item.responseId)
 
                 val fragment = if (item.resend) {
-                    //  재요청 카드면 Response 화면으로
+                    // 재요청 카드면 Response 화면으로
                     Friend02ResponseFragment().apply {
                         arguments = Bundle().apply {
                             putParcelable("teumItem", item)   // 단일 아이템 전달
                         }
                     }
                 } else {
-                    //  원본 요청 카드면 Request 화면으로
+                    // 원본 요청 카드면 Request 화면으로
                     Friend02RequestFragment().apply {
                         arguments = Bundle().apply {
                             val originalRequests = viewModel.receivedTeums.value
@@ -84,11 +84,11 @@ class FriendFragment : Fragment() {
                     }
                 }
 
-                if(item.read==false){
+                if(!item.read) {
                     viewModel.readTeumRequest(item.responseId)
                 }
 
-                //선택된 아이템 저장
+                // 선택된 아이템 저장
                 viewModel.selectTeum(item)
 
                 parentFragmentManager.beginTransaction()
@@ -173,14 +173,14 @@ class FriendFragment : Fragment() {
                                 putString("name", profile.name)
                                 putString("field", profile.field)
                                 putString("imageUrl", profile.profileImageUrl)
-                                putString("fromTab", "follower") // 🔹 탭 정보 추가
+                                putString("fromTab", "follower") // 탭 정보 추가
                             }
                         }
                     } else {
                         FriendProfileFollowFragment().apply {
                             arguments = Bundle().apply {
                                 putInt("userId", profile.userId)
-                                putString("fromTab", "follower") // 🔹 탭 정보 추가
+                                putString("fromTab", "follower") // 탭 정보 추가
                             }
                         }
                     }
@@ -258,8 +258,8 @@ class FriendFragment : Fragment() {
 
         // 탭 클릭 리스너
         binding.tabFollowing.setOnClickListener {
-            binding.tabFollowing.setTextColor(Color.parseColor("#0F0F0F"))
-            binding.tabFollower.setTextColor(Color.parseColor("#B1B2B3"))
+            binding.tabFollowing.setTextColor("#0F0F0F".toColorInt())
+            binding.tabFollower.setTextColor("#B1B2B3".toColorInt())
             binding.followingRecyclerView.visibility = View.VISIBLE
             binding.followerRecyclerView.visibility = View.GONE
 
@@ -269,8 +269,8 @@ class FriendFragment : Fragment() {
         }
 
         binding.tabFollower.setOnClickListener {
-            binding.tabFollowing.setTextColor(Color.parseColor("#B1B2B3"))
-            binding.tabFollower.setTextColor(Color.parseColor("#0F0F0F"))
+            binding.tabFollowing.setTextColor("#B1B2B3".toColorInt())
+            binding.tabFollower.setTextColor("#0F0F0F".toColorInt())
             binding.followingRecyclerView.visibility = View.GONE
             binding.followerRecyclerView.visibility = View.VISIBLE
 
@@ -327,13 +327,13 @@ class FriendFragment : Fragment() {
 
         viewModel.successMessage.observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let { msg ->
-                Log.d("FriendFragment", msg.toString())
+                Log.d("FriendFragment", msg)
             }
         }
 
         viewModel.errorMessage.observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let { msg ->
-                Log.d("FriendFragment", msg.toString())
+                Log.d("FriendFragment", msg)
             }
         }
 

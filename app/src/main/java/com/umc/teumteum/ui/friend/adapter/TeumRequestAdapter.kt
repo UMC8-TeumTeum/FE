@@ -27,7 +27,7 @@ class TeumRequestAdapter(
             position: Int,
             fullList: List<TeumRequestDateResult>
         ) {
-            //  초기화
+            // 초기화
             binding.tvStatus.visibility = View.GONE
             binding.tvResendNotice.visibility = View.GONE
 
@@ -35,14 +35,14 @@ class TeumRequestAdapter(
             binding.btnCancelRequest.visibility = View.GONE
             binding.btnCancelRequest.setOnClickListener(null)
 
-            //  재요청 카드
-            if (data.isResend == true) {
+            // 재요청 카드
+            if (data.isResend) {
                 binding.tvResendNotice.visibility = View.VISIBLE
                 binding.tvResendNotice.text = "재요청 기록이 있어요"
                 binding.topContainer.setBackgroundResource(R.drawable.bg_top_rounded)
             }
 
-            //  취소된 원본 카드 (뒤에 재요청이 없는 경우)
+            // 취소된 원본 카드 (뒤에 재요청이 없는 경우)
             else if (
                 data.isCancelled &&
                 data.accepted.isNullOrEmpty() &&
@@ -53,12 +53,12 @@ class TeumRequestAdapter(
                 binding.topContainer.setBackgroundResource(R.drawable.bg_top_rounded_cancel)
             }
 
-            //  그 외 기본 상태
+            // 그 외 기본 상태
             else {
                 binding.topContainer.setBackgroundResource(R.drawable.bg_top_rounded)
             }
 
-            //  원본/재요청 구분선
+            // 원본/재요청 구분선
             binding.originalDivider.visibility = View.GONE
             val isOriginal = data.isResend == false
             val nextIsResend =
@@ -67,26 +67,26 @@ class TeumRequestAdapter(
                 binding.originalDivider.visibility = View.VISIBLE
             }
 
-            //  프로필, 이름
+            // 프로필, 이름
             Glide.with(binding.profileIv.context)
                 .load(data.requester.profileImageUrl)
-                .placeholder(com.umc.teumteum.R.drawable.gray_teum)
-                .error(com.umc.teumteum.R.drawable.gray_teum)
-                .fallback(com.umc.teumteum.R.drawable.gray_teum)
+                .placeholder(R.drawable.gray_teum)
+                .error(R.drawable.gray_teum)
+                .fallback(R.drawable.gray_teum)
                 .into(binding.profileIv)
 
             binding.tvName.text = data.requester.nickname ?: "이름없음"
 
-            //  날짜/시간
+            // 날짜/시간
             val dateFormatted = data.date.replace("-", ".").substring(2) // "25.09.02"
             binding.tvDate.text = "$dateFormatted     |"
             binding.tvTime.text = "${data.timeSlot.start} ~ ${data.timeSlot.end}"
 
-            //  제목 / 설명
+            // 제목 / 설명
             binding.title.text = data.title
             binding.description.text = data.description
 
-            //  상태별 FlexboxLayout 처리
+            // 상태별 FlexboxLayout 처리
             updateSectionRow(
                 binding.rowAccept,
                 binding.labelAccept,
@@ -121,7 +121,6 @@ class TeumRequestAdapter(
                     onCancelClick?.invoke(data.requestId.toLong())
                 }
             }
-
         }
 
         private fun updateSectionRow(
@@ -154,15 +153,15 @@ class TeumRequestAdapter(
             val inflater = LayoutInflater.from(container.context)
             for (user in users) {
                 val imageView = inflater.inflate(
-                    com.umc.teumteum.R.layout.item_user_circle,
+                    R.layout.item_user_circle,
                     container,
                     false
                 ) as ShapeableImageView
                 Glide.with(imageView.context)
                     .load(user.profileImageUrl)
-                    .placeholder(com.umc.teumteum.R.drawable.gray_teum)
-                    .error(com.umc.teumteum.R.drawable.gray_teum)
-                    .fallback(com.umc.teumteum.R.drawable.gray_teum)
+                    .placeholder(R.drawable.gray_teum)
+                    .error(R.drawable.gray_teum)
+                    .fallback(R.drawable.gray_teum)
                     .into(imageView)
 
                 container.addView(imageView)

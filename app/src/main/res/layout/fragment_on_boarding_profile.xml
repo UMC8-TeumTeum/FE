@@ -11,7 +11,7 @@
         android:id="@+id/title_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="닉네임 님"
+        tools:text="닉네임 님"
         style="@style/notoSansBold"
         android:textSize="28sp"
         android:textColor="@color/text_primary"
@@ -77,7 +77,7 @@
             android:id="@+id/camera_btn"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:background="@android:color/transparent"
+            android:background="@color/transparent"
             android:src="@drawable/camera_btn"
             android:scaleType="centerInside"
             android:layout_gravity="center"
@@ -88,7 +88,7 @@
         android:id="@+id/nickname_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="닉네임"
+        tools:text="닉네임"
         style="@style/Header2"
         android:textSize="20sp"
         android:textColor="@color/text_primary"
@@ -114,6 +114,4 @@
         android:layout_marginEnd="19dp"
         android:layout_marginBottom="18.5dp"
         />
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

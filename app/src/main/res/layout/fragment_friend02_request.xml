@@ -2,19 +2,17 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white">
+    android:background="@color/white">
 
-    <!-- 뒤로가기 -->
     <ImageButton
         android:id="@+id/backButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="80dp"
         android:layout_marginEnd="55dp"
-        android:background="@android:color/transparent"
+        android:background="@color/transparent"
         android:contentDescription="뒤로가기 버튼"
         android:src="@drawable/ic_undo"
         app:layout_constraintEnd_toEndOf="parent"
@@ -26,13 +24,12 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="23dp"
         android:layout_marginTop="83dp"
-        android:background="@android:color/transparent"
+        android:background="@color/transparent"
         android:src="@drawable/friend_setting"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/black" />
+        app:tint="@color/text_primary" />
 
-    <!-- 타이틀 & 서브타이틀 -->
     <LinearLayout
         android:id="@+id/titleSection"
         android:layout_width="wrap_content"
@@ -43,7 +40,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <!-- 제목 -->
         <TextView
             android:id="@+id/titleTextView"
             android:layout_width="wrap_content"
@@ -54,10 +50,9 @@
             android:lineSpacingExtra="0dp"
             android:paddingBottom="5dp"
             android:text="나에게 온 틈 요청이에요"
-            android:textColor="#0F0F0F"
+            android:textColor="@color/text_primary"
             android:textSize="22sp" />
 
-        <!-- 부제목 -->
         <TextView
             android:id="@+id/subtitleTextView"
             android:layout_width="wrap_content"
@@ -68,11 +63,10 @@
             android:lineSpacingExtra="0dp"
             android:paddingTop="3dp"
             android:text="아직 확인하지 않은 틈을 보여드려요"
-            android:textColor="#0F0F0F"
+            android:textColor="@color/text_primary"
             android:textSize="12sp" />
     </LinearLayout>
 
-    <!-- 틈 요청 카드 ViewPager2 -->
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/requestViewPager"
         android:layout_width="0dp"
@@ -82,7 +76,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/titleSection" />
 
-    <!-- Dots Indicator -->
     <com.tbuonomo.viewpagerdotsindicator.DotsIndicator
         android:id="@+id/dotsIndicator"
         android:layout_width="wrap_content"
@@ -97,11 +90,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/requestViewPager"
-        app:selectedDotColor="#0F0F0F" />
+        app:selectedDotColor="@color/text_primary" />
 
-
-
-    <!-- 버튼: 거절 -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnReject"
         android:layout_width="0dp"
@@ -115,7 +105,7 @@
         android:insetRight="0dp"
         android:insetBottom="0dp"
         android:text="이때는 시간이 안돼요"
-        android:textColor="#0F0F0F"
+        android:textColor="@color/text_primary"
         android:textSize="16sp"
         app:backgroundTint="#F6F6F6"
         app:cornerRadius="12dp"
@@ -123,7 +113,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <!-- 버튼: 수락 -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnAccept"
         android:layout_width="0dp"
@@ -132,9 +121,9 @@
         android:layout_marginEnd="19dp"
         android:fontFamily="@font/noto_sans_kr_medium"
         android:text="함께할래요"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/white"
         android:textSize="16sp"
-        app:backgroundTint="#0F0F0F"
+        app:backgroundTint="@color/text_primary"
         app:cornerRadius="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

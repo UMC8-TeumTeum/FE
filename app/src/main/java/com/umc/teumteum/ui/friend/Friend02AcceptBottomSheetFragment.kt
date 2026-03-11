@@ -1,7 +1,6 @@
 package com.umc.teumteum.ui.friend
 
 import android.app.Dialog
-import android.graphics.Color
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.Spannable
@@ -17,6 +16,7 @@ import com.umc.teumteum.ui.friend.viewModel.FriendViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
+import androidx.core.graphics.toColorInt
 
 @AndroidEntryPoint
 class Friend02AcceptBottomSheetFragment : BottomSheetDialogFragment() {
@@ -49,14 +49,14 @@ class Friend02AcceptBottomSheetFragment : BottomSheetDialogFragment() {
 
         val item = viewModel.selectedTeum.value
         if (item == null) {
-            dismiss() // 방어: 선택값 없으면 닫기
+            dismiss() // 선택값 없으면 닫기
             return
         }
 
         val fullText = "함께 할래요 멘트를 보낼까요?"
         val spannable = SpannableString(fullText).apply {
-            setSpan(ForegroundColorSpan(Color.parseColor("#7770FE")), 0, 6, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-            setSpan(ForegroundColorSpan(Color.parseColor("#0F0F0F")), 6, fullText.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            setSpan(ForegroundColorSpan("#7770FE".toColorInt()), 0, 6, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            setSpan(ForegroundColorSpan("#0F0F0F".toColorInt()), 6, fullText.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         }
         binding.mentText.text = spannable
 
@@ -66,16 +66,14 @@ class Friend02AcceptBottomSheetFragment : BottomSheetDialogFragment() {
             val responseId = arguments?.getInt("responseId") ?: return@setOnClickListener
             val status = "accepted"
 
-            //  로그 & 토스트
             Log.d("ACCEPT_BOTTOM_SHEET", "responseId: $responseId, status: $status")
 
-            //  응답 처리
+            // 응답 처리
             viewModel.respondToTeum(responseId, status)
 
             // 바텀시트 닫기
             dismiss()
 
-            // 화면 전환
             parentFragmentManager.beginTransaction()
                 .replace(R.id.main_frm, FriendSendFragment())
                 .addToBackStack(null)

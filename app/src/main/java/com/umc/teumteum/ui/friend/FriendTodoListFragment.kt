@@ -26,8 +26,8 @@ import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
 import com.kizitonwose.calendar.view.CalendarView
 import com.kizitonwose.calendar.view.MonthDayBinder
 import com.kizitonwose.calendar.view.ViewContainer
+import com.umc.teumteum.utils.weekdayShortKorean
 import dagger.hilt.android.AndroidEntryPoint
-import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
@@ -91,6 +91,7 @@ class FriendTodoListFragment : Fragment() {
         // 최초 가시 월 기준으로 한 번 조회
         visibleMonth = YearMonth.now()
         lastRequestedMonth = null
+
         // arguments에서 friendUserId 읽은 뒤에 호출
         fetchDotDates()
 
@@ -223,16 +224,6 @@ class FriendTodoListFragment : Fragment() {
             }
             container.addView(tv)
         }
-    }
-
-    private fun weekdayShortKorean(dow: DayOfWeek): String = when (dow) {
-        DayOfWeek.SUNDAY -> "일"
-        DayOfWeek.MONDAY -> "월"
-        DayOfWeek.TUESDAY -> "화"
-        DayOfWeek.WEDNESDAY -> "수"
-        DayOfWeek.THURSDAY -> "목"
-        DayOfWeek.FRIDAY -> "금"
-        DayOfWeek.SATURDAY -> "토"
     }
 
     private fun setupRecyclerView() {

@@ -5,7 +5,7 @@
     android:id="@+id/fragment_my_profile_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white">
+    android:background="@color/white">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/top_panel"
@@ -41,7 +41,6 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <!-- 일정 카드 박스 -->
         <LinearLayout
             android:id="@+id/schedule_card_container"
             android:layout_width="0dp"
@@ -58,7 +57,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/back_btn">
 
-            <!-- 일정 항목 1 -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/schedule1_cl"
                 android:layout_width="match_parent"
@@ -75,7 +73,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:includeFontPadding="false"
-                    android:text="15:20"
+                    tools:text="15:20"
                     android:textColor="@color/text_primary"
                     android:textSize="12sp"
                     app:layout_constraintStart_toStartOf="parent"
@@ -88,7 +86,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
                     android:includeFontPadding="false"
-                    android:text="16:10"
+                    tools:text="16:10"
                     android:textColor="@color/teumteum_deactive"
                     android:textSize="12sp"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -112,7 +110,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="17dp"
                     android:includeFontPadding="false"
-                    android:text="강아지 산책 가자"
+                    tools:text="강아지 산책 가자"
                     android:textColor="@color/text_primary"
                     android:textSize="15sp"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -121,7 +119,6 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <!-- 일정 항목 2 -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/schedule2_cl"
                 android:layout_width="match_parent"
@@ -138,7 +135,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:includeFontPadding="false"
-                    android:text="18:00"
+                    tools:text="18:00"
                     android:textColor="@color/text_primary"
                     android:textSize="12sp"
                     app:layout_constraintStart_toStartOf="parent"
@@ -151,7 +148,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
                     android:includeFontPadding="false"
-                    android:text="22:00"
+                    tools:text="22:00"
                     android:textColor="@color/teumteum_deactive"
                     android:textSize="12sp"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -175,7 +172,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="17dp"
                     android:includeFontPadding="false"
-                    android:text="이천 드라이브 어때"
+                    tools:text="이천 드라이브 어때"
                     android:textColor="@color/text_primary"
                     android:textSize="15sp"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -184,7 +181,6 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <!-- 더보기 -->
             <TextView
                 android:id="@+id/see_more_tv"
                 android:layout_width="wrap_content"
@@ -199,7 +195,6 @@
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- 프로필 부분 -->
     <LinearLayout
         android:id="@+id/profile_ll"
         android:layout_width="0dp"

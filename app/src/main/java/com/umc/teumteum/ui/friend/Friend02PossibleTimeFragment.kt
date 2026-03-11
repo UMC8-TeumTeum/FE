@@ -49,7 +49,6 @@ class Friend02PossibleTimeFragment : Fragment() {
         //  전달받은 데이터 받기
         val selected = viewModel.selectedTeum.value
         if (selected == null) {
-            // 방어: 선택값이 없으면 종료
             parentFragmentManager.popBackStack()
             return
         }
@@ -57,14 +56,13 @@ class Friend02PossibleTimeFragment : Fragment() {
         teumList = listOf(selected)
         responseId = arguments?.getInt("responseId") ?: -1
 
-        //  어댑터 연결
+        // 어댑터 연결
         adapter = FriendRequestCardAdapter(teumList)
         binding.requestViewPager.adapter = adapter
 
-        //  바텀 네비게이션 숨기기
         (activity as? MainActivity)?.hideBottomBar()
 
-        //  뒤로가기
+        // 뒤로가기
         binding.backButton.setOnClickListener {
             val selected = viewModel.selectedTeum.value
 
@@ -88,7 +86,7 @@ class Friend02PossibleTimeFragment : Fragment() {
             }
         }
 
-        //  "찾기" 버튼 클릭 시 → Suggest로 넘어갈 때도 teumList, responseId 넘기기
+        // "찾기" 버튼 클릭 시 → Suggest로 넘어갈 때도 teumList, responseId 넘기기
         binding.btnFind.setOnClickListener {
             val fragment = Friend02SuggestFragment().apply {
                 arguments = Bundle().apply {

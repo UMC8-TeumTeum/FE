@@ -1,8 +1,8 @@
 package com.umc.teumteum.data.remote.alarm.repository
 
 import android.util.Log
-import com.umc.teumteum.data.remote.alarm.dto.NotificationsPage
-import com.umc.teumteum.data.remote.alarm.dto.ReadNotificationResult
+import com.umc.teumteum.data.remote.alarm.model.NotificationsPage
+import com.umc.teumteum.data.remote.alarm.model.ReadNotificationResult
 import com.umc.teumteum.data.remote.alarm.service.NotificationService
 import javax.inject.Inject
 import javax.inject.Singleton

@@ -8,13 +8,13 @@
     android:layout_height="match_parent"
     android:clipToPadding="false"
     android:fillViewport="true"
-    android:background="@android:color/white">
+    android:background="@color/white">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/fragment_my_profile_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/white">
+        android:background="@color/white">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/top_panel"
@@ -68,7 +68,6 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!-- 프로필 부분 -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/profile_ll"
             android:layout_width="0dp"
@@ -167,7 +166,5 @@
                 android:layout_marginStart="3dp"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </androidx.core.widget.NestedScrollView>

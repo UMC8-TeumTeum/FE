@@ -70,7 +70,6 @@ class SettingViewModel @Inject constructor(
         }
     }
 
-
     fun updateRemindAlarms(minutes: List<Int>) {
         viewModelScope.launch {
             _saving.value = true

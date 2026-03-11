@@ -1,6 +1,5 @@
 package com.umc.teumteum.ui.onboarding
 
-import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -18,6 +17,7 @@ import com.umc.teumteum.ui.auth.SignUpActivity
 import com.umc.teumteum.ui.onboarding.viewModel.OnBoardingUiState
 import com.umc.teumteum.ui.onboarding.viewModel.OnBoardingViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import androidx.core.graphics.toColorInt
 
 @AndroidEntryPoint
 class OnBoardingNicknameFragment : Fragment() {
@@ -51,7 +51,6 @@ class OnBoardingNicknameFragment : Fragment() {
 
         observeViewModel()
         setupUI()
-
     }
 
     private fun setupUI() {
@@ -109,7 +108,7 @@ class OnBoardingNicknameFragment : Fragment() {
         binding.nextBtn.isEnabled = enabled
         binding.nextBtn.setBackgroundColor(
             if (enabled) requireContext().getColor(R.color.black)
-            else Color.parseColor("#F6F6F6")
+            else "#F6F6F6".toColorInt()
         )
         binding.nextBtn.setTextColor(
             if (enabled) requireContext().getColor(R.color.white)
@@ -128,23 +127,22 @@ class OnBoardingNicknameFragment : Fragment() {
                     binding.nicknameErrorTv.visibility = View.GONE
 
                     val code = state.code
-                    val msg = state.message ?: ""
+                    val msg = state.message
 
-                    // 1) 닉네임 중복(기존 로직)
+                    // 1) 닉네임 중복 검증 로직
                     if (code.contains("ONBOARDING4091")) {
                         binding.nicknameErrorTv.visibility = View.VISIBLE
                         binding.nicknameErrorTv.text = "중복된 닉네임입니다."
                         return@observe
                     }
 
-                    // 2) 닉네임 형식 오류 (서버가 COMMON400으로 주는 케이스)
+                    // 2) 닉네임 형식 오류
                     if (code.contains("COMMON400") || msg.contains("닉네임은")) {
                         binding.nicknameErrorTv.visibility = View.VISIBLE
                         binding.nicknameErrorTv.text =
                             if (msg.contains("닉네임은")) msg else "닉네임은 영어와 한글만 가능합니다."
                         return@observe
                     }
-
                 }
                 else -> Unit
             }

@@ -13,7 +13,7 @@ class TeumTeumApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        //Kakao SDK 초기화
+        // Kakao SDK 초기화
         KakaoSdk.init(
             context = this,
             appKey = BuildConfig.NATIVE_APP_KEY

@@ -1,7 +1,7 @@
 package com.umc.teumteum.ui.friend
 
+import android.annotation.SuppressLint
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
@@ -13,6 +13,7 @@ import com.umc.teumteum.R
 import com.umc.teumteum.databinding.DialogFriendMatchingPreviewBinding
 import com.umc.teumteum.ui.friend.viewModel.FriendViewModel
 import kotlin.math.abs
+import androidx.core.graphics.drawable.toDrawable
 
 class FriendMatchingPreviewDialog : DialogFragment() {
 
@@ -48,7 +49,7 @@ class FriendMatchingPreviewDialog : DialogFragment() {
     override fun onStart() {
         super.onStart()
         dialog?.window?.let { window ->
-            window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            window.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
             val params = window.attributes
             params.width = (resources.displayMetrics.widthPixels * 0.85).toInt()
             params.height = WindowManager.LayoutParams.WRAP_CONTENT
@@ -60,6 +61,7 @@ class FriendMatchingPreviewDialog : DialogFragment() {
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 

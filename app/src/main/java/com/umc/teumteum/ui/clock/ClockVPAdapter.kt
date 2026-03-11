@@ -34,10 +34,6 @@ class ClockVPAdapter<VB : ViewBinding>(
     // 주어진 Half의 페이지 인덱스
     fun positionOf(half: ClockHalf): Int = if (half == ClockHalf.AM) 0 else 1
 
-    fun refresh(half: ClockHalf) {
-        notifyItemChanged(positionOf(half))
-    }
-
     // 양쪽 페이지 모두 갱신
     fun refreshAll() {
         notifyItemChanged(0)

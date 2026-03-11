@@ -92,7 +92,7 @@ class Friend01SearchResultFragment : Fragment() {
                     viewModel.currentSearchKeyword.value = keyword
                     viewModel.addRecentKeyword(keyword)
 
-                    // 같은 Fragment에서 검색만 다시
+                    // 같은 Fragment에서 재검색
                     viewModel.searchUser(keyword)
                 }
                 true

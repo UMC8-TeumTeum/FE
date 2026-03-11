@@ -3,7 +3,6 @@ package com.umc.teumteum.ui.myhome
 import android.app.Dialog
 import android.content.Intent
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -25,6 +24,9 @@ import com.navercorp.nid.NidOAuth
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import androidx.core.graphics.drawable.toDrawable
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 
 @AndroidEntryPoint
 class MyAccountSettingFragment : Fragment() {
@@ -77,7 +79,7 @@ class MyAccountSettingFragment : Fragment() {
         dialog.setContentView(dialogView)
 
         dialog.window?.apply {
-            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
             setGravity(Gravity.CENTER)
         }
 
@@ -88,7 +90,7 @@ class MyAccountSettingFragment : Fragment() {
             dialog.dismiss()
             performLogout()
 
-            //네이버 로그아웃
+            // 네이버 로그아웃
             NidOAuth.logout(object : com.navercorp.nid.oauth.util.NidOAuthCallback {
                 override fun onSuccess() {
                 }
@@ -115,7 +117,7 @@ class MyAccountSettingFragment : Fragment() {
         dialog.setContentView(dialogView)
 
         dialog.window?.apply {
-            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
             setGravity(Gravity.CENTER)
         }
 
@@ -222,7 +224,6 @@ class MyAccountSettingFragment : Fragment() {
             runCatching { logoutUseCase.deactivateFcmAndLogout() }
 
             unlinkSocialProviderByType()
-
             navigateToLoginAndFinish()
         }
     }
@@ -253,13 +254,13 @@ class MyAccountSettingFragment : Fragment() {
             "GOOGLE" -> {
                 runCatching {
                     val gso =
-                        com.google.android.gms.auth.api.signin.GoogleSignInOptions.Builder(
-                            com.google.android.gms.auth.api.signin.GoogleSignInOptions.DEFAULT_SIGN_IN
+                        GoogleSignInOptions.Builder(
+                            GoogleSignInOptions.DEFAULT_SIGN_IN
                         )
                             .requestEmail()
                             .build()
 
-                    val client = com.google.android.gms.auth.api.signin.GoogleSignIn
+                    val client = GoogleSignIn
                         .getClient(requireContext(), gso)
 
                     client.revokeAccess().addOnCompleteListener {

@@ -63,7 +63,7 @@ class OnBoardingViewModel @Inject constructor(
     private val _remindList = MutableLiveData<List<Int>>(emptyList())
     val remindList: LiveData<List<Int>> get() = _remindList
 
-    /** 약관 동의  */
+    // 약관 동의
     fun postAgreements(request: AgreementRequest) {
         _state.value = OnBoardingUiState.Loading
         viewModelScope.launch {
@@ -75,7 +75,7 @@ class OnBoardingViewModel @Inject constructor(
         }
     }
 
-    /** 닉네임/직업 등록 */
+    // 닉네임/직종 등록
     fun postNicknameAndJob() {
         val nickname = _nickname.value.orEmpty()
         val jobField = _field.value.orEmpty()
@@ -90,7 +90,7 @@ class OnBoardingViewModel @Inject constructor(
         }
     }
 
-    /** 프리사인드 url 요청 후 실제 S3에 프로필 이미지 등록 */
+    // 프리사인드 url 요청 후 실제 S3에 프로필 이미지 등록
     fun uploadProfileImage(context: Context) {
         val uri = _profileImageUri.value ?: run {
             _state.value = OnBoardingUiState.Success
@@ -159,7 +159,7 @@ class OnBoardingViewModel @Inject constructor(
         }
     }
 
-    /** 수면 패턴 등록 (선택적) */
+    // 수면 패턴 등록
     fun postSleepPattern(request: SleepPatternRequest) {
         _state.value = OnBoardingUiState.Loading
         viewModelScope.launch {
@@ -171,7 +171,7 @@ class OnBoardingViewModel @Inject constructor(
         }
     }
 
-    /** 반복 일정 등록 (선택적) */
+    // 반복 일정 등록
     fun postSchedule(request: ScheduleRequest) {
         _state.value = OnBoardingUiState.Loading
         viewModelScope.launch {
@@ -183,7 +183,7 @@ class OnBoardingViewModel @Inject constructor(
         }
     }
 
-    //반복 일정 추가
+    // 반복 일정 추가
     fun addSchedule(dayIndex: Int, schedule: Schedule) {
         val list = scheduleMap.getOrPut(dayIndex) { mutableListOf() }
         list.add(schedule)
@@ -200,8 +200,7 @@ class OnBoardingViewModel @Inject constructor(
         return current.size != target.size || current != target
     }
 
-
-    /** 리마인드 알림 등록 (선택적) */
+    // 리마인드 알림 등록
     fun postRemind(request: RemindRequest) {
         _state.value = OnBoardingUiState.Loading
         viewModelScope.launch {
@@ -213,12 +212,11 @@ class OnBoardingViewModel @Inject constructor(
         }
     }
 
-    /** 상태 초기화 */
     fun resetState() {
         _state.value = OnBoardingUiState.Idle
     }
 
-    /** 공통 에러 처리 */
+    // 공통 에러 처리
     private fun handleError(e: Throwable) {
         if (e is ApiException) {
             _state.value = OnBoardingUiState.Error(
@@ -233,7 +231,7 @@ class OnBoardingViewModel @Inject constructor(
         }
     }
 
-    //수면 시간 설정
+    // 수면 시간 설정
     fun setSleepStartTime(start: LocalTime) {
         _sleepStartTime.value = start
     }
@@ -242,7 +240,6 @@ class OnBoardingViewModel @Inject constructor(
         _sleepEndTime.value = end
     }
 
-    // 닉네임, 직종 저장
     fun setNickname(value: String) {
         _nickname.value = value
     }
@@ -270,7 +267,7 @@ class OnBoardingViewModel @Inject constructor(
         _remindList.value = current.sorted()
     }
 
-    fun updateSchedule(dayIndex: Int, scheduleId: String, new: com.umc.teumteum.ui.onboarding.data.Schedule) {
+    fun updateSchedule(dayIndex: Int, scheduleId: String, new: Schedule) {
         val list = scheduleMap[dayIndex] ?: return
         val idx = list.indexOfFirst { it.id == scheduleId }
         if (idx == -1) return

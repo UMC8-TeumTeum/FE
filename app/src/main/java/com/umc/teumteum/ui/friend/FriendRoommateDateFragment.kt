@@ -28,8 +28,8 @@ import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
 import com.kizitonwose.calendar.view.CalendarView
 import com.kizitonwose.calendar.view.MonthDayBinder
 import com.kizitonwose.calendar.view.ViewContainer
+import com.umc.teumteum.utils.weekdayShortKorean
 import dagger.hilt.android.AndroidEntryPoint
-import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
@@ -94,7 +94,6 @@ class FriendRoommateDateFragment : Fragment() {
             insets
         }
 
-
         // 2-1) 좌측 = 상대(타겟) 표시
         binding.profileNicknameTv1.text = targetNickname ?: "상대"
         Glide.with(binding.profileIv1)
@@ -123,7 +122,6 @@ class FriendRoommateDateFragment : Fragment() {
         binding.nextBtn.setBackgroundColor(Color.parseColor("#F6F6F6"))
         binding.nextBtn.setTextColor(Color.parseColor("#0F0F0F"))
 
-        // 뒤로가기 버튼
         binding.btnBack.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
@@ -261,16 +259,6 @@ class FriendRoommateDateFragment : Fragment() {
             }
             container.addView(tv)
         }
-    }
-
-    private fun weekdayShortKorean(dow: DayOfWeek): String = when (dow) {
-        DayOfWeek.SUNDAY -> "일"
-        DayOfWeek.MONDAY -> "월"
-        DayOfWeek.TUESDAY -> "화"
-        DayOfWeek.WEDNESDAY -> "수"
-        DayOfWeek.THURSDAY -> "목"
-        DayOfWeek.FRIDAY -> "금"
-        DayOfWeek.SATURDAY -> "토"
     }
 
     private fun setupNavigationButtons() {

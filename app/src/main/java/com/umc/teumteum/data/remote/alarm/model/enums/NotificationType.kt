@@ -1,4 +1,4 @@
-package com.umc.teumteum.data.remote.alarm.dto.enums
+package com.umc.teumteum.data.remote.alarm.model.enums
 
 import com.google.gson.annotations.SerializedName
 

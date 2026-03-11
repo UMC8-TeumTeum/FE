@@ -59,7 +59,6 @@ class OnBoardingProfileFragment : Fragment() {
             binding.cameraBtn.visibility = View.GONE
         }
 
-
         val initialMarginBottom =
             (binding.nextBtn.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin
 
