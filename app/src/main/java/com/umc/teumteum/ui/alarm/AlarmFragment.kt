@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -26,7 +27,7 @@ class AlarmFragment : Fragment() {
     private var _binding: FragmentHomeAlarmBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: NotificationViewModel by viewModels()
+    private val viewModel: NotificationViewModel by activityViewModels()
     private val friendViewModel: FriendViewModel by viewModels()
 
     private lateinit var adapter: AlarmRVAdapter
@@ -127,8 +128,9 @@ class AlarmFragment : Fragment() {
 
         observeViewModel()
 
-        // 최초 로드
-        viewModel.loadFirst()
+        if (viewModel.items.value.isNullOrEmpty()) {
+            viewModel.loadFirst()
+        }
     }
 
     private fun observeViewModel() {
@@ -166,6 +168,7 @@ class AlarmFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         navigating = false
+        viewModel.refresh()
     }
 
     private companion object {

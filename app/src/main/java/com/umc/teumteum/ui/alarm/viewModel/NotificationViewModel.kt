@@ -30,16 +30,22 @@ class NotificationViewModel @Inject constructor(
     private var runningJob: Job? = null
 
     fun loadFirst() {
-        if (isLoading) return
+        if (isLoading || !_items.value.isNullOrEmpty()) return
         page = 1
         hasNext = true
-        _items.value = emptyList()
         fetch(page)
     }
 
     fun loadNext() {
         if (isLoading || !hasNext) return
         fetch(page + 1)
+    }
+
+    fun refresh() {
+        if (isLoading) return
+        page = 1
+        hasNext = true
+        fetch(page)
     }
 
     private fun fetch(targetPage: Int) {
@@ -51,12 +57,12 @@ class NotificationViewModel @Inject constructor(
                     hasNext = pageData.hasNext
                     page = pageData.currentPage
 
-                    val merged = if (targetPage == 1) {
-                        pageData.content
-                    } else {
-                        val old = _items.value.orEmpty()
-                        old + pageData.content
-                    }
+                    val old = _items.value.orEmpty()
+
+                    val merged = (pageData.content + old)
+                        .distinctBy { it.id }
+                        .sortedByDescending { it.createdAt }
+
                     _items.value = merged
                 }
                 .onFailure { e ->
