@@ -168,6 +168,7 @@ class AlarmFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         navigating = false
+        viewModel.refresh()
     }
 
     private companion object {

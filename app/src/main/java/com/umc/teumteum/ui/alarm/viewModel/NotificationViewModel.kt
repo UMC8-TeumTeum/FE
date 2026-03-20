@@ -41,6 +41,13 @@ class NotificationViewModel @Inject constructor(
         fetch(page + 1)
     }
 
+    fun refresh() {
+        if (isLoading) return
+        page = 1
+        hasNext = true
+        fetch(page)
+    }
+
     private fun fetch(targetPage: Int) {
         isLoading = true
         runningJob?.cancel()
