@@ -144,7 +144,7 @@ class FriendProfileFollowFragment : Fragment() {
 
             val userName = binding.profileNicknameTv.text.toString()
 
-            FriendBlockBottomSheet
+            BottomSheetFriendBlockFragment
                 .newInstance(targetUserId, userName)
                 .show(parentFragmentManager, "FriendBlockBottomSheet")
         }
@@ -162,7 +162,6 @@ class FriendProfileFollowFragment : Fragment() {
     }
 
     private fun observeViewModel() {
-        // 프로필 LiveData
         viewModel.friendProfile.observe(viewLifecycleOwner) { result ->
             binding.profileNicknameTv.text = result.name
             binding.profileFieldTv.text = result.field
@@ -181,7 +180,6 @@ class FriendProfileFollowFragment : Fragment() {
             }
         }
 
-        // 팔로우 성공 메시지
         viewModel.followMessage.observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let { msg ->
                 if (msg.contains("성공") || msg.contains("완료")) {
@@ -190,7 +188,6 @@ class FriendProfileFollowFragment : Fragment() {
             }
         }
 
-        // 에러 메시지
         viewModel.errorMessage.observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let { msg ->
                 Log.e("FRIEND_PROFILE_FRAGMENT", msg)
