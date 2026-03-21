@@ -68,6 +68,7 @@
                 android:lineSpacingExtra="0dp"
                 tools:text="사용자가 작성한 제목"
                 android:textSize="12sp"
+                android:textColor="@color/text_primary"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/border" />
