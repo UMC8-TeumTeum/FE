@@ -60,18 +60,15 @@ class Friend02SuggestFragment : Fragment() {
             insets
         }
 
-        // 바텀 네비게이션 숨기기
         (activity as? MainActivity)?.hideBottomBar()
 
-        //  전달받은 데이터 꺼내기
+        // 전달받은 데이터 꺼내기
         teumList = arguments?.getParcelableArrayList("teumList") ?: emptyList()
         responseId = arguments?.getInt("responseId") ?: -1
 
-        //  어댑터 연결
         adapter = FriendRequestCardAdapter(teumList)
         binding.requestViewPager.adapter = adapter
 
-        //  뒤로가기 버튼 처리
         binding.backButton.setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.main_frm, Friend02PossibleTimeFragment.newInstance(ArrayList(teumList), responseId))
@@ -79,7 +76,7 @@ class Friend02SuggestFragment : Fragment() {
                 .commit()
         }
 
-        //  전송 버튼 클릭 시 → 재요청 및 FriendSendFragment 이동
+        // 전송 버튼 클릭 → 재요청 및 프레그먼 이동
         binding.btnSend.setOnClickListener {
             val selected = timeCardAdapter.getSelectedItem()
             Log.d("SELECTED_TIME_CARD", selected.toString())
@@ -120,21 +117,16 @@ class Friend02SuggestFragment : Fragment() {
         observeViewModel()
 
         val currentItem = teumList.firstOrNull { it.responseId == responseId } ?: teumList.firstOrNull()
-        val requesterId = currentItem?.senderUser?.userId
-        if (requesterId == null) {
-            return
-        }
+        val requesterId = currentItem?.senderUser?.userId ?: return
 
-        // 2) 날짜 받기
         val selectedDate = currentItem.date
 
-        // 3) Request 생성 (내 아이디 + 요청자 아이디)
+        // 요청 생성 (내 아이디 + 요청자 아이디)
         val request = PossibleTimeRequest(
             userIds = listOfNotNull(requesterId),
             date = selectedDate
         )
 
-        // 4) API 호출
         viewModel.getPossibleTimeWithFriend(request)
     }
 

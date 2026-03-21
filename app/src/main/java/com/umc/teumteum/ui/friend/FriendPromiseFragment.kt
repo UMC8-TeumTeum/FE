@@ -258,7 +258,7 @@ class FriendPromiseFragment : Fragment() {
         scheduleId: Int,
         isPast: Boolean
     ) {
-        val bottomSheet = PromiseDetailBottomSheet(
+        val bottomSheet = BottomSheetPromiseDetailFragment(
             detail = detail,
             scheduleId = scheduleId,
             isPast = isPast

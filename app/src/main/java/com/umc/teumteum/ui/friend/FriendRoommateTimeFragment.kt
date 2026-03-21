@@ -88,7 +88,7 @@ class FriendRoommateTimeFragment : Fragment() {
         val profileList = mutableListOf<FriendProfileResult>()
         val addedFriends = arguments?.getParcelableArrayList<FriendProfileResult>("addedFriends") ?: emptyList()
 
-        // 1. 나
+        // 본인
         profileList.add(
             FriendProfileResult(
                 userId = -1,
@@ -100,7 +100,7 @@ class FriendRoommateTimeFragment : Fragment() {
             )
         )
 
-        // 2. 상대
+        // 상대방
         profileList.add(
             FriendProfileResult(
                 userId = targetUserId,

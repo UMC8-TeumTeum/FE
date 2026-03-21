@@ -15,7 +15,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class FriendBlockBottomSheet : BottomSheetDialogFragment() {
+class BottomSheetFriendBlockFragment : BottomSheetDialogFragment() {
 
     private var _binding: BottomSheetFriendBlockBinding? = null
     private val binding get() = _binding!!
@@ -71,8 +71,8 @@ class FriendBlockBottomSheet : BottomSheetDialogFragment() {
         private const val ARG_USER_ID = "userId"
         private const val ARG_USER_NAME = "userName"
 
-        fun newInstance(userId: Int, userName: String): FriendBlockBottomSheet {
-            return FriendBlockBottomSheet().apply {
+        fun newInstance(userId: Int, userName: String): BottomSheetFriendBlockFragment {
+            return BottomSheetFriendBlockFragment().apply {
                 arguments = Bundle().apply {
                     putInt(ARG_USER_ID, userId)
                     putString(ARG_USER_NAME, userName)

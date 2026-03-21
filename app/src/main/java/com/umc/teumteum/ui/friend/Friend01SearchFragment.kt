@@ -33,7 +33,7 @@ class Friend01SearchFragment : Fragment() {
     ): View {
         _binding = FragmentFriend01SearchBinding.inflate(inflater, container, false)
 
-        // 검색 화면 "처음 진입" 시 검색어 초기화
+        // 처음 진입 시 검색어 초기화
         viewModel.currentSearchKeyword.value = null
 
         return binding.root
@@ -44,12 +44,10 @@ class Friend01SearchFragment : Fragment() {
 
         (activity as? MainActivity)?.hideBottomBar()
 
-        // 최근 검색어 목록 관찰
         viewModel.recentKeywords.observe(viewLifecycleOwner) { keywords ->
             updateSearchList(keywords)
         }
 
-        // 뒤로가기
         binding.backButton.setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.main_frm, FriendFragment())

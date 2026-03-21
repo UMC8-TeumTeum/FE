@@ -101,11 +101,11 @@ class Friend02RequestFragment : Fragment() {
             if (response.hasConflict) {
                 // 겹침 있음 → 다른 바텀시트
                 val conflictList = ArrayList(response.conflictingSchedules)
-                val bottomSheet = FriendTodoBottomSheetFragment.newInstance(responseId, conflictList)
+                val bottomSheet = BottomSheetFriendTodoFragment.newInstance(responseId, conflictList)
                 bottomSheet.show(parentFragmentManager, bottomSheet.tag)
             } else {
                 // 겹침 없음 → 기존 수락 바텀시트
-                val bottomSheet = Friend02AcceptBottomSheetFragment.newInstance(responseId)
+                val bottomSheet = BottomSheetFriend02AcceptFragment.newInstance(responseId)
                 bottomSheet.show(parentFragmentManager, bottomSheet.tag)
             }
         }
@@ -128,7 +128,7 @@ class Friend02RequestFragment : Fragment() {
             val currentItem = binding.requestViewPager.currentItem
             val responseId = teumList.getOrNull(currentItem)?.responseId ?: return@setOnClickListener
 
-            val bottomSheet = Friend02RejectBottomSheetFragment.newInstance(responseId)
+            val bottomSheet = BottomSheetFriend02RejectFragment.newInstance(responseId)
             bottomSheet.show(parentFragmentManager, bottomSheet.tag)
         }
 
@@ -205,7 +205,7 @@ class Friend02RequestFragment : Fragment() {
             val targetType = "TEUM_REQUEST"
             val targetId = current.requestId.toLong()
 
-            FriendReportChoiceBottomSheet
+            BottomSheetFriendReportChoiceFragment
                 .newInstance(targetType, targetId)
                 .show(parentFragmentManager, "FriendReportChoiceBottomSheet")
         }

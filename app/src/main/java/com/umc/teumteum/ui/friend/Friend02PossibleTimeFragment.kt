@@ -46,7 +46,7 @@ class Friend02PossibleTimeFragment : Fragment() {
             insets
         }
 
-        //  전달받은 데이터 받기
+        // 전달받은 데이터 받기
         val selected = viewModel.selectedTeum.value
         if (selected == null) {
             parentFragmentManager.popBackStack()
@@ -56,18 +56,16 @@ class Friend02PossibleTimeFragment : Fragment() {
         teumList = listOf(selected)
         responseId = arguments?.getInt("responseId") ?: -1
 
-        // 어댑터 연결
         adapter = FriendRequestCardAdapter(teumList)
         binding.requestViewPager.adapter = adapter
 
         (activity as? MainActivity)?.hideBottomBar()
 
-        // 뒤로가기
         binding.backButton.setOnClickListener {
             val selected = viewModel.selectedTeum.value
 
             if (selected?.resend == true) {
-                //  재요청 카드였으면 Response 화면으로
+                // 재요청 카드: response 화면
                 val frag = Friend02ResponseFragment().apply {
                     arguments = Bundle().apply {
                         putParcelable("teumItem", selected)
@@ -78,7 +76,7 @@ class Friend02PossibleTimeFragment : Fragment() {
                     .addToBackStack(null)
                     .commit()
             } else {
-                // 원본 요청 카드였으면 Request 화면으로
+                // 원본 요청 카드: request 화면
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.main_frm, Friend02RequestFragment())
                     .addToBackStack(null)
@@ -86,7 +84,7 @@ class Friend02PossibleTimeFragment : Fragment() {
             }
         }
 
-        // "찾기" 버튼 클릭 시 → Suggest로 넘어갈 때도 teumList, responseId 넘기기
+        // "찾기" 버튼 클릭  → teumList, responseId 넘기기
         binding.btnFind.setOnClickListener {
             val fragment = Friend02SuggestFragment().apply {
                 arguments = Bundle().apply {

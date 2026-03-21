@@ -1,7 +1,6 @@
 package com.umc.teumteum.ui.friend
 
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -80,7 +79,7 @@ class Friend02ResponseFragment  : Fragment() {
         // 수락 버튼
         binding.btnAccept.setOnClickListener {
             teumItem?.responseId?.let { responseId ->
-                val bottomSheet = Friend02AcceptBottomSheetFragment.newInstance(responseId)
+                val bottomSheet = BottomSheetFriend02AcceptFragment.newInstance(responseId)
                 bottomSheet.show(parentFragmentManager, bottomSheet.tag)
             }
         }
@@ -88,7 +87,7 @@ class Friend02ResponseFragment  : Fragment() {
         // 거절 버튼
         binding.btnReject.setOnClickListener {
             teumItem?.responseId?.let { responseId ->
-                val bottomSheet = Friend02RejectBottomSheetFragment.newInstance(responseId)
+                val bottomSheet = BottomSheetFriend02RejectFragment.newInstance(responseId)
                 bottomSheet.show(parentFragmentManager, bottomSheet.tag)
             }
         }
@@ -155,7 +154,7 @@ class Friend02ResponseFragment  : Fragment() {
             val targetType = "TEUM_REQUEST"
             val targetId = current.requestId.toLong()
 
-            FriendReportChoiceBottomSheet
+            BottomSheetFriendReportChoiceFragment
                 .newInstance(targetType, targetId)
                 .show(parentFragmentManager, "FriendReportChoiceBottomSheet")
         }

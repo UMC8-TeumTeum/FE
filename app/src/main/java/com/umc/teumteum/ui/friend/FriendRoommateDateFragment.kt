@@ -1,6 +1,5 @@
 package com.umc.teumteum.ui.friend
 
-import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
@@ -34,6 +33,7 @@ import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import androidx.core.graphics.toColorInt
 
 @AndroidEntryPoint
 class FriendRoommateDateFragment : Fragment() {
@@ -94,7 +94,7 @@ class FriendRoommateDateFragment : Fragment() {
             insets
         }
 
-        // 2-1) 좌측 = 상대(타겟) 표시
+        // 좌측: 상대방 표시
         binding.profileNicknameTv1.text = targetNickname ?: "상대"
         Glide.with(binding.profileIv1)
             .load(targetProfileUrl)
@@ -103,7 +103,7 @@ class FriendRoommateDateFragment : Fragment() {
             .circleCrop()
             .into(binding.profileIv1)
 
-        // 2-2) 우측 = 나 표시 (ViewModel에서 내 프로필 관찰)
+        // 우측: 본인 표시
         viewModel.fetchMyInfo() // 최초 1회 로딩
         viewModel.myNickname.observe(viewLifecycleOwner) { myNick ->
             binding.profileNicknameTv2.text = myNick ?: "나"
@@ -119,8 +119,8 @@ class FriendRoommateDateFragment : Fragment() {
 
         // 초기 버튼 상태 비활성화
         binding.nextBtn.isEnabled = false
-        binding.nextBtn.setBackgroundColor(Color.parseColor("#F6F6F6"))
-        binding.nextBtn.setTextColor(Color.parseColor("#0F0F0F"))
+        binding.nextBtn.setBackgroundColor("#F6F6F6".toColorInt())
+        binding.nextBtn.setTextColor("#0F0F0F".toColorInt())
 
         binding.btnBack.setOnClickListener {
             parentFragmentManager.popBackStack()
@@ -140,7 +140,7 @@ class FriendRoommateDateFragment : Fragment() {
                 putString("targetNickname", targetNickname)
                 putString("targetProfileUrl", targetProfileUrl)
 
-                //  내 정보
+                // 본인 정보
                 putString("myNickname", viewModel.myNickname.value)
                 putString("myProfileUrl", viewModel.myProfileUrl.value)
             }
@@ -157,7 +157,6 @@ class FriendRoommateDateFragment : Fragment() {
                 .addToBackStack(null)
                 .commit()
         }
-
     }
 
     private fun setupHeader() {

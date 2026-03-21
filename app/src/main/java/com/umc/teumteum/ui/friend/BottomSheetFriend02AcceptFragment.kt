@@ -19,7 +19,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import androidx.core.graphics.toColorInt
 
 @AndroidEntryPoint
-class Friend02AcceptBottomSheetFragment : BottomSheetDialogFragment() {
+class BottomSheetFriend02AcceptFragment : BottomSheetDialogFragment() {
 
     private var _binding: BottomSheetFriend02AcceptBinding? = null
     private val binding get() = _binding!!
@@ -87,8 +87,8 @@ class Friend02AcceptBottomSheetFragment : BottomSheetDialogFragment() {
     }
 
     companion object {
-        fun newInstance(responseId: Int): Friend02AcceptBottomSheetFragment {
-            return Friend02AcceptBottomSheetFragment().apply {
+        fun newInstance(responseId: Int): BottomSheetFriend02AcceptFragment {
+            return BottomSheetFriend02AcceptFragment().apply {
                 arguments = Bundle().apply {
                     putInt("responseId", responseId)
                 }

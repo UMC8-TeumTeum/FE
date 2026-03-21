@@ -19,14 +19,13 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import androidx.core.graphics.toColorInt
 
-class FriendReportChoiceBottomSheet : BottomSheetDialogFragment() {
+class BottomSheetFriendReportChoiceFragment : BottomSheetDialogFragment() {
 
     private var _binding: BottomSheetFriendReportChoiceBinding? = null
     private val binding get() = _binding!!
 
     private val viewModel: FriendViewModel by activityViewModels()
 
-    //  서버용: reasonId를 저장
     private var selectedReasonId: Int? = null
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -73,7 +72,7 @@ class FriendReportChoiceBottomSheet : BottomSheetDialogFragment() {
         setupSingleSelection(binding.optPrivacyCb, 12)
         setupSingleSelection(binding.optSpamCb, 13)
 
-        // 14번은 무조건 텍스트 바텀시트로 이동 (여기서 신고 X)
+        // 14번: 텍스트 바텀시트로 이동
         binding.optOtherArrow.setOnClickListener {
             binding.optOtherArrow.isEnabled = false
 
@@ -181,7 +180,7 @@ class FriendReportChoiceBottomSheet : BottomSheetDialogFragment() {
         private const val ARG_TARGET_TYPE = "arg_target_type"
         private const val ARG_TARGET_ID = "arg_target_id"
 
-        fun newInstance(targetType: String, targetId: Long) = FriendReportChoiceBottomSheet().apply {
+        fun newInstance(targetType: String, targetId: Long) = BottomSheetFriendReportChoiceFragment().apply {
             arguments = Bundle().apply {
                 putString(ARG_TARGET_TYPE, targetType) // "USER" | "TEUM_REQUEST"
                 putLong(ARG_TARGET_ID, targetId)

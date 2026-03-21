@@ -155,7 +155,7 @@ class FriendProfileFollowFragment : Fragment() {
 
             if (targetUserId == -1) return@setOnClickListener
 
-            FriendReportChoiceBottomSheet
+            BottomSheetFriendReportChoiceFragment
                 .newInstance("USER", targetUserId.toLong())
                 .show(parentFragmentManager, "FriendReportChoiceBottomSheet")
         }

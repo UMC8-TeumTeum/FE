@@ -22,7 +22,7 @@ import java.time.LocalTime
 import java.time.format.TextStyle
 import java.util.*
 
-class PromiseDetailBottomSheet(
+class BottomSheetPromiseDetailFragment(
     private val detail: TeumScheduleDetailResult,
     private val scheduleId: Int,
     private val isPast: Boolean
@@ -33,7 +33,6 @@ class PromiseDetailBottomSheet(
 
     private val viewModel: FriendViewModel by activityViewModels()
 
-    // 바텀 시트 배경
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
 
@@ -70,7 +69,6 @@ class PromiseDetailBottomSheet(
 
         Log.d("PromiseDetailBottomSheet", "바텀시트 표시됨 - title: ${detail.title}")
 
-        // UI 설정
         binding.tvTitle.text = detail.title
         binding.tvDate1.text = formatDate(detail.date)
         binding.tvTime1.text = formatTime(detail.startTime)
@@ -91,9 +89,8 @@ class PromiseDetailBottomSheet(
         binding.btnCancelPromise.visibility =
             if (isPastLocal) View.GONE else View.VISIBLE
 
-        // 클릭 시 취소 요청만 호출
         binding.btnCancelPromise.setOnClickListener {
-            FriendTeumDeleteBottomSheet
+            BottomSheetFriendTeumDeleteFragment
                 .newInstance(scheduleId)
                 .show(parentFragmentManager, "FriendTeumDeleteBottomSheet")
         }

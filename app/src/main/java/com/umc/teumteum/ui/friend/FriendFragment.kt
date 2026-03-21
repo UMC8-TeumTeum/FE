@@ -64,14 +64,14 @@ class FriendFragment : Fragment() {
                 viewModel.readTeumRequest(item.responseId)
 
                 val fragment = if (item.resend) {
-                    // 재요청 카드면 Response 화면으로
+                    // 재요청 카드: response 화면
                     Friend02ResponseFragment().apply {
                         arguments = Bundle().apply {
-                            putParcelable("teumItem", item)   // 단일 아이템 전달
+                            putParcelable("teumItem", item)
                         }
                     }
                 } else {
-                    // 원본 요청 카드면 Request 화면으로
+                    // 원본 요청 카드: request 화면
                     Friend02RequestFragment().apply {
                         arguments = Bundle().apply {
                             val originalRequests = viewModel.receivedTeums.value
@@ -92,7 +92,7 @@ class FriendFragment : Fragment() {
                 viewModel.selectTeum(item)
 
                 parentFragmentManager.beginTransaction()
-                    .replace(R.id.main_frm, fragment)  // 선택된 fragment 사용
+                    .replace(R.id.main_frm, fragment)
                     .addToBackStack(null)
                     .commit()
             }
@@ -106,7 +106,7 @@ class FriendFragment : Fragment() {
             binding.recommendRecyclerView.removeItemDecorationAt(0)
         }
 
-        // 아이템 간격 12dp (마지막 제외), RTL 대응
+        // 아이템 간격 12dp, RTL 대응
         binding.recommendRecyclerView.addItemDecoration(object : RecyclerView.ItemDecoration() {
             override fun getItemOffsets(
                 outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State
@@ -123,7 +123,7 @@ class FriendFragment : Fragment() {
                 if (!isLast) {
                     if (isRtl) outRect.left = space else outRect.right = space
                 } else {
-                    // 마지막 아이템은 간격 없음 (오른쪽 21dp 패딩이 ‘끝 여백’ 역할)
+                    // 마지막 아이템은 간격 없음
                     outRect.set(0, 0, 0, 0)
                 }
             }
@@ -173,14 +173,14 @@ class FriendFragment : Fragment() {
                                 putString("name", profile.name)
                                 putString("field", profile.field)
                                 putString("imageUrl", profile.profileImageUrl)
-                                putString("fromTab", "follower") // 탭 정보 추가
+                                putString("fromTab", "follower")
                             }
                         }
                     } else {
                         FriendProfileFollowFragment().apply {
                             arguments = Bundle().apply {
                                 putInt("userId", profile.userId)
-                                putString("fromTab", "follower") // 탭 정보 추가
+                                putString("fromTab", "follower")
                             }
                         }
                     }
@@ -220,7 +220,6 @@ class FriendFragment : Fragment() {
             }
         )
 
-        // 리사이클러뷰 세팅
         binding.followingRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = followingAdapter
@@ -304,14 +303,13 @@ class FriendFragment : Fragment() {
                 }
             }
 
-            // 3) 전달한 인스턴스(frag)로 교체
+            // 전달한 인스턴스(frag)로 교체
             parentFragmentManager.beginTransaction()
                 .replace(R.id.main_frm, frag)
                 .addToBackStack(null)
                 .commit()
         }
 
-        // ViewModel 옵저버 세팅
         viewModel.followingUsers.observe(viewLifecycleOwner) { list ->
             followingAdapter.updateData(list)
         }
@@ -320,7 +318,6 @@ class FriendFragment : Fragment() {
             followingAdapter.setFavoriteMap(favMap)
         }
 
-        //  추가: 팔로워 목록 옵저버
         viewModel.followerUsers.observe(viewLifecycleOwner) { list ->
             followerAdapter.updateData(list)
         }
@@ -360,7 +357,6 @@ class FriendFragment : Fragment() {
         super.onResume()
         (activity as? MainActivity)?.showBottomBar()
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

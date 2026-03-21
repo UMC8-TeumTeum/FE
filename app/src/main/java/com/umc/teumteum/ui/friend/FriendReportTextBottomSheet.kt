@@ -83,7 +83,7 @@ class FriendReportTextBottomSheet : BottomSheetDialogFragment() {
         }
 
         binding.btnBack.setOnClickListener {
-            FriendReportChoiceBottomSheet
+            BottomSheetFriendReportChoiceFragment
                 .newInstance(targetType, targetId)
                 .show(parentFragmentManager, "FriendReportChoiceBottomSheet")
             dismiss()

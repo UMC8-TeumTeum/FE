@@ -20,7 +20,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class FriendTodoBottomSheetFragment : BottomSheetDialogFragment() {
+class BottomSheetFriendTodoFragment : BottomSheetDialogFragment() {
 
     private var _binding: BottomSheetFriendTodoBinding? = null
     private val binding get() = _binding!!
@@ -155,8 +155,8 @@ class FriendTodoBottomSheetFragment : BottomSheetDialogFragment() {
         fun newInstance(
             responseId: Int,
             conflictList: ArrayList<TodoConflictItem>
-        ): FriendTodoBottomSheetFragment {
-            return FriendTodoBottomSheetFragment().apply {
+        ): BottomSheetFriendTodoFragment {
+            return BottomSheetFriendTodoFragment().apply {
                 arguments = Bundle().apply {
                     putInt(ARG_RESPONSE_ID, responseId)
                     putParcelableArrayList(ARG_CONFLICT_LIST, conflictList)
