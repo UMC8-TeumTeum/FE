@@ -20,6 +20,7 @@ import com.umc.teumteum.utils.enableTapToNext
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.umc.teumteum.databinding.BottomSheetRoutineModifyBinding
+import com.umc.teumteum.databinding.FragmentHomeBinding
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -30,7 +31,9 @@ class BottomSheetRoutineModifyFragment(
     private val targetRoutine: MyRoutine,
 ) : BottomSheetDialogFragment() {
 
-    private lateinit var binding: BottomSheetRoutineModifyBinding
+    private var _binding: BottomSheetRoutineModifyBinding? = null
+    private val binding get() = _binding!!
+
     private val dayNames = listOf("일", "월", "화", "수", "목", "금", "토")
 
     private var startTime: LocalTime? = null
@@ -48,7 +51,7 @@ class BottomSheetRoutineModifyFragment(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = BottomSheetRoutineModifyBinding.inflate(inflater, container, false)
+        _binding = BottomSheetRoutineModifyBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -86,6 +89,8 @@ class BottomSheetRoutineModifyFragment(
         }
 
         binding.saveBtn.setOnClickListener {
+            binding.saveBtn.isEnabled = false
+
             val title = binding.scheduleTitleEt.text.toString().trim()
             val description = binding.descriptionTextEt.text.toString().trim()
 
@@ -136,6 +141,8 @@ class BottomSheetRoutineModifyFragment(
         }
 
         binding.deleteBtn.setOnClickListener {
+            binding.deleteBtn.isEnabled = false
+
             viewModel.deleteRoutine(
                 routineId = targetRoutine.routineId,
                 dayIndex = selectedDayIndex
@@ -279,5 +286,10 @@ class BottomSheetRoutineModifyFragment(
         val minuteStr = "%02d".format(time.minute)
         val idx = minuteValues.indexOf(minuteStr).let { if (it == -1) 0 else it }
         minutePicker.value = idx
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
