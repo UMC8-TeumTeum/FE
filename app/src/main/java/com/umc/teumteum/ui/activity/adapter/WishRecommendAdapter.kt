@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.umc.teumteum.R
 import com.umc.teumteum.data.remote.activity.model.ActivityWishResult
 import com.umc.teumteum.databinding.ItemWishlistBinding
-import com.umc.teumteum.ui.activity.BottomSheetContentFragment
+import com.umc.teumteum.ui.activity.BottomSheetActivityContentFragment
 import com.umc.teumteum.ui.activity.FillingSetting01Fragment
 import com.umc.teumteum.utils.setOnSingleClickListener
 
@@ -41,7 +41,7 @@ class WishRecommendAdapter(private var wishList: List<ActivityWishResult>, priva
                 putString("content", item.content)
                 putString("time", item.estimatedDuration)
             }
-            BottomSheetContentFragment().apply { arguments = args }
+            BottomSheetActivityContentFragment().apply { arguments = args }
                 .show(fragmentManager, CONTENT_SHEET_TAG)
         }
 

@@ -20,7 +20,7 @@ class RecommendAdapter(
         notifyDataSetChanged()
     }
 
-    //읽지 않은 요청
+    // 읽지 않은 요청
     inner class RecommendViewHolder(val binding: Friend01ItemRecommendCardBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -29,14 +29,13 @@ class RecommendAdapter(
             val receiverCount = item.receiverCount
 
             val displayName = if (item.resend) {
-                "나 > $nickname"   // 재요청이면 "나 > 상대방 이름"
+                "나 > $nickname" // 재요청: "나 > 상대방 이름"
             } else {
                 if (receiverCount <= 1) nickname else "$nickname 외 ${receiverCount - 1}명"
             }
             binding.tvName.text = displayName
 
-
-            //  재요청이면 고정 텍스트
+            // 재요청: 고정 텍스트
             binding.tvDesc.text = if (item.resend) {
                 "시간 제안이 도착했어요"
             } else {
@@ -57,7 +56,7 @@ class RecommendAdapter(
         }
     }
 
-    //읽은 요청
+    // 읽은 요청
     inner class RecommendReadViewHolder(val binding: Friend01ItemRecommendCardReadBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -66,14 +65,13 @@ class RecommendAdapter(
             val receiverCount = item.receiverCount
 
             val displayName = if (item.resend) {
-                "나 > $nickname"   // 재요청이면 "나 > 상대방 이름"
+                "나 > $nickname" // 재요청: "나 > 상대방 이름"
             } else {
                 if (receiverCount <= 1) nickname else "$nickname 외 ${receiverCount - 1}명"
             }
             binding.tvName.text = displayName
 
-
-            //  재요청이면 고정 텍스트
+            // 재요청: 고정 텍스트
             binding.tvDesc.text = if (item.resend) {
                 "시간 제안이 도착했어요"
             } else {
@@ -128,4 +126,3 @@ class RecommendAdapter(
 
     override fun getItemCount(): Int = teumList.size
 }
-

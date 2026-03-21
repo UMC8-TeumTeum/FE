@@ -43,12 +43,12 @@ class FriendRoommateFriendFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        selectedDate     = arguments?.getString("selected_date")
-        targetUserId     = arguments?.getInt("targetUserId", -1) ?: -1
-        targetNickname   = arguments?.getString("targetNickname")
+        selectedDate = arguments?.getString("selected_date")
+        targetUserId = arguments?.getInt("targetUserId", -1) ?: -1
+        targetNickname = arguments?.getString("targetNickname")
         targetProfileUrl = arguments?.getString("targetProfileUrl")
-        myNickname       = arguments?.getString("myNickname")
-        myProfileUrl     = arguments?.getString("myProfileUrl")
+        myNickname = arguments?.getString("myNickname")
+        myProfileUrl = arguments?.getString("myProfileUrl")
     }
 
     override fun onCreateView(
@@ -66,7 +66,6 @@ class FriendRoommateFriendFragment : Fragment() {
         val selectedDate = arguments?.getString("selected_date")
         binding.dateView.text = selectedDate ?: "날짜 없음"
 
-        // 하단 바 숨기기
         (activity as? MainActivity)?.hideBottomBar()
 
         addedFriendAdapter = AddedFriendAdapter()
@@ -96,8 +95,7 @@ class FriendRoommateFriendFragment : Fragment() {
             addedFriendAdapter.submitList(merged)
         }
 
-
-        // 좌측(상대)
+        // 좌측(상대방)
         binding.profileNicknameTv1.text = targetNickname ?: "상대"
         Glide.with(this)
             .load(targetProfileUrl)
@@ -106,7 +104,7 @@ class FriendRoommateFriendFragment : Fragment() {
             .circleCrop()
             .into(binding.profileIv1)
 
-        // 우측(나)
+        // 우측(본인)
         binding.profileNicknameTv2.text = myNickname ?: "나"
         Glide.with(this)
             .load(myProfileUrl)
@@ -147,7 +145,6 @@ class FriendRoommateFriendFragment : Fragment() {
             addedFriendAdapter.submitList(merged)
         }
 
-        //FriendRoommateTimeFragment 로 이동
         binding.matchBtn.setOnClickListener {
             val bundle = Bundle().apply {
                 putString("selected_date", selectedDate)
@@ -177,7 +174,6 @@ class FriendRoommateFriendFragment : Fragment() {
                 parentFragmentManager.popBackStack()
             }
         })
-
     }
 
     override fun onDestroyView() {

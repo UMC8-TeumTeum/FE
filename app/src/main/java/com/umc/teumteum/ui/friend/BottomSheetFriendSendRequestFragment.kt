@@ -15,7 +15,7 @@ import com.umc.teumteum.databinding.BottomSheetFriendSendRequestBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-class FriendSendRequestBottomSheet : BottomSheetDialogFragment() {
+class BottomSheetFriendSendRequestFragment : BottomSheetDialogFragment() {
 
     private var _binding: BottomSheetFriendSendRequestBinding? = null
     private val binding get() = _binding!!
@@ -148,13 +148,12 @@ class FriendSendRequestBottomSheet : BottomSheetDialogFragment() {
 
     companion object {
         private const val ARG_CONFLICT_LIST = "arg_conflict_list"
-        const val TAG = "FriendSendRequestBottomSheet"
+        const val TAG = "BottomSheetFriendSendRequestFragment"
 
-        // 실제 충돌 리스트를 받아 생성
         fun newInstance(
             list: List<TeumConflictItem>
-        ): FriendSendRequestBottomSheet {
-            return FriendSendRequestBottomSheet().apply {
+        ): BottomSheetFriendSendRequestFragment {
+            return BottomSheetFriendSendRequestFragment().apply {
                 arguments = Bundle().apply {
                     putParcelableArrayList(
                         ARG_CONFLICT_LIST,

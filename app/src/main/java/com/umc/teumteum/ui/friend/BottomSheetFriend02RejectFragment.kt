@@ -11,7 +11,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import com.umc.teumteum.R
 import com.umc.teumteum.databinding.BottomSheetFriend02RejectBinding
@@ -22,7 +21,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import androidx.core.graphics.toColorInt
 
 @AndroidEntryPoint
-class Friend02RejectBottomSheetFragment : BottomSheetDialogFragment() {
+class BottomSheetFriend02RejectFragment : BottomSheetDialogFragment() {
 
     private var _binding: BottomSheetFriend02RejectBinding? = null
     private val binding get() = _binding!!
@@ -56,7 +55,7 @@ class Friend02RejectBottomSheetFragment : BottomSheetDialogFragment() {
 
         val item = viewModel.selectedTeum.value
         if (item == null) {
-            dismiss() // 선택값 없으면 닫기
+            dismiss()
             return
         }
 
@@ -78,11 +77,10 @@ class Friend02RejectBottomSheetFragment : BottomSheetDialogFragment() {
             val responseId = arguments?.getInt("responseId") ?: return@setOnClickListener
 
             if (selectedOption == SelectedOption.SUGGEST) {
-                // Friend02RequestFragment에서 받아온 teumList 전달 필요
+                // Friend02RequestFragment에서 받아온 teumList 전달
                 val parentFragment = parentFragmentManager.fragments.firstOrNull { it is Friend02RequestFragment } as? Friend02RequestFragment
                 val teumList = parentFragment?.teumList ?: emptyList()
 
-                // 시간 제안 화면 이동
                 parentFragmentManager.beginTransaction()
                     .replace(
                         R.id.main_frm,
@@ -95,7 +93,7 @@ class Friend02RejectBottomSheetFragment : BottomSheetDialogFragment() {
                 val status = "rejected"
 
                 Log.d("REJECT_BOTTOM_SHEET", "responseId: $responseId, status: $status")
-                Toast.makeText(requireContext(), "삭제되었습니다", Toast.LENGTH_SHORT).show()
+                Log.d("REJECT_BOTTOM_SHEET", "틈 요청을 거절하였습니다.")
 
                 // 응답 처리
                 viewModel.respondToTeum(responseId, status)
@@ -152,8 +150,8 @@ class Friend02RejectBottomSheetFragment : BottomSheetDialogFragment() {
     }
 
     companion object {
-        fun newInstance(responseId: Int): Friend02RejectBottomSheetFragment {
-            return Friend02RejectBottomSheetFragment().apply {
+        fun newInstance(responseId: Int): BottomSheetFriend02RejectFragment {
+            return BottomSheetFriend02RejectFragment().apply {
                 arguments = Bundle().apply {
                     putInt("responseId", responseId)
                 }

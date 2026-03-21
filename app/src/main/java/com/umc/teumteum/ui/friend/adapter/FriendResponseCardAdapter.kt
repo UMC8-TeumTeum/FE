@@ -44,21 +44,18 @@ class FriendResponseCardAdapter(
 
         fun bind(item: TeumReceivedItem) {
             binding.apply {
-                // 이름: "나 > 상대방 이름"
                 tvName.text = "나 > ${item.senderUser.nickname}"
 
                 // 내가 보낸 날짜/시간
                 tvDate.text = "${formatDate(item.originalDate)}     |"
                 tvTime.text = "${item.originalTimeSlot?.start} ~ ${item.originalTimeSlot?.end}"
 
-                // 제목 & 설명
                 tvTitle.text = item.title
                 tvDesc.text = item.description
 
                 // 상대가 재요청한 시간
                 tvSuggestionTime.text = "${item.timeSlot.start} ~ ${item.timeSlot.end}"
 
-                // 프로필 이미지
                 Glide.with(root.context)
                     .load(item.senderUser.profileImageUrl)
                     .placeholder(R.drawable.gray_teum)

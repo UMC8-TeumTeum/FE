@@ -39,7 +39,6 @@ class Friend01SearchResultFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 하단 바 숨기기
         (activity as? MainActivity)?.hideBottomBar()
 
         // 리사이클러뷰 초기화
@@ -50,14 +49,12 @@ class Friend01SearchResultFragment : Fragment() {
         binding.searchResultRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.searchResultRecyclerView.adapter = adapter
 
-        // 검색 결과 관찰
         viewModel.searchResults.observe(viewLifecycleOwner) { results ->
             val list = results.orEmpty()
             applySearchResultEmptyState(list.isEmpty())
             adapter.updateData(list)
         }
 
-        // 메시지 (성공/실패) 관찰
         viewModel.successMessage.observe(viewLifecycleOwner) { msg ->
             Log.d("SEARCH_RESULT_FRAGMENT", "성공: $msg")
         }
@@ -74,7 +71,6 @@ class Friend01SearchResultFragment : Fragment() {
                 binding.searchEditText.setText(keyword)
                 binding.searchEditText.setSelection(keyword.length)
 
-                // 검색 API 호출
                 viewModel.searchUser(keyword)
             }
         }
@@ -99,13 +95,12 @@ class Friend01SearchResultFragment : Fragment() {
             } else false
         }
 
-        // 뒤로가기 버튼
         binding.backButton.setOnClickListener {
             viewModel.currentSearchKeyword.value = null
             parentFragmentManager.popBackStack()
         }
 
-        // 시스템 뒤로가기까지 커버
+        // 시스템 뒤로가기 커버
         requireActivity().onBackPressedDispatcher.addCallback(
             viewLifecycleOwner,
             object : OnBackPressedCallback(true) {

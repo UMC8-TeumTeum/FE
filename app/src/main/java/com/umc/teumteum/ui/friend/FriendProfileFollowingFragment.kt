@@ -1,7 +1,6 @@
 package com.umc.teumteum.ui.friend
 
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -76,7 +75,6 @@ class FriendProfileFollowingFragment : Fragment() {
             viewModel.fetchRecentPublicTodos(targetUserId)
         }
 
-        // 빈틈 시간 옵저브
         viewModel.teumTimeText.observe(viewLifecycleOwner) {
             binding.profileTimerTv.text = it
         }
@@ -86,11 +84,8 @@ class FriendProfileFollowingFragment : Fragment() {
             binding.nicknameTv.text = text
         }
 
-        // 뒤로가기 버튼 클릭 시
         binding.backBtn.setOnClickListener {
-            // 이전 프래그먼트로 돌아가기
             parentFragmentManager.popBackStack()
-            // bottomNav 다시 보여주기
             (activity as? MainActivity)?.showBottomBar()
         }
 
@@ -106,9 +101,9 @@ class FriendProfileFollowingFragment : Fragment() {
             }
         }
 
-        // star_btn 클릭 처리 (ViewModel 공용 토글 사용)
         binding.starBtn.setOnClickListener {
             if (targetUserId != -1) {
+                // viewModel 공용 토글 사용
                 viewModel.toggleFavorite(targetUserId)
             }
         }
@@ -130,7 +125,7 @@ class FriendProfileFollowingFragment : Fragment() {
                 .commit()
         }
 
-        // sendBtn 클릭 시 친구 저장 + FriendRoommateDateFragment로 이동
+        // 친구 저장 + 프레그먼트 이동
         binding.sendBtn.setOnClickListener {
             if (targetUserId != -1) {
                 val dateFragment = FriendRoommateDateFragment().apply {
@@ -148,7 +143,6 @@ class FriendProfileFollowingFragment : Fragment() {
             }
         }
 
-        // 더보기 버튼 선택시
         binding.seeMoreTv.setOnClickListener {
             val nickname = binding.profileNicknameTv.text?.toString().orEmpty()
 
@@ -160,11 +154,10 @@ class FriendProfileFollowingFragment : Fragment() {
             }
 
             parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, frag)   // 컨테이너 id 프로젝트에 맞게 확인
+                .replace(R.id.main_frm, frag)
                 .addToBackStack(null)
                 .commit()
         }
-
         observeViewModel()
     }
 
@@ -196,7 +189,6 @@ class FriendProfileFollowingFragment : Fragment() {
             6                            // 바로 아래
         )
 
-        // 차단 버튼 클릭
         popupView.findViewById<View>(R.id.btn_block).setOnClickListener {
             popupWindow.dismiss()
 
@@ -207,20 +199,19 @@ class FriendProfileFollowingFragment : Fragment() {
 
             val userName = binding.profileNicknameTv.text.toString()
 
-            FriendBlockBottomSheet
+            BottomSheetFriendBlockFragment
                 .newInstance(targetUserId, userName)
-                .show(parentFragmentManager, "FriendBlockBottomSheet")
+                .show(parentFragmentManager, "BottomSheetFriendBlockFragment")
         }
 
-        // 신고 버튼
         popupView.findViewById<View>(R.id.btn_report).setOnClickListener {
             popupWindow.dismiss()
 
             if (targetUserId == -1) return@setOnClickListener
 
-            FriendReportChoiceBottomSheet
+            BottomSheetFriendReportChoiceFragment
                 .newInstance("USER", targetUserId.toLong())
-                .show(parentFragmentManager, "FriendReportChoiceBottomSheet")
+                .show(parentFragmentManager, "BottomSheetFriendReportChoiceFragment")
         }
     }
 
@@ -265,27 +256,27 @@ class FriendProfileFollowingFragment : Fragment() {
             }
         }
 
-        // 프로필 LiveData도 관찰해서 서버 favorite 수신 시 반영
         viewModel.friendProfile.observe(viewLifecycleOwner) { profile ->
             if (profile.userId == targetUserId) {
                 binding.profileNicknameTv.text = profile.name
                 binding.profileFieldTv.text = profile.field
-                Glide.with(requireContext()).load(profile.profileImageUrl)
-                updateStarIcon() // 아래 함수
+                Glide.with(requireContext())
+                    .load(profile.profileImageUrl)
+                    .placeholder(R.drawable.gray_teum)
+                    .error(R.drawable.gray_teum)
+                    .into(binding.profileIv)
+                updateStarIcon()
             }
         }
 
-        // favoriteMap(오버라이드) 변경시에도 별 갱신
         viewModel.favoriteMap.observe(viewLifecycleOwner) {
             updateStarIcon()
         }
 
-        //  최근 공개 투두 관찰
         viewModel.recentTodos.observe(viewLifecycleOwner) { list ->
             bindRecentTodos(list)
         }
 
-        // 에러 메시지
         viewModel.errorMessage.observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let { msg ->
                 Log.d("FRIEND_PROFILE_FOLLOWING_FRAGMENT", msg)
@@ -309,7 +300,6 @@ class FriendProfileFollowingFragment : Fragment() {
         )
     }
 
-    // 화면 내에 추가
     private fun bindRecentTodos(list: List<PublicTodoResult>) {
         val l = list.take(2)
 

@@ -31,15 +31,15 @@ class SharedTeumTimeFragment : Fragment() {
 
         val targetUserId = arguments?.getInt("targetUserId") ?: -1
 
-        // 로그인 유저 ID 주입해서 좌/우 결정
+        // 로그인 유저 ID 주입하여 좌/우 결정
         adapter = SharedTeumAdapter()
         binding.sharedTeumRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.sharedTeumRecyclerView.adapter = adapter
 
-        // API 호출 (총 함께한 시간 + 목록)
+        // (총 함께한 시간 + 목록) 데이터 호출
         if (targetUserId != -1) {
-            viewModel.loadSharedTeumTime(targetUserId)   // TEUM2012
-            viewModel.loadSharedTeumList(targetUserId)  // TEUM2013
+            viewModel.loadSharedTeumTime(targetUserId) // TEUM2012
+            viewModel.loadSharedTeumList(targetUserId) // TEUM2013
         }
 
         // 총 함께한 시간
@@ -62,10 +62,9 @@ class SharedTeumTimeFragment : Fragment() {
 
         viewModel.errorMessage.observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let { msg ->
-                Log.e("SHARED_TEUM_TIME_FRAGMENT", msg.toString())
+                Log.e("SHARED_TEUM_TIME_FRAGMENT", msg)
             }
         }
-
         binding.backButton.setOnClickListener { parentFragmentManager.popBackStack() }
     }
 

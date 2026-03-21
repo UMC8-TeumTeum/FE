@@ -69,7 +69,7 @@
         android:lineSpacingExtra="0dp"
         tools:text="6월 4일 (수)"
         android:textColor="@color/text_primary"
-        android:textSize="14sp"
+        android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/icTime1"
         app:layout_constraintTop_toBottomOf="@+id/divider1" />
 
@@ -78,16 +78,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="22dp"
-        android:layout_marginEnd="18dp"
-        android:layout_marginStart="188dp"
+        android:layout_marginEnd="25dp"
         android:fontFamily="@font/noto_sans_kr_regular"
         android:includeFontPadding="false"
         android:lineSpacingExtra="0dp"
         tools:text="오후 5:30"
         android:textColor="@color/text_primary"
-        android:textSize="14sp"
+        android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/tvDate1"
         app:layout_constraintTop_toBottomOf="@+id/divider1" />
 
     <View
@@ -113,7 +111,7 @@
         android:lineSpacingExtra="0dp"
         tools:text="6월 4일 (수)"
         android:textColor="@color/text_primary"
-        android:textSize="14sp"
+        android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/icTime1"
         app:layout_constraintTop_toBottomOf="@+id/tvDate1" />
 
@@ -122,16 +120,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="17dp"
-        android:layout_marginEnd="18dp"
-        android:layout_marginStart="188dp"
+        android:layout_marginEnd="25dp"
         android:fontFamily="@font/noto_sans_kr_regular"
         android:includeFontPadding="false"
         android:lineSpacingExtra="0dp"
         tools:text="오후 6:30"
         android:textColor="@color/text_primary"
-        android:textSize="14sp"
+        android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/tvDate2"
         app:layout_constraintTop_toBottomOf="@+id/tvTime1" />
 
     <LinearLayout

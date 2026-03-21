@@ -39,20 +39,17 @@ class FriendRoommateFriendAddFragment : Fragment() {
         val preselectedFromVm   = viewModel.teumRequestReceiverUserIds.value?.toSet() ?: emptySet()
         val initialSelected     = if (preselectedFromArgs.isNotEmpty()) preselectedFromArgs else preselectedFromVm
 
-        // 1) 리사이클러뷰/어댑터
         adapter = FriendAddAdapter(emptyList())
         binding.friendRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.friendRecyclerView.adapter = adapter
 
-        // 2) 제외할 사용자 ID (매칭 대상)
+        // 제외할 사용자 ID (매칭 대상)
         val excludeUserIdArg = arguments?.getInt("excludeUserId", -1) ?: -1
         val excludeForApi = excludeUserIdArg.takeIf { it != -1 }
         Log.d(TAG, "onViewCreated | excludeUserId(from args)=$excludeUserIdArg -> forApi=$excludeForApi")
 
-        // 3) 서버 호출: 서버에서 직접 제외 적용 (프론트에서 재필터링하지 않음)
         viewModel.getMutualFriends(excludeForApi)
 
-        // 4) 단일 옵저버: 중복 등록 제거
         viewModel.mutualFriends.observe(viewLifecycleOwner) { list ->
             Log.d(TAG, "받은 맞팔 목록 수=${list.size}")
             if (list.isNotEmpty()) {
@@ -67,10 +64,10 @@ class FriendRoommateFriendAddFragment : Fragment() {
             }
         }
 
-        // 5) 뒤로가기
         binding.backButton.setOnClickListener {
             val selectedFriends = adapter.getSelectedUserIdsWithInfo() // FriendProfileResult 리스트
-            // 뷰모델 저장
+
+            // viewModel 저장
             viewModel.setTeumRequestReceiverUserIds(selectedFriends.map {
                 it.userId
             })

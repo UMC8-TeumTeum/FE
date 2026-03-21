@@ -21,7 +21,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-class FriendReportTextBottomSheet : BottomSheetDialogFragment() {
+class BottomSheetFriendReportTextFragment : BottomSheetDialogFragment() {
 
     private var _binding: BottomSheetFriendReportTextBinding? = null
     private val binding get() = _binding!!
@@ -74,8 +74,8 @@ class FriendReportTextBottomSheet : BottomSheetDialogFragment() {
         val targetType = arguments?.getString(ARG_TARGET_TYPE) ?: return
         val targetId = arguments?.getLong(ARG_TARGET_ID) ?: return
 
-        // ViewModel 결과 관찰 (성공/실패에 따라 토스트/버튼/닫기 처리)
         observeReportResult()
+        setupTitleImeDone()
 
         binding.etReportDetail.addTextChangedListener { editable ->
             val length = editable?.length ?: 0
@@ -83,9 +83,9 @@ class FriendReportTextBottomSheet : BottomSheetDialogFragment() {
         }
 
         binding.btnBack.setOnClickListener {
-            FriendReportChoiceBottomSheet
+            BottomSheetFriendReportChoiceFragment
                 .newInstance(targetType, targetId)
-                .show(parentFragmentManager, "FriendReportChoiceBottomSheet")
+                .show(parentFragmentManager, "BottomSheetFriendReportChoiceFragment")
             dismiss()
         }
 
@@ -97,7 +97,6 @@ class FriendReportTextBottomSheet : BottomSheetDialogFragment() {
                 return@setOnClickListener
             }
 
-            // 중복 클릭 방지 (응답 오기 전까지 비활성화)
             binding.btnReportSubmit.isEnabled = false
 
             viewModel.createReport(
@@ -120,12 +119,9 @@ class FriendReportTextBottomSheet : BottomSheetDialogFragment() {
         viewModel.errorMessage.observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let { message ->
                 Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-                // 실패 시 재시도 가능하도록 버튼 다시 활성화
                 binding.btnReportSubmit.isEnabled = true
             }
         }
-
-        setupTitleImeDone()
     }
 
     private fun setupTitleImeDone() {
@@ -164,8 +160,8 @@ class FriendReportTextBottomSheet : BottomSheetDialogFragment() {
         private const val ARG_TARGET_TYPE = "arg_target_type"
         private const val ARG_TARGET_ID = "arg_target_id"
 
-        fun newInstance(targetType: String, targetId: Long): FriendReportTextBottomSheet {
-            return FriendReportTextBottomSheet().apply {
+        fun newInstance(targetType: String, targetId: Long): BottomSheetFriendReportTextFragment {
+            return BottomSheetFriendReportTextFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_TARGET_TYPE, targetType)
                     putLong(ARG_TARGET_ID, targetId)

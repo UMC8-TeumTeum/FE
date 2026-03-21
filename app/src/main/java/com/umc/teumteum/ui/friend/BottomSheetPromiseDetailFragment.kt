@@ -13,27 +13,26 @@ import androidx.fragment.app.activityViewModels
 import com.bumptech.glide.Glide
 import com.umc.teumteum.R
 import com.umc.teumteum.data.remote.friend.model.TeumScheduleDetailResult
-import com.umc.teumteum.databinding.Friend03PromiseDetailBottomSheetBinding
 import com.umc.teumteum.ui.friend.viewModel.FriendViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.umc.teumteum.databinding.BottomSheetFriend03PromiseDetailBinding
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.TextStyle
 import java.util.*
 
-class PromiseDetailBottomSheet(
+class BottomSheetPromiseDetailFragment(
     private val detail: TeumScheduleDetailResult,
     private val scheduleId: Int,
     private val isPast: Boolean
 ) : BottomSheetDialogFragment() {
 
-    private var _binding: Friend03PromiseDetailBottomSheetBinding? = null
+    private var _binding: BottomSheetFriend03PromiseDetailBinding? = null
     private val binding get() = _binding!!
 
     private val viewModel: FriendViewModel by activityViewModels()
 
-    // 바텀 시트 배경
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
 
@@ -61,7 +60,7 @@ class PromiseDetailBottomSheet(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = Friend03PromiseDetailBottomSheetBinding.inflate(inflater, container, false)
+        _binding = BottomSheetFriend03PromiseDetailBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -70,7 +69,6 @@ class PromiseDetailBottomSheet(
 
         Log.d("PromiseDetailBottomSheet", "바텀시트 표시됨 - title: ${detail.title}")
 
-        // UI 설정
         binding.tvTitle.text = detail.title
         binding.tvDate1.text = formatDate(detail.date)
         binding.tvTime1.text = formatTime(detail.startTime)
@@ -91,11 +89,10 @@ class PromiseDetailBottomSheet(
         binding.btnCancelPromise.visibility =
             if (isPastLocal) View.GONE else View.VISIBLE
 
-        // 클릭 시 취소 요청만 호출
         binding.btnCancelPromise.setOnClickListener {
-            FriendTeumDeleteBottomSheet
+            BottomSheetFriendTeumDeleteFragment
                 .newInstance(scheduleId)
-                .show(parentFragmentManager, "FriendTeumDeleteBottomSheet")
+                .show(parentFragmentManager, "BottomSheetFriendTeumDeleteFragment")
         }
 
         viewModel.successMessage.observe(viewLifecycleOwner) { event ->

@@ -33,7 +33,7 @@ class FriendMatchingPreviewDialog : DialogFragment() {
     )
 
     private var downX = 0f
-    private val swipeThreshold = 100f   // 드래그 인식 최소 거리(px)
+    private val swipeThreshold = 100f // 드래그 인식 최소 거리
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -65,10 +65,10 @@ class FriendMatchingPreviewDialog : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 1 ViewModel 기반 텍스트/프로필 세팅
+        // 1) viewModel 기반 텍스트/프로필 세팅
         updateSuggestion()
 
-        // 2 arguments로 넘어온 값 덮어쓰기
+        // 2) arguments로 넘어온 값 덮어쓰기
         arguments?.let { args ->
             binding.title.text = args.getString("title") ?: binding.title.text
             binding.detailSentence.text =
@@ -81,16 +81,14 @@ class FriendMatchingPreviewDialog : DialogFragment() {
             }
         }
 
-        // 3 초기 이미지 반영
+        // 3) 초기 이미지 반영
         updateImage()
 
-        // ▶ 다음 버튼
         binding.btnNext.setOnClickListener {
             currentIndex = (currentIndex + 1) % imageList.size
             updateImage()
         }
 
-        // ◀ 이전 버튼
         binding.btnPrev.setOnClickListener {
             currentIndex =
                 if (currentIndex == 0) imageList.size - 1
@@ -112,18 +110,16 @@ class FriendMatchingPreviewDialog : DialogFragment() {
 
                     val diffX = event.x - downX
                     if (abs(diffX) > swipeThreshold) {
-                        if (diffX < 0) {
+                        currentIndex = if (diffX < 0) {
                             // 왼쪽 드래그 → 다음
-                            currentIndex = (currentIndex + 1) % imageList.size
+                            (currentIndex + 1) % imageList.size
                         } else {
                             // 오른쪽 드래그 → 이전
-                            currentIndex =
-                                if (currentIndex == 0) imageList.size - 1
-                                else currentIndex - 1
+                            if (currentIndex == 0) imageList.size - 1
+                            else currentIndex - 1
                         }
                         updateImage()
                     }
-
                     v.performClick()
                     true
                 }
@@ -132,15 +128,13 @@ class FriendMatchingPreviewDialog : DialogFragment() {
                     v.isPressed = false
                     true
                 }
-
                 else -> false
             }
         }
 
         binding.btnSend.setOnClickListener {
-            val request = viewModel.buildTeumRequest()
+            val request = viewModel.buildTeumRequest() ?: return@setOnClickListener
             setLoading(true)
-            if (request == null) return@setOnClickListener
 
             viewModel.sendTeumRequest(
                 request,

@@ -11,6 +11,8 @@ import androidx.fragment.app.Fragment
 import com.umc.teumteum.R
 import com.umc.teumteum.databinding.FragmentFriendRejectSendBinding
 import androidx.core.graphics.toColorInt
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 
 class FriendRejectSendFragment : Fragment() {
 
@@ -28,6 +30,13 @@ class FriendRejectSendFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // 네비게이션 바
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val bottomInset = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom
+            v.setPadding(0, 0, 0, bottomInset)
+            insets
+        }
+
         // "전송" 글자만 색상 변경
         val text = "친구에게 전송했어요!"
         val spannable = SpannableString(text)
@@ -41,8 +50,11 @@ class FriendRejectSendFragment : Fragment() {
         binding.textTitle.text = spannable
 
         binding.btnGoHome.setOnClickListener {
+            if (!it.isEnabled) return@setOnClickListener
+            it.isEnabled = false
+
             parentFragmentManager.beginTransaction()
-                .replace(R.id.main_frm, FriendFragment()) // 메인에 FriendFragment 로드
+                .replace(R.id.main_frm, FriendFragment())
                 .addToBackStack(null)
                 .commit()
         }

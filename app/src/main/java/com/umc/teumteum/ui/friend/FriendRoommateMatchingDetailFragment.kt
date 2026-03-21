@@ -40,7 +40,6 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
     private lateinit var binding: FragmentFriendRoommateMatchingDetailBinding
     private lateinit var timeConflictCardAdapter: TimeConflictCardAdapter
 
-    // 선택된 날짜 저장 (이전 Fragment에서 전달)
     private var selectedDate: String = ""
 
     private val viewModel: FriendViewModel by activityViewModels()
@@ -306,9 +305,9 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
             response ?: return@observe
 
             if (response.hasConflict && response.conflictingRequests.isNotEmpty()) {
-                FriendSendRequestBottomSheet
+                BottomSheetFriendSendRequestFragment
                     .newInstance(response.conflictingRequests)
-                    .show(parentFragmentManager, FriendSendRequestBottomSheet.TAG)
+                    .show(parentFragmentManager, BottomSheetFriendSendRequestFragment.TAG)
 
                 viewModel.clearTeumConflict()
             }

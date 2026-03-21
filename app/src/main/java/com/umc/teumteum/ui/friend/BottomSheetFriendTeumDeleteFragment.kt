@@ -14,12 +14,11 @@ import com.umc.teumteum.ui.friend.viewModel.FriendViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import androidx.core.graphics.toColorInt
 
-class FriendTeumDeleteBottomSheet : BottomSheetDialogFragment() {
+class BottomSheetFriendTeumDeleteFragment : BottomSheetDialogFragment() {
 
     private var _binding: BottomSheetFriendTeumDeleteBinding? = null
     private val binding get() = _binding!!
 
-    // Activity 범위 ViewModel 유지
     private val viewModel: FriendViewModel by activityViewModels()
 
     // arguments에서 scheduleId 읽기
@@ -55,14 +54,12 @@ class FriendTeumDeleteBottomSheet : BottomSheetDialogFragment() {
             dismiss()
         }
 
-        // 취소 api 호출
         binding.btnYes.setOnClickListener {
             binding.btnYes.isEnabled = false
             viewModel.cancelTeumSchedule(scheduleId)
             Log.d("CANCEL_DEBUG", "취소 요청 scheduleId=$scheduleId")
         }
 
-        // 취소 성공 이벤트로만 닫기
         viewModel.cancelScheduleSuccess.observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let { canceledId ->
                 if (canceledId == scheduleId) {
@@ -92,7 +89,7 @@ class FriendTeumDeleteBottomSheet : BottomSheetDialogFragment() {
         private const val ARG_SCHEDULE_ID = "ARG_SCHEDULE_ID"
 
         fun newInstance(scheduleId: Int) =
-            FriendTeumDeleteBottomSheet().apply {
+            BottomSheetFriendTeumDeleteFragment().apply {
                 arguments = Bundle().apply {
                     putInt(ARG_SCHEDULE_ID, scheduleId)
                 }

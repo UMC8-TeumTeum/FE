@@ -1,7 +1,6 @@
 package com.umc.teumteum.ui.friend
 
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -77,18 +76,16 @@ class Friend02ResponseFragment  : Fragment() {
             teumList = listOf(it)
         }
 
-        // 수락 버튼
         binding.btnAccept.setOnClickListener {
             teumItem?.responseId?.let { responseId ->
-                val bottomSheet = Friend02AcceptBottomSheetFragment.newInstance(responseId)
+                val bottomSheet = BottomSheetFriend02AcceptFragment.newInstance(responseId)
                 bottomSheet.show(parentFragmentManager, bottomSheet.tag)
             }
         }
 
-        // 거절 버튼
         binding.btnReject.setOnClickListener {
             teumItem?.responseId?.let { responseId ->
-                val bottomSheet = Friend02RejectBottomSheetFragment.newInstance(responseId)
+                val bottomSheet = BottomSheetFriend02RejectFragment.newInstance(responseId)
                 bottomSheet.show(parentFragmentManager, bottomSheet.tag)
             }
         }
@@ -115,7 +112,6 @@ class Friend02ResponseFragment  : Fragment() {
         popupWindow.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
         popupWindow.elevation = 0f
 
-
         // anchorView 기준으로 위치 계산
         popupWindow.showAsDropDown(
             anchorView,
@@ -123,7 +119,6 @@ class Friend02ResponseFragment  : Fragment() {
             6                            // 바로 아래
         )
 
-        // 클릭 리스너 설정
         popupView.findViewById<View>(R.id.btn_profile).setOnClickListener {
             popupWindow.dismiss()
 
@@ -155,11 +150,10 @@ class Friend02ResponseFragment  : Fragment() {
             val targetType = "TEUM_REQUEST"
             val targetId = current.requestId.toLong()
 
-            FriendReportChoiceBottomSheet
+            BottomSheetFriendReportChoiceFragment
                 .newInstance(targetType, targetId)
-                .show(parentFragmentManager, "FriendReportChoiceBottomSheet")
+                .show(parentFragmentManager, "BottomSheetFriendReportChoiceFragment")
         }
-
     }
 
     override fun onDestroyView() {

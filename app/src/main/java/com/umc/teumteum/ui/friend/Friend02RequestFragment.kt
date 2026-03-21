@@ -101,11 +101,11 @@ class Friend02RequestFragment : Fragment() {
             if (response.hasConflict) {
                 // 겹침 있음 → 다른 바텀시트
                 val conflictList = ArrayList(response.conflictingSchedules)
-                val bottomSheet = FriendTodoBottomSheetFragment.newInstance(responseId, conflictList)
+                val bottomSheet = BottomSheetFriendTodoFragment.newInstance(responseId, conflictList)
                 bottomSheet.show(parentFragmentManager, bottomSheet.tag)
             } else {
                 // 겹침 없음 → 기존 수락 바텀시트
-                val bottomSheet = Friend02AcceptBottomSheetFragment.newInstance(responseId)
+                val bottomSheet = BottomSheetFriend02AcceptFragment.newInstance(responseId)
                 bottomSheet.show(parentFragmentManager, bottomSheet.tag)
             }
         }
@@ -128,7 +128,7 @@ class Friend02RequestFragment : Fragment() {
             val currentItem = binding.requestViewPager.currentItem
             val responseId = teumList.getOrNull(currentItem)?.responseId ?: return@setOnClickListener
 
-            val bottomSheet = Friend02RejectBottomSheetFragment.newInstance(responseId)
+            val bottomSheet = BottomSheetFriend02RejectFragment.newInstance(responseId)
             bottomSheet.show(parentFragmentManager, bottomSheet.tag)
         }
 
@@ -174,7 +174,6 @@ class Friend02RequestFragment : Fragment() {
             6                            // 바로 아래
         )
 
-        // 클릭 리스너 설정
         popupView.findViewById<View>(R.id.btn_profile).setOnClickListener {
             popupWindow.dismiss()
 
@@ -205,17 +204,17 @@ class Friend02RequestFragment : Fragment() {
             val targetType = "TEUM_REQUEST"
             val targetId = current.requestId.toLong()
 
-            FriendReportChoiceBottomSheet
+            BottomSheetFriendReportChoiceFragment
                 .newInstance(targetType, targetId)
-                .show(parentFragmentManager, "FriendReportChoiceBottomSheet")
+                .show(parentFragmentManager, "BottomSheetFriendReportChoiceFragment")
         }
     }
 
     // 미확인 → 최신순 정렬
     private fun sortTeumList(teumList: List<TeumReceivedItem>): List<TeumReceivedItem> {
         return teumList.sortedWith(
-            compareBy<TeumReceivedItem> { it.read }      // false(미확인) 먼저
-                .thenByDescending { it.requestId }       // 최신순
+            compareBy<TeumReceivedItem> { it.read } // 미확인 먼저
+                .thenByDescending { it.requestId } // 최신순
         )
     }
 
