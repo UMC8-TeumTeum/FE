@@ -84,7 +84,7 @@ class Friend02PossibleTimeFragment : Fragment() {
             }
         }
 
-        // "찾기" 버튼 클릭  → teumList, responseId 넘기기
+        // "찾기" 버튼 클릭 → teumList, responseId 넘기기
         binding.btnFind.setOnClickListener {
             val fragment = Friend02SuggestFragment().apply {
                 arguments = Bundle().apply {

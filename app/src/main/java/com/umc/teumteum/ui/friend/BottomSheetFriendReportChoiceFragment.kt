@@ -84,9 +84,9 @@ class BottomSheetFriendReportChoiceFragment : BottomSheetDialogFragment() {
             
             val targetId = requireArguments().getLong(ARG_TARGET_ID)
 
-            FriendReportTextBottomSheet
+            BottomSheetFriendReportTextFragment
                 .newInstance(targetType, targetId)
-                .show(parentFragmentManager, "FriendReportTextBottomSheet")
+                .show(parentFragmentManager, "BottomSheetFriendReportTextFragment")
 
             dismiss()
         }

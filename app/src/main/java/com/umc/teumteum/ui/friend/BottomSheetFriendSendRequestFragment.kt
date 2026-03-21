@@ -148,9 +148,8 @@ class BottomSheetFriendSendRequestFragment : BottomSheetDialogFragment() {
 
     companion object {
         private const val ARG_CONFLICT_LIST = "arg_conflict_list"
-        const val TAG = "FriendSendRequestBottomSheet"
+        const val TAG = "BottomSheetFriendSendRequestFragment"
 
-        // 실제 충돌 리스트를 받아 생성
         fun newInstance(
             list: List<TeumConflictItem>
         ): BottomSheetFriendSendRequestFragment {

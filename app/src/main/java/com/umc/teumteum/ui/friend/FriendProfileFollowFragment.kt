@@ -146,7 +146,7 @@ class FriendProfileFollowFragment : Fragment() {
 
             BottomSheetFriendBlockFragment
                 .newInstance(targetUserId, userName)
-                .show(parentFragmentManager, "FriendBlockBottomSheet")
+                .show(parentFragmentManager, "BottomSheetFriendBlockFragment")
         }
 
         // 신고 버튼
@@ -157,7 +157,7 @@ class FriendProfileFollowFragment : Fragment() {
 
             BottomSheetFriendReportChoiceFragment
                 .newInstance("USER", targetUserId.toLong())
-                .show(parentFragmentManager, "FriendReportChoiceBottomSheet")
+                .show(parentFragmentManager, "BottomSheetFriendReportChoiceFragment")
         }
     }
 

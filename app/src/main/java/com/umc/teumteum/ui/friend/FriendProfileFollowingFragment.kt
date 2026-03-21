@@ -201,7 +201,7 @@ class FriendProfileFollowingFragment : Fragment() {
 
             BottomSheetFriendBlockFragment
                 .newInstance(targetUserId, userName)
-                .show(parentFragmentManager, "FriendBlockBottomSheet")
+                .show(parentFragmentManager, "BottomSheetFriendBlockFragment")
         }
 
         popupView.findViewById<View>(R.id.btn_report).setOnClickListener {
@@ -211,7 +211,7 @@ class FriendProfileFollowingFragment : Fragment() {
 
             BottomSheetFriendReportChoiceFragment
                 .newInstance("USER", targetUserId.toLong())
-                .show(parentFragmentManager, "FriendReportChoiceBottomSheet")
+                .show(parentFragmentManager, "BottomSheetFriendReportChoiceFragment")
         }
     }
 
@@ -260,7 +260,11 @@ class FriendProfileFollowingFragment : Fragment() {
             if (profile.userId == targetUserId) {
                 binding.profileNicknameTv.text = profile.name
                 binding.profileFieldTv.text = profile.field
-                Glide.with(requireContext()).load(profile.profileImageUrl)
+                Glide.with(requireContext())
+                    .load(profile.profileImageUrl)
+                    .placeholder(R.drawable.gray_teum)
+                    .error(R.drawable.gray_teum)
+                    .into(binding.profileIv)
                 updateStarIcon()
             }
         }

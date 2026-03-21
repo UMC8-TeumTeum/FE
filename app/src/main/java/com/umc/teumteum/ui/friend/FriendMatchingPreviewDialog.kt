@@ -33,7 +33,7 @@ class FriendMatchingPreviewDialog : DialogFragment() {
     )
 
     private var downX = 0f
-    private val swipeThreshold = 100f // 드래그 인식 최소 거리(px)
+    private val swipeThreshold = 100f // 드래그 인식 최소 거리
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -133,9 +133,8 @@ class FriendMatchingPreviewDialog : DialogFragment() {
         }
 
         binding.btnSend.setOnClickListener {
-            val request = viewModel.buildTeumRequest()
+            val request = viewModel.buildTeumRequest() ?: return@setOnClickListener
             setLoading(true)
-            if (request == null) return@setOnClickListener
 
             viewModel.sendTeumRequest(
                 request,

@@ -14,12 +14,12 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import com.umc.teumteum.R
-import com.umc.teumteum.databinding.FragmentBottomSheetRoutineModifyBinding
 import com.umc.teumteum.ui.myhome.data.MyRoutine
 import com.umc.teumteum.ui.myhome.viewModel.MyRoutineViewModel
 import com.umc.teumteum.utils.enableTapToNext
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.umc.teumteum.databinding.BottomSheetRoutineModifyBinding
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -30,7 +30,7 @@ class BottomSheetRoutineModifyFragment(
     private val targetRoutine: MyRoutine,
 ) : BottomSheetDialogFragment() {
 
-    private lateinit var binding: FragmentBottomSheetRoutineModifyBinding
+    private lateinit var binding: BottomSheetRoutineModifyBinding
     private val dayNames = listOf("일", "월", "화", "수", "목", "금", "토")
 
     private var startTime: LocalTime? = null
@@ -48,7 +48,7 @@ class BottomSheetRoutineModifyFragment(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentBottomSheetRoutineModifyBinding.inflate(inflater, container, false)
+        binding = BottomSheetRoutineModifyBinding.inflate(inflater, container, false)
         return binding.root
     }
 

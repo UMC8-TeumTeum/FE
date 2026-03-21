@@ -78,7 +78,7 @@
                         android:focusable="true"
                         tools:text="오전 9:00"
                         android:textColor="@color/text_primary"
-                        android:textSize="14sp" />
+                        android:textSize="15sp" />
                 </LinearLayout>
 
                 <FrameLayout
@@ -151,7 +151,7 @@
                         android:layout_height="wrap_content"
                         tools:text="오후 12:00"
                         android:textColor="@color/text_primary"
-                        android:textSize="14sp" />
+                        android:textSize="15sp" />
                 </LinearLayout>
 
                 <FrameLayout

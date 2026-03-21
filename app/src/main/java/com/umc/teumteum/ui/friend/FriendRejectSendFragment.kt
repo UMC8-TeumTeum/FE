@@ -50,6 +50,9 @@ class FriendRejectSendFragment : Fragment() {
         binding.textTitle.text = spannable
 
         binding.btnGoHome.setOnClickListener {
+            if (!it.isEnabled) return@setOnClickListener
+            it.isEnabled = false
+
             parentFragmentManager.beginTransaction()
                 .replace(R.id.main_frm, FriendFragment())
                 .addToBackStack(null)

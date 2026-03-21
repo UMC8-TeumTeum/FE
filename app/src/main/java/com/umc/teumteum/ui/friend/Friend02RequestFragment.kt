@@ -174,7 +174,6 @@ class Friend02RequestFragment : Fragment() {
             6                            // 바로 아래
         )
 
-        // 클릭 리스너 설정
         popupView.findViewById<View>(R.id.btn_profile).setOnClickListener {
             popupWindow.dismiss()
 
@@ -207,15 +206,15 @@ class Friend02RequestFragment : Fragment() {
 
             BottomSheetFriendReportChoiceFragment
                 .newInstance(targetType, targetId)
-                .show(parentFragmentManager, "FriendReportChoiceBottomSheet")
+                .show(parentFragmentManager, "BottomSheetFriendReportChoiceFragment")
         }
     }
 
     // 미확인 → 최신순 정렬
     private fun sortTeumList(teumList: List<TeumReceivedItem>): List<TeumReceivedItem> {
         return teumList.sortedWith(
-            compareBy<TeumReceivedItem> { it.read }      // false(미확인) 먼저
-                .thenByDescending { it.requestId }       // 최신순
+            compareBy<TeumReceivedItem> { it.read } // 미확인 먼저
+                .thenByDescending { it.requestId } // 최신순
         )
     }
 

@@ -5,12 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.umc.teumteum.R
-import com.umc.teumteum.databinding.BottomSheetContentBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.umc.teumteum.databinding.BottomSheetActivityContentBinding
 
-class BottomSheetContentFragment : BottomSheetDialogFragment() {
+class BottomSheetActivityContentFragment : BottomSheetDialogFragment() {
 
-    private var _binding: BottomSheetContentBinding? = null
+    private var _binding: BottomSheetActivityContentBinding? = null
     private val binding get() = _binding!!
 
     private var aiId: String? = null
@@ -21,7 +21,7 @@ class BottomSheetContentFragment : BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = BottomSheetContentBinding.inflate(inflater, container, false)
+        _binding = BottomSheetActivityContentBinding.inflate(inflater, container, false)
 
         return binding.root
     }

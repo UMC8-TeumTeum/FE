@@ -21,7 +21,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-class FriendReportTextBottomSheet : BottomSheetDialogFragment() {
+class BottomSheetFriendReportTextFragment : BottomSheetDialogFragment() {
 
     private var _binding: BottomSheetFriendReportTextBinding? = null
     private val binding get() = _binding!!
@@ -85,7 +85,7 @@ class FriendReportTextBottomSheet : BottomSheetDialogFragment() {
         binding.btnBack.setOnClickListener {
             BottomSheetFriendReportChoiceFragment
                 .newInstance(targetType, targetId)
-                .show(parentFragmentManager, "FriendReportChoiceBottomSheet")
+                .show(parentFragmentManager, "BottomSheetFriendReportChoiceFragment")
             dismiss()
         }
 
@@ -164,8 +164,8 @@ class FriendReportTextBottomSheet : BottomSheetDialogFragment() {
         private const val ARG_TARGET_TYPE = "arg_target_type"
         private const val ARG_TARGET_ID = "arg_target_id"
 
-        fun newInstance(targetType: String, targetId: Long): FriendReportTextBottomSheet {
-            return FriendReportTextBottomSheet().apply {
+        fun newInstance(targetType: String, targetId: Long): BottomSheetFriendReportTextFragment {
+            return BottomSheetFriendReportTextFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_TARGET_TYPE, targetType)
                     putLong(ARG_TARGET_ID, targetId)

@@ -31,7 +31,7 @@ class SharedTeumTimeFragment : Fragment() {
 
         val targetUserId = arguments?.getInt("targetUserId") ?: -1
 
-        // 로그인 유저 ID 주입하 좌/우 결정
+        // 로그인 유저 ID 주입하여 좌/우 결정
         adapter = SharedTeumAdapter()
         binding.sharedTeumRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.sharedTeumRecyclerView.adapter = adapter

@@ -68,10 +68,11 @@ class BottomSheetFriend02AcceptFragment : BottomSheetDialogFragment() {
 
             Log.d("ACCEPT_BOTTOM_SHEET", "responseId: $responseId, status: $status")
 
+            binding.btnSend.isEnabled = false
+
             // 응답 처리
             viewModel.respondToTeum(responseId, status)
 
-            // 바텀시트 닫기
             dismiss()
 
             parentFragmentManager.beginTransaction()

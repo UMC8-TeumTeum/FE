@@ -66,7 +66,8 @@ class FriendRoommateFriendAddFragment : Fragment() {
 
         binding.backButton.setOnClickListener {
             val selectedFriends = adapter.getSelectedUserIdsWithInfo() // FriendProfileResult 리스트
-            // 뷰모델 저장
+
+            // viewModel 저장
             viewModel.setTeumRequestReceiverUserIds(selectedFriends.map {
                 it.userId
             })

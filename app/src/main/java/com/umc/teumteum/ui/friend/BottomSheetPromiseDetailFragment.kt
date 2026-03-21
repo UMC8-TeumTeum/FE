@@ -13,10 +13,10 @@ import androidx.fragment.app.activityViewModels
 import com.bumptech.glide.Glide
 import com.umc.teumteum.R
 import com.umc.teumteum.data.remote.friend.model.TeumScheduleDetailResult
-import com.umc.teumteum.databinding.Friend03PromiseDetailBottomSheetBinding
 import com.umc.teumteum.ui.friend.viewModel.FriendViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.umc.teumteum.databinding.BottomSheetFriend03PromiseDetailBinding
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.TextStyle
@@ -28,7 +28,7 @@ class BottomSheetPromiseDetailFragment(
     private val isPast: Boolean
 ) : BottomSheetDialogFragment() {
 
-    private var _binding: Friend03PromiseDetailBottomSheetBinding? = null
+    private var _binding: BottomSheetFriend03PromiseDetailBinding? = null
     private val binding get() = _binding!!
 
     private val viewModel: FriendViewModel by activityViewModels()
@@ -60,7 +60,7 @@ class BottomSheetPromiseDetailFragment(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = Friend03PromiseDetailBottomSheetBinding.inflate(inflater, container, false)
+        _binding = BottomSheetFriend03PromiseDetailBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -92,7 +92,7 @@ class BottomSheetPromiseDetailFragment(
         binding.btnCancelPromise.setOnClickListener {
             BottomSheetFriendTeumDeleteFragment
                 .newInstance(scheduleId)
-                .show(parentFragmentManager, "FriendTeumDeleteBottomSheet")
+                .show(parentFragmentManager, "BottomSheetFriendTeumDeleteFragment")
         }
 
         viewModel.successMessage.observe(viewLifecycleOwner) { event ->

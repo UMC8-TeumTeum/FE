@@ -85,6 +85,7 @@ class BottomSheetFriendTodoFragment : BottomSheetDialogFragment() {
         binding.btnAccept.setOnClickListener {
             val responseId = arguments?.getInt(ARG_RESPONSE_ID) ?: return@setOnClickListener
 
+            binding.btnAccept.isEnabled = false
             viewModel.respondToTeum(responseId, "accepted")
 
             dismiss()
