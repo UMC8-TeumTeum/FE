@@ -89,7 +89,6 @@ class BottomSheetRoutineModifyFragment(
         }
 
         binding.saveBtn.setOnClickListener {
-            binding.saveBtn.isEnabled = false
 
             val title = binding.scheduleTitleEt.text.toString().trim()
             val description = binding.descriptionTextEt.text.toString().trim()
@@ -127,6 +126,8 @@ class BottomSheetRoutineModifyFragment(
                     return@setOnClickListener
                 }
             }
+
+            binding.saveBtn.isEnabled = false
 
             viewModel.modifyRoutine(
                 routineId = targetRoutine.routineId,
