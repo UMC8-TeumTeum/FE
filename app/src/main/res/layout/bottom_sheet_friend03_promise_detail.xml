@@ -85,7 +85,7 @@
         android:lineSpacingExtra="0dp"
         tools:text="오후 5:30"
         android:textColor="@color/text_primary"
-        android:textSize="14sp"
+        android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/tvDate1"
         app:layout_constraintTop_toBottomOf="@+id/divider1" />
