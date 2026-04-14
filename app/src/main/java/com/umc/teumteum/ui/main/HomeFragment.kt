@@ -676,9 +676,6 @@ class HomeFragment : Fragment() {
         binding.clockPager.setCurrentItem(initialPos, false)
         updateIndicator(initialPos == amPos)
 
-        binding.clockPager.setCurrentItem(amPos, false)
-        updateIndicator(binding.clockPager.currentItem == amPos)
-
         binding.clockPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 updateIndicator(position == amPos)
@@ -855,8 +852,7 @@ class HomeFragment : Fragment() {
         if (!::clockAdapter.isInitialized) return
         clockAdapter.refreshAll()
 
-        val amPos = clockAdapter.positionOf(ClockHalf.AM)
-        updateIndicator(binding.clockPager.currentItem == amPos)
+        syncClockPagerWithCurrentTime()
     }
 
     override fun onDestroyView() {
