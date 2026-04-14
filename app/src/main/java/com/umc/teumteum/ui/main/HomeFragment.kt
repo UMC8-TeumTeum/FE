@@ -21,47 +21,44 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.viewpager2.widget.ViewPager2
-import com.umc.teumteum.R
-import com.umc.teumteum.data.remote.todo.model.AlarmStatusRequest
-import com.umc.teumteum.databinding.FragmentHomeBinding
-
-import com.umc.teumteum.ui.alarm.AlarmFragment
-import com.umc.teumteum.ui.activity.FillingActivity01Fragment
-import com.umc.teumteum.ui.todo.adapter.TodoAdapter
-import com.umc.teumteum.ui.todo.BottomSheetTodoRegisterFragment
-import com.umc.teumteum.ui.wish.WishlistFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-
-import com.umc.teumteum.data.remote.todo.model.TodoListResult
-import com.umc.teumteum.data.remote.todo.model.enums.AlarmStatus
-import com.umc.teumteum.databinding.ItemClockPageBinding
-import com.umc.teumteum.ui.activity.viewModel.ActivityViewModel
-import com.umc.teumteum.ui.todo.viewModel.TodoViewModel
-import com.umc.teumteum.ui.clock.ChartUtils
-import com.umc.teumteum.ui.clock.ClockHalf
-import com.umc.teumteum.ui.clock.ClockVPAdapter
-import com.umc.teumteum.ui.main.viewModel.HomeViewModel
-import com.umc.teumteum.ui.myhome.viewModel.MyHomeViewModel
-import com.umc.teumteum.utils.applyBlurShadow
-import com.umc.teumteum.utils.setOnSingleClickListener
-
-import com.kizitonwose.calendar.view.CalendarView
-import com.kizitonwose.calendar.view.MonthDayBinder
-import com.kizitonwose.calendar.view.ViewContainer
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.CalendarMonth
 import com.kizitonwose.calendar.core.DayPosition
 import com.kizitonwose.calendar.core.Week
 import com.kizitonwose.calendar.core.WeekDay
+import com.kizitonwose.calendar.view.CalendarView
+import com.kizitonwose.calendar.view.MonthDayBinder
+import com.kizitonwose.calendar.view.ViewContainer
 import com.kizitonwose.calendar.view.WeekCalendarView
 import com.kizitonwose.calendar.view.WeekDayBinder
+import com.umc.teumteum.R
+import com.umc.teumteum.data.remote.todo.model.AlarmStatusRequest
+import com.umc.teumteum.data.remote.todo.model.TodoListResult
+import com.umc.teumteum.data.remote.todo.model.enums.AlarmStatus
+import com.umc.teumteum.databinding.FragmentHomeBinding
+import com.umc.teumteum.databinding.ItemClockPageBinding
+import com.umc.teumteum.ui.activity.FillingActivity01Fragment
+import com.umc.teumteum.ui.activity.viewModel.ActivityViewModel
+import com.umc.teumteum.ui.alarm.AlarmFragment
+import com.umc.teumteum.ui.clock.ChartUtils
+import com.umc.teumteum.ui.clock.ClockHalf
+import com.umc.teumteum.ui.clock.ClockVPAdapter
+import com.umc.teumteum.ui.main.viewModel.HomeViewModel
+import com.umc.teumteum.ui.myhome.viewModel.MyHomeViewModel
+import com.umc.teumteum.ui.todo.BottomSheetTodoRegisterFragment
+import com.umc.teumteum.ui.todo.adapter.TodoAdapter
+import com.umc.teumteum.ui.todo.viewModel.TodoViewModel
+import com.umc.teumteum.ui.wish.WishlistFragment
+import com.umc.teumteum.utils.applyBlurShadow
+import com.umc.teumteum.utils.setOnSingleClickListener
 import com.umc.teumteum.utils.weekdayShortKorean
-
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.LocalTime
 import java.time.YearMonth
+import java.time.format.DateTimeFormatter
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
@@ -496,6 +493,10 @@ class HomeFragment : Fragment() {
         super.onResume()
         val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.main_bnv)
         bottomNav?.visibility = View.VISIBLE
+
+        if (::clockAdapter.isInitialized) {
+            syncClockPagerWithCurrentTime()
+        }
     }
 
     // 주별 날짜 헤더
@@ -625,6 +626,21 @@ class HomeFragment : Fragment() {
         backCallback = null
     }
 
+    private fun isNowAM(): Boolean {
+        return LocalTime.now().hour < 12
+    }
+
+    private fun syncClockPagerWithCurrentTime() {
+        val amPos = clockAdapter.positionOf(ClockHalf.AM)
+        val pmPos = clockAdapter.positionOf(ClockHalf.PM)
+        val targetPos = if (isNowAM()) amPos else pmPos
+
+        if (binding.clockPager.currentItem != targetPos) {
+            binding.clockPager.setCurrentItem(targetPos, false)
+        }
+        updateIndicator(targetPos == amPos)
+    }
+
     private fun setupClockPager() {
         clockAdapter = ClockVPAdapter(
             inflate = ItemClockPageBinding::inflate,
@@ -655,6 +671,10 @@ class HomeFragment : Fragment() {
 
         val amPos = clockAdapter.positionOf(ClockHalf.AM)
         val pmPos = clockAdapter.positionOf(ClockHalf.PM)
+
+        val initialPos = if (isNowAM()) amPos else pmPos
+        binding.clockPager.setCurrentItem(initialPos, false)
+        updateIndicator(initialPos == amPos)
 
         binding.clockPager.setCurrentItem(amPos, false)
         updateIndicator(binding.clockPager.currentItem == amPos)
