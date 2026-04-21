@@ -73,15 +73,15 @@
             android:scaleType="centerCrop"
             app:shapeAppearanceOverlay="@style/CircleImage" />
 
-        <ImageButton
-            android:id="@+id/camera_btn"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:background="@color/transparent"
-            android:src="@drawable/camera_btn"
-            android:scaleType="centerInside"
-            android:layout_gravity="center"
-            android:contentDescription="카메라 버튼" />
+<!--        <ImageButton-->
+<!--            android:id="@+id/camera_btn"-->
+<!--            android:layout_width="32dp"-->
+<!--            android:layout_height="32dp"-->
+<!--            android:background="@color/transparent"-->
+<!--            android:src="@drawable/camera_btn"-->
+<!--            android:scaleType="centerInside"-->
+<!--            android:layout_gravity="center"-->
+<!--            android:contentDescription="카메라 버튼" />-->
     </FrameLayout>
 
     <TextView
