@@ -61,4 +61,7 @@ interface MyPageService {
 
     @DELETE("/api/users/mypage")
     suspend fun deleteUser(): Response<ApiResponse<Unit>>
+
+    @DELETE("/api/users/mypage/profile-image")
+    suspend fun deleteProfileImage(): Response<ApiResponse<Unit>>
 }
