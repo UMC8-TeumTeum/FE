@@ -161,7 +161,7 @@ class FriendProfileFollowingFragment : Fragment() {
         observeViewModel()
     }
 
-    // 차단 신고 팝업 표시
+    // 신고/차단 팝업 표시
     private fun showOptionsPopup(anchorView: View) {
         val popupView = layoutInflater.inflate(R.layout.popup_friend_options, null)
         val density = resources.displayMetrics.density
@@ -185,8 +185,8 @@ class FriendProfileFollowingFragment : Fragment() {
         // anchorView 기준으로 위치 계산
         popupWindow.showAsDropDown(
             anchorView,
-            anchorView.width - widthPx, // 오른쪽 정렬
-            6                            // 바로 아래
+            anchorView.width - widthPx,
+            20
         )
 
         popupView.findViewById<View>(R.id.btn_block).setOnClickListener {
@@ -224,9 +224,7 @@ class FriendProfileFollowingFragment : Fragment() {
                     binding.modifyProfileBtn.isEnabled = false
                     binding.modifyProfileBtn.alpha = 0.5f
 
-                    binding.modifyProfileBtn.setTextColor(
-                        "#0F0F0F".toColorInt()
-                    )
+                    binding.modifyProfileBtn.setTextColor(requireContext().getColor(R.color.text_primary))
 
                     binding.starBtn.isEnabled = false
                     binding.sendBtn.isEnabled = false

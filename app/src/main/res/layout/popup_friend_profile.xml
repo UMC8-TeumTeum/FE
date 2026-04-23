@@ -34,7 +34,7 @@
         android:gravity="center"
         android:text="신고"
         android:textSize="14sp"
-        android:textColor="#FF473B"
+        android:textColor="@color/destructive_primary"
         android:fontFamily="@font/noto_sans_kr_regular"
         android:background="?attr/selectableItemBackground"
         android:clickable="true"

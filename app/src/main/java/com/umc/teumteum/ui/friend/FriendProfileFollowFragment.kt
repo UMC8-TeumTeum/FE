@@ -105,7 +105,7 @@ class FriendProfileFollowFragment : Fragment() {
         }
     }
 
-    // 차단 신고 팝업 표시
+    // 신고/차단 팝업 표시
     private fun showOptionsPopup(anchorView: View) {
         val popupView = layoutInflater.inflate(R.layout.popup_friend_options, null)
         val density = resources.displayMetrics.density
@@ -129,8 +129,8 @@ class FriendProfileFollowFragment : Fragment() {
         // anchorView 기준으로 위치 계산
         popupWindow.showAsDropDown(
             anchorView,
-            anchorView.width - widthPx, // 오른쪽 정렬
-            6                            // 바로 아래
+            anchorView.width - widthPx,
+            20
         )
 
         // 차단 버튼 클릭
