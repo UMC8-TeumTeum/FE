@@ -18,7 +18,6 @@ import com.umc.teumteum.databinding.FragmentFriend01SearchBinding
 import com.umc.teumteum.ui.friend.viewModel.FriendViewModel
 import com.umc.teumteum.ui.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
-import androidx.core.graphics.toColorInt
 
 @AndroidEntryPoint
 class Friend01SearchFragment : Fragment() {
@@ -123,7 +122,7 @@ class Friend01SearchFragment : Fragment() {
                 text = keyword
                 textSize = 16f
                 setPadding(0, 2, 0, 2)
-                setTextColor("#0F0F0F".toColorInt())
+                setTextColor(requireContext().getColor(R.color.text_primary))
                 typeface = ResourcesCompat.getFont(requireContext(), R.font.noto_sans_kr_medium)
                 layoutParams = LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
@@ -141,7 +140,7 @@ class Friend01SearchFragment : Fragment() {
                 ).apply {
                     topMargin = (0.5f * resources.displayMetrics.density).toInt()
                 }
-                setBackgroundColor("#EAEAEA".toColorInt())
+                setBackgroundColor(requireContext().getColor(R.color.teumteum_line))
             }
             binding.recentSearchList.addView(divider)
         }

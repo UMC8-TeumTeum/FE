@@ -33,7 +33,6 @@ import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.util.Locale
-import androidx.core.graphics.toColorInt
 
 @AndroidEntryPoint
 class FriendRoommateDateFragment : Fragment() {
@@ -119,15 +118,15 @@ class FriendRoommateDateFragment : Fragment() {
 
         // 초기 버튼 상태 비활성화
         binding.nextBtn.isEnabled = false
-        binding.nextBtn.setBackgroundColor("#F6F6F6".toColorInt())
-        binding.nextBtn.setTextColor("#0F0F0F".toColorInt())
+        binding.nextBtn.setBackgroundColor(requireContext().getColor(R.color.teumteum_bg))
+        binding.nextBtn.setTextColor(requireContext().getColor(R.color.text_primary))
 
         binding.btnBack.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
 
         binding.nextBtn.setOnClickListener {
-            val formattedDate = selectedDate?.let {
+            val formattedDate = selectedDate.let {
                 val formatter = DateTimeFormatter.ofPattern("yy.MM.dd(E)", Locale.KOREAN)
                 it.format(formatter)
             } ?: ""

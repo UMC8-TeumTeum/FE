@@ -18,7 +18,6 @@ import com.umc.teumteum.databinding.FragmentFriendProfileFollowingBinding
 import com.umc.teumteum.ui.friend.viewModel.FriendViewModel
 import com.umc.teumteum.ui.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
-import androidx.core.graphics.toColorInt
 import androidx.core.graphics.drawable.toDrawable
 
 @AndroidEntryPoint

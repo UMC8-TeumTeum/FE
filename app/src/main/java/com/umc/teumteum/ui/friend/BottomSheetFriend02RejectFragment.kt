@@ -18,7 +18,6 @@ import com.umc.teumteum.ui.friend.viewModel.FriendViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
-import androidx.core.graphics.toColorInt
 
 @AndroidEntryPoint
 class BottomSheetFriend02RejectFragment : BottomSheetDialogFragment() {
@@ -113,7 +112,7 @@ class BottomSheetFriend02RejectFragment : BottomSheetDialogFragment() {
 
         if (option == SelectedOption.REJECT) {
             binding.btnRejectMent.text = getColoredText("이때는 시간이 안돼요", " 멘트 보내기")
-            binding.btnRejectMent.strokeColor = ColorStateList.valueOf("#7770FE".toColorInt())
+            binding.btnRejectMent.strokeColor = ColorStateList.valueOf(requireContext().getColor(R.color.main_1))
             binding.btnRejectMent.strokeWidth = 2
 
             binding.btnSuggestTime.text = getGrayText("가능한 다른 시간대 제안하기")
@@ -121,7 +120,7 @@ class BottomSheetFriend02RejectFragment : BottomSheetDialogFragment() {
             binding.btnSuggestTime.strokeWidth = 0
         } else {
             binding.btnSuggestTime.text = getColoredText("가능한 다른 시간대", " 제안하기")
-            binding.btnSuggestTime.strokeColor = ColorStateList.valueOf("#7770FE".toColorInt())
+            binding.btnSuggestTime.strokeColor = ColorStateList.valueOf(requireContext().getColor(R.color.main_1))
             binding.btnSuggestTime.strokeWidth = 2
 
             binding.btnRejectMent.text = getGrayText("이때는 시간이 안돼요 멘트 보내기")
@@ -133,14 +132,14 @@ class BottomSheetFriend02RejectFragment : BottomSheetDialogFragment() {
     private fun getColoredText(purplePart: String, blackPart: String): SpannableString {
         val fullText = purplePart + blackPart
         return SpannableString(fullText).apply {
-            setSpan(ForegroundColorSpan("#7770FE".toColorInt()), 0, purplePart.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-            setSpan(ForegroundColorSpan("#0F0F0F".toColorInt()), purplePart.length, fullText.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            setSpan(ForegroundColorSpan(requireContext().getColor(R.color.main_1)), 0, purplePart.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            setSpan(ForegroundColorSpan(requireContext().getColor(R.color.text_primary)), purplePart.length, fullText.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         }
     }
 
     private fun getGrayText(fullText: String): SpannableString {
         return SpannableString(fullText).apply {
-            setSpan(ForegroundColorSpan("#D3D3D3".toColorInt()), 0, fullText.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            setSpan(ForegroundColorSpan(requireContext().getColor(R.color.teumteum_gray)), 0, fullText.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         }
     }
 

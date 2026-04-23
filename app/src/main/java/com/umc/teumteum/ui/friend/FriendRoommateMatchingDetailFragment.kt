@@ -32,7 +32,6 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import kotlin.getValue
-import androidx.core.graphics.toColorInt
 
 @AndroidEntryPoint
 class FriendRoommateMatchingDetailFragment : Fragment() {
@@ -75,7 +74,7 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
 
         if (starIndex != -1) {
             spannable.setSpan(
-                android.text.style.ForegroundColorSpan("#7770FE".toColorInt()),
+                android.text.style.ForegroundColorSpan(requireContext().getColor(R.color.main_1)),
                 starIndex,
                 starIndex + 1,
                 android.text.Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -123,7 +122,7 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
 
         // 초기 버튼 상태 설정
         binding.sendBtn.isEnabled = false
-        binding.sendBtn.setBackgroundColor("#F6F6F6".toColorInt())
+        binding.sendBtn.setBackgroundColor(requireContext().getColor(R.color.teumteum_bg))
     }
 
     private fun updateNextButtonState() {
@@ -133,10 +132,10 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
 
         binding.sendBtn.isEnabled = isEnabled
         binding.sendBtn.setBackgroundColor(
-            if (isEnabled) 0xFF0F0F0F.toInt() else 0xFFF6F6F6.toInt()
+            if (isEnabled) requireContext().getColor(R.color.text_primary) else requireContext().getColor(R.color.teumteum_bg)
         )
         binding.sendBtn.setTextColor(
-            if (isEnabled) 0xFFFFFFFF.toInt() else 0xFF0F0F0F.toInt()
+            if (isEnabled) requireContext().getColor(R.color.white) else requireContext().getColor(R.color.text_primary)
         )
     }
 

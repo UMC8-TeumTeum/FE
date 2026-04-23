@@ -31,7 +31,6 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import kotlin.getValue
-import androidx.core.graphics.toColorInt
 
 @AndroidEntryPoint
 class FriendRoommateTimeFragment : Fragment() {
@@ -219,12 +218,12 @@ class FriendRoommateTimeFragment : Fragment() {
     private fun updateNextButton(hasEmpty: Boolean) {
         if (!hasEmpty) {
             binding.nextBtn.isEnabled = false
-            binding.nextBtn.setBackgroundColor("#F6F6F6".toColorInt())
-            binding.nextBtn.setTextColor("#0F0F0F".toColorInt())
+            binding.nextBtn.setBackgroundColor(requireContext().getColor(R.color.teumteum_bg))
+            binding.nextBtn.setTextColor(requireContext().getColor(R.color.text_primary))
         } else {
             binding.nextBtn.isEnabled = true
-            binding.nextBtn.setBackgroundColor("#0F0F0F".toColorInt())
-            binding.nextBtn.setTextColor("#FFFFFF".toColorInt())
+            binding.nextBtn.setBackgroundColor(requireContext().getColor(R.color.text_primary))
+            binding.nextBtn.setTextColor(requireContext().getColor(R.color.white))
         }
     }
 

@@ -16,7 +16,6 @@ import com.umc.teumteum.ui.friend.viewModel.FriendViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
-import androidx.core.graphics.toColorInt
 
 @AndroidEntryPoint
 class BottomSheetFriend02AcceptFragment : BottomSheetDialogFragment() {
@@ -49,14 +48,14 @@ class BottomSheetFriend02AcceptFragment : BottomSheetDialogFragment() {
 
         val item = viewModel.selectedTeum.value
         if (item == null) {
-            dismiss() // 선택값 없으면 닫기
+            dismiss()
             return
         }
 
         val fullText = "함께 할래요 멘트를 보낼까요?"
         val spannable = SpannableString(fullText).apply {
-            setSpan(ForegroundColorSpan("#7770FE".toColorInt()), 0, 6, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-            setSpan(ForegroundColorSpan("#0F0F0F".toColorInt()), 6, fullText.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            setSpan(ForegroundColorSpan(requireContext().getColor(R.color.main_1)), 0, 6, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            setSpan(ForegroundColorSpan(requireContext().getColor(R.color.text_primary)), 6, fullText.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         }
         binding.mentText.text = spannable
 
