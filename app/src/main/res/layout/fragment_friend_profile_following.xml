@@ -325,7 +325,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="팔로잉"
-        android:textColor="#0F0F0F"
+        android:textColor="@color/text_primary"
         style="@style/Md16"
         android:backgroundTint="@color/teumteum_bg"
         app:cornerRadius="12dp"

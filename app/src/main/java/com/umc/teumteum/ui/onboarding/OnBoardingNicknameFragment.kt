@@ -107,12 +107,12 @@ class OnBoardingNicknameFragment : Fragment() {
 
         binding.nextBtn.isEnabled = enabled
         binding.nextBtn.setBackgroundColor(
-            if (enabled) requireContext().getColor(R.color.black)
-            else "#F6F6F6".toColorInt()
+            if (enabled) requireContext().getColor(R.color.text_primary)
+            else requireContext().getColor(R.color.teumteum_bg)
         )
         binding.nextBtn.setTextColor(
             if (enabled) requireContext().getColor(R.color.white)
-            else requireContext().getColor(R.color.black)
+            else requireContext().getColor(R.color.text_primary)
         )
     }
 

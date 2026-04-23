@@ -254,6 +254,7 @@
         android:layout_height="wrap_content"
         android:text="프로필 수정"
         style="@style/Md16"
+        android:textColor="@color/white"
         android:backgroundTint="@color/text_primary"
         app:cornerRadius="12dp"
         android:layout_marginStart="19dp"

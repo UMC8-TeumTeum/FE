@@ -56,7 +56,7 @@
         android:inputType="textMultiLine"
         android:maxLength="100"
         android:padding="12dp"
-        android:textColor="#D3D3D3"
+        android:textColor="@color/teumteum_gray"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_title" />
