@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.umc.teumteum.R
 import com.umc.teumteum.databinding.FragmentFriendRejectSendBinding
-import androidx.core.graphics.toColorInt
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
@@ -43,7 +42,7 @@ class FriendRejectSendFragment : Fragment() {
         val start = text.indexOf("전송")
         val end = start + 2
         spannable.setSpan(
-            ForegroundColorSpan("#7770FE".toColorInt()),
+            ForegroundColorSpan(requireContext().getColor(R.color.main_1)),
             start, end,
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
         )

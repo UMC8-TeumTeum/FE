@@ -201,11 +201,6 @@ class Friend02SuggestFragment : Fragment() {
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
     private fun observeViewModel() {
         viewModel.possibleTimeList.observe(viewLifecycleOwner) { list ->
             Log.d("DEBUG", "observeViewModel triggered: ${list.size}개")
@@ -229,6 +224,11 @@ class Friend02SuggestFragment : Fragment() {
     // 24:00 -> 00:00 변환
     private fun convert24To00(timeStr: String): String {
         return if (timeStr == "24:00") "00:00" else timeStr
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     companion object {

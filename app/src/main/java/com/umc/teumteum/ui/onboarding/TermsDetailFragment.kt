@@ -18,13 +18,14 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class TermsDetailFragment : Fragment() {
 
-    private lateinit var binding: FragmentTermsDetailBinding
+    private var _binding: FragmentTermsDetailBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentTermsDetailBinding.inflate(inflater, container, false)
+        _binding = FragmentTermsDetailBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -75,5 +76,10 @@ class TermsDetailFragment : Fragment() {
             "term4" -> getString(R.string.term4_content)
             else -> "약관 내용을 불러올 수 없습니다."
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

@@ -189,6 +189,7 @@
         android:text="적용"
         style="@style/Md16"
         app:cornerRadius="12dp"
+        android:textColor="@color/white"
         android:backgroundTint="@color/text_primary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

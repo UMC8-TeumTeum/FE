@@ -31,6 +31,14 @@
     <color name="teumteum_deactive">#B1B2B3</color>
     <color name="teumteum_bg">#F6F6F6</color>
 
+    <color name="destructive_primary">#FF473B</color>
+    <color name="destructive_secondary">#FF5C5C</color>
+
+    <color name="gray_500">#797979</color>
+    <color name="gray_800">#181818</color>
+    <color name="gray_900">#1F1F1F</color>
+    <color name="error_red">#FF0000</color>
+
     <color name="clock_sleep">#605ADB</color>
     <color name="clock_teum">#FFFFFF</color>
     <color name="clock_todo">#847EFF</color>

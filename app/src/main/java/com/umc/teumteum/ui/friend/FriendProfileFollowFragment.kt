@@ -105,7 +105,7 @@ class FriendProfileFollowFragment : Fragment() {
         }
     }
 
-    // 차단 신고 팝업 표시
+    // 신고/차단 팝업 표시
     private fun showOptionsPopup(anchorView: View) {
         val popupView = layoutInflater.inflate(R.layout.popup_friend_options, null)
         val density = resources.displayMetrics.density
@@ -126,14 +126,27 @@ class FriendProfileFollowFragment : Fragment() {
         popupWindow.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
         popupWindow.elevation = 0f
 
+        val yOffsetPx = (15 * density).toInt()
+
         // anchorView 기준으로 위치 계산
         popupWindow.showAsDropDown(
             anchorView,
-            anchorView.width - widthPx, // 오른쪽 정렬
-            6                            // 바로 아래
+            anchorView.width - widthPx,
+            yOffsetPx
         )
 
-        // 차단 버튼 클릭
+        // 신고
+        popupView.findViewById<View>(R.id.btn_report).setOnClickListener {
+            popupWindow.dismiss()
+
+            if (targetUserId == -1) return@setOnClickListener
+
+            BottomSheetFriendReportChoiceFragment
+                .newInstance("USER", targetUserId.toLong())
+                .show(parentFragmentManager, "BottomSheetFriendReportChoiceFragment")
+        }
+
+        // 차단
         popupView.findViewById<View>(R.id.btn_block).setOnClickListener {
             popupWindow.dismiss()
 
@@ -147,17 +160,6 @@ class FriendProfileFollowFragment : Fragment() {
             BottomSheetFriendBlockFragment
                 .newInstance(targetUserId, userName)
                 .show(parentFragmentManager, "BottomSheetFriendBlockFragment")
-        }
-
-        // 신고 버튼
-        popupView.findViewById<View>(R.id.btn_report).setOnClickListener {
-            popupWindow.dismiss()
-
-            if (targetUserId == -1) return@setOnClickListener
-
-            BottomSheetFriendReportChoiceFragment
-                .newInstance("USER", targetUserId.toLong())
-                .show(parentFragmentManager, "BottomSheetFriendReportChoiceFragment")
         }
     }
 

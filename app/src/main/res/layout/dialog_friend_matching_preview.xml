@@ -63,7 +63,7 @@
                     android:layout_marginEnd="8.52dp"
                     android:fontFamily="@font/noto_sans_kr_regular"
                     tools:text="25.05.02     |"
-                    android:textColor="#FFFFFF"
+                    android:textColor="@color/white"
                     android:textSize="11sp" />
 
                 <ImageView
@@ -80,7 +80,7 @@
                     android:layout_marginEnd="21dp"
                     android:fontFamily="@font/noto_sans_kr_regular"
                     tools:text="15:20 ~ 16:10"
-                    android:textColor="#FFFFFF"
+                    android:textColor="@color/white"
                     android:textSize="11sp" />
             </LinearLayout>
         </LinearLayout>
@@ -93,12 +93,12 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="9dp"
         android:layout_marginEnd="20dp"
-        app:cardBackgroundColor="#FFFFFF"
+        app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/teum_time_card"
-        app:strokeColor="#E8ECFF"
+        app:strokeColor="@color/main_2"
         app:strokeWidth="2dp">
 
         <LinearLayout
@@ -115,7 +115,7 @@
                 android:fontFamily="@font/noto_sans_kr_medium"
                 android:includeFontPadding="false"
                 tools:text="학교 앞 샤브월데이 가자"
-                android:textColor="#0F0F0F"
+                android:textColor="@color/text_primary"
                 android:textSize="15sp" />
 
             <TextView
@@ -128,7 +128,7 @@
                 android:fontFamily="@font/noto_sans_kr_regular"
                 android:includeFontPadding="false"
                 tools:text="샤브월데이 할인한대! 가서 샤브샤브랑 초코 요거트 과일쌈 해먹고 살얼음 맥주 마시자"
-                android:textColor="#788084"
+                android:textColor="@color/text_tertiary"
                 android:textSize="12sp" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -187,8 +187,8 @@
                 android:layout_marginBottom="17dp"
                 android:fontFamily="@font/noto_sans_kr_medium"
                 android:text="전송하기"
-                android:textColor="#FFFFFF"
-                app:backgroundTint="#0F0F0F"
+                android:textColor="@color/white"
+                app:backgroundTint="@color/text_primary"
                 app:cornerRadius="100dp" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>

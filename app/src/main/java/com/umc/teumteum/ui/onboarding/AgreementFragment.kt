@@ -20,7 +20,6 @@ import com.umc.teumteum.ui.auth.SignUpActivity
 import com.umc.teumteum.ui.onboarding.viewModel.OnBoardingUiState
 import com.umc.teumteum.ui.onboarding.viewModel.OnBoardingViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import androidx.core.graphics.toColorInt
 
 @AndroidEntryPoint
 class AgreementFragment : Fragment() {
@@ -111,10 +110,12 @@ class AgreementFragment : Fragment() {
         val enabled = binding.term1Checkbox.isChecked && binding.term2Checkbox.isChecked
         binding.nextBtn.isEnabled = enabled
         binding.nextBtn.setBackgroundColor(
-            if (enabled) requireContext().getColor(R.color.black) else "#F6F6F6".toColorInt()
+            if (enabled) ContextCompat.getColor(requireContext(), R.color.text_primary)
+            else ContextCompat.getColor(requireContext(), R.color.teumteum_bg)
         )
         binding.nextBtn.setTextColor(
-            if (enabled) requireContext().getColor(R.color.white) else requireContext().getColor(R.color.black)
+            if (enabled) ContextCompat.getColor(requireContext(), R.color.white)
+            else ContextCompat.getColor(requireContext(), R.color.text_primary)
         )
     }
 

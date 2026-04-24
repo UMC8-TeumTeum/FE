@@ -31,7 +31,9 @@ import java.util.Calendar
 @AndroidEntryPoint
 class OnBoardingScheduleFragment : Fragment() {
 
-    private lateinit var binding: FragmentOnBoardingScheduleBinding
+    private var _binding: FragmentOnBoardingScheduleBinding? = null
+    private val binding get() = _binding!!
+
     private val scheduleAdapter by lazy { ScheduleAdapter() }
 
     private lateinit var dayTextViews: List<TextView>
@@ -78,7 +80,7 @@ class OnBoardingScheduleFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentOnBoardingScheduleBinding.inflate(inflater, container, false)
+        _binding = FragmentOnBoardingScheduleBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -251,5 +253,10 @@ class OnBoardingScheduleFragment : Fragment() {
 
             parent.touchDelegate = multi
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

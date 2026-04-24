@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupWindow
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
@@ -18,7 +19,6 @@ import com.umc.teumteum.databinding.FragmentFriendProfileFollowingBinding
 import com.umc.teumteum.ui.friend.viewModel.FriendViewModel
 import com.umc.teumteum.ui.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
-import androidx.core.graphics.toColorInt
 import androidx.core.graphics.drawable.toDrawable
 
 @AndroidEntryPoint
@@ -161,7 +161,7 @@ class FriendProfileFollowingFragment : Fragment() {
         observeViewModel()
     }
 
-    // 차단 신고 팝업 표시
+    // 신고/차단 팝업 표시
     private fun showOptionsPopup(anchorView: View) {
         val popupView = layoutInflater.inflate(R.layout.popup_friend_options, null)
         val density = resources.displayMetrics.density
@@ -182,11 +182,13 @@ class FriendProfileFollowingFragment : Fragment() {
         popupWindow.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
         popupWindow.elevation = 0f
 
+        val yOffsetPx = (15 * density).toInt()
+
         // anchorView 기준으로 위치 계산
         popupWindow.showAsDropDown(
             anchorView,
-            anchorView.width - widthPx, // 오른쪽 정렬
-            6                            // 바로 아래
+            anchorView.width - widthPx,
+            yOffsetPx
         )
 
         popupView.findViewById<View>(R.id.btn_block).setOnClickListener {
@@ -223,10 +225,7 @@ class FriendProfileFollowingFragment : Fragment() {
                     binding.modifyProfileBtn.text = "차단됨"
                     binding.modifyProfileBtn.isEnabled = false
                     binding.modifyProfileBtn.alpha = 0.5f
-
-                    binding.modifyProfileBtn.setTextColor(
-                        "#0F0F0F".toColorInt()
-                    )
+                    binding.modifyProfileBtn.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
 
                     binding.starBtn.isEnabled = false
                     binding.sendBtn.isEnabled = false

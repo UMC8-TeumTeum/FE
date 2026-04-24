@@ -15,13 +15,14 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class ServiceInfoDetailFragment : Fragment() {
 
-    private lateinit var binding: FragmentServiceInfoDetailBinding
+    private var _binding: FragmentServiceInfoDetailBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentServiceInfoDetailBinding.inflate(inflater, container, false)
+        _binding = FragmentServiceInfoDetailBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -40,5 +41,10 @@ class ServiceInfoDetailFragment : Fragment() {
         binding.backArrowIv.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

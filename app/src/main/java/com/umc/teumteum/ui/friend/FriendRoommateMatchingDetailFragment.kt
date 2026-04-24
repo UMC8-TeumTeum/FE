@@ -32,12 +32,13 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import kotlin.getValue
-import androidx.core.graphics.toColorInt
 
 @AndroidEntryPoint
 class FriendRoommateMatchingDetailFragment : Fragment() {
 
-    private lateinit var binding: FragmentFriendRoommateMatchingDetailBinding
+    private var _binding: FragmentFriendRoommateMatchingDetailBinding? = null
+    private val binding get() = _binding!!
+
     private lateinit var timeConflictCardAdapter: TimeConflictCardAdapter
 
     private var selectedDate: String = ""
@@ -47,8 +48,8 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentFriendRoommateMatchingDetailBinding.inflate(inflater, container, false)
+    ): View {
+        _binding = FragmentFriendRoommateMatchingDetailBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -75,7 +76,7 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
 
         if (starIndex != -1) {
             spannable.setSpan(
-                android.text.style.ForegroundColorSpan("#7770FE".toColorInt()),
+                android.text.style.ForegroundColorSpan(requireContext().getColor(R.color.main_1)),
                 starIndex,
                 starIndex + 1,
                 android.text.Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -123,7 +124,7 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
 
         // 초기 버튼 상태 설정
         binding.sendBtn.isEnabled = false
-        binding.sendBtn.setBackgroundColor("#F6F6F6".toColorInt())
+        binding.sendBtn.setBackgroundColor(requireContext().getColor(R.color.teumteum_bg))
     }
 
     private fun updateNextButtonState() {
@@ -133,10 +134,10 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
 
         binding.sendBtn.isEnabled = isEnabled
         binding.sendBtn.setBackgroundColor(
-            if (isEnabled) 0xFF0F0F0F.toInt() else 0xFFF6F6F6.toInt()
+            if (isEnabled) requireContext().getColor(R.color.text_primary) else requireContext().getColor(R.color.teumteum_bg)
         )
         binding.sendBtn.setTextColor(
-            if (isEnabled) 0xFFFFFFFF.toInt() else 0xFF0F0F0F.toInt()
+            if (isEnabled) requireContext().getColor(R.color.white) else requireContext().getColor(R.color.text_primary)
         )
     }
 
@@ -360,5 +361,10 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
     // 24:00 -> 00:00 변환
     private fun convert24To00(timeStr: String): String {
         return if (timeStr == "24:00") "00:00" else timeStr
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

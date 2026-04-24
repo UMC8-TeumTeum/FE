@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.util.Log
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -20,7 +21,6 @@ import com.umc.teumteum.ui.friend.adapter.RecommendAdapter
 import com.umc.teumteum.ui.friend.viewModel.FriendViewModel
 import com.umc.teumteum.ui.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
-import androidx.core.graphics.toColorInt
 
 @AndroidEntryPoint
 class FriendFragment : Fragment() {
@@ -257,8 +257,8 @@ class FriendFragment : Fragment() {
 
         // 탭 클릭 리스너
         binding.tabFollowing.setOnClickListener {
-            binding.tabFollowing.setTextColor("#0F0F0F".toColorInt())
-            binding.tabFollower.setTextColor("#B1B2B3".toColorInt())
+            binding.tabFollowing.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
+            binding.tabFollower.setTextColor(ContextCompat.getColor(requireContext(), R.color.teumteum_deactive))
             binding.followingRecyclerView.visibility = View.VISIBLE
             binding.followerRecyclerView.visibility = View.GONE
 
@@ -268,8 +268,8 @@ class FriendFragment : Fragment() {
         }
 
         binding.tabFollower.setOnClickListener {
-            binding.tabFollowing.setTextColor("#B1B2B3".toColorInt())
-            binding.tabFollower.setTextColor("#0F0F0F".toColorInt())
+            binding.tabFollowing.setTextColor(ContextCompat.getColor(requireContext(), R.color.teumteum_deactive))
+            binding.tabFollower.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
             binding.followingRecyclerView.visibility = View.GONE
             binding.followerRecyclerView.visibility = View.VISIBLE
 

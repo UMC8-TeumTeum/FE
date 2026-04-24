@@ -174,7 +174,7 @@
             android:layout_height="wrap_content"
             android:text="팔로워"
             android:fontFamily="@font/noto_sans_kr_medium"
-            android:textColor="#B1B2B3" />
+            android:textColor="@color/teumteum_deactive" />
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView

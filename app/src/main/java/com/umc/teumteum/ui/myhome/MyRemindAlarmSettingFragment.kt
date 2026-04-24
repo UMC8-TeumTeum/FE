@@ -18,7 +18,8 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class MyRemindAlarmSettingFragment : Fragment() {
 
-    private lateinit var binding: FragmentMyRemindAlarmSettingBinding
+    private var _binding: FragmentMyRemindAlarmSettingBinding? = null
+    private val binding get() = _binding!!
 
     private val viewModel: SettingViewModel by viewModels()
 
@@ -28,8 +29,8 @@ class MyRemindAlarmSettingFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentMyRemindAlarmSettingBinding.inflate(inflater,container,false)
+    ): View {
+        _binding = FragmentMyRemindAlarmSettingBinding.inflate(inflater,container,false)
         return binding.root
     }
 
@@ -94,4 +95,9 @@ class MyRemindAlarmSettingFragment : Fragment() {
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        saveJob?.cancel()
+        _binding = null
+    }
 }

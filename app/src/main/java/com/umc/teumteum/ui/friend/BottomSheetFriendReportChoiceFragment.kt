@@ -17,7 +17,6 @@ import com.umc.teumteum.ui.friend.viewModel.FriendViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import androidx.core.graphics.toColorInt
 
 class BottomSheetFriendReportChoiceFragment : BottomSheetDialogFragment() {
 
@@ -144,8 +143,8 @@ class BottomSheetFriendReportChoiceFragment : BottomSheetDialogFragment() {
                 intArrayOf(-android.R.attr.state_checked)
             ),
             intArrayOf(
-                "#0F0F0F".toColorInt(), // 체크 o
-                "#788084".toColorInt()  // 체크 x
+                requireContext().getColor(R.color.text_primary), // 체크 o
+                requireContext().getColor(R.color.text_tertiary)  // 체크 x
             )
         )
 

@@ -17,7 +17,8 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MyHomeFragment : Fragment() {
 
-    lateinit var binding: FragmentMyHomeBinding
+    private var _binding: FragmentMyHomeBinding? = null
+    private val binding get() = _binding!!
 
     private val viewModel: MyHomeViewModel by activityViewModels()
     private val homeViewModel: HomeViewModel by activityViewModels()
@@ -27,7 +28,7 @@ class MyHomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentMyHomeBinding.inflate(inflater, container, false)
+        _binding = FragmentMyHomeBinding.inflate(inflater, container, false)
 
         return binding.root
     }
@@ -115,5 +116,10 @@ class MyHomeFragment : Fragment() {
         val hours = homeViewModel.teumTimeHours.value ?: 0
         val minutes = homeViewModel.teumTimeMinutes.value ?: 0
         binding.timeTv.text = "${days}일 ${hours}시간 ${minutes}분"
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

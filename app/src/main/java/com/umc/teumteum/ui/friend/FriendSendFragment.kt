@@ -14,7 +14,6 @@ import androidx.fragment.app.FragmentManager
 import com.umc.teumteum.R
 import com.umc.teumteum.databinding.FragmentFriendSendBinding
 import dagger.hilt.android.AndroidEntryPoint
-import androidx.core.graphics.toColorInt
 
 @AndroidEntryPoint
 class FriendSendFragment : Fragment() {
@@ -45,7 +44,7 @@ class FriendSendFragment : Fragment() {
         val start = text.indexOf("전송")
         val end = start + 2
         spannable.setSpan(
-            ForegroundColorSpan("#7770FE".toColorInt()),
+            ForegroundColorSpan(requireContext().getColor(R.color.main_1)),
             start, end,
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
         )

@@ -1,8 +1,6 @@
 package com.umc.teumteum.ui.onboarding
 
-import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -25,12 +23,13 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
-import androidx.core.graphics.toColorInt
 
 @AndroidEntryPoint
 class OnBoardingSleepPatternFragment : Fragment() {
 
-    private lateinit var binding: FragmentOnBoardingSleepPatternBinding
+    private var _binding: FragmentOnBoardingSleepPatternBinding? = null
+    private val binding get() = _binding!!
+
     private val viewModel: OnBoardingViewModel by activityViewModels()
 
     private var selectedStartTime: LocalTime? = null
@@ -40,7 +39,7 @@ class OnBoardingSleepPatternFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentOnBoardingSleepPatternBinding.inflate(inflater, container, false)
+        _binding = FragmentOnBoardingSleepPatternBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -217,7 +216,7 @@ class OnBoardingSleepPatternFragment : Fragment() {
             if (shouldEnable)
                 requireContext().getColor(R.color.text_primary)
             else
-                "#F6F6F6".toColorInt()
+                requireContext().getColor(R.color.teumteum_bg)
         )
         binding.nextBtn.setTextColor(
             if (shouldEnable)
@@ -225,5 +224,10 @@ class OnBoardingSleepPatternFragment : Fragment() {
             else
                 requireContext().getColor(R.color.text_primary)
         )
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

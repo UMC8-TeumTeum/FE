@@ -17,12 +17,12 @@ import com.umc.teumteum.ui.auth.SignUpActivity
 import com.umc.teumteum.ui.onboarding.viewModel.OnBoardingUiState
 import com.umc.teumteum.ui.onboarding.viewModel.OnBoardingViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import androidx.core.graphics.toColorInt
 
 @AndroidEntryPoint
 class OnBoardingNicknameFragment : Fragment() {
 
-    private lateinit var binding: FragmentOnBoardingNicknameBinding
+    private var _binding: FragmentOnBoardingNicknameBinding? = null
+    private val binding get() = _binding!!
 
     private val viewModel: OnBoardingViewModel by activityViewModels()
 
@@ -30,7 +30,7 @@ class OnBoardingNicknameFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentOnBoardingNicknameBinding.inflate(inflater, container, false)
+        _binding = FragmentOnBoardingNicknameBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -107,12 +107,12 @@ class OnBoardingNicknameFragment : Fragment() {
 
         binding.nextBtn.isEnabled = enabled
         binding.nextBtn.setBackgroundColor(
-            if (enabled) requireContext().getColor(R.color.black)
-            else "#F6F6F6".toColorInt()
+            if (enabled) requireContext().getColor(R.color.text_primary)
+            else requireContext().getColor(R.color.teumteum_bg)
         )
         binding.nextBtn.setTextColor(
             if (enabled) requireContext().getColor(R.color.white)
-            else requireContext().getColor(R.color.black)
+            else requireContext().getColor(R.color.text_primary)
         )
     }
 
@@ -152,5 +152,10 @@ class OnBoardingNicknameFragment : Fragment() {
     private fun navigateToNext() {
         (activity as? SignUpActivity)?.proceedToNextOnboardingStep(this)
         viewModel.resetState()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

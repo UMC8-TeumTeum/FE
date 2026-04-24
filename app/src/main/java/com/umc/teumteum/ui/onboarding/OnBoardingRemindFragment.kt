@@ -19,14 +19,16 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class OnBoardingRemindFragment : Fragment() {
 
-    private lateinit var binding: FragmentOnBoardingRemindBinding
+    private var _binding: FragmentOnBoardingRemindBinding? = null
+    private val binding get() = _binding!!
+
     private val viewModel: OnBoardingViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentOnBoardingRemindBinding.inflate(inflater, container, false)
+        _binding = FragmentOnBoardingRemindBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -73,7 +75,7 @@ class OnBoardingRemindFragment : Fragment() {
         viewModel.state.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is OnBoardingUiState.Success -> {
-                    // 온보딩 완료 - SignUpActivity의 메서드를 통해 메인으로 이동
+                    // 온보딩 완료
                     (activity as? SignUpActivity)?.completeOnboarding()
                 }
                 is OnBoardingUiState.Error -> {
@@ -81,5 +83,10 @@ class OnBoardingRemindFragment : Fragment() {
                 else -> Unit
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

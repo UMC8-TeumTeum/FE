@@ -12,7 +12,7 @@ import androidx.fragment.app.activityViewModels
 import com.umc.teumteum.databinding.BottomSheetFriendTeumDeleteBinding
 import com.umc.teumteum.ui.friend.viewModel.FriendViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import androidx.core.graphics.toColorInt
+import com.umc.teumteum.R
 
 class BottomSheetFriendTeumDeleteFragment : BottomSheetDialogFragment() {
 
@@ -43,7 +43,7 @@ class BottomSheetFriendTeumDeleteFragment : BottomSheetDialogFragment() {
         val spannable = SpannableString(text)
         val start = text.indexOf("취소")
         spannable.setSpan(
-            ForegroundColorSpan("#7770FE".toColorInt()),
+            ForegroundColorSpan(requireContext().getColor(R.color.main_1)),
             start,
             start + 2,
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE

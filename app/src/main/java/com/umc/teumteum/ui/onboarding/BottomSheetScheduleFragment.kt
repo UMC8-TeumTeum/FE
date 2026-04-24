@@ -29,7 +29,9 @@ class BottomSheetScheduleFragment(
     private val existingSchedules: List<Schedule>,
 ) : BottomSheetDialogFragment() {
 
-    private lateinit var binding: BottomSheetScheduleBinding
+    private var _binding: BottomSheetScheduleBinding? = null
+    private val binding get() = _binding!!
+
     private val dayNames = listOf("일", "월", "화", "수", "목", "금", "토")
 
     private var startTime: LocalTime? = null
@@ -41,7 +43,7 @@ class BottomSheetScheduleFragment(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = BottomSheetScheduleBinding.inflate(inflater, container, false)
+        _binding = BottomSheetScheduleBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -199,5 +201,10 @@ class BottomSheetScheduleFragment(
         }
 
         return dialog
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
