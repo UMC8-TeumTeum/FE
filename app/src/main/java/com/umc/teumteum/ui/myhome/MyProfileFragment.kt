@@ -27,14 +27,10 @@ class MyProfileFragment : Fragment() {
     private val viewModel: MyHomeViewModel by activityViewModels()
     private val homeViewModel: HomeViewModel by activityViewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentMyProfileBinding.inflate(inflater,container,false)
         return binding.root
     }
