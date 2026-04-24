@@ -13,8 +13,10 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import com.umc.teumteum.R
 import com.umc.teumteum.databinding.FragmentOnBoardingProfileBinding
 import com.umc.teumteum.ui.auth.SignUpActivity
+import com.umc.teumteum.ui.myhome.BottomSheetSelectPictureFragment
 import com.umc.teumteum.ui.onboarding.viewModel.OnBoardingUiState
 import com.umc.teumteum.ui.onboarding.viewModel.OnBoardingViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,20 +24,18 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class OnBoardingProfileFragment : Fragment() {
 
-    private lateinit var binding: FragmentOnBoardingProfileBinding
-    private val viewModel: OnBoardingViewModel by activityViewModels()
+    private var _binding: FragmentOnBoardingProfileBinding? = null
+    private val binding get() = _binding!!
 
-    private var lastSelectedImageUri: Uri? = null
+    private val viewModel: OnBoardingViewModel by activityViewModels()
 
     private val galleryLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             result.data?.data?.let { uri ->
-                lastSelectedImageUri = uri
-                binding.profileIv.setImageURI(uri)
-                binding.cameraBtn.visibility = View.GONE
                 viewModel.setProfileImage(uri)
+                renderProfileImage(uri)
             }
         }
     }
@@ -44,7 +44,7 @@ class OnBoardingProfileFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentOnBoardingProfileBinding.inflate(inflater, container, false)
+        _binding = FragmentOnBoardingProfileBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -54,10 +54,8 @@ class OnBoardingProfileFragment : Fragment() {
         val nickname = viewModel.nickname.value
         binding.titleTv.text = "$nickname 님"
         binding.nicknameTv.text = nickname
-        binding.profileIv.setImageURI(viewModel.profileImageUri.value)
-        if(viewModel.profileImageUri.value != null){
-            binding.cameraBtn.visibility = View.GONE
-        }
+
+        renderProfileImage(viewModel.profileImageUri.value)
 
         val initialMarginBottom =
             (binding.nextBtn.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin
@@ -73,13 +71,35 @@ class OnBoardingProfileFragment : Fragment() {
 
         observeViewModel()
 
-        val pickImageIntent = Intent(Intent.ACTION_PICK).apply { type = "image/*" }
-        binding.galleryFl.setOnClickListener { galleryLauncher.launch(pickImageIntent) }
-        binding.cameraBtn.setOnClickListener { galleryLauncher.launch(pickImageIntent) }
+        binding.galleryFl.setOnClickListener {
+            showSelectPictureBottomSheet()
+        }
+
+//        binding.cameraBtn.setOnClickListener {
+//            showSelectPictureBottomSheet()
+//        }
 
         binding.nextBtn.setOnClickListener {
             viewModel.uploadProfileImage(requireContext())
         }
+    }
+
+    private fun showSelectPictureBottomSheet() {
+        val bottomSheet = BottomSheetSelectPictureFragment().apply {
+            setOnGalleryClickListener {
+                val pickImageIntent = Intent(Intent.ACTION_PICK).apply {
+                    type = "image/*"
+                }
+                galleryLauncher.launch(pickImageIntent)
+            }
+
+            setOnDefaultProfileClickListener {
+                viewModel.clearProfileImage()
+                renderProfileImage(null)
+            }
+        }
+
+        bottomSheet.show(parentFragmentManager, "BottomSheetSelectPictureFragment")
     }
 
     private fun observeViewModel() {
@@ -101,10 +121,29 @@ class OnBoardingProfileFragment : Fragment() {
                 else -> Unit
             }
         }
+
+        viewModel.profileImageUri.observe(viewLifecycleOwner) { uri ->
+            renderProfileImage(uri)
+        }
+    }
+
+    private fun renderProfileImage(uri: Uri?) {
+        if (uri != null) {
+            binding.profileIv.setImageURI(uri)
+//            binding.cameraBtn.visibility = View.GONE
+        } else {
+            binding.profileIv.setImageResource(R.drawable.gray_teum)
+//            binding.cameraBtn.visibility = View.VISIBLE
+        }
     }
 
     private fun navigateToNext() {
         (activity as? SignUpActivity)?.proceedToNextOnboardingStep(this)
         viewModel.resetState()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
