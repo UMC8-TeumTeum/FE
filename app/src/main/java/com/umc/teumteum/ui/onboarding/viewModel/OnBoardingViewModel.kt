@@ -139,7 +139,6 @@ class OnBoardingViewModel @Inject constructor(
                         override fun onResponse(call: Call, response: Response) {
                             response.use {
                                 if (response.isSuccessful) {
-                                    // ✅ 이미지 있을 때만 API 호출
                                     postProfileImage(
                                         ProfileImageRequest(
                                             _profileImageFileName.value!!

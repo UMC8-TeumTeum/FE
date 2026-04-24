@@ -42,7 +42,7 @@
         <TextView
             android:id="@+id/gallery_tv"
             android:fontFamily="@font/pretendard_medium"
-            android:textSize="20dp"
+            android:textSize="20sp"
             android:text="갤러리에서 이미지 선택"
             android:includeFontPadding="false"
             android:layout_width="wrap_content"
@@ -86,7 +86,7 @@
         <TextView
             android:id="@+id/basic_profile_tv"
             android:fontFamily="@font/pretendard_medium"
-            android:textSize="20dp"
+            android:textSize="20sp"
             android:text="기본 프로필로 변경"
             android:includeFontPadding="false"
             android:layout_width="wrap_content"

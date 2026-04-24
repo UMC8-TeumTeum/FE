@@ -29,6 +29,10 @@ class OnBoardingProfileFragment : Fragment() {
 
     private val viewModel: OnBoardingViewModel by activityViewModels()
 
+    companion object {
+        private const val SELECT_PICTURE_BOTTOM_SHEET_TAG = "BottomSheetSelectPictureFragment"
+    }
+
     private val galleryLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -85,6 +89,9 @@ class OnBoardingProfileFragment : Fragment() {
     }
 
     private fun showSelectPictureBottomSheet() {
+        if (parentFragmentManager.findFragmentByTag(SELECT_PICTURE_BOTTOM_SHEET_TAG) != null) {
+            return
+        }
         val bottomSheet = BottomSheetSelectPictureFragment().apply {
             setOnGalleryClickListener {
                 val pickImageIntent = Intent(Intent.ACTION_PICK).apply {
@@ -99,7 +106,8 @@ class OnBoardingProfileFragment : Fragment() {
             }
         }
 
-        bottomSheet.show(parentFragmentManager, "BottomSheetSelectPictureFragment")
+//        bottomSheet.show(parentFragmentManager, "BottomSheetSelectPictureFragment")
+        bottomSheet.show(parentFragmentManager, SELECT_PICTURE_BOTTOM_SHEET_TAG)
     }
 
     private fun observeViewModel() {
