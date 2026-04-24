@@ -18,11 +18,13 @@ import com.umc.teumteum.ui.onboarding.data.Schedule
 import com.umc.teumteum.utils.ApiException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
 import java.io.IOException
 import java.time.LocalTime
 import javax.inject.Inject
@@ -63,19 +65,17 @@ class OnBoardingViewModel @Inject constructor(
     private val _remindList = MutableLiveData<List<Int>>(emptyList())
     val remindList: LiveData<List<Int>> get() = _remindList
 
-    // 약관 동의
+    //약관동의
     fun postAgreements(request: AgreementRequest) {
         _state.value = OnBoardingUiState.Loading
         viewModelScope.launch {
             repository.postAgreements(request)
-                .onSuccess {
-                    _state.value = OnBoardingUiState.Success
-                }
+                .onSuccess { _state.value = OnBoardingUiState.Success }
                 .onFailure { handleError(it) }
         }
     }
 
-    // 닉네임/직종 등록
+    //닉네임, 직종
     fun postNicknameAndJob() {
         val nickname = _nickname.value.orEmpty()
         val jobField = _field.value.orEmpty()
@@ -83,16 +83,18 @@ class OnBoardingViewModel @Inject constructor(
         _state.value = OnBoardingUiState.Loading
         viewModelScope.launch {
             repository.postNicknameAndJobField(NicknameJobRequest(nickname, jobField))
-                .onSuccess {
-                    _state.value = OnBoardingUiState.Success
-                }
+                .onSuccess { _state.value = OnBoardingUiState.Success }
                 .onFailure { handleError(it) }
         }
     }
 
-    // 프리사인드 url 요청 후 실제 S3에 프로필 이미지 등록
+    //프로필 이미지
     fun uploadProfileImage(context: Context) {
-        val uri = _profileImageUri.value ?: run {
+
+        val uri = _profileImageUri.value
+
+        //기본 이미지 선택
+        if (uri == null) {
             _state.value = OnBoardingUiState.Success
             return
         }
@@ -103,19 +105,29 @@ class OnBoardingViewModel @Inject constructor(
         viewModelScope.launch {
             repository.requestPresignedUrl(PresignedRequest(contentType))
                 .onSuccess { response ->
+
                     _profileImageFileName.value = response.fileName
 
                     val inputStream = context.contentResolver.openInputStream(uri)
                     val bytes = inputStream?.readBytes() ?: run {
-                        _state.value = OnBoardingUiState.Error("UPLOAD_FAIL", "이미지를 불러올 수 없습니다.")
+                        _state.value = OnBoardingUiState.Error(
+                            "UPLOAD_FAIL",
+                            "이미지를 불러올 수 없습니다."
+                        )
                         return@onSuccess
                     }
 
-                    val requestBody = bytes.toRequestBody(contentType.toMediaTypeOrNull())
-                    val request = Request.Builder().url(response.presignedUrl).put(requestBody).build()
+                    val requestBody =
+                        bytes.toRequestBody(contentType.toMediaTypeOrNull())
+
+                    val request = Request.Builder()
+                        .url(response.presignedUrl)
+                        .put(requestBody)
+                        .build()
 
                     OkHttpClient().newCall(request).enqueue(object : Callback {
-                        override fun onFailure(call: okhttp3.Call, e: IOException) {
+
+                        override fun onFailure(call: Call, e: IOException) {
                             _state.postValue(
                                 OnBoardingUiState.Error(
                                     "UPLOAD_FAIL",
@@ -124,27 +136,27 @@ class OnBoardingViewModel @Inject constructor(
                             )
                         }
 
-                        override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
-                            if (response.isSuccessful) {
-                                postProfileImage(
-                                    ProfileImageRequest(
-                                        _profileImageFileName.value!!
+                        override fun onResponse(call: Call, response: Response) {
+                            response.use {
+                                if (response.isSuccessful) {
+                                    postProfileImage(
+                                        ProfileImageRequest(
+                                            _profileImageFileName.value!!
+                                        )
                                     )
-                                )
-                            } else {
-                                _state.postValue(
-                                    OnBoardingUiState.Error(
-                                        "UPLOAD_FAIL",
-                                        "이미지 업로드 실패 (code: ${response.code})"
+                                } else {
+                                    _state.postValue(
+                                        OnBoardingUiState.Error(
+                                            "UPLOAD_FAIL",
+                                            "이미지 업로드 실패 (code: ${response.code})"
+                                        )
                                     )
-                                )
+                                }
                             }
                         }
                     })
                 }
-                .onFailure {
-                    handleError(it)
-                }
+                .onFailure { handleError(it) }
         }
     }
 
@@ -159,31 +171,26 @@ class OnBoardingViewModel @Inject constructor(
         }
     }
 
-    // 수면 패턴 등록
+    //수면 패턴
     fun postSleepPattern(request: SleepPatternRequest) {
         _state.value = OnBoardingUiState.Loading
         viewModelScope.launch {
             repository.postSleepPattern(request)
-                .onSuccess {
-                    _state.value = OnBoardingUiState.Success
-                }
+                .onSuccess { _state.value = OnBoardingUiState.Success }
                 .onFailure { handleError(it) }
         }
     }
 
-    // 반복 일정 등록
+    //반복일정
     fun postSchedule(request: ScheduleRequest) {
         _state.value = OnBoardingUiState.Loading
         viewModelScope.launch {
             repository.postSchedules(request)
-                .onSuccess {
-                    _state.value = OnBoardingUiState.Success
-                }
+                .onSuccess { _state.value = OnBoardingUiState.Success }
                 .onFailure { handleError(it) }
         }
     }
 
-    // 반복 일정 추가
     fun addSchedule(dayIndex: Int, schedule: Schedule) {
         val list = scheduleMap.getOrPut(dayIndex) { mutableListOf() }
         list.add(schedule)
@@ -200,14 +207,12 @@ class OnBoardingViewModel @Inject constructor(
         return current.size != target.size || current != target
     }
 
-    // 리마인드 알림 등록
+    //리마인드
     fun postRemind(request: RemindRequest) {
         _state.value = OnBoardingUiState.Loading
         viewModelScope.launch {
             repository.postRemind(request)
-                .onSuccess {
-                    _state.value = OnBoardingUiState.Success
-                }
+                .onSuccess { _state.value = OnBoardingUiState.Success }
                 .onFailure { handleError(it) }
         }
     }
@@ -216,22 +221,18 @@ class OnBoardingViewModel @Inject constructor(
         _state.value = OnBoardingUiState.Idle
     }
 
-    // 공통 에러 처리
     private fun handleError(e: Throwable) {
         if (e is ApiException) {
-            _state.value = OnBoardingUiState.Error(
-                code = e.code,
-                message = e.message
-            )
+            _state.value = OnBoardingUiState.Error(e.code, e.message)
         } else {
             _state.value = OnBoardingUiState.Error(
-                code = "NETWORK_ERROR",
-                message = "네트워크 오류가 발생했습니다."
+                "NETWORK_ERROR",
+                "네트워크 오류가 발생했습니다."
             )
         }
     }
 
-    // 수면 시간 설정
+    //setter
     fun setSleepStartTime(start: LocalTime) {
         _sleepStartTime.value = start
     }
@@ -248,8 +249,12 @@ class OnBoardingViewModel @Inject constructor(
         _field.value = value
     }
 
-    fun setProfileImage(uri: Uri) {
+    fun setProfileImage(uri: Uri?) {
         _profileImageUri.value = uri
+    }
+
+    fun clearProfileImage() {
+        _profileImageUri.value = null
     }
 
     fun updateCurrentDaySchedule(dayIndex: Int) {
@@ -273,7 +278,6 @@ class OnBoardingViewModel @Inject constructor(
         if (idx == -1) return
 
         list[idx] = new.copy(id = scheduleId)
-
         _currentDayScheduleList.value = list.toList()
     }
 
@@ -285,4 +289,3 @@ class OnBoardingViewModel @Inject constructor(
         _currentDayScheduleList.value = list.toList()
     }
 }
-

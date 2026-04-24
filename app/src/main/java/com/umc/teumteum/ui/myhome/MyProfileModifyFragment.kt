@@ -7,12 +7,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.umc.teumteum.R
 import com.umc.teumteum.databinding.FragmentMyProfileModifyBinding
 import com.umc.teumteum.ui.main.MainActivity
@@ -25,18 +27,20 @@ import kotlin.math.max
 @AndroidEntryPoint
 class MyProfileModifyFragment : Fragment() {
 
-    private lateinit var binding: FragmentMyProfileModifyBinding
+    private var _binding: FragmentMyProfileModifyBinding? = null
+    private val binding get() = _binding!!
 
     private val viewModel: MyHomeViewModel by activityViewModels()
     private val homeViewModel: HomeViewModel by activityViewModels()
-
-    // 수정 전용 ViewModel
     private val modifyViewModel: ProfileModifyViewModel by activityViewModels()
 
     private var nicknameInitialized = false
     private var fieldInitialized = false
 
-    // 갤러리에서 이미지 선택
+    companion object {
+        private const val SELECT_PICTURE_BOTTOM_SHEET_TAG = "BottomSheetSelectPictureFragment"
+    }
+
     private val galleryLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -48,10 +52,11 @@ class MyProfileModifyFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentMyProfileModifyBinding.inflate(inflater, container, false)
+        _binding = FragmentMyProfileModifyBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -63,7 +68,6 @@ class MyProfileModifyFragment : Fragment() {
             val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
             val sysBottom = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom
             val bottomPadding = if (imeBottom > 0) max(imeBottom, sysBottom) else 0
-
             v.updatePadding(bottom = bottomPadding)
             insets
         }
@@ -102,43 +106,49 @@ class MyProfileModifyFragment : Fragment() {
             }
         }
 
-        // 타이머
         homeViewModel.teumTimeDays.observe(viewLifecycleOwner) { updateTeumTime() }
         homeViewModel.teumTimeHours.observe(viewLifecycleOwner) { updateTeumTime() }
         homeViewModel.teumTimeMinutes.observe(viewLifecycleOwner) { updateTeumTime() }
 
-        modifyViewModel.tempImageUri.observe(viewLifecycleOwner) { uri ->
-            if (uri != null) {
-                binding.profileIv.setImageURI(uri)
-            }
+        modifyViewModel.imageEditState.observe(viewLifecycleOwner) {
+            renderEditProfileImagePreview()
         }
 
-        viewModel.profileImageUrl.observe(viewLifecycleOwner) { imageUrl ->
-            if (modifyViewModel.tempImageUri.value != null) return@observe
-
-            if (!imageUrl.isNullOrBlank()) {
-                Glide.with(this)
-                    .load(imageUrl)
-                    .placeholder(R.drawable.gray_teum)
-                    .error(R.drawable.gray_teum)
-                    .into(binding.profileIv)
-            } else {
-                binding.profileIv.setImageResource(R.drawable.gray_teum)
-            }
+        viewModel.profileImageUrl.observe(viewLifecycleOwner) {
+            renderEditProfileImagePreview()
         }
 
-        val pickImageIntent = Intent(Intent.ACTION_PICK).apply { type = "image/*" }
         binding.profileIv.setOnClickListener {
-            galleryLauncher.launch(pickImageIntent)
+            if(parentFragmentManager.findFragmentByTag(SELECT_PICTURE_BOTTOM_SHEET_TAG) != null) {
+                return@setOnClickListener
+            }
+
+            val bottomSheet = BottomSheetSelectPictureFragment().apply {
+                setOnGalleryClickListener {
+                    val pickImageIntent = Intent(Intent.ACTION_PICK).apply {
+                        type = "image/*"
+                    }
+                    galleryLauncher.launch(pickImageIntent)
+                }
+
+                setOnDefaultProfileClickListener {
+                    modifyViewModel.setDefaultProfileImage()
+                }
+            }
+//            bottomSheet.show(parentFragmentManager, "BottomSheetSelectPictureFragment")
+            bottomSheet.show(parentFragmentManager, SELECT_PICTURE_BOTTOM_SHEET_TAG)
         }
 
         modifyViewModel.saveSuccess.observe(viewLifecycleOwner) { ok ->
             if (ok == true) {
-                // 성공 후 내 프로필 재조회
-                viewModel.getMyInfo()
+                modifyViewModel.consumeSaveSuccess()
+
+                parentFragmentManager.setFragmentResult(
+                    "profile_modify_result",
+                    bundleOf("profile_updated" to true)
+                )
 
                 parentFragmentManager.popBackStack()
-                modifyViewModel.consumeSaveSuccess()
             }
         }
 
@@ -162,21 +172,40 @@ class MyProfileModifyFragment : Fragment() {
             val next = !(modifyViewModel.timePublic.value ?: true)
             modifyViewModel.setTimePublic(next)
         }
+
         binding.timerLockIv.setOnClickListener {
             val next = !(modifyViewModel.timePublic.value ?: true)
             modifyViewModel.setTimePublic(next)
         }
+    }
 
-        modifyViewModel.saveSuccess.observe(viewLifecycleOwner) { ok ->
-            if (ok == true) {
-                // 재조회
-                viewModel.getMyInfo()
+    private fun renderProfileImage(imageUrl: String?) {
+        if (!imageUrl.isNullOrBlank()) {
+            Glide.with(this)
+                .load(imageUrl)
+                .placeholder(R.drawable.gray_teum)
+                .error(R.drawable.gray_teum)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .into(binding.profileIv)
+        } else {
+            Glide.with(binding.profileIv).clear(binding.profileIv)
+            binding.profileIv.setImageResource(R.drawable.gray_teum)
+        }
+    }
 
-                viewModel.profileImageUrl.observe(viewLifecycleOwner) {
-                    parentFragmentManager.popBackStack()
-                }
-
-                modifyViewModel.consumeSaveSuccess()
+    private fun renderEditProfileImagePreview() {
+        when (val state = modifyViewModel.imageEditState.value) {
+            is ProfileModifyViewModel.ImageEditState.New -> {
+                Glide.with(binding.profileIv).clear(binding.profileIv)
+                binding.profileIv.setImageURI(state.uri)
+            }
+            is ProfileModifyViewModel.ImageEditState.Default -> {
+                Glide.with(binding.profileIv).clear(binding.profileIv)
+                binding.profileIv.setImageResource(R.drawable.gray_teum)
+            }
+            is ProfileModifyViewModel.ImageEditState.Keep, null -> {
+                renderProfileImage(viewModel.profileImageUrl.value)
             }
         }
     }
@@ -186,5 +215,10 @@ class MyProfileModifyFragment : Fragment() {
         val hours = homeViewModel.teumTimeHours.value ?: 0
         val minutes = homeViewModel.teumTimeMinutes.value ?: 0
         binding.profileTimerTv.text = "${days}일 ${hours}시간 ${minutes}분"
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

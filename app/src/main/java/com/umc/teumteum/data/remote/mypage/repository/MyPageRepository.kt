@@ -42,6 +42,12 @@ class MyPageRepository @Inject constructor(
         handleApiResponseUnit(response)
     }
 
+    suspend fun deleteProfileImage(): Result<Unit> = runCatching {
+        val response = myPageService.deleteProfileImage()
+        Log.d("ProfileImageDelete", "response = ${response.body()}")
+        handleApiResponseUnit(response)
+    }
+
     //프로필 수정
     suspend fun updateProfile(request: ProfileUpdateRequest): Result<Unit> = runCatching {
         val response = myPageService.updateProfile(request)

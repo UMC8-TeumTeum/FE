@@ -10,6 +10,7 @@ import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.umc.teumteum.R
 import com.umc.teumteum.data.remote.mypage.model.PublicTodoResponse
 import com.umc.teumteum.databinding.FragmentMyProfileBinding
@@ -22,20 +23,17 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MyProfileFragment : Fragment() {
 
-    private lateinit var binding: FragmentMyProfileBinding
+    private var _binding: FragmentMyProfileBinding? = null
+    private val binding get() = _binding!!
 
     private val viewModel: MyHomeViewModel by activityViewModels()
     private val homeViewModel: HomeViewModel by activityViewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentMyProfileBinding.inflate(inflater,container,false)
+    ): View {
+        _binding = FragmentMyProfileBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -45,9 +43,24 @@ class MyProfileFragment : Fragment() {
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.fragmentMyProfileContainer) { _, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-
             binding.fragmentMyProfileContainer.updatePadding(bottom = systemBars.bottom)
             insets
+        }
+
+        // 최초 1회 조회
+        if (!viewModel.isLoaded) {
+            viewModel.getMyInfo()
+        }
+
+        // 프로필 수정 후 돌아왔을 때만 재조회
+        parentFragmentManager.setFragmentResultListener(
+            "profile_modify_result",
+            viewLifecycleOwner
+        ) { _, bundle ->
+            val updated = bundle.getBoolean("profile_updated", false)
+            if (updated) {
+                viewModel.getMyInfo()
+            }
         }
 
         binding.backBtn.setOnClickListener {
@@ -89,15 +102,16 @@ class MyProfileFragment : Fragment() {
             if (!imageUrl.isNullOrBlank()) {
                 Glide.with(this)
                     .load(imageUrl)
-                    .placeholder(R.drawable.gray_teum) // 기본 이미지 리소스
-                    .error(R.drawable.gray_teum)       // 에러 시 이미지
+                    .placeholder(R.drawable.gray_teum)
+                    .error(R.drawable.gray_teum)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
                     .into(binding.profileIv)
             } else {
                 binding.profileIv.setImageResource(R.drawable.gray_teum)
             }
         }
 
-        //  최근 투두 관찰
         viewModel.recentTodos.observe(viewLifecycleOwner) { list ->
             bindTodos(list)
         }
@@ -110,30 +124,32 @@ class MyProfileFragment : Fragment() {
         binding.profileTimerTv.text = "${days}일 ${hours}시간 ${minutes}분"
     }
 
-    // 화면 내에 추가
     private fun bindTodos(list: List<PublicTodoResponse>) {
         val l = list.take(2)
 
-        // 컨테이너 보이기/숨기기
-        binding.scheduleCardContainer.visibility = if (l.isNotEmpty()) View.VISIBLE else View.GONE
+        binding.scheduleCardContainer.visibility =
+            if (l.isNotEmpty()) View.VISIBLE else View.GONE
 
         if (l.isEmpty()) return
 
-        // 첫 번째 카드
         val first = l[0]
         binding.schedule1TimeStartTv.text = first.startTime
-        binding.schedule1TimeEndTv.text   = first.endTime
-        binding.schedule1TitleTv.text     = first.title
+        binding.schedule1TimeEndTv.text = first.endTime
+        binding.schedule1TitleTv.text = first.title
 
-        // 두 번째 카드
         if (l.size >= 2) {
             val second = l[1]
             binding.schedule2Cl.visibility = View.VISIBLE
             binding.schedule2TimeStartTv.text = second.startTime
-            binding.schedule2TimeEndTv.text   = second.endTime
-            binding.schedule2TitleTv.text     = second.title
+            binding.schedule2TimeEndTv.text = second.endTime
+            binding.schedule2TitleTv.text = second.title
         } else {
             binding.schedule2Cl.visibility = View.GONE
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
