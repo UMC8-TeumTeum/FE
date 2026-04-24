@@ -28,7 +28,8 @@ import java.util.Calendar
 @AndroidEntryPoint
 class MyRoutineModifyFragment : Fragment() {
 
-    private lateinit var binding: FragmentMyRoutineModifyBinding
+    private var _binding: FragmentMyRoutineModifyBinding? = null
+    private val binding get() = _binding!!
 
     private val scheduleAdapter by lazy { MyRoutineAdapter() }
     private val viewModel: MyRoutineViewModel by activityViewModels()
@@ -66,7 +67,7 @@ class MyRoutineModifyFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentMyRoutineModifyBinding.inflate(inflater, container, false)
+        _binding = FragmentMyRoutineModifyBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -225,5 +226,10 @@ class MyRoutineModifyFragment : Fragment() {
 
             parent.touchDelegate = multi
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

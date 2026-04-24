@@ -126,14 +126,27 @@ class FriendProfileFollowFragment : Fragment() {
         popupWindow.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
         popupWindow.elevation = 0f
 
+        val yOffsetPx = (15 * density).toInt()
+
         // anchorView 기준으로 위치 계산
         popupWindow.showAsDropDown(
             anchorView,
             anchorView.width - widthPx,
-            20
+            yOffsetPx
         )
 
-        // 차단 버튼 클릭
+        // 신고
+        popupView.findViewById<View>(R.id.btn_report).setOnClickListener {
+            popupWindow.dismiss()
+
+            if (targetUserId == -1) return@setOnClickListener
+
+            BottomSheetFriendReportChoiceFragment
+                .newInstance("USER", targetUserId.toLong())
+                .show(parentFragmentManager, "BottomSheetFriendReportChoiceFragment")
+        }
+
+        // 차단
         popupView.findViewById<View>(R.id.btn_block).setOnClickListener {
             popupWindow.dismiss()
 
@@ -147,17 +160,6 @@ class FriendProfileFollowFragment : Fragment() {
             BottomSheetFriendBlockFragment
                 .newInstance(targetUserId, userName)
                 .show(parentFragmentManager, "BottomSheetFriendBlockFragment")
-        }
-
-        // 신고 버튼
-        popupView.findViewById<View>(R.id.btn_report).setOnClickListener {
-            popupWindow.dismiss()
-
-            if (targetUserId == -1) return@setOnClickListener
-
-            BottomSheetFriendReportChoiceFragment
-                .newInstance("USER", targetUserId.toLong())
-                .show(parentFragmentManager, "BottomSheetFriendReportChoiceFragment")
         }
     }
 

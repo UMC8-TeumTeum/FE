@@ -126,10 +126,8 @@ class FriendRoommateDateFragment : Fragment() {
         }
 
         binding.nextBtn.setOnClickListener {
-            val formattedDate = selectedDate.let {
-                val formatter = DateTimeFormatter.ofPattern("yy.MM.dd(E)", Locale.KOREAN)
-                it.format(formatter)
-            } ?: ""
+            val formatter = DateTimeFormatter.ofPattern("yy.MM.dd(E)", Locale.KOREAN)
+            val formattedDate = selectedDate.format(formatter)
 
             val bundle = Bundle().apply {
                 putString("selected_date", formattedDate)

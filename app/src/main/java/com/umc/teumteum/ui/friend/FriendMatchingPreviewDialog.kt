@@ -201,17 +201,17 @@ class FriendMatchingPreviewDialog : DialogFragment() {
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
     private fun setLoading(loading: Boolean) {
         binding.btnSend.isEnabled = !loading
         binding.btnPrev.isEnabled = !loading
         binding.btnNext.isEnabled = !loading
         isCancelable = !loading
         dialog?.setCanceledOnTouchOutside(!loading)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     companion object {

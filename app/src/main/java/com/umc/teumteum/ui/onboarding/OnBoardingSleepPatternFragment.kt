@@ -27,7 +27,9 @@ import java.time.format.DateTimeFormatter
 @AndroidEntryPoint
 class OnBoardingSleepPatternFragment : Fragment() {
 
-    private lateinit var binding: FragmentOnBoardingSleepPatternBinding
+    private var _binding: FragmentOnBoardingSleepPatternBinding? = null
+    private val binding get() = _binding!!
+
     private val viewModel: OnBoardingViewModel by activityViewModels()
 
     private var selectedStartTime: LocalTime? = null
@@ -37,7 +39,7 @@ class OnBoardingSleepPatternFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentOnBoardingSleepPatternBinding.inflate(inflater, container, false)
+        _binding = FragmentOnBoardingSleepPatternBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -222,5 +224,10 @@ class OnBoardingSleepPatternFragment : Fragment() {
             else
                 requireContext().getColor(R.color.text_primary)
         )
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

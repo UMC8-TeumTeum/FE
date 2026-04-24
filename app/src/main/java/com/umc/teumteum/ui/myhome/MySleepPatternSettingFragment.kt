@@ -15,8 +15,10 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.umc.teumteum.R
 import com.umc.teumteum.data.remote.onboarding.model.SleepPatternRequest
 import com.umc.teumteum.databinding.DialogConfirmSleepDeleteBinding
@@ -34,7 +36,8 @@ import java.time.format.DateTimeFormatter
 @AndroidEntryPoint
 class MySleepPatternSettingFragment : Fragment() {
 
-    private lateinit var binding: FragmentMySleepPatternSettingBinding
+    private var _binding: FragmentMySleepPatternSettingBinding? = null
+    private val binding get() = _binding!!
 
     private val viewModel: SettingViewModel by viewModels()
     private val homeViewModel: HomeViewModel by activityViewModels()
@@ -45,7 +48,7 @@ class MySleepPatternSettingFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentMySleepPatternSettingBinding.inflate(inflater,container,false)
+        _binding = FragmentMySleepPatternSettingBinding.inflate(inflater,container,false)
         return binding.root
     }
 
@@ -275,10 +278,15 @@ class MySleepPatternSettingFragment : Fragment() {
     private fun navigateToHome() {
         parentFragmentManager.popBackStack(
             null,
-            androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
+            FragmentManager.POP_BACK_STACK_INCLUSIVE
         )
 
-        val bottomNav = requireActivity().findViewById<com.google.android.material.bottomnavigation.BottomNavigationView>(R.id.main_bnv)
+        val bottomNav = requireActivity().findViewById<BottomNavigationView>(R.id.main_bnv)
         bottomNav.selectedItemId = R.id.fragment_home
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

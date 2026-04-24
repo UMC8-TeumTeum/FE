@@ -23,7 +23,6 @@
                 android:layout_height="wrap_content"
                 style="@style/Header1"
                 android:textColor="@color/text_primary"
-                android:textColorHint="@color/text_primary"
                 android:minHeight="28dp"
                 android:textSize="20sp"
                 android:background="@color/transparent"

@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupWindow
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
@@ -181,11 +182,13 @@ class FriendProfileFollowingFragment : Fragment() {
         popupWindow.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
         popupWindow.elevation = 0f
 
+        val yOffsetPx = (15 * density).toInt()
+
         // anchorView 기준으로 위치 계산
         popupWindow.showAsDropDown(
             anchorView,
             anchorView.width - widthPx,
-            20
+            yOffsetPx
         )
 
         popupView.findViewById<View>(R.id.btn_block).setOnClickListener {
@@ -222,8 +225,7 @@ class FriendProfileFollowingFragment : Fragment() {
                     binding.modifyProfileBtn.text = "차단됨"
                     binding.modifyProfileBtn.isEnabled = false
                     binding.modifyProfileBtn.alpha = 0.5f
-
-                    binding.modifyProfileBtn.setTextColor(requireContext().getColor(R.color.text_primary))
+                    binding.modifyProfileBtn.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
 
                     binding.starBtn.isEnabled = false
                     binding.sendBtn.isEnabled = false

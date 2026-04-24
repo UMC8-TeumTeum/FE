@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.util.Log
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -256,8 +257,8 @@ class FriendFragment : Fragment() {
 
         // 탭 클릭 리스너
         binding.tabFollowing.setOnClickListener {
-            binding.tabFollowing.setTextColor(requireContext().getColor(R.color.text_primary))
-            binding.tabFollower.setTextColor(requireContext().getColor(R.color.teumteum_deactive))
+            binding.tabFollowing.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
+            binding.tabFollower.setTextColor(ContextCompat.getColor(requireContext(), R.color.teumteum_deactive))
             binding.followingRecyclerView.visibility = View.VISIBLE
             binding.followerRecyclerView.visibility = View.GONE
 
@@ -267,8 +268,8 @@ class FriendFragment : Fragment() {
         }
 
         binding.tabFollower.setOnClickListener {
-            binding.tabFollowing.setTextColor(requireContext().getColor(R.color.teumteum_deactive))
-            binding.tabFollower.setTextColor(requireContext().getColor(R.color.text_primary))
+            binding.tabFollowing.setTextColor(ContextCompat.getColor(requireContext(), R.color.teumteum_deactive))
+            binding.tabFollower.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
             binding.followingRecyclerView.visibility = View.GONE
             binding.followerRecyclerView.visibility = View.VISIBLE
 

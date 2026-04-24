@@ -13,13 +13,14 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MySettingFragment : Fragment() {
 
-    private lateinit var binding: FragmentMySettingBinding
+    private var _binding: FragmentMySettingBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentMySettingBinding.inflate(inflater,container,false)
+        _binding = FragmentMySettingBinding.inflate(inflater,container,false)
         return binding.root
     }
 
@@ -75,5 +76,10 @@ class MySettingFragment : Fragment() {
                 .addToBackStack(null)
                 .commit()
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

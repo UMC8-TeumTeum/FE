@@ -21,7 +21,8 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class OnBoardingNicknameFragment : Fragment() {
 
-    private lateinit var binding: FragmentOnBoardingNicknameBinding
+    private var _binding: FragmentOnBoardingNicknameBinding? = null
+    private val binding get() = _binding!!
 
     private val viewModel: OnBoardingViewModel by activityViewModels()
 
@@ -29,7 +30,7 @@ class OnBoardingNicknameFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentOnBoardingNicknameBinding.inflate(inflater, container, false)
+        _binding = FragmentOnBoardingNicknameBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -151,5 +152,10 @@ class OnBoardingNicknameFragment : Fragment() {
     private fun navigateToNext() {
         (activity as? SignUpActivity)?.proceedToNextOnboardingStep(this)
         viewModel.resetState()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

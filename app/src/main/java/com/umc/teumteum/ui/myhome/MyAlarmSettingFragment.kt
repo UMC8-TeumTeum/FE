@@ -16,7 +16,8 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MyAlarmSettingFragment : Fragment() {
 
-    private lateinit var binding: FragmentMyAlarmSettingBinding
+    private var _binding: FragmentMyAlarmSettingBinding? = null
+    private val binding get() = _binding!!
 
     private val viewModel: SettingViewModel by viewModels()
 
@@ -26,7 +27,7 @@ class MyAlarmSettingFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentMyAlarmSettingBinding.inflate(inflater,container,false)
+        _binding = FragmentMyAlarmSettingBinding.inflate(inflater,container,false)
         return binding.root
     }
 
@@ -119,5 +120,10 @@ class MyAlarmSettingFragment : Fragment() {
                     !binding.teumRequestSwitch.isChecked
 
         binding.pushAlarmPauseSwitch.isChecked = allOff
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

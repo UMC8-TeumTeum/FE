@@ -24,6 +24,7 @@ class BottomSheetFriend02RejectFragment : BottomSheetDialogFragment() {
 
     private var _binding: BottomSheetFriend02RejectBinding? = null
     private val binding get() = _binding!!
+
     private val viewModel: FriendViewModel by activityViewModels()
 
     private var selectedOption: SelectedOption = SelectedOption.REJECT

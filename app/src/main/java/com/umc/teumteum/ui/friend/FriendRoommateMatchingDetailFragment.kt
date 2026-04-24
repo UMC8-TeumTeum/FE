@@ -36,7 +36,9 @@ import kotlin.getValue
 @AndroidEntryPoint
 class FriendRoommateMatchingDetailFragment : Fragment() {
 
-    private lateinit var binding: FragmentFriendRoommateMatchingDetailBinding
+    private var _binding: FragmentFriendRoommateMatchingDetailBinding? = null
+    private val binding get() = _binding!!
+
     private lateinit var timeConflictCardAdapter: TimeConflictCardAdapter
 
     private var selectedDate: String = ""
@@ -47,7 +49,7 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentFriendRoommateMatchingDetailBinding.inflate(inflater, container, false)
+        _binding = FragmentFriendRoommateMatchingDetailBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -359,5 +361,10 @@ class FriendRoommateMatchingDetailFragment : Fragment() {
     // 24:00 -> 00:00 변환
     private fun convert24To00(timeStr: String): String {
         return if (timeStr == "24:00") "00:00" else timeStr
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

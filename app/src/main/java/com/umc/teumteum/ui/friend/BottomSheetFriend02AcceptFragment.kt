@@ -22,6 +22,7 @@ class BottomSheetFriend02AcceptFragment : BottomSheetDialogFragment() {
 
     private var _binding: BottomSheetFriend02AcceptBinding? = null
     private val binding get() = _binding!!
+
     private val viewModel: FriendViewModel by activityViewModels()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {

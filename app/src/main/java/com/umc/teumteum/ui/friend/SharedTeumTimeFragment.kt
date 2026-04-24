@@ -16,6 +16,7 @@ class SharedTeumTimeFragment : Fragment() {
 
     private var _binding: FragmentSharedTeumTimeBinding? = null
     private val binding get() = _binding!!
+
     private val viewModel: FriendViewModel by activityViewModels()
     private lateinit var adapter: SharedTeumAdapter
 

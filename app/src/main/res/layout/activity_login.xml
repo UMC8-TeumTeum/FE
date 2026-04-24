@@ -100,7 +100,7 @@
                 android:backgroundTint="#F2F2F2"
                 android:paddingStart="17dp"
                 android:text="Google로 로그인"
-                android:textColor="#1F1F1F"
+                android:textColor="@color/gray_900"
                 app:cornerRadius="8dp"
                 app:icon="@drawable/ic_google"
                 app:iconGravity="start"
