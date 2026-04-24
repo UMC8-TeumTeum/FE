@@ -5,11 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.umc.teumteum.databinding.FragmentBottomSheetSelectPictureBinding
+import com.umc.teumteum.databinding.BottomSheetSelectPictureBinding
 
 class BottomSheetSelectPictureFragment : BottomSheetDialogFragment() {
 
-    private var _binding: FragmentBottomSheetSelectPictureBinding? = null
+    private var _binding: BottomSheetSelectPictureBinding? = null
     private val binding get() = _binding!!
 
     private var onGalleryClick: (() -> Unit)? = null
@@ -28,7 +28,7 @@ class BottomSheetSelectPictureFragment : BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentBottomSheetSelectPictureBinding.inflate(inflater, container, false)
+        _binding = BottomSheetSelectPictureBinding.inflate(inflater, container, false)
         return binding.root
     }
 
