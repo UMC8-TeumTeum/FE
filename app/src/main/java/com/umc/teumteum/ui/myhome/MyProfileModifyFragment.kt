@@ -37,6 +37,10 @@ class MyProfileModifyFragment : Fragment() {
     private var nicknameInitialized = false
     private var fieldInitialized = false
 
+    companion object {
+        private const val SELECT_PICTURE_BOTTOM_SHEET_TAG = "BottomSheetSelectPictureFragment"
+    }
+
     private val galleryLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -115,6 +119,10 @@ class MyProfileModifyFragment : Fragment() {
         }
 
         binding.profileIv.setOnClickListener {
+            if(parentFragmentManager.findFragmentByTag(SELECT_PICTURE_BOTTOM_SHEET_TAG) != null) {
+                return@setOnClickListener
+            }
+
             val bottomSheet = BottomSheetSelectPictureFragment().apply {
                 setOnGalleryClickListener {
                     val pickImageIntent = Intent(Intent.ACTION_PICK).apply {
@@ -127,7 +135,8 @@ class MyProfileModifyFragment : Fragment() {
                     modifyViewModel.setDefaultProfileImage()
                 }
             }
-            bottomSheet.show(parentFragmentManager, "BottomSheetSelectPictureFragment")
+//            bottomSheet.show(parentFragmentManager, "BottomSheetSelectPictureFragment")
+            bottomSheet.show(parentFragmentManager, SELECT_PICTURE_BOTTOM_SHEET_TAG)
         }
 
         modifyViewModel.saveSuccess.observe(viewLifecycleOwner) { ok ->
@@ -180,6 +189,7 @@ class MyProfileModifyFragment : Fragment() {
                 .skipMemoryCache(true)
                 .into(binding.profileIv)
         } else {
+            Glide.with(binding.profileIv).clear(binding.profileIv)
             binding.profileIv.setImageResource(R.drawable.gray_teum)
         }
     }
@@ -187,9 +197,11 @@ class MyProfileModifyFragment : Fragment() {
     private fun renderEditProfileImagePreview() {
         when (val state = modifyViewModel.imageEditState.value) {
             is ProfileModifyViewModel.ImageEditState.New -> {
+                Glide.with(binding.profileIv).clear(binding.profileIv)
                 binding.profileIv.setImageURI(state.uri)
             }
             is ProfileModifyViewModel.ImageEditState.Default -> {
+                Glide.with(binding.profileIv).clear(binding.profileIv)
                 binding.profileIv.setImageResource(R.drawable.gray_teum)
             }
             is ProfileModifyViewModel.ImageEditState.Keep, null -> {
